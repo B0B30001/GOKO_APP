@@ -4,11 +4,16 @@ class Board {
   final int size;
   late List<List<int>> board;
   late List<String> history;
+  int _capturedByBlack = 0;
+  int _capturedByWhite = 0;
 
   Board(this.size) {
     board = List.generate(size, (_) => List.filled(size, 0));
     history = [];
   }
+
+  int get capturedByBlack => _capturedByBlack;
+  int get capturedByWhite => _capturedByWhite;
 
   bool placeStone(int i, int j, int player) {
     // 1. Проверка на выход за границы
@@ -37,6 +42,12 @@ class Board {
       capturesExist = true;
       for (var stone in capturedStones) {
         board[stone[0]][stone[1]] = 0;
+      }
+      // Обновляем счетчик захваченных камней
+      if (player == 1) {
+        _capturedByBlack += capturedStones.length;
+      } else {
+        _capturedByWhite += capturedStones.length;
       }
     }
 
