@@ -160,7 +160,7 @@ class Board {
   }
 
   void printBoard() {
-    print('  ' + List.generate(size, (j) => '${(j+1).toString().padLeft(2)}').join(' '));
+    print('  ${List.generate(size, (j) => '${(j+1).toString().padLeft(2)}').join(' ')}');
     for (int i = 0; i < size; i++) {
       String row = '${(i+1).toString().padLeft(2)} ';
       for (int j = 0; j < size; j++) {

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:zaibal/screens/home_screen.dart';
+import 'package:zaibal/screens/learn_screen.dart';
+import 'package:zaibal/screens/history_screen.dart';
+import 'package:zaibal/screens/profile_screen.dart';
+import 'package:zaibal/screens/settings_screen.dart';
 import 'package:zaibal/theme/go_theme.dart';
 
 void main() {
@@ -29,7 +33,14 @@ class _ZaibalAppState extends State<ZaibalApp> {
       theme: GoTheme.light,
       darkTheme: GoTheme.dark,
       themeMode: _isDarkTheme ? ThemeMode.dark : ThemeMode.light,
-      home: HomeScreen(onThemeToggle: toggleTheme),
+      initialRoute: '/home',
+      routes: {
+        '/home': (context) => HomeScreen(onThemeToggle: toggleTheme),
+        '/learn': (context) => const LearnScreen(),
+        '/history': (context) => const HistoryScreen(),
+        '/profile': (context) => const ProfileScreen(),
+        '/settings': (context) => const SettingsScreen(),
+      },
     );
   }
 }

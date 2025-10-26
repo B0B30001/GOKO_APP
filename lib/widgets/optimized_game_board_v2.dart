@@ -436,7 +436,7 @@ class _DynamicBoardPainter extends CustomPainter {
 
   void _drawHoverHighlight(Canvas canvas) {
     if (hoverPosition != null) {
-      final hoverPaint = _getCachedPaint('hover_${isValidMove}', () {
+      final hoverPaint = _getCachedPaint('hover_$isValidMove', () {
         return Paint()
           ..color = isValidMove
               ? Colors.green.withOpacity(0.3)
@@ -446,7 +446,7 @@ class _DynamicBoardPainter extends CustomPainter {
 
       canvas.drawCircle(hoverPosition!, metrics.adjustedCellSize * 0.45, hoverPaint);
 
-      final hoverBorderPaint = _getCachedPaint('hover_border_${isValidMove}', () {
+      final hoverBorderPaint = _getCachedPaint('hover_border_$isValidMove', () {
         return Paint()
           ..color = isValidMove
               ? Colors.green.withOpacity(0.8)

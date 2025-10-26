@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:zaibal/models/optimized_game.dart';
 import 'package:zaibal/widgets/optimized_game_board_v2.dart';
+import 'package:zaibal/widgets/bottom_nav_bar.dart';
 
 class GameBoardScreen extends StatefulWidget {
   final int boardSize;
@@ -34,6 +35,10 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
       appBar: AppBar(
         title: Text('GO Game ${widget.boardSize}x${widget.boardSize}'),
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -54,6 +59,65 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
           }
         },
       ),
+      bottomNavigationBar: BottomNavBar(
+        currentIndex: 0,
+        onTap: (index) {
+          switch (index) {
+            case 0: // Play
+              break;
+            case 1: // Learn
+              // TODO: Navigate to learn screen
+              break;
+            case 2: // History
+              // TODO: Navigate to game history
+              break;
+            case 3: // Profile
+              // TODO: Navigate to profile
+              break;
+            case 4: // More
+              _showMoreMenu(context);
+              break;
+          }
+        },
+      ),
+    );
+  }
+
+  void _showMoreMenu(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Settings'),
+              onTap: () {
+                // TODO: Navigate to settings
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.help_outline),
+              title: const Text('Help & Support'),
+              onTap: () {
+                // TODO: Navigate to help
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.info_outline),
+              title: const Text('About'),
+              onTap: () {
+                // TODO: Navigate to about
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -70,6 +134,7 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
               child: OptimizedGameBoard(
                 board: _game.board.board,
                 onTap: _onTapBoard,
+                isDarkTheme: Theme.of(context).brightness == Brightness.dark,
               ),
             ),
           ),
@@ -80,24 +145,29 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
   }
 
   Widget _buildMobileLayout(BoxConstraints constraints) {
-    final double boardSize = constraints.maxWidth * 0.9;
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          const SizedBox(height: 16),
-          Center(
-            child: SizedBox(
+    final double boardSize = constraints.maxWidth * 0.95;
+    return Center(
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(height: 16),
+            Container(
               width: boardSize,
               height: boardSize,
               child: OptimizedGameBoard(
                 board: _game.board.board,
                 onTap: _onTapBoard,
+                isDarkTheme: Theme.of(context).brightness == Brightness.dark,
               ),
             ),
-          ),
-          const SizedBox(height: 16),
-          _buildGameInfo(),
-        ],
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: _buildGameInfo(),
+            ),
+          ],
+        ),
       ),
     );
   }
