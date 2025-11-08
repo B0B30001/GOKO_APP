@@ -16,7 +16,43 @@ class Board {
   int get capturedByBlack => _capturedByBlack;
   int get capturedByWhite => _capturedByWhite;
 
+  set capturedByBlack(int value) => _capturedByBlack = value;
+  set capturedByWhite(int value) => _capturedByWhite = value;
+
   int getStone(int i, int j) => _board[i * size + j];
+  void setStone(int i, int j, int value) => _setStone(i, j, value);
+
+  bool isValidMove(int i, int j, int player) {
+    if (i < 0 || i >= size || j < 0 || j >= size || getStone(i, j) != 0) {
+      return false;
+    }
+
+    // Временно размещаем камень для проверки
+    _setStone(i, j, player);
+
+    // Проверяем, есть ли у группы свободы
+    final hasLiberties = _findLiberties([_Point(i, j)]).isNotEmpty;
+
+    // Если у группы нет свобод, проверяем, захватывает ли ход камни противника
+    var capturesOpponent = false;
+    if (!hasLiberties) {
+      final opponent = (player == 1) ? 2 : 1;
+      final neighborGroups = _getNeighborGroups(i, j, opponent);
+      for (final group in neighborGroups) {
+        if (_findLiberties(group).isEmpty) {
+          capturesOpponent = true;
+          break;
+        }
+      }
+    }
+
+    // Отменяем временное размещение камня (в isValidMove мы не учитываем Ко, т.к.
+    // он корректно обрабатывается в placeStone при реальном ходе)
+    _setStone(i, j, 0);
+
+    // Достаточно проверить свободы/захват. Правило Ко будет применено при placeStone.
+    return hasLiberties || capturesOpponent;
+  }
   void _setStone(int i, int j, int value) => _board[i * size + j] = value;
 
   List<List<int>> get board {

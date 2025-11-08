@@ -39,9 +39,11 @@ class HistoryScreen extends StatelessWidget {
           if (index != 2) {
             Navigator.pushReplacementNamed(
               context,
-              index == 0 ? '/home' :
-              index == 1 ? '/learn' :
-              index == 3 ? '/profile' : '/more',
+              index == 0
+                  ? '/home'
+                  : index == 1
+                  ? '/learn'
+                  : '/profile',
             );
           }
         },
@@ -100,7 +102,7 @@ class _GameHistoryCard extends StatelessWidget {
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                         Text(
-                          '${boardSize}×${boardSize}',
+                          '$boardSize×$boardSize',
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ],

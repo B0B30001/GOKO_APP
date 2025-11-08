@@ -14,60 +14,41 @@ class LearnScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _buildSection(
+          _buildLevelHeader(context),
+          const SizedBox(height: 12),
+          _buildLevelSection(
             context,
-            'Basics',
-            [
-              _LessonCard(
-                title: 'Game Rules',
-                description: 'Learn the basic rules of Go',
-                icon: Icons.book,
-                progress: 0.8,
-              ),
-              _LessonCard(
-                title: 'Board Setup',
-                description: 'Understanding the Go board',
-                icon: Icons.grid_on,
-                progress: 1.0,
-              ),
+            title: 'Novice',
+            stars: 1,
+            topics: const [
+              _Topic('Rules & Basics', Icons.menu_book, 0.9),
+              _Topic('Liberties', Icons.blur_circular, 0.7),
+              _Topic('Captures', Icons.close, 0.6),
+              _Topic('Ko Basics', Icons.loop, 0.3),
             ],
           ),
           const SizedBox(height: 24),
-          _buildSection(
+          _buildLevelSection(
             context,
-            'Strategy',
-            [
-              _LessonCard(
-                title: 'Capturing Stones',
-                description: 'Master the art of capturing',
-                icon: Icons.catching_pokemon,
-                progress: 0.6,
-              ),
-              _LessonCard(
-                title: 'Territory',
-                description: 'Learn to build and defend territory',
-                icon: Icons.map,
-                progress: 0.3,
-              ),
+            title: 'Intermediate',
+            stars: 2,
+            topics: const [
+              _Topic('Shape', Icons.gesture, 0.4),
+              _Topic('Sente & Gote', Icons.swap_horiz, 0.2),
+              _Topic('Joseki Intro', Icons.grid_3x3, 0.1),
+              _Topic('Life & Death', Icons.psychology, 0.25),
             ],
           ),
           const SizedBox(height: 24),
-          _buildSection(
+          _buildLevelSection(
             context,
-            'Advanced',
-            [
-              _LessonCard(
-                title: 'Opening Theory',
-                description: 'Study common opening patterns',
-                icon: Icons.start,
-                progress: 0.2,
-              ),
-              _LessonCard(
-                title: 'Life and Death',
-                description: 'Master life and death problems',
-                icon: Icons.psychology,
-                progress: 0.0,
-              ),
+            title: 'Advanced',
+            stars: 3,
+            topics: const [
+              _Topic('Fuseki', Icons.dashboard_customize, 0.05),
+              _Topic('Tesuji', Icons.auto_fix_high, 0.15),
+              _Topic('Yose (Endgame)', Icons.flag_circle, 0.0),
+              _Topic('Influence vs Territory', Icons.compare_arrows, 0.0),
             ],
           ),
         ],
@@ -78,9 +59,7 @@ class LearnScreen extends StatelessWidget {
           if (index != 1) {
             Navigator.pushReplacementNamed(
               context,
-              index == 0 ? '/home' :
-              index == 2 ? '/history' :
-              index == 3 ? '/profile' : '/more',
+              index == 0 ? '/home' : '/profile',
             );
           }
         },
@@ -88,18 +67,97 @@ class LearnScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSection(BuildContext context, String title, List<Widget> children) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildLevelHeader(BuildContext context) {
+    return Row(
       children: [
+        Icon(Icons.star, color: Colors.amber[600]),
+        const SizedBox(width: 8),
         Text(
-          title,
-          style: Theme.of(context).textTheme.headlineSmall,
+          'Choose your level',
+          style: Theme.of(context).textTheme.titleLarge,
         ),
-        const SizedBox(height: 16),
-        ...children,
       ],
     );
+  }
+
+  Widget _buildLevelSection(
+    BuildContext context, {
+    required String title,
+    required int stars,
+    required List<_Topic> topics,
+  }) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                for (var i = 0; i < stars; i++)
+                  const Icon(Icons.star, color: Colors.amber, size: 20),
+                if (stars < 3)
+                  for (var i = 0; i < 3 - stars; i++)
+                    Icon(Icons.star_border, color: Colors.amber[400], size: 20),
+                const SizedBox(width: 8),
+                Text(title, style: Theme.of(context).textTheme.titleMedium),
+              ],
+            ),
+            const SizedBox(height: 12),
+            ...topics.map(
+              (t) => _LessonCard(
+                title: t.title,
+                description: _topicDescription(t.title),
+                icon: t.icon,
+                progress: t.progress,
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/topic',
+                    arguments: {
+                      'title': t.title,
+                      'description': _topicDescription(t.title),
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _topicDescription(String title) {
+    switch (title) {
+      case 'Rules & Basics':
+        return 'Learn the core rules and flow of Go';
+      case 'Liberties':
+        return 'Understand liberties and groups';
+      case 'Captures':
+        return 'How to capture stones effectively';
+      case 'Ko Basics':
+        return 'What is Ko and how it works';
+      case 'Shape':
+        return 'Good and bad shapes to know';
+      case 'Sente & Gote':
+        return 'Initiative and tempo concepts';
+      case 'Joseki Intro':
+        return 'Common corner patterns overview';
+      case 'Life & Death':
+        return 'Tactics to live or kill groups';
+      case 'Fuseki':
+        return 'Opening strategies and frameworks';
+      case 'Tesuji':
+        return 'Tactical techniques that win fights';
+      case 'Yose (Endgame)':
+        return 'Scoring points efficiently in yose';
+      case 'Influence vs Territory':
+        return 'Balancing influence and territory';
+      default:
+        return '';
+    }
   }
 }
 
@@ -108,12 +166,14 @@ class _LessonCard extends StatelessWidget {
   final String description;
   final IconData icon;
   final double progress;
+  final VoidCallback? onTap;
 
   const _LessonCard({
     required this.title,
     required this.description,
     required this.icon,
     required this.progress,
+    this.onTap,
   });
 
   @override
@@ -121,9 +181,7 @@ class _LessonCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
-        onTap: () {
-          // TODO: Navigate to lesson
-        },
+        onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -170,4 +228,11 @@ class _LessonCard extends StatelessWidget {
       ),
     );
   }
+}
+
+class _Topic {
+  final String title;
+  final IconData icon;
+  final double progress;
+  const _Topic(this.title, this.icon, this.progress);
 }

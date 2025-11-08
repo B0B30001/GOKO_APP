@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:zaibal/models/optimized_game.dart';
+import 'package:zaibal/models/app_settings.dart';
 import 'package:zaibal/widgets/optimized_game_board_v2.dart';
-import 'package:zaibal/widgets/bottom_nav_bar.dart';
 
 class GameBoardScreen extends StatefulWidget {
   final int boardSize;
@@ -16,32 +16,61 @@ class GameBoardScreen extends StatefulWidget {
 
 class _GameBoardScreenState extends State<GameBoardScreen> {
   late Game _game;
+  bool _showCoordinates = false;
 
   @override
   void initState() {
     super.initState();
     _game = Game(widget.boardSize);
+    _showCoordinates = AppSettings.showCoordinates;
   }
 
   void _onTapBoard(int i, int j) {
+    if (_game.isGameOver) return;
+    
     setState(() {
-      _game.playTurn(i, j);
+      if (_game.playTurn(i, j)) {
+        // Не делаем авто-пасс. Если у соперника нет ходов, показываем подсказку.
+        if (!_game.hasValidMoves()) {
+          _showSnack('No legal moves available. Press Pass to continue.');
+        }
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final forceLight = AppSettings.forceLightThemeInGame;
+    final scaffold = Scaffold(
       appBar: AppBar(
-        title: Text('GO Game ${widget.boardSize}x${widget.boardSize}'),
+        backgroundColor: forceLight ? Colors.white : null,
+        title: Text(
+          'GO Game ${widget.boardSize}x${widget.boardSize}',
+          style: forceLight ? const TextStyle(color: Colors.black87) : null,
+        ),
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(
+            Icons.arrow_back,
+            color: forceLight ? Colors.black87 : null,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            tooltip: _showCoordinates ? 'Hide coordinates' : 'Show coordinates',
+            icon: Icon(
+              _showCoordinates ? Icons.grid_off : Icons.grid_on,
+              color: forceLight ? Colors.black87 : null,
+            ),
+            onPressed: () =>
+                setState(() => _showCoordinates = !_showCoordinates),
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.refresh,
+              color: forceLight ? Colors.black87 : null,
+            ),
             onPressed: () {
               setState(() {
                 _game = Game(widget.boardSize);
@@ -49,6 +78,7 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
             },
           ),
         ],
+        elevation: 0,
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -59,70 +89,82 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
           }
         },
       ),
-      bottomNavigationBar: BottomNavBar(
-        currentIndex: 0,
-        onTap: (index) {
-          switch (index) {
-            case 0: // Play
-              break;
-            case 1: // Learn
-              // TODO: Navigate to learn screen
-              break;
-            case 2: // History
-              // TODO: Navigate to game history
-              break;
-            case 3: // Profile
-              // TODO: Navigate to profile
-              break;
-            case 4: // More
-              _showMoreMenu(context);
-              break;
-          }
-        },
-      ),
-    );
-  }
-
-  void _showMoreMenu(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
-              onTap: () {
-                // TODO: Navigate to settings
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.help_outline),
-              title: const Text('Help & Support'),
-              onTap: () {
-                // TODO: Navigate to help
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.info_outline),
-              title: const Text('About'),
-              onTap: () {
-                // TODO: Navigate to about
-                Navigator.pop(context);
-              },
-            ),
-          ],
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          border: Border(top: BorderSide(color: Colors.grey.withOpacity(0.2))),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.undo),
+                onPressed: _game.canUndo
+                    ? () {
+                        setState(() {
+                          _game.undo();
+                        });
+                      }
+                    : null,
+                tooltip: 'Undo move',
+              ),
+              IconButton(
+                icon: const Icon(Icons.skip_next),
+                onPressed: () {
+                  setState(() {
+                    _game.pass();
+                    if (!_game.hasValidMoves()) {
+                      _showGameOverDialog();
+                    }
+                  });
+                },
+                tooltip: 'Pass turn',
+              ),
+              IconButton(
+                icon: const Icon(Icons.redo),
+                onPressed: _game.canRedo
+                    ? () {
+                        setState(() {
+                          _game.redo();
+                        });
+                      }
+                    : null,
+                tooltip: 'Redo move',
+              ),
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: () {
+                  setState(() {
+                    _game = Game(widget.boardSize);
+                  });
+                },
+                tooltip: 'New game',
+              ),
+            ],
+          ),
         ),
       ),
     );
+
+    return forceLight
+        ? Theme(data: ThemeData.light(), child: scaffold)
+        : scaffold;
   }
+
+  void _showSnack(String msg) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+  }
+
+
 
   Widget _buildDesktopLayout(BoxConstraints constraints) {
     final double boardSize = constraints.maxHeight * 0.8;
+    final forceLight = AppSettings.forceLightThemeInGame;
+    final isDarkTheme = forceLight
+        ? false
+        : Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
         Expanded(
@@ -131,10 +173,23 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
             child: SizedBox(
               width: boardSize,
               height: boardSize,
-              child: OptimizedGameBoard(
-                board: _game.board.board,
-                onTap: _onTapBoard,
-                isDarkTheme: Theme.of(context).brightness == Brightness.dark,
+              child: Stack(
+                children: [
+                  OptimizedGameBoard(
+                    board: _game.board.board,
+                    onTap: _onTapBoard,
+                    isDarkTheme: isDarkTheme,
+                  ),
+                  if (_showCoordinates)
+                    IgnorePointer(
+                      child: CustomPaint(
+                        painter: _CoordinatesPainter(
+                          boardSize: widget.boardSize,
+                          isDark: isDarkTheme,
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
           ),
@@ -146,19 +201,36 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
 
   Widget _buildMobileLayout(BoxConstraints constraints) {
     final double boardSize = constraints.maxWidth * 0.95;
+    final forceLight = AppSettings.forceLightThemeInGame;
+    final isDarkTheme = forceLight
+        ? false
+        : Theme.of(context).brightness == Brightness.dark;
     return Center(
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 16),
-            Container(
+            SizedBox(
               width: boardSize,
               height: boardSize,
-              child: OptimizedGameBoard(
-                board: _game.board.board,
-                onTap: _onTapBoard,
-                isDarkTheme: Theme.of(context).brightness == Brightness.dark,
+              child: Stack(
+                children: [
+                  OptimizedGameBoard(
+                    board: _game.board.board,
+                    onTap: _onTapBoard,
+                    isDarkTheme: isDarkTheme,
+                  ),
+                  if (_showCoordinates)
+                    IgnorePointer(
+                      child: CustomPaint(
+                        painter: _CoordinatesPainter(
+                          boardSize: widget.boardSize,
+                          isDark: isDarkTheme,
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
             const SizedBox(height: 16),
@@ -344,5 +416,84 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
         ],
       ),
     );
+  }
+
+}
+
+class _CoordinatesPainter extends CustomPainter {
+  final int boardSize;
+  final bool isDark;
+
+  _CoordinatesPainter({required this.boardSize, required this.isDark});
+
+  static const _letters = [
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'F',
+    'G',
+    'H',
+    'J',
+    'K',
+    'L',
+    'M',
+    'N',
+    'O',
+    'P',
+    'Q',
+    'R',
+    'S',
+    'T',
+  ]; // Skips I as in Go notation
+
+  String _colLabel(int index) {
+    // For 19x19 we use A..T skipping I. For smaller boards, use first N letters.
+    if (boardSize <= _letters.length) return _letters[index];
+    // Fallback: still cycle letters safely
+    return _letters[index % _letters.length];
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final color = isDark ? Colors.white70 : Colors.black87;
+    final textStyle = TextStyle(color: color, fontSize: 10);
+    final tp = TextPainter(textDirection: TextDirection.ltr);
+
+    // Approximate board margin used by the board painter
+    final margin = size.width * 0.06;
+    final grid = size.width - 2 * margin;
+    if (grid <= 0) return;
+    final step = grid / (boardSize - 1);
+
+    // Draw column letters (top and bottom)
+    for (int c = 0; c < boardSize; c++) {
+      final label = _colLabel(c);
+      tp.text = TextSpan(text: label, style: textStyle);
+      tp.layout();
+      final x = margin + c * step - tp.width / 2;
+      // top
+      tp.paint(canvas, Offset(x, margin - tp.height - 2));
+      // bottom
+      tp.paint(canvas, Offset(x, margin + grid + 2));
+    }
+
+    // Draw row numbers (left and right)
+    for (int r = 0; r < boardSize; r++) {
+      final label = (r + 1).toString();
+      tp.text = TextSpan(text: label, style: textStyle);
+      tp.layout();
+      final y = margin + r * step - tp.height / 2;
+      // left
+      tp.paint(canvas, Offset(margin - tp.width - 4, y));
+      // right
+      tp.paint(canvas, Offset(margin + grid + 4, y));
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _CoordinatesPainter oldDelegate) {
+    return oldDelegate.boardSize != boardSize || oldDelegate.isDark != isDark;
   }
 }

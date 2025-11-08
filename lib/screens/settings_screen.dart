@@ -1,18 +1,41 @@
 import 'package:flutter/material.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  final bool isDark;
+  final ValueChanged<bool> onThemeChanged;
+  final bool showCoordinates;
+  final ValueChanged<bool> onCoordinatesChanged;
+  final bool forceLightGame;
+  final ValueChanged<bool> onForceLightGameChanged;
+
+  const SettingsScreen({
+    required this.isDark,
+    required this.onThemeChanged,
+    required this.showCoordinates,
+    required this.onCoordinatesChanged,
+    required this.forceLightGame,
+    required this.onForceLightGameChanged,
+    super.key,
+  });
 
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool _isDarkMode = false;
   bool _soundEnabled = true;
   bool _vibrationEnabled = true;
   bool _notificationsEnabled = true;
   String _selectedLanguage = 'English';
+  bool _showCoordinates = false;
+  bool _forceLightGame = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _showCoordinates = widget.showCoordinates;
+    _forceLightGame = widget.forceLightGame;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,19 +47,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         children: [
           _buildSection(
-            'Appearance',
-            [
-              SwitchListTile(
-                title: const Text('Dark Mode'),
-                subtitle: const Text('Toggle dark/light theme'),
-                value: _isDarkMode,
-                onChanged: (value) {
-                  setState(() => _isDarkMode = value);
-                  // TODO: Implement theme switching
-                },
-              ),
-            ],
-          ),
+            'General', [
+            SwitchListTile(
+              title: const Text('Show board coordinates'),
+              value: _showCoordinates,
+              onChanged: (v) {
+                setState(() => _showCoordinates = v);
+                widget.onCoordinatesChanged(v);
+              },
+            ),
+            SwitchListTile(
+              title: const Text('Light theme in game'),
+              subtitle: const Text('Force light theme on the Game screen'),
+              value: _forceLightGame,
+              onChanged: (v) {
+                setState(() => _forceLightGame = v);
+                widget.onForceLightGameChanged(v);
+              },
+            ),
+          ]),
           _buildSection(
             'Game Settings',
             [

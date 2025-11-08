@@ -8,20 +8,80 @@ class Game {
   Map<String, dynamic>? _cachedScore;
   bool _scoreIsDirty = true;
 
+  final List<_GameState> _history = [];
+  int _currentHistoryIndex = -1;
+
   Game(this.boardSize) {
     board = Board(boardSize);
+    _saveState();
   }
 
   bool get isBlackTurn => _isBlackTurn;
   bool get isGameOver => _consecutivePasses >= 2;
+  bool get canUndo => _currentHistoryIndex > 0;
+  bool get canRedo => _currentHistoryIndex < _history.length - 1;
 
-  void playTurn(int i, int j) {
+  void _saveState() {
+    // Если мы делаем новый ход после undo, удаляем все последующие состояния
+    if (_currentHistoryIndex < _history.length - 1) {
+      _history.removeRange(_currentHistoryIndex + 1, _history.length);
+    }
+    _history.add(_GameState.fromGame(this));
+    _currentHistoryIndex = _history.length - 1;
+  }
+
+  void _restoreState(_GameState state) {
+    for (var i = 0; i < boardSize; i++) {
+      for (var j = 0; j < boardSize; j++) {
+        if (board.getStone(i, j) != state.board[i][j]) {
+          board.setStone(i, j, state.board[i][j]);
+        }
+      }
+    }
+    _isBlackTurn = state.isBlackTurn;
+    _consecutivePasses = state.consecutivePasses;
+    board.capturedByBlack = state.capturedByBlack;
+    board.capturedByWhite = state.capturedByWhite;
+    _scoreIsDirty = true;
+    _cachedScore = null;
+  }
+
+  void undo() {
+    if (canUndo) {
+      _currentHistoryIndex--;
+      _restoreState(_history[_currentHistoryIndex]);
+    }
+  }
+
+  void redo() {
+    if (canRedo) {
+      _currentHistoryIndex++;
+      _restoreState(_history[_currentHistoryIndex]);
+    }
+  }
+
+  bool hasValidMoves() {
+    for (var i = 0; i < boardSize; i++) {
+      for (var j = 0; j < boardSize; j++) {
+        if (board.getStone(i, j) == 0 &&
+            board.isValidMove(i, j, _isBlackTurn ? 1 : 2)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  bool playTurn(int i, int j) {
     if (board.placeStone(i, j, _isBlackTurn ? 1 : 2)) {
       _switchPlayer();
       _consecutivePasses = 0;
       _scoreIsDirty = true;
       _cachedScore = null;
+      _saveState();
+      return true;
     }
+    return false;
   }
 
   void pass() {
@@ -29,6 +89,7 @@ class Game {
     _switchPlayer();
     _scoreIsDirty = true;
     _cachedScore = null;
+    _saveState();
   }
 
   void _switchPlayer() {
@@ -152,6 +213,40 @@ class Game {
 
   bool _isValidPosition(int i, int j) {
     return i >= 0 && i < boardSize && j >= 0 && j < boardSize;
+  }
+}
+
+class _GameState {
+  final List<List<int>> board;
+  final bool isBlackTurn;
+  final int consecutivePasses;
+  final int capturedByBlack;
+  final int capturedByWhite;
+
+  _GameState({
+    required this.board,
+    required this.isBlackTurn,
+    required this.consecutivePasses,
+    required this.capturedByBlack,
+    required this.capturedByWhite,
+  });
+
+  factory _GameState.fromGame(Game game) {
+    return _GameState(
+      board: List.generate(
+        game.boardSize,
+        (i) => List.generate(
+          game.boardSize,
+          (j) => game.board.getStone(i, j),
+          growable: false,
+        ),
+        growable: false,
+      ),
+      isBlackTurn: game._isBlackTurn,
+      consecutivePasses: game._consecutivePasses,
+      capturedByBlack: game.board.capturedByBlack,
+      capturedByWhite: game.board.capturedByWhite,
+    );
   }
 }
 

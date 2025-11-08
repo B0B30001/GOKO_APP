@@ -13,6 +13,13 @@ class ProfileScreen extends StatelessWidget {
             expandedHeight: 200,
             floating: false,
             pinned: true,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.more_vert),
+                onPressed: () => _showMoreMenu(context),
+                tooltip: 'More',
+              ),
+            ],
             flexibleSpace: FlexibleSpaceBar(
               title: const Text('Player Name'),
               background: Container(
@@ -53,21 +60,55 @@ class ProfileScreen extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: BottomNavBar(
-        currentIndex: 3,
+        currentIndex: 2,
         onTap: (index) {
-          if (index != 3) {
+          if (index != 2) {
             Navigator.pushReplacementNamed(
               context,
-              index == 0
-                  ? '/home'
-                  : index == 1
-                  ? '/learn'
-                  : index == 2
-                  ? '/history'
-                  : '/more',
+              index == 0 ? '/home' : '/learn',
             );
           }
         },
+      ),
+    );
+  }
+
+  void _showMoreMenu(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Settings'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/settings');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.help_outline),
+              title: const Text('Help & Support'),
+              onTap: () {
+                Navigator.pop(context);
+                // TODO: Navigate to help
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.info_outline),
+              title: const Text('About'),
+              onTap: () {
+                Navigator.pop(context);
+                // TODO: Navigate to about
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

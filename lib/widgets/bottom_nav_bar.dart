@@ -35,19 +35,9 @@ class BottomNavBar extends StatelessWidget {
           label: 'Learn',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.watch_later_outlined),
-          activeIcon: Icon(Icons.watch_later),
-          label: 'History',
-        ),
-        BottomNavigationBarItem(
           icon: Icon(Icons.person_outline),
           activeIcon: Icon(Icons.person),
           label: 'Profile',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.menu),
-          activeIcon: Icon(Icons.menu),
-          label: 'More',
         ),
       ],
     );

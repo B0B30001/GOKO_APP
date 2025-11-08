@@ -5,21 +5,22 @@ class GoTheme {
     final base = ThemeData.light();
     return base.copyWith(
       brightness: Brightness.light,
-      primaryColor: const Color(0xFFDEB887),
+      // Light, friendly blue palette
+      primaryColor: const Color(0xFF42A5F5), // Blue 400
       scaffoldBackgroundColor: Colors.white,
       appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFFDEB887),
-        foregroundColor: Colors.black87,
+        backgroundColor: Color(0xFF42A5F5),
+        foregroundColor: Colors.white,
         elevation: 0,
       ),
       colorScheme: ColorScheme.light(
-        primary: const Color(0xFFDEB887),
-        secondary: Colors.brown[300]!,
+        primary: const Color(0xFF42A5F5),
+        secondary: Color(0xFF90CAF9), // Blue 200
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFDEB887),
-          foregroundColor: Colors.black87,
+          backgroundColor: const Color(0xFF42A5F5),
+          foregroundColor: Colors.white,
           elevation: 4,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           shape: RoundedRectangleBorder(
