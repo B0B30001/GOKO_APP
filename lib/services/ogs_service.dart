@@ -1,23 +1,55 @@
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:http/http.dart' as http;
-import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:flutter/foundation.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:app_links/app_links.dart';
+import 'dart:async';
 import 'dart:convert';
 
-// TODO: Register your app on OGS to get these details
-// Visit: https://online-go.com/oauth2/applications/registered/
-const String ogsClientId = 'YOUR_OGS_CLIENT_ID';
-const String ogsClientSecret = 'YOUR_OGS_CLIENT_SECRET';
-const String ogsRedirectUri = 'com.zaibal.app://oauth2callback';
+// OGS OAuth2 Configuration
+const String ogsClientId = 'cWdZPCV6jbYUzqeWdoAGYuklXDcgLGHNSisPzRp1';
+const String ogsClientSecret =
+    'pbkdf2_sha256\$870000\$D9IrathOPN53DUfjdyYiHn\$5TwoDTLOD93mw9jOgc55m5sNtJh8EmhoGR+5T0qiIts=';
+const String ogsRedirectUri = 'https://b0b30001.github.io/zaibal_app/oauth2callback';
+const String ogsAuthUrl = 'https://online-go.com/oauth2/authorize';
+const String ogsTokenUrl = 'https://online-go.com/oauth2/token';
+const String ogsApiBase = 'https://online-go.com/api/v1';
 
 class OgsService extends ChangeNotifier {
   IO.Socket? socket;
   String? _accessToken;
   Map<String, dynamic>? _userData;
+  StreamSubscription? _linkSubscription;
+  final _appLinks = AppLinks();
 
   String? get accessToken => _accessToken;
   Map<String, dynamic>? get userData => _userData;
   bool get isAuthenticated => _accessToken != null;
+
+  OgsService() {
+    _initDeepLinking();
+  }
+
+  void _initDeepLinking() {
+    // Listen for deep links
+    _linkSubscription = _appLinks.uriLinkStream.listen(
+      (Uri uri) {
+        if (uri.scheme == 'zaibalgo') {
+          _handleDeepLink(uri);
+        }
+      },
+      onError: (err) {
+        debugPrint('Deep link error: $err');
+      },
+    );
+  }
+
+  Future<void> _handleDeepLink(Uri uri) async {
+    final code = uri.queryParameters['code'];
+    if (code != null) {
+      await _exchangeCodeForToken(code);
+    }
+  }
 
   // Step 1: Authenticate the user via OAuth2
   Future<bool> login() async {
@@ -27,22 +59,29 @@ class OgsService extends ChangeNotifier {
         'client_id': ogsClientId,
         'redirect_uri': ogsRedirectUri,
         'response_type': 'code',
-        'scope': 'openid profile email',
+        'scope': 'read write',
       });
 
       // Open the browser for user login
-      final result = await FlutterWebAuth2.authenticate(
-        url: authUrl.toString(),
-        callbackUrlScheme: 'com.zaibal.app',
-      );
-
-      // Extract the authorization code from the callback
-      final code = Uri.parse(result).queryParameters['code'];
-      if (code == null) {
-        print('No authorization code received');
+      final canLaunch = await canLaunchUrl(authUrl);
+      if (!canLaunch) {
+        debugPrint('Cannot launch URL');
         return false;
       }
 
+      await launchUrl(authUrl, mode: LaunchMode.externalApplication,
+      );
+
+      // The deep link handler will receive the callback
+      return true;
+    } catch (e) {
+      debugPrint('Login error: $e');
+      return false;
+    }
+  }
+
+  Future<void> _exchangeCodeForToken(String code) async {
+    try {
       // Exchange the code for an access token
       final tokenResponse = await http.post(
         Uri.https('online-go.com', '/oauth2/token'),
@@ -62,14 +101,14 @@ class OgsService extends ChangeNotifier {
 
         // Fetch user profile
         await _fetchUserProfile();
-        return true;
+        notifyListeners();
+
+        debugPrint('Login successful!');
       } else {
-        print('Failed to get access token: ${tokenResponse.body}');
-        return false;
+        debugPrint('Failed to get access token: ${tokenResponse.body}');
       }
     } catch (e) {
-      print('Login error: $e');
-      return false;
+      debugPrint('Token exchange error: $e');
     }
   }
 
@@ -100,7 +139,7 @@ class OgsService extends ChangeNotifier {
       return;
     }
 
-    socket = IO.io('https://online-go.com', <String, dynamic>{
+    socket = IO.io('https://online-go.com/socket.io', <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': true,
       'extraHeaders': {
@@ -138,7 +177,7 @@ class OgsService extends ChangeNotifier {
 
     try {
       final response = await http.get(
-        Uri.https('online-go.com', '/api/v1/challenges'),
+        Uri.https('online-go.com', '/api/v1/games/open'),
         headers: {'Authorization': 'Bearer $_accessToken'},
       );
 
@@ -154,15 +193,29 @@ class OgsService extends ChangeNotifier {
   }
 
   // Join a game
-  void joinGame(int gameId) {
-    if (socket == null) {
-      print('Not connected to socket');
-      return;
-    }
+  Future<bool> joinGame(int gameId) async {
+    if (_accessToken == null) return false;
 
-    socket!.emit('game/connect', {
-      'game_id': gameId,
-    });
+    try {
+      final response = await http.post(
+        Uri.https('online-go.com', '/api/v1/games/$gameId/join'),
+        headers: {'Authorization': 'Bearer $_accessToken'},
+      );
+
+      if (response.statusCode == 200) {
+        // Connect to the game via socket if not already connected
+        if (socket == null) {
+          connect();
+        }
+        
+        // Join the game room
+        socket?.emit('game/connect', {'game_id': gameId});
+        return true;
+      }
+    } catch (e) {
+      print('Failed to join game: $e');
+    }
+    return false;
   }
 
   // Step 3: Send a move to the server
@@ -188,5 +241,12 @@ class OgsService extends ChangeNotifier {
     _accessToken = null;
     _userData = null;
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _linkSubscription?.cancel();
+    disconnect();
+    super.dispose();
   }
 }
