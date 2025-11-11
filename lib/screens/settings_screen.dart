@@ -40,14 +40,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Settings'), centerTitle: true),
       body: ListView(
         children: [
-          _buildSection(
-            'General', [
+          _buildSection('General', [
             SwitchListTile(
               title: const Text('Show board coordinates'),
               value: _showCoordinates,
@@ -66,85 +62,71 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
             ),
           ]),
-          _buildSection(
-            'Game Settings',
-            [
-              SwitchListTile(
-                title: const Text('Sound Effects'),
-                subtitle: const Text('Play sounds during the game'),
-                value: _soundEnabled,
-                onChanged: (value) => setState(() => _soundEnabled = value),
-              ),
-              SwitchListTile(
-                title: const Text('Vibration'),
-                subtitle: const Text('Vibrate on move'),
-                value: _vibrationEnabled,
-                onChanged: (value) => setState(() => _vibrationEnabled = value),
-              ),
-            ],
-          ),
-          _buildSection(
-            'Notifications',
-            [
-              SwitchListTile(
-                title: const Text('Push Notifications'),
-                subtitle: const Text('Get notified about your games'),
-                value: _notificationsEnabled,
-                onChanged: (value) => setState(() => _notificationsEnabled = value),
-              ),
-            ],
-          ),
-          _buildSection(
-            'Language',
-            [
-              ListTile(
-                title: const Text('App Language'),
-                subtitle: Text(_selectedLanguage),
-                trailing: const Icon(Icons.arrow_forward_ios),
-                onTap: _showLanguageDialog,
-              ),
-            ],
-          ),
-          _buildSection(
-            'Account',
-            [
-              ListTile(
-                title: const Text('Edit Profile'),
-                leading: const Icon(Icons.person_outline),
-                onTap: () {
-                  // TODO: Navigate to profile edit
-                },
-              ),
-              ListTile(
-                title: const Text('Change Password'),
-                leading: const Icon(Icons.lock_outline),
-                onTap: () {
-                  // TODO: Navigate to password change
-                },
-              ),
-            ],
-          ),
-          _buildSection(
-            'About',
-            [
-              ListTile(
-                title: const Text('Version'),
-                subtitle: const Text('1.0.0'),
-              ),
-              ListTile(
-                title: const Text('Terms of Service'),
-                onTap: () {
-                  // TODO: Show terms
-                },
-              ),
-              ListTile(
-                title: const Text('Privacy Policy'),
-                onTap: () {
-                  // TODO: Show privacy policy
-                },
-              ),
-            ],
-          ),
+          _buildSection('Game Settings', [
+            SwitchListTile(
+              title: const Text('Sound Effects'),
+              subtitle: const Text('Play sounds during the game'),
+              value: _soundEnabled,
+              onChanged: (value) => setState(() => _soundEnabled = value),
+            ),
+            SwitchListTile(
+              title: const Text('Vibration'),
+              subtitle: const Text('Vibrate on move'),
+              value: _vibrationEnabled,
+              onChanged: (value) => setState(() => _vibrationEnabled = value),
+            ),
+          ]),
+          _buildSection('Notifications', [
+            SwitchListTile(
+              title: const Text('Push Notifications'),
+              subtitle: const Text('Get notified about your games'),
+              value: _notificationsEnabled,
+              onChanged: (value) =>
+                  setState(() => _notificationsEnabled = value),
+            ),
+          ]),
+          _buildSection('Language', [
+            ListTile(
+              title: const Text('App Language'),
+              subtitle: Text(_selectedLanguage),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: _showLanguageDialog,
+            ),
+          ]),
+          _buildSection('Account', [
+            ListTile(
+              title: const Text('Edit Profile'),
+              leading: const Icon(Icons.person_outline),
+              onTap: () {
+                // TODO: Navigate to profile edit
+              },
+            ),
+            ListTile(
+              title: const Text('Change Password'),
+              leading: const Icon(Icons.lock_outline),
+              onTap: () {
+                // TODO: Navigate to password change
+              },
+            ),
+          ]),
+          _buildSection('About', [
+            ListTile(
+              title: const Text('Version'),
+              subtitle: const Text('1.0.0'),
+            ),
+            ListTile(
+              title: const Text('Terms of Service'),
+              onTap: () {
+                // TODO: Show terms
+              },
+            ),
+            ListTile(
+              title: const Text('Privacy Policy'),
+              onTap: () {
+                // TODO: Show privacy policy
+              },
+            ),
+          ]),
         ],
       ),
     );

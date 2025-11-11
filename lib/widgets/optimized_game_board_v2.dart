@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'dart:ui' as ui;
+import '../utils/performance_config.dart';
 
 @immutable
 class _BoardMetrics {
@@ -16,7 +17,10 @@ class _BoardMetrics {
     required this.adjustedCellSize,
   });
 
-  factory _BoardMetrics.fromConstraints(BoxConstraints constraints, int boardSize) {
+  factory _BoardMetrics.fromConstraints(
+    BoxConstraints constraints,
+    int boardSize,
+  ) {
     final size = Size(constraints.maxWidth, constraints.maxWidth);
     final cellSize = size.width / (boardSize - 1);
     final margin = cellSize;
@@ -35,11 +39,13 @@ class OptimizedGameBoard extends StatefulWidget {
   final List<List<int>> board;
   final Function(int i, int j) onTap;
   final bool isDarkTheme;
+  final bool showCoordinates;
 
   const OptimizedGameBoard({
     required this.board,
     required this.onTap,
     this.isDarkTheme = false,
+    this.showCoordinates = false,
     super.key,
   });
 
@@ -54,9 +60,12 @@ class _OptimizedGameBoardState extends State<OptimizedGameBoard> {
   Size? _lastSize;
   int? _lastBoardSize;
   bool? _lastTheme;
+  bool? _lastShowCoordinates;
   final Map<String, Paint> _paintCache = {};
   final Map<int, List<Offset>> _hoshiPointsCache = {};
-  final TextPainter _textPainter = TextPainter(textDirection: TextDirection.ltr);
+  final TextPainter _textPainter = TextPainter(
+    textDirection: TextDirection.ltr,
+  );
 
   @override
   void dispose() {
@@ -108,26 +117,29 @@ class _OptimizedGameBoardState extends State<OptimizedGameBoard> {
   Future<void> _updateCachedBoard(_BoardMetrics metrics) async {
     if (_lastSize == metrics.size &&
         _lastBoardSize == widget.board.length &&
-        _lastTheme == widget.isDarkTheme) {
+        _lastTheme == widget.isDarkTheme &&
+        _lastShowCoordinates == widget.showCoordinates) {
       return;
     }
 
     _lastSize = metrics.size;
     _lastBoardSize = widget.board.length;
     _lastTheme = widget.isDarkTheme;
+    _lastShowCoordinates = widget.showCoordinates;
 
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
     final staticPainter = _StaticBoardPainter(
       widget.board.length,
       widget.isDarkTheme,
+      widget.showCoordinates,
       _getCachedPaint,
       _getCachedHoshiPoints,
       _textPainter,
     );
-    
+
     staticPainter.paint(canvas, metrics.size);
-    
+
     final picture = recorder.endRecording();
     _cachedBoard?.dispose();
     _cachedBoard = await picture.toImage(
@@ -146,12 +158,9 @@ class _OptimizedGameBoardState extends State<OptimizedGameBoard> {
     _handleBoardInteraction(localPos, metrics);
   }
 
-  void _handleTap(
-    TapDownDetails details,
-    _BoardMetrics metrics,
-  ) {
+  void _handleTap(TapDownDetails details, _BoardMetrics metrics) {
     final (i, j) = _getBoardCoordinates(details.localPosition, metrics);
-    
+
     if (i >= 0 &&
         i < widget.board.length &&
         j >= 0 &&
@@ -170,10 +179,7 @@ class _OptimizedGameBoardState extends State<OptimizedGameBoard> {
     return (i, j);
   }
 
-  void _handleBoardInteraction(
-    Offset position,
-    _BoardMetrics metrics,
-  ) {
+  void _handleBoardInteraction(Offset position, _BoardMetrics metrics) {
     final (i, j) = _getBoardCoordinates(position, metrics);
 
     if (i >= 0 &&
@@ -228,9 +234,7 @@ class _OptimizedGameBoardState extends State<OptimizedGameBoard> {
                     if (_cachedBoard != null)
                       CustomPaint(
                         size: metrics.size,
-                        painter: _CachedBoardPainter(
-                          _cachedBoard!,
-                        ),
+                        painter: _CachedBoardPainter(_cachedBoard!),
                       ),
                     // Dynamic layer (stones and hover highlight)
                     CustomPaint(
@@ -258,6 +262,7 @@ class _OptimizedGameBoardState extends State<OptimizedGameBoard> {
 class _StaticBoardPainter extends CustomPainter {
   final int boardSize;
   final bool isDarkTheme;
+  final bool showCoordinates;
   final Paint Function(String, Paint Function()) getPaint;
   final List<Offset> Function(int) getHoshiPoints;
   final TextPainter textPainter;
@@ -265,6 +270,7 @@ class _StaticBoardPainter extends CustomPainter {
   _StaticBoardPainter(
     this.boardSize,
     this.isDarkTheme,
+    this.showCoordinates,
     this.getPaint,
     this.getHoshiPoints,
     this.textPainter,
@@ -278,14 +284,18 @@ class _StaticBoardPainter extends CustomPainter {
 
     _drawBoard(canvas, size);
     _drawGrid(canvas, size, margin, adjustedCellSize);
-    _drawCoordinates(canvas, size, margin, adjustedCellSize);
+    if (showCoordinates) {
+      _drawCoordinates(canvas, size, margin, adjustedCellSize);
+    }
     _drawHoshiPoints(canvas, margin, adjustedCellSize);
   }
 
   void _drawBoard(Canvas canvas, Size size) {
     final boardPaint = getPaint('board', () {
       return Paint()
-        ..color = isDarkTheme ? const Color(0xFF2C2C2C) : const Color(0xFFDEB887)
+        ..color = isDarkTheme
+            ? const Color(0xFF2C2C2C)
+            : const Color(0xFFDEB887)
         ..style = PaintingStyle.fill;
     });
 
@@ -310,7 +320,12 @@ class _StaticBoardPainter extends CustomPainter {
     canvas.drawRect(rect, Paint()..shader = gradient);
   }
 
-  void _drawGrid(Canvas canvas, Size size, double margin, double adjustedCellSize) {
+  void _drawGrid(
+    Canvas canvas,
+    Size size,
+    double margin,
+    double adjustedCellSize,
+  ) {
     final linePaint = getPaint('grid', () {
       return Paint()
         ..color = isDarkTheme ? Colors.white70 : Colors.black87
@@ -332,7 +347,12 @@ class _StaticBoardPainter extends CustomPainter {
     }
   }
 
-  void _drawCoordinates(Canvas canvas, Size size, double margin, double adjustedCellSize) {
+  void _drawCoordinates(
+    Canvas canvas,
+    Size size,
+    double margin,
+    double adjustedCellSize,
+  ) {
     final textStyle = TextStyle(
       color: isDarkTheme ? Colors.white70 : Colors.black87,
       fontSize: 14,
@@ -387,7 +407,7 @@ class _StaticBoardPainter extends CustomPainter {
   @override
   bool shouldRepaint(_StaticBoardPainter oldDelegate) {
     return boardSize != oldDelegate.boardSize ||
-           isDarkTheme != oldDelegate.isDarkTheme;
+        isDarkTheme != oldDelegate.isDarkTheme;
   }
 }
 
@@ -444,7 +464,11 @@ class _DynamicBoardPainter extends CustomPainter {
           ..style = PaintingStyle.fill;
       });
 
-      canvas.drawCircle(hoverPosition!, metrics.adjustedCellSize * 0.45, hoverPaint);
+      canvas.drawCircle(
+        hoverPosition!,
+        metrics.adjustedCellSize * 0.45,
+        hoverPaint,
+      );
 
       final hoverBorderPaint = _getCachedPaint('hover_border_$isValidMove', () {
         return Paint()
@@ -479,23 +503,27 @@ class _DynamicBoardPainter extends CustomPainter {
     final shadowPaint = _getCachedPaint('stone_shadow', () {
       return Paint()
         ..color = Colors.black26
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3);
+        ..maskFilter = MaskFilter.blur(
+          BlurStyle.normal,
+          PerformanceConfig.stoneShadowBlur,
+        );
     });
 
     final highlightPaint = _getCachedPaint('stone_highlight', () {
       return Paint()
         ..style = PaintingStyle.fill
-        ..shader = RadialGradient(
-          colors: [
-            Colors.white.withOpacity(0.5),
-            Colors.white.withOpacity(0),
-          ],
-        ).createShader(
-          Rect.fromCircle(
-            center: const Offset(0, 0),
-            radius: metrics.adjustedCellSize * 0.45 * 0.8,
-          ),
-        );
+        ..shader =
+            RadialGradient(
+              colors: [
+                Colors.white.withOpacity(0.5),
+                Colors.white.withOpacity(0),
+              ],
+            ).createShader(
+              Rect.fromCircle(
+                center: const Offset(0, 0),
+                radius: metrics.adjustedCellSize * 0.45 * 0.8,
+              ),
+            );
     });
 
     for (int i = 0; i < board.length; i++) {
@@ -509,11 +537,7 @@ class _DynamicBoardPainter extends CustomPainter {
           final isBlack = board[i][j] == 1;
 
           // Draw shadow
-          canvas.drawCircle(
-            center.translate(2, 2),
-            radius,
-            shadowPaint,
-          );
+          canvas.drawCircle(center.translate(2, 2), radius, shadowPaint);
 
           // Draw stone
           canvas.drawCircle(
@@ -529,11 +553,7 @@ class _DynamicBoardPainter extends CustomPainter {
               center.dx - radius * 0.3,
               center.dy - radius * 0.3,
             );
-            canvas.drawCircle(
-              Offset.zero,
-              radius,
-              highlightPaint,
-            );
+            canvas.drawCircle(Offset.zero, radius, highlightPaint);
             canvas.restore();
           }
         }
@@ -544,7 +564,7 @@ class _DynamicBoardPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _DynamicBoardPainter oldDelegate) {
     return board != oldDelegate.board ||
-           hoverPosition != oldDelegate.hoverPosition ||
-           isValidMove != oldDelegate.isValidMove;
+        hoverPosition != oldDelegate.hoverPosition ||
+        isValidMove != oldDelegate.isValidMove;
   }
 }

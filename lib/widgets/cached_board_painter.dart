@@ -26,8 +26,8 @@ class CachedBoardPainter extends CustomPainter {
   @override
   bool shouldRepaint(CachedBoardPainter oldDelegate) {
     return boardSize != oldDelegate.boardSize ||
-           isDarkTheme != oldDelegate.isDarkTheme ||
-           cellSize != oldDelegate.cellSize ||
-           cachedBoard != oldDelegate.cachedBoard;
+        isDarkTheme != oldDelegate.isDarkTheme ||
+        cellSize != oldDelegate.cellSize ||
+        cachedBoard != oldDelegate.cachedBoard;
   }
 }

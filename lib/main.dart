@@ -6,8 +6,6 @@ import 'package:zaibal/screens/history_screen.dart';
 import 'package:zaibal/screens/profile_screen.dart';
 import 'package:zaibal/screens/settings_screen.dart';
 import 'package:zaibal/screens/topic_detail_screen.dart';
-import 'package:zaibal/screens/login_screen.dart';
-import 'package:zaibal/screens/game_list_screen.dart';
 import 'package:zaibal/theme/go_theme.dart';
 import 'package:zaibal/models/app_settings.dart';
 import 'package:zaibal/services/ogs_service.dart';
@@ -47,14 +45,12 @@ class _ZaibalAppState extends State<ZaibalApp> {
         theme: GoTheme.light,
         darkTheme: GoTheme.dark,
         themeMode: _isDarkTheme ? ThemeMode.dark : ThemeMode.light,
-        initialRoute: '/login',
+        initialRoute: '/home',
         routes: {
-          '/login': (context) => const LoginScreen(),
           '/home': (context) => HomeScreen(onThemeToggle: toggleTheme),
           '/learn': (context) => const LearnScreen(),
           '/history': (context) => const HistoryScreen(),
           '/profile': (context) => const ProfileScreen(),
-          '/game_list': (context) => const GameListScreen(),
           '/settings': (context) => SettingsScreen(
             isDark: _isDarkTheme,
             onThemeChanged: setTheme,

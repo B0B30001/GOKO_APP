@@ -7,10 +7,7 @@ class LearnScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Learn Go'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Learn Go'), centerTitle: true),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -214,7 +211,9 @@ class _LessonCard extends StatelessWidget {
                 value: progress,
                 backgroundColor: Colors.grey[200],
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  progress == 1.0 ? Colors.green : Theme.of(context).primaryColor,
+                  progress == 1.0
+                      ? Colors.green
+                      : Theme.of(context).primaryColor,
                 ),
               ),
               const SizedBox(height: 8),

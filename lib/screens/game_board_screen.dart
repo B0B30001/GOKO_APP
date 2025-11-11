@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:zaibal/models/optimized_game.dart';
 import 'package:zaibal/models/app_settings.dart';
-import 'package:zaibal/widgets/optimized_game_board_v2.dart';
+import 'package:zaibal/widgets/fast_game_board.dart';
 
 class GameBoardScreen extends StatefulWidget {
   final int boardSize;
@@ -16,26 +16,32 @@ class GameBoardScreen extends StatefulWidget {
 
 class _GameBoardScreenState extends State<GameBoardScreen> {
   late Game _game;
-  bool _showCoordinates = false;
 
   @override
   void initState() {
     super.initState();
     _game = Game(widget.boardSize);
-    _showCoordinates = AppSettings.showCoordinates;
   }
 
   void _onTapBoard(int i, int j) {
     if (_game.isGameOver) return;
-    
-    setState(() {
-      if (_game.playTurn(i, j)) {
-        // Не делаем авто-пасс. Если у соперника нет ходов, показываем подсказку.
-        if (!_game.hasValidMoves()) {
-          _showSnack('No legal moves available. Press Pass to continue.');
-        }
+
+    // Play turn without setState to check if valid first
+    final success = _game.playTurn(i, j);
+
+    if (success) {
+      // Only rebuild if move was successful
+      setState(() {});
+
+      // Check for no valid moves after a frame delay to avoid jank
+      if (!_game.hasValidMoves()) {
+        Future.microtask(() {
+          if (mounted) {
+            _showSnack('No legal moves available. Press Pass to continue.');
+          }
+        });
       }
-    });
+    }
   }
 
   @override
@@ -58,23 +64,13 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
         ),
         actions: [
           IconButton(
-            tooltip: _showCoordinates ? 'Hide coordinates' : 'Show coordinates',
-            icon: Icon(
-              _showCoordinates ? Icons.grid_off : Icons.grid_on,
-              color: forceLight ? Colors.black87 : null,
-            ),
-            onPressed: () =>
-                setState(() => _showCoordinates = !_showCoordinates),
-          ),
-          IconButton(
             icon: Icon(
               Icons.refresh,
               color: forceLight ? Colors.black87 : null,
             ),
             onPressed: () {
-              setState(() {
-                _game = Game(widget.boardSize);
-              });
+              _game = Game(widget.boardSize);
+              setState(() {});
             },
           ),
         ],
@@ -102,9 +98,8 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
                 icon: const Icon(Icons.undo),
                 onPressed: _game.canUndo
                     ? () {
-                        setState(() {
-                          _game.undo();
-                        });
+                        _game.undo();
+                        setState(() {});
                       }
                     : null,
                 tooltip: 'Undo move',
@@ -112,12 +107,13 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
               IconButton(
                 icon: const Icon(Icons.skip_next),
                 onPressed: () {
-                  setState(() {
-                    _game.pass();
-                    if (!_game.hasValidMoves()) {
-                      _showGameOverDialog();
-                    }
-                  });
+                  _game.pass();
+                  setState(() {});
+                  if (!_game.hasValidMoves()) {
+                    Future.microtask(() {
+                      if (mounted) _showGameOverDialog();
+                    });
+                  }
                 },
                 tooltip: 'Pass turn',
               ),
@@ -125,9 +121,8 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
                 icon: const Icon(Icons.redo),
                 onPressed: _game.canRedo
                     ? () {
-                        setState(() {
-                          _game.redo();
-                        });
+                        _game.redo();
+                        setState(() {});
                       }
                     : null,
                 tooltip: 'Redo move',
@@ -157,8 +152,6 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
   }
 
-
-
   Widget _buildDesktopLayout(BoxConstraints constraints) {
     final double boardSize = constraints.maxHeight * 0.8;
     final forceLight = AppSettings.forceLightThemeInGame;
@@ -173,23 +166,11 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
             child: SizedBox(
               width: boardSize,
               height: boardSize,
-              child: Stack(
-                children: [
-                  OptimizedGameBoard(
-                    board: _game.board.board,
-                    onTap: _onTapBoard,
-                    isDarkTheme: isDarkTheme,
-                  ),
-                  if (_showCoordinates)
-                    IgnorePointer(
-                      child: CustomPaint(
-                        painter: _CoordinatesPainter(
-                          boardSize: widget.boardSize,
-                          isDark: isDarkTheme,
-                        ),
-                      ),
-                    ),
-                ],
+              child: FastGameBoard(
+                board: _game.board.board,
+                onTap: _onTapBoard,
+                isDarkTheme: isDarkTheme,
+                showCoordinates: AppSettings.showCoordinates,
               ),
             ),
           ),
@@ -214,23 +195,11 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
             SizedBox(
               width: boardSize,
               height: boardSize,
-              child: Stack(
-                children: [
-                  OptimizedGameBoard(
-                    board: _game.board.board,
-                    onTap: _onTapBoard,
-                    isDarkTheme: isDarkTheme,
-                  ),
-                  if (_showCoordinates)
-                    IgnorePointer(
-                      child: CustomPaint(
-                        painter: _CoordinatesPainter(
-                          boardSize: widget.boardSize,
-                          isDark: isDarkTheme,
-                        ),
-                      ),
-                    ),
-                ],
+              child: FastGameBoard(
+                board: _game.board.board,
+                onTap: _onTapBoard,
+                isDarkTheme: isDarkTheme,
+                showCoordinates: AppSettings.showCoordinates,
               ),
             ),
             const SizedBox(height: 16),
@@ -416,84 +385,5 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
         ],
       ),
     );
-  }
-
-}
-
-class _CoordinatesPainter extends CustomPainter {
-  final int boardSize;
-  final bool isDark;
-
-  _CoordinatesPainter({required this.boardSize, required this.isDark});
-
-  static const _letters = [
-    'A',
-    'B',
-    'C',
-    'D',
-    'E',
-    'F',
-    'G',
-    'H',
-    'J',
-    'K',
-    'L',
-    'M',
-    'N',
-    'O',
-    'P',
-    'Q',
-    'R',
-    'S',
-    'T',
-  ]; // Skips I as in Go notation
-
-  String _colLabel(int index) {
-    // For 19x19 we use A..T skipping I. For smaller boards, use first N letters.
-    if (boardSize <= _letters.length) return _letters[index];
-    // Fallback: still cycle letters safely
-    return _letters[index % _letters.length];
-  }
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final color = isDark ? Colors.white70 : Colors.black87;
-    final textStyle = TextStyle(color: color, fontSize: 10);
-    final tp = TextPainter(textDirection: TextDirection.ltr);
-
-    // Approximate board margin used by the board painter
-    final margin = size.width * 0.06;
-    final grid = size.width - 2 * margin;
-    if (grid <= 0) return;
-    final step = grid / (boardSize - 1);
-
-    // Draw column letters (top and bottom)
-    for (int c = 0; c < boardSize; c++) {
-      final label = _colLabel(c);
-      tp.text = TextSpan(text: label, style: textStyle);
-      tp.layout();
-      final x = margin + c * step - tp.width / 2;
-      // top
-      tp.paint(canvas, Offset(x, margin - tp.height - 2));
-      // bottom
-      tp.paint(canvas, Offset(x, margin + grid + 2));
-    }
-
-    // Draw row numbers (left and right)
-    for (int r = 0; r < boardSize; r++) {
-      final label = (r + 1).toString();
-      tp.text = TextSpan(text: label, style: textStyle);
-      tp.layout();
-      final y = margin + r * step - tp.height / 2;
-      // left
-      tp.paint(canvas, Offset(margin - tp.width - 4, y));
-      // right
-      tp.paint(canvas, Offset(margin + grid + 4, y));
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _CoordinatesPainter oldDelegate) {
-    return oldDelegate.boardSize != boardSize || oldDelegate.isDark != isDark;
   }
 }

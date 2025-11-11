@@ -1,8 +1,13 @@
 // lib/screens/home_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../widgets/bottom_nav_bar.dart';
+import '../widgets/login_dialog.dart';
+import '../services/ogs_service.dart';
 import './game_board_screen.dart';
+import './online/online_lobby_screen.dart';
+import './board_comparison_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final Function onThemeToggle;
@@ -21,6 +26,36 @@ class HomeScreen extends StatelessWidget {
                   floating: true,
                   pinned: true,
                   expandedHeight: 180,
+                  actions: [
+                    // Developer menu with board comparison
+                    PopupMenuButton<String>(
+                      icon: const Icon(Icons.bug_report),
+                      tooltip: 'Developer Tools',
+                      onSelected: (value) {
+                        if (value == 'board_comparison') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const BoardComparisonScreen(),
+                            ),
+                          );
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        const PopupMenuItem(
+                          value: 'board_comparison',
+                          child: Row(
+                            children: [
+                              Icon(Icons.speed),
+                              SizedBox(width: 8),
+                              Text('Board Performance Test'),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                   flexibleSpace: FlexibleSpaceBar(
                     titlePadding: const EdgeInsets.only(left: 16, bottom: 12),
                     title: const Text(''), // No title per request
@@ -113,7 +148,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Sharpen your Go skills with quick games and lessons',
+                    'Everything works offline - no account needed!',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Colors.white.withOpacity(0.9),
                     ),
@@ -260,40 +295,11 @@ class HomeScreen extends StatelessWidget {
       children: [
         Text('Recent Games', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 12),
-        ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: items.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 8),
-          itemBuilder: (context, index) {
-            final it = items[index];
-            return Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: it.win ? Colors.green : Colors.red,
-                  child: Icon(
-                    it.win ? Icons.arrow_upward : Icons.arrow_downward,
-                    color: Colors.white,
-                  ),
-                ),
-                title: Text(it.title),
-                subtitle: Text('${it.board} • ${it.timeAgo}'),
-                trailing: Text(
-                  it.delta,
-                  style: TextStyle(
-                    color: it.win ? Colors.green : Colors.red,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                onTap: () {
-                  Navigator.pushNamed(context, '/history');
-                },
-              ),
-            );
-          },
+        ...items.map(
+          (item) => Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: _HistoryCard(item: item),
+          ),
         ),
       ],
     );
@@ -353,14 +359,31 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 16),
             _buildModeButton(
               context,
-              'vs Friend (Local)',
+              'vs Friend (Same Device)',
               Icons.people,
               () => _showBoardSize(context, isComputer: false),
             ),
             const SizedBox(height: 16),
-            _buildModeButton(context, 'vs Online', Icons.wifi, () {
-              Navigator.pop(context);
-              Navigator.pushNamed(context, '/login');
+            _buildModeButton(context, 'vs Online', Icons.wifi, () async {
+              Navigator.pop(context); // Close the play mode dialog first
+
+              final ogsService = Provider.of<OgsService>(
+                context,
+                listen: false,
+              );
+
+              if (!ogsService.isAuthenticated) {
+                // Show login dialog
+                await showLoginDialog(context);
+              } else {
+                // Already logged in, go to lobby
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const OnlineLobbyScreen(),
+                  ),
+                );
+              }
             }),
           ],
         ),
@@ -372,10 +395,11 @@ class HomeScreen extends StatelessWidget {
     BuildContext context,
     String title,
     IconData icon,
-    VoidCallback onTap,
-  ) {
+    VoidCallback onTap, {
+    bool isDisabled = false,
+  }) {
     return ElevatedButton.icon(
-      onPressed: onTap,
+      onPressed: isDisabled ? null : onTap,
       icon: Icon(icon),
       label: Text(title),
       style: ElevatedButton.styleFrom(
@@ -442,4 +466,39 @@ class _HistoryItem {
   final String timeAgo;
 
   _HistoryItem(this.title, this.board, this.delta, this.win, this.timeAgo);
+}
+
+// Separate widget for history cards to avoid rebuilds
+class _HistoryCard extends StatelessWidget {
+  final _HistoryItem item;
+
+  const _HistoryCard({required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: item.win ? Colors.green : Colors.red,
+          child: Icon(
+            item.win ? Icons.arrow_upward : Icons.arrow_downward,
+            color: Colors.white,
+          ),
+        ),
+        title: Text(item.title),
+        subtitle: Text('${item.board} • ${item.timeAgo}'),
+        trailing: Text(
+          item.delta,
+          style: TextStyle(
+            color: item.win ? Colors.green : Colors.red,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        onTap: () {
+          Navigator.pushNamed(context, '/history');
+        },
+      ),
+    );
+  }
 }

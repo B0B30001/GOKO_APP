@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 class PreviewBoardPainter extends CustomPainter {
   final bool isDark;
 
-  PreviewBoardPainter({
-    required this.isDark,
-  });
+  PreviewBoardPainter({required this.isDark});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -22,8 +20,10 @@ class PreviewBoardPainter extends CustomPainter {
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [
-        (isDark ? const Color(0xFF2C2C2C) : const Color(0xFFDEB887)).withOpacity(0.7),
-        (isDark ? const Color(0xFF1A1A1A) : const Color(0xFFD2691E)).withOpacity(0.3),
+        (isDark ? const Color(0xFF2C2C2C) : const Color(0xFFDEB887))
+            .withOpacity(0.7),
+        (isDark ? const Color(0xFF1A1A1A) : const Color(0xFFD2691E))
+            .withOpacity(0.3),
       ],
     );
     canvas.drawRect(rect, Paint()..shader = gradient.createShader(rect));
@@ -40,14 +40,14 @@ class PreviewBoardPainter extends CustomPainter {
     // Рисуем сетку
     for (int i = 0; i < 19; i++) {
       final pos = margin + i * cellSize;
-      
+
       // Горизонтальные линии
       canvas.drawLine(
         Offset(margin, pos),
         Offset(size.width - margin, pos),
         linePaint,
       );
-      
+
       // Вертикальные линии
       canvas.drawLine(
         Offset(pos, margin),
@@ -75,10 +75,7 @@ class PreviewBoardPainter extends CustomPainter {
 
     for (final point in hosiPoints) {
       canvas.drawCircle(
-        Offset(
-          margin + point.dx * cellSize,
-          margin + point.dy * cellSize,
-        ),
+        Offset(margin + point.dx * cellSize, margin + point.dy * cellSize),
         3.0,
         hosiPaint,
       );
@@ -129,17 +126,18 @@ class PreviewBoardPainter extends CustomPainter {
     if (!isBlack) {
       final highlightPaint = Paint()
         ..style = PaintingStyle.fill
-        ..shader = RadialGradient(
-          colors: [
-            Colors.white.withOpacity(0.5),
-            Colors.white.withOpacity(0),
-          ],
-        ).createShader(
-          Rect.fromCircle(
-            center: center.translate(-radius * 0.3, -radius * 0.3),
-            radius: radius * 0.8,
-          ),
-        );
+        ..shader =
+            RadialGradient(
+              colors: [
+                Colors.white.withOpacity(0.5),
+                Colors.white.withOpacity(0),
+              ],
+            ).createShader(
+              Rect.fromCircle(
+                center: center.translate(-radius * 0.3, -radius * 0.3),
+                radius: radius * 0.8,
+              ),
+            );
       canvas.drawCircle(center, radius, highlightPaint);
     }
   }

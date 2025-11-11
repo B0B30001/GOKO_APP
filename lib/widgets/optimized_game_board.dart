@@ -27,8 +27,10 @@ class _GameBoardState extends State<GameBoard> {
   bool? _lastTheme;
   final Map<String, Paint> _paintCache = {};
   final Map<int, List<Offset>> _hoshiPointsCache = {};
-  final TextPainter _textPainter = TextPainter(textDirection: TextDirection.ltr);
-  
+  final TextPainter _textPainter = TextPainter(
+    textDirection: TextDirection.ltr,
+  );
+
   @override
   void dispose() {
     _cachedBoard?.dispose();
@@ -90,22 +92,19 @@ class _GameBoardState extends State<GameBoard> {
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
 
-    _drawStaticBoard(
-      canvas,
-      size,
-      widget.board.length,
-      widget.isDarkTheme,
-    );
+    _drawStaticBoard(canvas, size, widget.board.length, widget.isDarkTheme);
 
     final picture = recorder.endRecording();
     _cachedBoard?.dispose();
-    _cachedBoard = await picture.toImage(
-      size.width.ceil(),
-      size.height.ceil(),
-    );
+    _cachedBoard = await picture.toImage(size.width.ceil(), size.height.ceil());
   }
 
-  void _drawStaticBoard(Canvas canvas, Size size, int boardSize, bool isDarkTheme) {
+  void _drawStaticBoard(
+    Canvas canvas,
+    Size size,
+    int boardSize,
+    bool isDarkTheme,
+  ) {
     final margin = size.width / (boardSize - 1);
     final playArea = size.width - margin * 2;
     final adjustedCellSize = playArea / (boardSize - 1);
@@ -113,7 +112,9 @@ class _GameBoardState extends State<GameBoard> {
     // Draw board background
     final boardPaint = _getCachedPaint('board', () {
       return Paint()
-        ..color = isDarkTheme ? const Color(0xFF2C2C2C) : const Color(0xFFDEB887)
+        ..color = isDarkTheme
+            ? const Color(0xFF2C2C2C)
+            : const Color(0xFFDEB887)
         ..style = PaintingStyle.fill;
     });
 
@@ -133,10 +134,7 @@ class _GameBoardState extends State<GameBoard> {
 
     final rect = Rect.fromLTWH(0, 0, size.width, size.height);
     canvas.drawRect(rect, boardPaint);
-    canvas.drawRect(
-      rect,
-      Paint()..shader = gradient.createShader(rect),
-    );
+    canvas.drawRect(rect, Paint()..shader = gradient.createShader(rect));
 
     // Draw grid
     final linePaint = _getCachedPaint('grid', () {
@@ -225,7 +223,10 @@ class _GameBoardState extends State<GameBoard> {
       adjustedCellSize,
     );
 
-    if (i >= 0 && i < widget.board.length && j >= 0 && j < widget.board.length) {
+    if (i >= 0 &&
+        i < widget.board.length &&
+        j >= 0 &&
+        j < widget.board.length) {
       if (mounted) {
         setState(() {
           hoverPosition = Offset(
@@ -243,15 +244,22 @@ class _GameBoardState extends State<GameBoard> {
     }
   }
 
-  void _handleTap(TapDownDetails details, double margin, double adjustedCellSize) {
+  void _handleTap(
+    TapDownDetails details,
+    double margin,
+    double adjustedCellSize,
+  ) {
     final (i, j) = _getBoardCoordinates(
       details.localPosition.dx,
       details.localPosition.dy,
       margin,
       adjustedCellSize,
     );
-    
-    if (i >= 0 && i < widget.board.length && j >= 0 && j < widget.board.length) {
+
+    if (i >= 0 &&
+        i < widget.board.length &&
+        j >= 0 &&
+        j < widget.board.length) {
       widget.onTap(i, j);
     }
   }
@@ -410,17 +418,15 @@ class _DynamicElementsPainter extends CustomPainter {
     final highlightPaint = _getCachedPaint('stone_highlight', () {
       return Paint()
         ..style = PaintingStyle.fill
-        ..shader = RadialGradient(
-          colors: [
-            Colors.white.withOpacity(0.5),
-            Colors.white.withOpacity(0),
-          ],
-        ).createShader(
-          Rect.fromCircle(
-            center: const Offset(0, 0),
-            radius: radius * 0.8,
-          ),
-        );
+        ..shader =
+            RadialGradient(
+              colors: [
+                Colors.white.withOpacity(0.5),
+                Colors.white.withOpacity(0),
+              ],
+            ).createShader(
+              Rect.fromCircle(center: const Offset(0, 0), radius: radius * 0.8),
+            );
     });
 
     for (int i = 0; i < board.length; i++) {
@@ -432,11 +438,7 @@ class _DynamicElementsPainter extends CustomPainter {
           );
           final isBlack = board[i][j] == 1;
 
-          canvas.drawCircle(
-            center.translate(2, 2),
-            radius,
-            shadowPaint,
-          );
+          canvas.drawCircle(center.translate(2, 2), radius, shadowPaint);
 
           canvas.drawCircle(
             center,
@@ -450,11 +452,7 @@ class _DynamicElementsPainter extends CustomPainter {
               center.dx - radius * 0.3,
               center.dy - radius * 0.3,
             );
-            canvas.drawCircle(
-              Offset.zero,
-              radius,
-              highlightPaint,
-            );
+            canvas.drawCircle(Offset.zero, radius, highlightPaint);
             canvas.restore();
           }
         }
@@ -465,7 +463,7 @@ class _DynamicElementsPainter extends CustomPainter {
   @override
   bool shouldRepaint(_DynamicElementsPainter oldDelegate) {
     return board != oldDelegate.board ||
-           hoverPosition != oldDelegate.hoverPosition ||
-           isValidMove != oldDelegate.isValidMove;
+        hoverPosition != oldDelegate.hoverPosition ||
+        isValidMove != oldDelegate.isValidMove;
   }
 }

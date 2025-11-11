@@ -49,7 +49,7 @@ class Game {
         } else if (board.board[i][j] == 2) {
           whiteStones++;
         }
-        
+
         if (territory[i][j] == 1) {
           blackTerritory++;
         } else if (territory[i][j] == 2) {
@@ -57,7 +57,7 @@ class Game {
         }
       }
     }
-    
+
     return {
       'black': {
         'stones': blackStones,
@@ -74,7 +74,7 @@ class Game {
       'passCount': consecutivePasses,
     };
   }
-  
+
   // Определение территории
   List<List<int>> _calculateTerritory() {
     var territory = List.generate(boardSize, (_) => List.filled(boardSize, 0));
@@ -93,15 +93,15 @@ class Game {
         }
       }
     }
-    
+
     return territory;
   }
-  
+
   // Определение владельца территории
   int _determineAreaOwner(Set<Point> area) {
     var blackBorders = 0;
     var whiteBorders = 0;
-    
+
     for (var point in area) {
       for (var dir in [
         [-1, 0],
@@ -123,7 +123,7 @@ class Game {
     if (whiteBorders > blackBorders) return 2;
     return 0;
   }
-  
+
   // Поиск связанных пустых пунктов
   Set<Point> _floodFill(int i, int j) {
     var points = <Point>{};
@@ -150,7 +150,7 @@ class Game {
         }
       }
     }
-    
+
     return points;
   }
 }

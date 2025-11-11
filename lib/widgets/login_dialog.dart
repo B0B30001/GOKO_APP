@@ -1,0 +1,237 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../services/ogs_service.dart';
+import '../screens/online/online_lobby_screen.dart';
+
+/// Login dialog for OGS authentication
+/// Shows a popup dialog with username/password fields
+class LoginDialog extends StatefulWidget {
+  const LoginDialog({super.key});
+
+  @override
+  State<LoginDialog> createState() => _LoginDialogState();
+}
+
+class _LoginDialogState extends State<LoginDialog> {
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _isLoading = false;
+  bool _obscurePassword = true;
+  String? _errorMessage;
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _login() async {
+    if (_usernameController.text.trim().isEmpty ||
+        _passwordController.text.isEmpty) {
+      setState(() {
+        _errorMessage = 'Please enter username and password';
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    final ogsService = Provider.of<OgsService>(context, listen: false);
+
+    try {
+      final success = await ogsService.loginWithPassword(
+        _usernameController.text.trim(),
+        _passwordController.text,
+      );
+
+      if (!mounted) return;
+
+      if (success) {
+        // Close dialog
+        Navigator.pop(context);
+
+        // Navigate to lobby
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const OnlineLobbyScreen()),
+        );
+      } else {
+        setState(() {
+          _errorMessage = 'Login failed. Check your credentials.';
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = 'Error: ${e.toString()}';
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 400),
+        padding: const EdgeInsets.all(24.0),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Header
+              Row(
+                children: [
+                  const Icon(Icons.album, size: 40, color: Colors.orange),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Sign in to OGS',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'Online Go Server',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: _isLoading ? null : () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              // Username field
+              TextField(
+                controller: _usernameController,
+                enabled: !_isLoading,
+                decoration: const InputDecoration(
+                  labelText: 'Username',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.person),
+                ),
+                autofocus: true,
+                textInputAction: TextInputAction.next,
+              ),
+              const SizedBox(height: 16),
+
+              // Password field
+              TextField(
+                controller: _passwordController,
+                enabled: !_isLoading,
+                obscureText: _obscurePassword,
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                  ),
+                ),
+                textInputAction: TextInputAction.done,
+                onSubmitted: (_) => _login(),
+              ),
+              const SizedBox(height: 16),
+
+              // Error message
+              if (_errorMessage != null)
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade100,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.error_outline, color: Colors.red.shade900),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          _errorMessage!,
+                          style: TextStyle(color: Colors.red.shade900),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              if (_errorMessage != null) const SizedBox(height: 16),
+
+              // Login button
+              ElevatedButton(
+                onPressed: _isLoading ? null : _login,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.all(16),
+                  backgroundColor: Colors.orange,
+                  foregroundColor: Colors.white,
+                ),
+                child: _isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text('Sign In', style: TextStyle(fontSize: 16)),
+              ),
+              const SizedBox(height: 12),
+
+              // Create account link
+              TextButton(
+                onPressed: _isLoading
+                    ? null
+                    : () {
+                        // TODO: Open OGS website to create account
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Create an account at online-go.com'),
+                          ),
+                        );
+                      },
+                child: const Text("Don't have an account? Sign up on OGS"),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Helper function to show the login dialog
+Future<void> showLoginDialog(BuildContext context) async {
+  return showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) => const LoginDialog(),
+  );
+}

@@ -112,7 +112,7 @@ class Game {
   Map<String, dynamic> _calculateScore(List<List<int>> territory) {
     var stats = {
       'black': {'stones': 0, 'territory': 0, 'captured': board.capturedByBlack},
-      'white': {'stones': 0, 'territory': 0, 'captured': board.capturedByWhite}
+      'white': {'stones': 0, 'territory': 0, 'captured': board.capturedByWhite},
     };
 
     for (var i = 0; i < boardSize; i++) {
@@ -132,12 +132,14 @@ class Game {
       }
     }
 
-    stats['black']!['total'] = stats['black']!['stones']! +
-                              stats['black']!['territory']! +
-                              stats['black']!['captured']!;
-    stats['white']!['total'] = stats['white']!['stones']! +
-                              stats['white']!['territory']! +
-                              stats['white']!['captured']!;
+    stats['black']!['total'] =
+        stats['black']!['stones']! +
+        stats['black']!['territory']! +
+        stats['black']!['captured']!;
+    stats['white']!['total'] =
+        stats['white']!['stones']! +
+        stats['white']!['territory']! +
+        stats['white']!['captured']!;
 
     return {
       'black': Map<String, dynamic>.from(stats['black']!),
@@ -195,7 +197,12 @@ class Game {
     final stone = board.getStone(i, j);
     if (stone == 0) {
       area.add(_Point(i, j));
-      for (var dir in const [[-1, 0], [1, 0], [0, -1], [0, 1]]) {
+      for (var dir in const [
+        [-1, 0],
+        [1, 0],
+        [0, -1],
+        [0, 1],
+      ]) {
         final ni = i + dir[0];
         final nj = j + dir[1];
         if (_isValidPosition(ni, nj)) {

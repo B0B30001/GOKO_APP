@@ -8,7 +8,7 @@ class Board {
   int _capturedByBlack = 0;
   int _capturedByWhite = 0;
   final _boardStateCache = HashMap<String, bool>();
-  
+
   Board(this.size) {
     _board = Uint8List(size * size);
   }
@@ -53,15 +53,13 @@ class Board {
     // Достаточно проверить свободы/захват. Правило Ко будет применено при placeStone.
     return hasLiberties || capturesOpponent;
   }
+
   void _setStone(int i, int j, int value) => _board[i * size + j] = value;
 
   List<List<int>> get board {
     return List.generate(
       size,
-      (i) => List.generate(
-        size,
-        (j) => getStone(i, j),
-      ),
+      (i) => List.generate(size, (j) => getStone(i, j)),
     );
   }
 
@@ -76,7 +74,7 @@ class Board {
     // Проверяем захват и обновляем счетчики
     var capturedStones = <_Point>[];
     final neighborGroups = _getNeighborGroups(i, j, opponent);
-    
+
     for (final group in neighborGroups) {
       if (_findLiberties(group).isEmpty) {
         capturedStones.addAll(group);
@@ -109,7 +107,7 @@ class Board {
 
     _history.add(_getCompressedBoardState());
     _boardStateCache[boardHash] = true;
-    
+
     if (_history.length > 8) {
       final oldState = _history.removeAt(0);
       _boardStateCache.remove(_getBoardHashFromState(oldState));
@@ -122,11 +120,11 @@ class Board {
     final liberties = <_Point>{};
     final player = getStone(group[0].i, group[0].j);
     final visited = <_Point>{};
-    
+
     for (final stone in group) {
       visited.add(stone);
       final neighbors = _getAdjacentPoints(stone.i, stone.j);
-      
+
       for (final neighbor in neighbors) {
         final neighborValue = getStone(neighbor.i, neighbor.j);
         if (neighborValue == 0) {
@@ -137,23 +135,24 @@ class Board {
         }
       }
     }
-    
+
     return liberties;
   }
 
   List<List<_Point>> _getNeighborGroups(int i, int j, int player) {
     final groups = <List<_Point>>[];
     final visited = <_Point>{};
-    
+
     for (final neighbor in _getAdjacentPoints(i, j)) {
-      if (getStone(neighbor.i, neighbor.j) == player && !visited.contains(neighbor)) {
+      if (getStone(neighbor.i, neighbor.j) == player &&
+          !visited.contains(neighbor)) {
         final group = <_Point>[neighbor];
         visited.add(neighbor);
         groups.add(group);
         _floodFillGroup(neighbor.i, neighbor.j, player, visited, group);
       }
     }
-    
+
     return groups;
   }
 
@@ -165,7 +164,8 @@ class Board {
     List<_Point> group,
   ) {
     for (final neighbor in _getAdjacentPoints(i, j)) {
-      if (getStone(neighbor.i, neighbor.j) == player && !visited.contains(neighbor)) {
+      if (getStone(neighbor.i, neighbor.j) == player &&
+          !visited.contains(neighbor)) {
         visited.add(neighbor);
         group.add(neighbor);
         _floodFillGroup(neighbor.i, neighbor.j, player, visited, group);
@@ -212,9 +212,9 @@ class Board {
 class _Point {
   final int i;
   final int j;
-  
+
   const _Point(this.i, this.j);
-  
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -222,7 +222,7 @@ class _Point {
           runtimeType == other.runtimeType &&
           i == other.i &&
           j == other.j;
-  
+
   @override
   int get hashCode => i * 31 + j;
 }
