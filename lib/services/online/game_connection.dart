@@ -273,23 +273,61 @@ class GameData {
       debugPrint('📦 [GameData] Board data length: ${boardData.length}');
 
       if (boardData is List && boardData.isNotEmpty) {
+        debugPrint(
+          '📦 [GameData] First element type: ${boardData[0].runtimeType}',
+        );
+
         // Check if it's already a 2D array
         if (boardData[0] is List) {
           debugPrint('📦 [GameData] Board is 2D array');
           board = boardData
-              .map((row) => (row as List).map((cell) => cell as int).toList())
+              .map(
+                (row) => (row as List).map((cell) {
+                  // OGS uses: 0=empty, 1=black, 2=white
+                  return cell as int;
+                }).toList(),
+              )
               .toList();
         } else {
           // Convert flat array to 2D array
           debugPrint('📦 [GameData] Board is flat array, converting to 2D');
+
+          // Check first few values to understand encoding
+          if (boardData.length > 0) {
+            debugPrint(
+              '📦 [GameData] Sample values: ${boardData.take(10).toList()}',
+            );
+          }
+
           board = List.generate(
             height,
             (i) => List.generate(width, (j) {
               final index = i * width + j;
-              return index < boardData.length ? boardData[index] as int : 0;
+              if (index < boardData.length) {
+                final value = boardData[index];
+                // OGS uses: 0=empty, 1=black, 2=white
+                return value as int;
+              }
+              return 0;
             }),
           );
         }
+
+        // Log board stats
+        int blackCount = 0, whiteCount = 0, emptyCount = 0;
+        for (var row in board) {
+          for (var cell in row) {
+            if (cell == 1)
+              blackCount++;
+            else if (cell == 2)
+              whiteCount++;
+            else
+              emptyCount++;
+          }
+        }
+        debugPrint(
+          '📦 [GameData] Board stats - Black: $blackCount, White: $whiteCount, Empty: $emptyCount',
+        );
       } else {
         // Empty board
         debugPrint('📦 [GameData] Board data is empty, creating empty board');
@@ -361,27 +399,62 @@ class MoveData {
     debugPrint('🔍 [MoveData] Parsing move JSON:');
     debugPrint('   Raw move array: $move');
     debugPrint('   Move length: ${move.length}');
-    if (move.length > 0) debugPrint('   Row: ${move[0]}');
-    if (move.length > 1) debugPrint('   Col: ${move[1]}');
-    if (move.length > 2)
-      debugPrint(
-        '   Color: ${move[2]} (${move[2] == 1
-            ? "BLACK"
-            : move[2] == 2
-            ? "WHITE"
-            : "UNKNOWN"})',
-      );
+    debugPrint('   Move types: ${move.map((e) => e.runtimeType).toList()}');
+
+    int row, col, color;
+
+    // OGS can send moves in different formats:
+    // 1. [row, col, color] as integers (0-based indices)
+    // 2. "ab" as SGF string (needs decoding)
+    // 3. [row, col] with color from current player
+
+    if (move.isEmpty) {
+      row = col = color = 0;
+    } else if (move[0] is String) {
+      // SGF format like "dd" - need to decode
+      final sgf = move[0] as String;
+      debugPrint('   SGF string format: $sgf');
+
+      if (sgf == '..' || sgf.isEmpty) {
+        // Pass move
+        row = col = -1;
+        color = move.length > 1 ? move[1] : 0;
+      } else if (sgf.length >= 2) {
+        // Decode SGF: first char = col, second char = row
+        const letters = 'abcdefghjklmnopqrs';
+        col = letters.indexOf(sgf[0]);
+        row = letters.indexOf(sgf[1]);
+        color = move.length > 1 ? move[1] : 0;
+        debugPrint('   Decoded SGF: "$sgf" -> row=$row, col=$col');
+      } else {
+        row = col = color = 0;
+      }
+    } else {
+      // Integer array format [row, col, color]
+      row = move.length > 0 ? move[0] as int : 0;
+      col = move.length > 1 ? move[1] as int : 0;
+      color = move.length > 2 ? move[2] as int : 0;
+      debugPrint('   Integer array format: row=$row, col=$col, color=$color');
+    }
+
+    debugPrint(
+      '   Final color: $color (${color == 1
+          ? "BLACK"
+          : color == 2
+          ? "WHITE"
+          : "UNKNOWN"})',
+    );
 
     final moveData = MoveData(
       gameId: json['game_id'].toString(),
       moveNumber: json['move_number'] ?? 0,
-      row: move.length > 0 ? move[0] : 0,
-      col: move.length > 1 ? move[1] : 0,
-      color: move.length > 2 ? move[2] : 0,
+      row: row,
+      col: col,
+      color: color,
     );
 
     debugPrint(
-      '✅ [MoveData] Parsed: row=${moveData.row}, col=${moveData.col}, color=${moveData.color}',
+      '✅ [MoveData] Final parsed: row=${moveData.row}, col=${moveData.col}, color=${moveData.color}',
     );
 
     return moveData;
