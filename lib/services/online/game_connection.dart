@@ -350,13 +350,34 @@ class MoveData {
 
   factory MoveData.fromJson(Map<String, dynamic> json) {
     final move = json['move'] as List;
-    return MoveData(
+
+    debugPrint('🔍 [MoveData] Parsing move JSON:');
+    debugPrint('   Raw move array: $move');
+    debugPrint('   Move length: ${move.length}');
+    if (move.length > 0) debugPrint('   Row: ${move[0]}');
+    if (move.length > 1) debugPrint('   Col: ${move[1]}');
+    if (move.length > 2)
+      debugPrint(
+        '   Color: ${move[2]} (${move[2] == 1
+            ? "BLACK"
+            : move[2] == 2
+            ? "WHITE"
+            : "UNKNOWN"})',
+      );
+
+    final moveData = MoveData(
       gameId: json['game_id'].toString(),
       moveNumber: json['move_number'] ?? 0,
       row: move.length > 0 ? move[0] : 0,
       col: move.length > 1 ? move[1] : 0,
       color: move.length > 2 ? move[2] : 0,
     );
+
+    debugPrint(
+      '✅ [MoveData] Parsed: row=${moveData.row}, col=${moveData.col}, color=${moveData.color}',
+    );
+
+    return moveData;
   }
 }
 

@@ -27,6 +27,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
   bool _isMyTurn = false;
   int? _myColor; // 1 = black, 2 = white
   int? _myPlayerId;
+  bool _pendingMove = false; // Prevent multiple moves at once
   List<ChatMessage> _chatMessages = [];
   final TextEditingController _chatController = TextEditingController();
 
@@ -104,11 +105,20 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
     // Listen to moves
     _gameConnection!.moves.listen((move) {
       debugPrint(
-        '🎯 [OnlineGameScreen] Move: (${move.row}, ${move.col}) = ${move.color}',
+        '🎯 [OnlineGameScreen] Move received: (${move.row}, ${move.col}) = ${move.color}',
+      );
+      debugPrint(
+        '   Move color: ${move.color == 1
+            ? "BLACK"
+            : move.color == 2
+            ? "WHITE"
+            : "UNKNOWN"}',
       );
 
       setState(() {
         _moveNumber = move.moveNumber;
+        _pendingMove = false; // Move confirmed, allow next move
+
         if (_board != null &&
             move.row >= 0 &&
             move.col >= 0 &&
@@ -125,7 +135,12 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
                     _board![i][j],
               ],
           ];
-          debugPrint('✅ Move applied to board (new instance created)');
+          debugPrint(
+            '✅ Move applied to board at (${move.row}, ${move.col}) with color ${move.color}',
+          );
+          debugPrint(
+            '   Board value at position: ${_board![move.row][move.col]}',
+          );
         } else {
           debugPrint('⚠️ Invalid move coordinates or board not initialized');
         }
@@ -398,8 +413,13 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
 
   void _onTapBoard(int i, int j) {
     debugPrint(
-      '🎯 Tap at ($i, $j) - Phase: $_phase, My turn: $_isMyTurn, My color: $_myColor',
+      '🎯 Tap at ($i, $j) - Phase: $_phase, My turn: $_isMyTurn, My color: $_myColor, Pending: $_pendingMove',
     );
+
+    if (_pendingMove) {
+      debugPrint('❌ Cannot place stone - move already pending');
+      return;
+    }
 
     if (_phase != 'play') {
       debugPrint('❌ Cannot place stone - game phase is $_phase');
@@ -418,11 +438,31 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
     }
 
     if (_board![i][j] != 0) {
-      debugPrint('❌ Cannot place stone - position occupied');
+      debugPrint(
+        '❌ Cannot place stone - position occupied (value: ${_board![i][j]})',
+      );
       return; // Already occupied
     }
 
-    debugPrint('✅ Submitting move at ($i, $j)');
+    debugPrint('✅ Submitting move at ($i, $j) with color $_myColor');
+
+    setState(() {
+      _pendingMove = true;
+
+      // Optimistically update the board locally
+      _board = [
+        for (int row = 0; row < _board!.length; row++)
+          [
+            for (int col = 0; col < _board![row].length; col++)
+              if (row == i && col == j)
+                _myColor! // Place my color
+              else
+                _board![row][col],
+          ],
+      ];
+      debugPrint('   Optimistic update: placed color $_myColor at ($i, $j)');
+    });
+
     _gameConnection?.submitMove(i, j);
   }
 
