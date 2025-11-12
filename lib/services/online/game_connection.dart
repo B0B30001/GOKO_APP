@@ -397,6 +397,7 @@ class MoveData {
     final move = json['move'] as List;
 
     debugPrint('🔍 [MoveData] Parsing move JSON:');
+    debugPrint('   Full JSON: $json');
     debugPrint('   Raw move array: $move');
     debugPrint('   Move length: ${move.length}');
     debugPrint('   Move types: ${move.map((e) => e.runtimeType).toList()}');
@@ -405,8 +406,8 @@ class MoveData {
 
     // OGS can send moves in different formats:
     // 1. [row, col, color] as integers (0-based indices)
-    // 2. "ab" as SGF string (needs decoding)
-    // 3. [row, col] with color from current player
+    // 2. ["ab", color] as SGF string (needs decoding)
+    // 3. ["ab"] with color determined by move_number (odd=black, even=white)
 
     if (move.isEmpty) {
       row = col = color = 0;
@@ -418,23 +419,41 @@ class MoveData {
       if (sgf == '..' || sgf.isEmpty) {
         // Pass move
         row = col = -1;
-        color = move.length > 1 ? move[1] : 0;
+        color = move.length > 1 ? move[1] as int : 0;
       } else if (sgf.length >= 2) {
         // Decode SGF: first char = col, second char = row
         const letters = 'abcdefghjklmnopqrs';
         col = letters.indexOf(sgf[0]);
         row = letters.indexOf(sgf[1]);
-        color = move.length > 1 ? move[1] : 0;
-        debugPrint('   Decoded SGF: "$sgf" -> row=$row, col=$col');
+        
+        // Get color from move array if provided, otherwise determine from move number
+        if (move.length > 1 && move[1] is int) {
+          color = move[1] as int;
+          debugPrint('   Color from move array: $color');
+        } else {
+          // If color not provided, determine from move_number
+          // Move 1 = black, Move 2 = white, Move 3 = black, etc.
+          final moveNumber = json['move_number'] ?? 0;
+          color = (moveNumber % 2 == 1) ? 1 : 2; // Odd moves = black (1), Even = white (2)
+          debugPrint('   Color from move_number $moveNumber: $color');
+        }
+        
+        debugPrint('   Decoded SGF: "$sgf" -> row=$row, col=$col, color=$color');
       } else {
         row = col = color = 0;
       }
     } else {
-      // Integer array format [row, col, color]
+      // Integer array format [row, col, milliseconds]
+      // NOTE: Third element is NOT color - it's timing info!
       row = move.length > 0 ? move[0] as int : 0;
       col = move.length > 1 ? move[1] as int : 0;
-      color = move.length > 2 ? move[2] as int : 0;
-      debugPrint('   Integer array format: row=$row, col=$col, color=$color');
+      
+      // Determine color from move_number (odd = black, even = white)
+      final moveNumber = json['move_number'] ?? 0;
+      color = (moveNumber % 2 == 1) ? 1 : 2;
+      
+      debugPrint('   Integer array format: row=$row, col=$col, timing=${move.length > 2 ? move[2] : 0}');
+      debugPrint('   Color from move_number $moveNumber: $color');
     }
 
     debugPrint(
@@ -475,11 +494,44 @@ class ClockData {
   });
 
   factory ClockData.fromJson(Map<String, dynamic> json) {
+    // Parse current_player - can be either int (player number) or int (player ID)
+    int currentPlayer = 0;
+    final currentPlayerValue = json['current_player'];
+    if (currentPlayerValue is int) {
+      currentPlayer = currentPlayerValue;
+    }
+    
+    // Parse time values - can be int (seconds) or Map (detailed time info)
+    int blackTime = 0;
+    int whiteTime = 0;
+    
+    final blackTimeValue = json['black_time'];
+    if (blackTimeValue is int) {
+      blackTime = blackTimeValue;
+    } else if (blackTimeValue is num) {
+      blackTime = blackTimeValue.round();
+    } else if (blackTimeValue is Map) {
+      // Extract thinking_time from map - can be int or double
+      final thinkingTime = blackTimeValue['thinking_time'];
+      blackTime = (thinkingTime is num) ? thinkingTime.round() : 0;
+    }
+    
+    final whiteTimeValue = json['white_time'];
+    if (whiteTimeValue is int) {
+      whiteTime = whiteTimeValue;
+    } else if (whiteTimeValue is num) {
+      whiteTime = whiteTimeValue.round();
+    } else if (whiteTimeValue is Map) {
+      // Extract thinking_time from map - can be int or double
+      final thinkingTime = whiteTimeValue['thinking_time'];
+      whiteTime = (thinkingTime is num) ? thinkingTime.round() : 0;
+    }
+    
     return ClockData(
       gameId: json['game_id'].toString(),
-      currentPlayer: json['current_player'] ?? 0,
-      blackTime: json['black_time'] ?? 0,
-      whiteTime: json['white_time'] ?? 0,
+      currentPlayer: currentPlayer,
+      blackTime: blackTime,
+      whiteTime: whiteTime,
     );
   }
 }

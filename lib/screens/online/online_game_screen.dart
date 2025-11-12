@@ -162,14 +162,14 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
     // Listen to clock updates
     _gameConnection!.clock.listen((clock) {
       setState(() {
-        _currentPlayer = clock.currentPlayer;
+        // DO NOT update _currentPlayer from clock events!
+        // Clock events can be delayed/stale. Only trust move events for turn changes.
+        // Only update times
         _blackTime = clock.blackTime;
         _whiteTime = clock.whiteTime;
 
-        // Update if it's my turn
-        _isMyTurn = (_myColor != null && _myColor == _currentPlayer);
         debugPrint(
-          '⏰ Clock update - Current player: $_currentPlayer, Is my turn: $_isMyTurn',
+          '⏰ Clock update - Black: $_blackTime, White: $_whiteTime (current player unchanged: $_currentPlayer)',
         );
       });
     });
