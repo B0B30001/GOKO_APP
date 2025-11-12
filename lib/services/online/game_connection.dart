@@ -228,6 +228,12 @@ class GameData {
   final int height;
   final List<List<int>> board;
   final String phase;
+  final int currentPlayer; // 1 = black, 2 = white
+  final String blackPlayerName;
+  final String whitePlayerName;
+  final int? blackPlayerId;
+  final int? whitePlayerId;
+  final int moveNumber;
 
   GameData({
     required this.gameId,
@@ -235,6 +241,12 @@ class GameData {
     required this.height,
     required this.board,
     required this.phase,
+    required this.currentPlayer,
+    required this.blackPlayerName,
+    required this.whitePlayerName,
+    this.blackPlayerId,
+    this.whitePlayerId,
+    required this.moveNumber,
   });
 
   factory GameData.fromJson(Map<String, dynamic> json) {
@@ -286,12 +298,37 @@ class GameData {
       '✅ [GameData] Board created: ${board.length}x${board.isNotEmpty ? board[0].length : 0}',
     );
 
+    // Parse player information
+    final players = json['players'] as Map<String, dynamic>?;
+    final black = players?['black'] as Map<String, dynamic>?;
+    final white = players?['white'] as Map<String, dynamic>?;
+
+    final blackPlayerName = black?['username'] as String? ?? 'Black';
+    final whitePlayerName = white?['username'] as String? ?? 'White';
+    final blackPlayerId = black?['id'] as int?;
+    final whitePlayerId = white?['id'] as int?;
+
+    final currentPlayer = json['current_player'] as int? ?? 1;
+    final moveNumber = json['move_number'] as int? ?? 0;
+
+    debugPrint(
+      '📦 [GameData] Players: $blackPlayerName (ID: $blackPlayerId) vs $whitePlayerName (ID: $whitePlayerId)',
+    );
+    debugPrint('📦 [GameData] Current Player: $currentPlayer');
+    debugPrint('📦 [GameData] Move Number: $moveNumber');
+
     return GameData(
       gameId: json['game_id'].toString(),
       width: width,
       height: height,
       board: board,
       phase: json['phase'] as String? ?? 'play',
+      currentPlayer: currentPlayer,
+      blackPlayerName: blackPlayerName,
+      whitePlayerName: whitePlayerName,
+      blackPlayerId: blackPlayerId,
+      whitePlayerId: whitePlayerId,
+      moveNumber: moveNumber,
     );
   }
 }

@@ -25,6 +25,8 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
   int _whiteTime = 0;
   int _currentPlayer = 1;
   bool _isMyTurn = false;
+  int? _myColor; // 1 = black, 2 = white
+  int? _myPlayerId;
   List<ChatMessage> _chatMessages = [];
   final TextEditingController _chatController = TextEditingController();
 
@@ -41,6 +43,9 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
       includeChat: true,
     );
 
+    // Get my player ID from OGS service
+    _myPlayerId = ogsService.userData?['id'] as int?;
+
     // Listen to game data
     _gameConnection!.gameData.listen((data) {
       debugPrint('📊 [OnlineGameScreen] Received game data:');
@@ -49,6 +54,13 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
         '   Board: ${data.board.length}x${data.board.isNotEmpty ? data.board[0].length : 0}',
       );
       debugPrint('   Phase: ${data.phase}');
+      debugPrint(
+        '   Black: ${data.blackPlayerName} (ID: ${data.blackPlayerId})',
+      );
+      debugPrint(
+        '   White: ${data.whitePlayerName} (ID: ${data.whitePlayerId})',
+      );
+      debugPrint('   My Player ID: $_myPlayerId');
 
       setState(() {
         // Create a new board instance to ensure Flutter detects changes
@@ -56,6 +68,27 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
           for (var row in data.board) [...row],
         ];
         _phase = data.phase;
+        _blackPlayer = data.blackPlayerName;
+        _whitePlayer = data.whitePlayerName;
+        _currentPlayer = data.currentPlayer;
+        _moveNumber = data.moveNumber;
+
+        // Determine which color I'm playing
+        if (_myPlayerId != null) {
+          if (data.blackPlayerId == _myPlayerId) {
+            _myColor = 1; // I'm playing black
+            debugPrint('✅ You are playing BLACK');
+          } else if (data.whitePlayerId == _myPlayerId) {
+            _myColor = 2; // I'm playing white
+            debugPrint('✅ You are playing WHITE');
+          }
+        }
+
+        // Determine if it's my turn
+        _isMyTurn = (_myColor != null && _myColor == _currentPlayer);
+        debugPrint(
+          '   Is my turn: $_isMyTurn (my color: $_myColor, current: $_currentPlayer)',
+        );
 
         // Update board size info for debugging
         if (_board != null && _board!.isNotEmpty) {
@@ -105,6 +138,12 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
         _currentPlayer = clock.currentPlayer;
         _blackTime = clock.blackTime;
         _whiteTime = clock.whiteTime;
+
+        // Update if it's my turn
+        _isMyTurn = (_myColor != null && _myColor == _currentPlayer);
+        debugPrint(
+          '⏰ Clock update - Current player: $_currentPlayer, Is my turn: $_isMyTurn',
+        );
       });
     });
 
@@ -213,12 +252,18 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
     final time = isBlack ? _blackTime : _whiteTime;
     final isCurrentPlayer =
         (isBlack && _currentPlayer == 1) || (!isBlack && _currentPlayer == 2);
+    final isMe =
+        (_myColor != null &&
+        ((isBlack && _myColor == 1) || (!isBlack && _myColor == 2)));
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      color: isCurrentPlayer
-          ? (isDarkTheme ? Colors.green[900] : Colors.green[100])
-          : null,
+      decoration: BoxDecoration(
+        color: isCurrentPlayer
+            ? (isDarkTheme ? Colors.green[900] : Colors.green[100])
+            : null,
+        border: isMe ? Border.all(color: Colors.blue, width: 2) : null,
+      ),
       child: Row(
         children: [
           CircleAvatar(
@@ -231,20 +276,56 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      name,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    if (isMe) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Text(
+                          'YOU',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
                 if (time > 0)
                   Text(_formatTime(time), style: const TextStyle(fontSize: 14)),
               ],
             ),
           ),
-          if (isCurrentPlayer)
+          if (isCurrentPlayer) ...[
             const Icon(Icons.hourglass_bottom, color: Colors.orange),
+            const SizedBox(width: 4),
+            if (isMe)
+              const Text(
+                'Your turn!',
+                style: TextStyle(
+                  color: Colors.orange,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
+              ),
+          ],
         ],
       ),
     );
@@ -316,9 +397,32 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
   }
 
   void _onTapBoard(int i, int j) {
-    if (!_isMyTurn || _phase != 'play') return;
-    if (_board![i][j] != 0) return; // Already occupied
+    debugPrint(
+      '🎯 Tap at ($i, $j) - Phase: $_phase, My turn: $_isMyTurn, My color: $_myColor',
+    );
 
+    if (_phase != 'play') {
+      debugPrint('❌ Cannot place stone - game phase is $_phase');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Game is not in play phase')),
+      );
+      return;
+    }
+
+    if (!_isMyTurn) {
+      debugPrint('❌ Cannot place stone - not your turn');
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('It\'s not your turn!')));
+      return;
+    }
+
+    if (_board![i][j] != 0) {
+      debugPrint('❌ Cannot place stone - position occupied');
+      return; // Already occupied
+    }
+
+    debugPrint('✅ Submitting move at ($i, $j)');
     _gameConnection?.submitMove(i, j);
   }
 
