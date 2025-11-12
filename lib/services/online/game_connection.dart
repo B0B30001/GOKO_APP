@@ -238,12 +238,60 @@ class GameData {
   });
 
   factory GameData.fromJson(Map<String, dynamic> json) {
+    debugPrint('📦 [GameData] Parsing JSON: ${json.keys.toList()}');
+
+    final width = json['width'] as int? ?? 19;
+    final height = json['height'] as int? ?? 19;
+
+    debugPrint('📦 [GameData] Board dimensions: ${width}x${height}');
+
+    // Parse the board data
+    List<List<int>> board;
+    if (json['board'] != null && json['board'] is List) {
+      // Board comes as a flat array or 2D array from OGS
+      final boardData = json['board'];
+      debugPrint('📦 [GameData] Board data type: ${boardData.runtimeType}');
+      debugPrint('📦 [GameData] Board data length: ${boardData.length}');
+
+      if (boardData is List && boardData.isNotEmpty) {
+        // Check if it's already a 2D array
+        if (boardData[0] is List) {
+          debugPrint('📦 [GameData] Board is 2D array');
+          board = boardData
+              .map((row) => (row as List).map((cell) => cell as int).toList())
+              .toList();
+        } else {
+          // Convert flat array to 2D array
+          debugPrint('📦 [GameData] Board is flat array, converting to 2D');
+          board = List.generate(
+            height,
+            (i) => List.generate(width, (j) {
+              final index = i * width + j;
+              return index < boardData.length ? boardData[index] as int : 0;
+            }),
+          );
+        }
+      } else {
+        // Empty board
+        debugPrint('📦 [GameData] Board data is empty, creating empty board');
+        board = List.generate(height, (i) => List.generate(width, (j) => 0));
+      }
+    } else {
+      // Initialize empty board if no board data
+      debugPrint('📦 [GameData] No board field in JSON, creating empty board');
+      board = List.generate(height, (i) => List.generate(width, (j) => 0));
+    }
+
+    debugPrint(
+      '✅ [GameData] Board created: ${board.length}x${board.isNotEmpty ? board[0].length : 0}',
+    );
+
     return GameData(
       gameId: json['game_id'].toString(),
-      width: json['width'] ?? 19,
-      height: json['height'] ?? 19,
-      board: json['board'] ?? [],
-      phase: json['phase'] ?? 'play',
+      width: width,
+      height: height,
+      board: board,
+      phase: json['phase'] as String? ?? 'play',
     );
   }
 }

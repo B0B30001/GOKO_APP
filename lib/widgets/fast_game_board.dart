@@ -133,20 +133,27 @@ class _FastGameBoardState extends State<FastGameBoard> {
                       ),
                     ),
 
-                  // Layer 2: Stones as widgets (GPU accelerated, smart diffing)
-                  ...buildStoneWidgets(margin, adjustedCellSize),
-
-                  // Layer 3: Hover indicator
+                  // Layer 2: Hover indicator (separate layer to avoid stone rebuilds)
                   if (_hoverPosition != null)
-                    CustomPaint(
-                      size: size,
-                      painter: _HoverPainter(
-                        _hoverPosition!,
-                        adjustedCellSize,
-                        _isValidMove,
-                        _paintCache,
+                    RepaintBoundary(
+                      child: CustomPaint(
+                        size: size,
+                        painter: _HoverPainter(
+                          _hoverPosition!,
+                          adjustedCellSize,
+                          _isValidMove,
+                          _paintCache,
+                        ),
                       ),
                     ),
+
+                  // Layer 3: Stones as widgets (GPU accelerated, smart diffing)
+                  // Wrapped in IgnorePointer so hover events pass through
+                  IgnorePointer(
+                    child: Stack(
+                      children: buildStoneWidgets(margin, adjustedCellSize),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -157,22 +164,32 @@ class _FastGameBoardState extends State<FastGameBoard> {
   }
 
   /// Build stones as individual widgets for optimal performance
+  /// Only rebuilds stones that changed since last render
   List<Widget> buildStoneWidgets(double margin, double adjustedCellSize) {
     final stones = <Widget>[];
     final boardSize = widget.board.length;
 
+    // Safety check
+    if (boardSize == 0) return stones;
+
     for (int i = 0; i < boardSize; i++) {
-      for (int j = 0; j < boardSize; j++) {
-        if (widget.board[i][j] != 0) {
-          final isBlack = widget.board[i][j] == 1;
+      // Safety check for row length
+      if (i >= widget.board.length || widget.board[i].isEmpty) continue;
+
+      final rowSize = widget.board[i].length;
+      for (int j = 0; j < rowSize; j++) {
+        final stoneValue = widget.board[i][j];
+        if (stoneValue != 0) {
+          final isBlack = stoneValue == 1;
           final center = Offset(
             margin + j * adjustedCellSize,
             margin + i * adjustedCellSize,
           );
 
+          // Use unique key so Flutter can identify and reuse the widget
           stones.add(
             Positioned(
-              key: ValueKey('stone-$i-$j-${widget.board[i][j]}'),
+              key: ValueKey('s$i$j'),
               left: center.dx - adjustedCellSize * 0.45,
               top: center.dy - adjustedCellSize * 0.45,
               width: adjustedCellSize * 0.9,
@@ -180,7 +197,6 @@ class _FastGameBoardState extends State<FastGameBoard> {
               child: _StoneWidget(
                 isBlack: isBlack,
                 size: adjustedCellSize * 0.45,
-                isDarkTheme: widget.isDarkTheme,
               ),
             ),
           );
@@ -528,13 +544,8 @@ class _HoverPainter extends CustomPainter {
 class _StoneWidget extends StatelessWidget {
   final bool isBlack;
   final double size;
-  final bool isDarkTheme;
 
-  const _StoneWidget({
-    required this.isBlack,
-    required this.size,
-    required this.isDarkTheme,
-  });
+  const _StoneWidget({required this.isBlack, required this.size});
 
   @override
   Widget build(BuildContext context) {
@@ -542,47 +553,62 @@ class _StoneWidget extends StatelessWidget {
       child: CustomPaint(
         size: Size(size * 2, size * 2),
         painter: _StonePainter(isBlack: isBlack, radius: size),
+        isComplex: true,
+        willChange: false,
       ),
     );
   }
 }
 
-/// Stone painter - draws individual stones
+/// Stone painter - draws individual stones with cached paints
 class _StonePainter extends CustomPainter {
   final bool isBlack;
   final double radius;
 
+  // Static paint cache shared across all stone painters
+  static final Map<String, Paint> _paintCache = {};
+
   const _StonePainter({required this.isBlack, required this.radius});
+
+  Paint _getCachedPaint(String key, Paint Function() creator) {
+    return _paintCache.putIfAbsent(key, creator);
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
 
-    // Shadow
-    final shadowPaint = Paint()
-      ..color = Colors.black26
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3);
+    // Shadow (cached)
+    final shadowPaint = _getCachedPaint('shadow', () {
+      return Paint()
+        ..color = Colors.black26
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3);
+    });
     canvas.drawCircle(center.translate(2, 2), radius, shadowPaint);
 
-    // Stone
-    final stonePaint = Paint()
-      ..style = PaintingStyle.fill
-      ..color = isBlack ? Colors.black : Colors.white;
+    // Stone (cached)
+    final stonePaint = _getCachedPaint('stone_$isBlack', () {
+      return Paint()
+        ..style = PaintingStyle.fill
+        ..color = isBlack ? Colors.black : Colors.white;
+    });
     canvas.drawCircle(center, radius, stonePaint);
 
-    // Highlight for white stones
+    // Highlight for white stones (cached)
     if (!isBlack) {
-      final highlightPaint = Paint()
-        ..style = PaintingStyle.fill
-        ..shader =
-            RadialGradient(
-              colors: [
-                Colors.white.withValues(alpha: 0.5),
-                Colors.white.withValues(alpha: 0),
-              ],
-            ).createShader(
-              Rect.fromCircle(center: Offset.zero, radius: radius * 0.8),
-            );
+      final highlightPaint = _getCachedPaint('highlight_${radius.toInt()}', () {
+        return Paint()
+          ..style = PaintingStyle.fill
+          ..shader =
+              RadialGradient(
+                colors: [
+                  Colors.white.withValues(alpha: 0.5),
+                  Colors.white.withValues(alpha: 0),
+                ],
+              ).createShader(
+                Rect.fromCircle(center: Offset.zero, radius: radius * 0.8),
+              );
+      });
 
       canvas.save();
       canvas.translate(center.dx - radius * 0.3, center.dy - radius * 0.3);

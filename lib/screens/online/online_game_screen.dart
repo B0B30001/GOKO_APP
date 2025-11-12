@@ -43,20 +43,58 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
 
     // Listen to game data
     _gameConnection!.gameData.listen((data) {
+      debugPrint('📊 [OnlineGameScreen] Received game data:');
+      debugPrint('   Board size: ${data.width}x${data.height}');
+      debugPrint(
+        '   Board: ${data.board.length}x${data.board.isNotEmpty ? data.board[0].length : 0}',
+      );
+      debugPrint('   Phase: ${data.phase}');
+
       setState(() {
-        _board = data.board;
+        // Create a new board instance to ensure Flutter detects changes
+        _board = [
+          for (var row in data.board) [...row],
+        ];
         _phase = data.phase;
+
+        // Update board size info for debugging
+        if (_board != null && _board!.isNotEmpty) {
+          debugPrint(
+            '✅ Board set successfully: ${_board!.length}x${_board![0].length}',
+          );
+        } else {
+          debugPrint('⚠️ Board is empty or null!');
+        }
       });
     });
 
     // Listen to moves
     _gameConnection!.moves.listen((move) {
+      debugPrint(
+        '🎯 [OnlineGameScreen] Move: (${move.row}, ${move.col}) = ${move.color}',
+      );
+
       setState(() {
         _moveNumber = move.moveNumber;
         if (_board != null &&
+            move.row >= 0 &&
+            move.col >= 0 &&
             move.row < _board!.length &&
-            move.col < _board![0].length) {
-          _board![move.row][move.col] = move.color;
+            move.col < _board![move.row].length) {
+          // Create a new board instance so Flutter detects the change
+          _board = [
+            for (int i = 0; i < _board!.length; i++)
+              [
+                for (int j = 0; j < _board![i].length; j++)
+                  if (i == move.row && j == move.col)
+                    move.color
+                  else
+                    _board![i][j],
+              ],
+          ];
+          debugPrint('✅ Move applied to board (new instance created)');
+        } else {
+          debugPrint('⚠️ Invalid move coordinates or board not initialized');
         }
       });
     });
@@ -124,8 +162,22 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
           ),
         ],
       ),
-      body: _board == null
-          ? const Center(child: CircularProgressIndicator())
+      body: _board == null || _board!.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const CircularProgressIndicator(),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Loading game ${widget.gameId}...',
+                    style: TextStyle(
+                      color: isDarkTheme ? Colors.white70 : Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
+            )
           : LayoutBuilder(
               builder: (context, constraints) {
                 return Column(
