@@ -144,6 +144,15 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
           debugPrint(
             '   Board value confirmed: ${_board![move.row][move.col]}',
           );
+
+          // Switch turns after move is placed
+          // If black (1) just moved, it's now white's (2) turn and vice versa
+          _currentPlayer = move.color == 1 ? 2 : 1;
+          _isMyTurn = (_myColor != null && _myColor == _currentPlayer);
+
+          debugPrint(
+            '🔄 Turn switched - Current player: $_currentPlayer (${_currentPlayer == 1 ? "BLACK" : "WHITE"}), Is my turn: $_isMyTurn',
+          );
         } else {
           debugPrint('⚠️ Invalid move coordinates or board not initialized');
         }
