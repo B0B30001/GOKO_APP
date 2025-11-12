@@ -237,9 +237,24 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
             )
           : LayoutBuilder(
               builder: (context, constraints) {
+                // Determine who goes on top vs bottom
+                // Bottom = You (my color), Top = Opponent
+                final bool showMeAsBlack = _myColor == 1;
+                final bool showMeAsWhite = _myColor == 2;
+
                 return Column(
                   children: [
-                    _buildPlayerInfo(false, isDarkTheme), // White
+                    // Top: Opponent
+                    if (showMeAsBlack)
+                      _buildPlayerInfo(false, isDarkTheme) // Opponent is White
+                    else if (showMeAsWhite)
+                      _buildPlayerInfo(true, isDarkTheme) // Opponent is Black
+                    else
+                      _buildPlayerInfo(
+                        false,
+                        isDarkTheme,
+                      ), // Default: White on top
+
                     Expanded(
                       child: Center(
                         child: AspectRatio(
@@ -256,7 +271,18 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
                         ),
                       ),
                     ),
-                    _buildPlayerInfo(true, isDarkTheme), // Black
+
+                    // Bottom: You
+                    if (showMeAsBlack)
+                      _buildPlayerInfo(true, isDarkTheme) // You are Black
+                    else if (showMeAsWhite)
+                      _buildPlayerInfo(false, isDarkTheme) // You are White
+                    else
+                      _buildPlayerInfo(
+                        true,
+                        isDarkTheme,
+                      ), // Default: Black on bottom
+
                     _buildControlPanel(),
                   ],
                 );
