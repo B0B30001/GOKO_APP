@@ -124,7 +124,9 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
             move.col >= 0 &&
             move.row < _board!.length &&
             move.col < _board![move.row].length) {
-          // Create a new board instance so Flutter detects the change
+          // ALWAYS update from server (overwrite optimistic update)
+          final oldValue = _board![move.row][move.col];
+
           _board = [
             for (int i = 0; i < _board!.length; i++)
               [
@@ -135,11 +137,12 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
                     _board![i][j],
               ],
           ];
+
           debugPrint(
-            '✅ Move applied to board at (${move.row}, ${move.col}) with color ${move.color}',
+            '✅ Move applied: (${move.row}, ${move.col}) ${oldValue} -> ${move.color}',
           );
           debugPrint(
-            '   Board value at position: ${_board![move.row][move.col]}',
+            '   Board value confirmed: ${_board![move.row][move.col]}',
           );
         } else {
           debugPrint('⚠️ Invalid move coordinates or board not initialized');
@@ -418,6 +421,9 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
 
     if (_pendingMove) {
       debugPrint('❌ Cannot place stone - move already pending');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please wait for previous move')),
+      );
       return;
     }
 
@@ -441,6 +447,9 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
       debugPrint(
         '❌ Cannot place stone - position occupied (value: ${_board![i][j]})',
       );
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Position already occupied')),
+      );
       return; // Already occupied
     }
 
@@ -448,22 +457,25 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
 
     setState(() {
       _pendingMove = true;
-
-      // Optimistically update the board locally
-      _board = [
-        for (int row = 0; row < _board!.length; row++)
-          [
-            for (int col = 0; col < _board![row].length; col++)
-              if (row == i && col == j)
-                _myColor! // Place my color
-              else
-                _board![row][col],
-          ],
-      ];
-      debugPrint('   Optimistic update: placed color $_myColor at ($i, $j)');
     });
 
+    // Send move to server
     _gameConnection?.submitMove(i, j);
+
+    // Safety timeout - if server doesn't respond in 10 seconds, reset pending state
+    Future.delayed(const Duration(seconds: 10), () {
+      if (mounted && _pendingMove) {
+        debugPrint('⚠️ Move timeout - resetting pending state');
+        setState(() {
+          _pendingMove = false;
+        });
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Move timed out - please try again')),
+          );
+        }
+      }
+    });
   }
 
   void _pass() {

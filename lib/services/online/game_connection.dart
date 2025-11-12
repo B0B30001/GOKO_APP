@@ -206,8 +206,15 @@ class GameConnection {
   }
 
   String _encodeMove(int row, int col) {
-    // Convert to SGF coordinates (a-s, skipping i)
+    // Convert to SGF coordinates (column + row)
+    // SGF format: column letter (a-s, skipping i) + row letter (a-s, skipping i)
+    // Example: top-left corner (0,0) = "aa", (3,3) = "dd"
     const letters = 'abcdefghjklmnopqrs';
+
+    debugPrint(
+      '🔢 [Encoding] row=$row, col=$col -> ${letters[col]}${letters[row]}',
+    );
+
     return letters[col] + letters[row];
   }
 
