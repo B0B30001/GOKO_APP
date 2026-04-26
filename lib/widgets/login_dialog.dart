@@ -89,7 +89,11 @@ class _LoginDialogState extends State<LoginDialog> {
               // Header
               Row(
                 children: [
-                  const Icon(Icons.album, size: 40, color: Colors.orange),
+                  Icon(
+                    Icons.album,
+                    size: 40,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -189,7 +193,7 @@ class _LoginDialogState extends State<LoginDialog> {
                 onPressed: _isLoading ? null : _login,
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.all(16),
-                  backgroundColor: Colors.orange,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   foregroundColor: Colors.white,
                 ),
                 child: _isLoading
@@ -205,17 +209,48 @@ class _LoginDialogState extends State<LoginDialog> {
               ),
               const SizedBox(height: 12),
 
+              // Divider and alternative sign-in methods
+              Row(
+                children: [
+                  Expanded(child: Divider(color: Colors.grey[400])),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Text('or continue with'),
+                  ),
+                  Expanded(child: Divider(color: Colors.grey[400])),
+                ],
+              ),
+              const SizedBox(height: 12),
+
+              // Continue with OGS OAuth (Google, etc.)
+              OutlinedButton.icon(
+                onPressed: _isLoading
+                    ? null
+                    : () async {
+                        final ogs = Provider.of<OgsService>(
+                          context,
+                          listen: false,
+                        );
+                        await ogs.startOgsOAuth();
+                      },
+                icon: const Icon(Icons.login),
+                label: const Text('Continue with OGS (Google, etc.)'),
+              ),
+              const SizedBox(height: 8),
+
               // Create account link
               TextButton(
                 onPressed: _isLoading
                     ? null
-                    : () {
-                        // TODO: Open OGS website to create account
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Create an account at online-go.com'),
-                          ),
+                    : () async {
+                        // Open OGS registration page
+                        final uri = Uri.parse('https://online-go.com/register');
+                        // Use url_launcher via OgsService helper for consistency
+                        final ogs = Provider.of<OgsService>(
+                          context,
+                          listen: false,
                         );
+                        await ogs.launchExternalUrl(uri);
                       },
                 child: const Text("Don't have an account? Sign up on OGS"),
               ),

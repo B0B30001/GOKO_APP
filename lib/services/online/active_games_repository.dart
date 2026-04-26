@@ -117,6 +117,8 @@ class OnlineGame {
   final int moveNumber;
   final bool isMyTurn;
   final int timeRemaining;
+  final String? speed; // live/blitz/correspondence (if available)
+  final String? timeControlDisplay; // e.g., "Byoyomi 10:00 + 5x30s"
 
   OnlineGame({
     required this.id,
@@ -129,9 +131,35 @@ class OnlineGame {
     required this.moveNumber,
     required this.isMyTurn,
     required this.timeRemaining,
+    this.speed,
+    this.timeControlDisplay,
   });
 
   factory OnlineGame.fromJson(Map<String, dynamic> json) {
+    String? speed;
+    String? tcDisplay;
+    final tc = json['time_control'];
+    if (tc is Map) {
+      // Common OGS fields: system, speed, main_time, period_time, periods, time_increment
+      final system = tc['system']?.toString();
+      speed = tc['speed']?.toString();
+      final main = (tc['main_time'] ?? tc['initial_time'])?.toString();
+      final periodTime = tc['period_time']?.toString();
+      final periods = tc['periods']?.toString();
+      final increment = tc['time_increment']?.toString();
+      // Build a friendly display string
+      if (system == 'byoyomi' &&
+          main != null &&
+          periodTime != null &&
+          periods != null) {
+        tcDisplay =
+            'Byoyomi ${_fmtSeconds(main)} + ${periods}×${_fmtSeconds(periodTime)}';
+      } else if (system == 'fischer' && main != null && increment != null) {
+        tcDisplay = 'Fischer ${_fmtSeconds(main)} + ${_fmtSeconds(increment)}';
+      } else if (main != null) {
+        tcDisplay = '${system ?? 'clock'} ${_fmtSeconds(main)}';
+      }
+    }
     return OnlineGame(
       id: json['id'].toString(),
       name: json['name'] ?? 'Untitled Game',
@@ -143,6 +171,18 @@ class OnlineGame {
       moveNumber: json['move_number'] ?? 0,
       isMyTurn: json['is_my_turn'] ?? false,
       timeRemaining: json['time_remaining'] ?? 0,
+      speed: speed ?? json['speed']?.toString(),
+      timeControlDisplay: tcDisplay,
     );
   }
+}
+
+String _fmtSeconds(String secondsLike) {
+  int secs = 0;
+  try {
+    secs = int.parse(secondsLike);
+  } catch (_) {}
+  final m = (secs ~/ 60).toString();
+  final s = (secs % 60).toString().padLeft(2, '0');
+  return '$m:$s';
 }

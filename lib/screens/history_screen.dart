@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../widgets/bottom_nav_bar.dart';
+import '../services/ogs_service.dart';
 
 class HistoryScreen extends StatelessWidget {
   const HistoryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final ogs = Provider.of<OgsService>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Game History'),
@@ -19,17 +22,44 @@ class HistoryScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: 10, // Временно для демонстрации
-        itemBuilder: (context, index) {
-          final isWin = index % 2 == 0;
-          return _GameHistoryCard(
-            opponent: 'Player ${index + 1}',
-            date: DateTime.now().subtract(Duration(days: index)),
-            result: isWin ? 'Win' : 'Loss',
-            score: isWin ? '+7.5' : '-3.5',
-            boardSize: index % 3 == 0 ? 19 : (index % 3 == 1 ? 13 : 9),
-            color: isWin ? Colors.green : Colors.red,
+      body: FutureBuilder<List<GameSummary>>(
+        future: ogs.fetchRecentGames(limit: 25),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Failed to load: ${snapshot.error}'));
+          }
+          final items = snapshot.data ?? [];
+          if (items.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.history, size: 64, color: Colors.grey[400]),
+                  const SizedBox(height: 16),
+                  Text(
+                    'No recent games',
+                    style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                  ),
+                ],
+              ),
+            );
+          }
+          return ListView.builder(
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              final g = items[index];
+              return _GameHistoryCard(
+                opponent: g.opponent,
+                date: g.ended ?? DateTime.now(),
+                result: g.didWin ? 'Win' : 'Loss',
+                score: g.score.isNotEmpty ? g.score : g.result,
+                boardSize: g.size,
+                color: g.didWin ? Colors.green : Colors.red,
+              );
+            },
           );
         },
       ),

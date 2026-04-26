@@ -16,6 +16,16 @@ class OnlineLobbyScreen extends StatefulWidget {
 class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
   bool _isSearching = false;
   String? _currentMatchId;
+  int? _etaSeconds;
+  int? _queuePosition;
+  int? _poolSize;
+  final List<StreamSubscription> _automatchSubs = [];
+
+  @override
+  void dispose() {
+    _detachAutomatchListeners();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,16 +138,46 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
             if (_isSearching) ...[
               const LinearProgressIndicator(),
               const SizedBox(height: 12),
-              const Text('Searching for opponent...'),
+              Text(_buildSearchingText()),
+              if (_etaSeconds != null ||
+                  _queuePosition != null ||
+                  _poolSize != null) ...[
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 4,
+                  children: [
+                    if (_etaSeconds != null)
+                      Chip(
+                        label: Text('ETA ~ ${_fmtEta(_etaSeconds!)}'),
+                        avatar: const Icon(Icons.schedule, size: 18),
+                      ),
+                    if (_queuePosition != null)
+                      Chip(
+                        label: Text('Queue #${_queuePosition}'),
+                        avatar: const Icon(Icons.people, size: 18),
+                      ),
+                    if (_poolSize != null)
+                      Chip(
+                        label: Text('Pool ${_poolSize}'),
+                        avatar: const Icon(Icons.group, size: 18),
+                      ),
+                  ],
+                ),
+              ],
               const SizedBox(height: 12),
               OutlinedButton(
                 onPressed: () {
                   if (_currentMatchId != null) {
                     ogsService.cancelAutomatch(_currentMatchId!);
                   }
+                  _detachAutomatchListeners();
                   setState(() {
                     _isSearching = false;
                     _currentMatchId = null;
+                    _etaSeconds = null;
+                    _queuePosition = null;
+                    _poolSize = null;
                   });
                 },
                 child: const Text('Cancel'),
@@ -257,6 +297,14 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
           children: [
             Text('${game.blackPlayerName} vs ${game.whitePlayerName}'),
             Text('${game.width}×${game.height} • Move ${game.moveNumber}'),
+            if (game.timeControlDisplay != null || game.speed != null)
+              Text(
+                [
+                  if (game.speed != null) game.speed!.toUpperCase(),
+                  if (game.timeControlDisplay != null) game.timeControlDisplay!,
+                ].join(' • '),
+                style: TextStyle(color: Colors.grey[700]),
+              ),
             if (game.isMyTurn)
               const Text(
                 'Your turn!',
@@ -301,10 +349,17 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
 
     setState(() {
       _isSearching = true;
-      _currentMatchId = DateTime.now().millisecondsSinceEpoch.toString();
+      _etaSeconds = null;
+      _queuePosition = null;
+      _poolSize = null;
     });
 
-    ogsService.startAutomatch(sizes: [size], speed: 'live');
+    ogsService.startAutomatch(sizes: [size], speed: 'live').then((uuid) {
+      setState(() {
+        _currentMatchId = uuid;
+      });
+      _attachAutomatchListeners(ogsService);
+    });
 
     // Listen for game start
     debugPrint('🔔 Listening for automatch/start event...');
@@ -337,7 +392,11 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
             setState(() {
               _isSearching = false;
               _currentMatchId = null;
+              _etaSeconds = null;
+              _queuePosition = null;
+              _poolSize = null;
             });
+            _detachAutomatchListeners();
 
             final gameId = data['game_id']?.toString();
             if (gameId != null) {
@@ -362,7 +421,11 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
             setState(() {
               _isSearching = false;
               _currentMatchId = null;
+              _etaSeconds = null;
+              _queuePosition = null;
+              _poolSize = null;
             });
+            _detachAutomatchListeners();
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Matchmaking failed: $error')),
             );
@@ -376,5 +439,67 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
         duration: Duration(seconds: 2),
       ),
     );
+  }
+
+  void _attachAutomatchListeners(OgsService ogs) {
+    // Track ETA/status updates from various possible OGS event names
+    void handleEstimate(dynamic data) {
+      try {
+        if (data is Map) {
+          final eta = data['eta'] ?? data['estimate'] ?? data['estimated'];
+          final pos = data['position'] ?? data['queue_position'];
+          final pool =
+              data['pool'] ?? data['players_in_pool'] ?? data['active_players'];
+          setState(() {
+            if (eta is int) _etaSeconds = eta;
+            if (eta is String) _etaSeconds = int.tryParse(eta);
+            if (pos is int) _queuePosition = pos;
+            if (pos is String) _queuePosition = int.tryParse(pos);
+            if (pool is int) _poolSize = pool;
+            if (pool is String) _poolSize = int.tryParse(pool);
+          });
+        }
+      } catch (_) {}
+    }
+
+    _automatchSubs.add(
+      ogs.webSocketService
+          .on<dynamic>('automatch/estimate')
+          .listen(handleEstimate),
+    );
+    _automatchSubs.add(
+      ogs.webSocketService
+          .on<dynamic>('automatch/status')
+          .listen(handleEstimate),
+    );
+    _automatchSubs.add(
+      ogs.webSocketService
+          .on<dynamic>('automatch/update')
+          .listen(handleEstimate),
+    );
+    _automatchSubs.add(
+      ogs.webSocketService
+          .on<dynamic>('automatch/candidates')
+          .listen(handleEstimate),
+    );
+  }
+
+  void _detachAutomatchListeners() {
+    for (final sub in _automatchSubs) {
+      sub.cancel();
+    }
+    _automatchSubs.clear();
+  }
+
+  String _fmtEta(int seconds) {
+    if (seconds < 60) return '${seconds}s';
+    final m = seconds ~/ 60;
+    final s = seconds % 60;
+    return '${m}m${s.toString().padLeft(2, '0')}s';
+  }
+
+  String _buildSearchingText() {
+    if (_etaSeconds == null) return 'Searching for opponent…';
+    return 'Searching for opponent… ~${_fmtEta(_etaSeconds!)}';
   }
 }

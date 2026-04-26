@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'online/websocket_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'online/active_games_repository.dart';
 
 /// OGS Service - handles authentication and API calls
@@ -20,9 +21,83 @@ class OgsService extends ChangeNotifier {
   bool get isAuthenticated => _userData != null && _chatAuth != null;
   WebSocketService get webSocketService => _wsService;
   Stream<bool> get connectionState => _wsService.connectionState;
+  
+  // Simple game summary model for recent/finished games
+  Future<List<GameSummary>> fetchRecentGames({int limit = 20}) async {
+    if (_userData == null) return [];
+    final userId = _userData!['id'];
+    final headers = <String, String>{'Accept': 'application/json'};
+    if (_jwt != null && _jwt!.isNotEmpty) {
+      headers['Authorization'] = 'Bearer $_jwt';
+    }
+    final candidates = <Uri>[
+      Uri.https('online-go.com', '/api/v1/players/$userId/games/', {
+        'page_size': limit.toString(),
+      }),
+      Uri.https('online-go.com', '/api/v1/me/games/', {
+        'page_size': limit.toString(),
+      }),
+    ];
+    http.Response? response;
+    for (final uri in candidates) {
+      try {
+        final r = await http.get(uri, headers: headers);
+        if (r.statusCode == 200) {
+          response = r;
+          break;
+        }
+      } catch (_) {
+        // try next
+      }
+    }
+    if (response == null) return [];
+    final data = json.decode(response.body);
+    final results = <GameSummary>[];
+    final items = (data is Map && data['results'] is List)
+        ? (data['results'] as List)
+        : (data is List ? data : const []);
+    for (final item in items) {
+      if (item is Map<String, dynamic>) {
+        results.add(GameSummary.fromJson(item, myId: userId));
+      }
+    }
+    return results;
+  }
 
   OgsService() {
     activeGamesRepository = ActiveGamesRepository(_wsService);
+  }
+
+  // OAuth config (set via --dart-define for client id in builds)
+  static const String _ogsClientId = String.fromEnvironment(
+    'OGS_CLIENT_ID',
+    defaultValue: '',
+  );
+  static const String _ogsRedirectUri = 'com.zaibal.app://oauth2callback';
+  static const String _ogsBase = 'https://online-go.com';
+
+  /// Launch an external URL using system browser
+  Future<void> launchExternalUrl(Uri uri) async {
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+  /// Start OGS OAuth sign-in (user can pick Google/others on OGS)
+  /// If client id is not configured, falls back to OGS login page.
+  Future<void> startOgsOAuth() async {
+    if (_ogsClientId.isEmpty) {
+      // Fallback to OGS login page (offers Google/etc.)
+      await launchExternalUrl(Uri.parse('$_ogsBase/login'));
+      return;
+    }
+    final authUri = Uri.parse('$_ogsBase/oauth2/authorize').replace(
+      queryParameters: {
+        'response_type': 'code',
+        'client_id': _ogsClientId,
+        'redirect_uri': _ogsRedirectUri,
+        'scope': 'read write ui_config',
+      },
+    );
+    await launchExternalUrl(authUri);
   }
 
   /// Login with username and password (Sente Go style)
@@ -136,9 +211,10 @@ class OgsService extends ChangeNotifier {
   }
 
   /// Start automatch (quick game) - OGS protocol
-  Future<void> startAutomatch({
+  Future<String> startAutomatch({
     List<String> sizes = const ['9x9'],
     String speed = 'live',
+    String? uuid,
   }) async {
     debugPrint(
       '╔════════════════════════════════════════════════════════════╗',
@@ -155,8 +231,9 @@ class OgsService extends ChangeNotifier {
       '╚════════════════════════════════════════════════════════════╝',
     );
 
+    final matchUuid = uuid ?? DateTime.now().millisecondsSinceEpoch.toString();
     final matchData = {
-      'uuid': DateTime.now().millisecondsSinceEpoch.toString(),
+      'uuid': matchUuid,
       'size_speed_options': sizes
           .map((size) => {'size': size, 'speed': speed})
           .toList(),
@@ -173,6 +250,7 @@ class OgsService extends ChangeNotifier {
     debugPrint('Match data: $matchData');
     // OGS protocol uses socket.send()
     _wsService.send('automatch/find_match', matchData);
+    return matchUuid;
   }
 
   /// Cancel automatch (OGS protocol)
@@ -199,5 +277,88 @@ class OgsService extends ChangeNotifier {
     disconnect();
     _wsService.dispose();
     super.dispose();
+  }
+}
+
+class GameSummary {
+  final String id;
+  final String opponent;
+  final DateTime? ended;
+  final int size;
+  final String result; // e.g., "B+R", "W+7.5"
+  final String score; // normalized from result when possible
+  final bool didWin;
+
+  GameSummary({
+    required this.id,
+    required this.opponent,
+    required this.ended,
+    required this.size,
+    required this.result,
+    required this.score,
+    required this.didWin,
+  });
+
+  factory GameSummary.fromJson(Map<String, dynamic> json, {required int myId}) {
+    final id = json['id']?.toString() ?? '';
+    final width = json['width'] ?? 19;
+    final size = width is int ? width : 19;
+    String opponent = 'Opponent';
+    final black = json['black'];
+    final white = json['white'];
+    int? blackId;
+    String blackName = 'Black';
+    String whiteName = 'White';
+    if (black is Map) {
+      blackId = black['id'] is int
+          ? black['id']
+          : int.tryParse('${black['id']}');
+      blackName = black['username']?.toString() ?? blackName;
+    }
+    if (white is Map) {
+      whiteName = white['username']?.toString() ?? whiteName;
+    }
+    final amBlack = blackId == myId;
+    opponent = amBlack ? whiteName : blackName;
+
+    String result =
+        json['outcome']?.toString() ?? json['result']?.toString() ?? '';
+    if (result.isEmpty && json['score'] != null) {
+      result = json['score'].toString();
+    }
+    String score = '';
+    final lower = result.toLowerCase();
+    bool didWin = false;
+    if (lower.startsWith('b+') || lower.startsWith('w+')) {
+      final winner = lower[0];
+      didWin = (winner == 'b' && amBlack) || (winner == 'w' && !amBlack);
+      score = result.contains('+') ? result.split('+').last : result;
+    } else if (lower.contains('resign')) {
+      // Try to parse winner
+      if (lower.contains('black')) didWin = amBlack;
+      if (lower.contains('white')) didWin = !amBlack;
+      score = 'Resign';
+    } else if (lower.contains('timeout')) {
+      score = 'Timeout';
+    } else if (lower.contains('draw')) {
+      score = 'Draw';
+    }
+
+    DateTime? ended;
+    final endedStr = json['ended']?.toString() ?? json['ended_at']?.toString();
+    if (endedStr != null && endedStr.isNotEmpty) {
+      try {
+        ended = DateTime.parse(endedStr);
+      } catch (_) {}
+    }
+    return GameSummary(
+      id: id,
+      opponent: opponent,
+      ended: ended,
+      size: size,
+      result: result,
+      score: score,
+      didWin: didWin,
+    );
   }
 }

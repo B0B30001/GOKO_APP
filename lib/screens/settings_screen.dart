@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'debug_menu_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   final bool isDark;
@@ -127,6 +129,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
             ),
           ]),
+          // Debug menu - only show in debug mode
+          if (kDebugMode)
+            _buildSection('Developer', [
+              ListTile(
+                title: const Text('Debug Menu'),
+                subtitle: const Text('DTD connection & debug tools'),
+                leading: const Icon(Icons.bug_report),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const DebugMenuScreen(),
+                    ),
+                  );
+                },
+              ),
+            ]),
         ],
       ),
     );

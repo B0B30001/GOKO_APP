@@ -6,8 +6,13 @@ import '../models/app_settings.dart';
 
 class PuzzleScreen extends StatefulWidget {
   final Puzzle puzzle;
+  final bool isDrillMode;
 
-  const PuzzleScreen({required this.puzzle, super.key});
+  const PuzzleScreen({
+    required this.puzzle,
+    this.isDrillMode = false,
+    super.key,
+  });
 
   @override
   _PuzzleScreenState createState() => _PuzzleScreenState();
@@ -18,6 +23,7 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
   bool _solved = false;
   bool _failed = false;
   int _moveCount = 0;
+  int _mistakeCount = 0;
 
   @override
   void initState() {
@@ -56,12 +62,32 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
             // Check if puzzle is complete
             if (_moveCount >= widget.puzzle.solution.length) {
               _solved = true;
-              _showSuccessDialog();
+              if (widget.isDrillMode) {
+                // In drill mode, immediately return result
+                Navigator.pop(context, {
+                  'solved': true,
+                  'mistakes': _mistakeCount,
+                });
+              } else {
+                _showSuccessDialog();
+              }
             }
           } else {
             // Wrong move
-            _failed = true;
-            _showFailDialog();
+            _mistakeCount++;
+            if (widget.isDrillMode) {
+              // In drill mode, show quick feedback and return
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Wrong move! Try again.'),
+                  duration: Duration(seconds: 1),
+                ),
+              );
+              _resetPuzzle();
+            } else {
+              _failed = true;
+              _showFailDialog();
+            }
           }
         }
       }

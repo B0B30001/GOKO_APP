@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:zaibal/screens/home_screen.dart';
 import 'package:zaibal/screens/learn_screen.dart';
@@ -11,6 +12,10 @@ import 'package:zaibal/models/app_settings.dart';
 import 'package:zaibal/services/ogs_service.dart';
 
 void main() {
+  // Trim logs in release or when verboseLogs is false
+  if (kReleaseMode || !AppSettings.verboseLogs) {
+    debugPrint = (String? message, {int? wrapWidth}) {};
+  }
   runApp(const ZaibalApp());
 }
 

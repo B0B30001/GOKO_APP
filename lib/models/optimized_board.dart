@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'dart:typed_data';
+import 'dart:math';
 
 class Board {
   final int size;
@@ -8,9 +9,16 @@ class Board {
   int _capturedByBlack = 0;
   int _capturedByWhite = 0;
   final _boardStateCache = HashMap<String, bool>();
+  late List<int> _zBlack; // Zobrist table entries for black stones
+  late List<int> _zWhite; // Zobrist table entries for white stones
+  int _zHash = 0; // Current Zobrist hash of the board
+
+  // For potential superko extension (currently simple ko only)
+  static const int _boardHashHistoryLimit = 8;
 
   Board(this.size) {
     _board = Uint8List(size * size);
+    _initializeZobrist();
   }
 
   int get capturedByBlack => _capturedByBlack;
@@ -20,7 +28,10 @@ class Board {
   set capturedByWhite(int value) => _capturedByWhite = value;
 
   int getStone(int i, int j) => _board[i * size + j];
-  void setStone(int i, int j, int value) => _setStone(i, j, value);
+  
+  /// Sets a stone directly (bypassing rule checks).
+  /// Use placeStone for validated moves. This is for reconstructing board state from server data.
+  void setStone(int i, int j, int value) => _setStoneHashed(i, j, value);
 
   bool isValidMove(int i, int j, int player) {
     if (i < 0 || i >= size || j < 0 || j >= size || getStone(i, j) != 0) {
@@ -55,6 +66,24 @@ class Board {
   }
 
   void _setStone(int i, int j, int value) => _board[i * size + j] = value;
+  void _setStoneHashed(int i, int j, int value) {
+    final idx = i * size + j;
+    final oldVal = _board[idx];
+    if (oldVal == value) return; // no change
+    // Remove old value contribution
+    if (oldVal == 1) {
+      _zHash ^= _zBlack[idx];
+    } else if (oldVal == 2) {
+      _zHash ^= _zWhite[idx];
+    }
+    // Apply new value contribution
+    if (value == 1) {
+      _zHash ^= _zBlack[idx];
+    } else if (value == 2) {
+      _zHash ^= _zWhite[idx];
+    }
+    _board[idx] = value;
+  }
 
   List<List<int>> get board {
     return List.generate(
@@ -69,7 +98,7 @@ class Board {
     }
 
     final opponent = (player == 1) ? 2 : 1;
-    _setStone(i, j, player);
+    _setStoneHashed(i, j, player);
 
     // Проверяем захват и обновляем счетчики
     var capturedStones = <_Point>[];
@@ -83,7 +112,7 @@ class Board {
 
     if (capturedStones.isNotEmpty) {
       for (final stone in capturedStones) {
-        _setStone(stone.i, stone.j, 0);
+        _setStoneHashed(stone.i, stone.j, 0);
       }
       if (player == 1) {
         _capturedByBlack += capturedStones.length;
@@ -91,16 +120,16 @@ class Board {
         _capturedByWhite += capturedStones.length;
       }
     } else if (_findLiberties([_Point(i, j)]).isEmpty) {
-      _setStone(i, j, 0);
+      _setStoneHashed(i, j, 0);
       return false;
     }
 
     // Проверка правила Ко
     final boardHash = _getBoardHash();
     if (_boardStateCache.containsKey(boardHash)) {
-      _setStone(i, j, 0);
+      _setStoneHashed(i, j, 0);
       for (final stone in capturedStones) {
-        _setStone(stone.i, stone.j, opponent);
+        _setStoneHashed(stone.i, stone.j, opponent);
       }
       return false;
     }
@@ -108,7 +137,7 @@ class Board {
     _history.add(_getCompressedBoardState());
     _boardStateCache[boardHash] = true;
 
-    if (_history.length > 8) {
+    if (_history.length > _boardHashHistoryLimit) {
       final oldState = _history.removeAt(0);
       _boardStateCache.remove(_getBoardHashFromState(oldState));
     }
@@ -116,26 +145,69 @@ class Board {
     return true;
   }
 
-  Set<_Point> _findLiberties(List<_Point> group) {
-    final liberties = <_Point>{};
-    final player = getStone(group[0].i, group[0].j);
-    final visited = <_Point>{};
+  /// Records current board state to history for ko detection.
+  /// Use this after reconstructing board from external data.
+  void recordCurrentState() {
+    final boardHash = _getBoardHash();
+    _history.add(_getCompressedBoardState());
+    _boardStateCache[boardHash] = true;
 
-    for (final stone in group) {
-      visited.add(stone);
-      final neighbors = _getAdjacentPoints(stone.i, stone.j);
+    if (_history.length > _boardHashHistoryLimit) {
+      final oldState = _history.removeAt(0);
+      _boardStateCache.remove(_getBoardHashFromState(oldState));
+    }
+  }
 
-      for (final neighbor in neighbors) {
-        final neighborValue = getStone(neighbor.i, neighbor.j);
-        if (neighborValue == 0) {
-          liberties.add(neighbor);
-        } else if (neighborValue == player && !visited.contains(neighbor)) {
-          visited.add(neighbor);
-          group.add(neighbor);
+  /// Calculate which stones would be captured by placing a stone at (i, j).
+  /// Returns a list of linear indices (r * size + c) of captured stones.
+  /// Does not modify the board state.
+  List<int> calculateCaptures(int i, int j, int player) {
+    final opponent = (player == 1) ? 2 : 1;
+    final capturedIndices = <int>[];
+
+    // Temporarily place the stone
+    _setStone(i, j, player);
+
+    // Find all adjacent opponent groups
+    final neighborGroups = _getNeighborGroups(i, j, opponent);
+
+    // Check each group for liberties
+    for (final group in neighborGroups) {
+      if (_findLiberties(group).isEmpty) {
+        // This group is captured
+        for (final stone in group) {
+          capturedIndices.add(stone.i * size + stone.j);
         }
       }
     }
 
+    // Remove the temporary stone
+    _setStone(i, j, 0);
+
+    return capturedIndices;
+  }
+
+  Set<_Point> _findLiberties(List<_Point> group) {
+    final liberties = <_Point>{};
+    if (group.isEmpty) return liberties;
+    final player = getStone(group[0].i, group[0].j);
+    // BFS over the connected group without mutating the input list during iteration.
+    final visited = <_Point>{};
+    final queue = List<_Point>.from(group);
+
+    while (queue.isNotEmpty) {
+      final stone = queue.removeLast();
+      if (visited.contains(stone)) continue;
+      visited.add(stone);
+      for (final neighbor in _getAdjacentPoints(stone.i, stone.j)) {
+        final neighborValue = getStone(neighbor.i, neighbor.j);
+        if (neighborValue == 0) {
+          liberties.add(neighbor);
+        } else if (neighborValue == player && !visited.contains(neighbor)) {
+          queue.add(neighbor);
+        }
+      }
+    }
     return liberties;
   }
 
@@ -190,13 +262,7 @@ class Board {
     return hash;
   }
 
-  String _getBoardHash() {
-    final buffer = StringBuffer();
-    for (var i = 0; i < size * size; i++) {
-      buffer.write(_board[i]);
-    }
-    return buffer.toString();
-  }
+  String _getBoardHash() => _zHash.toRadixString(16);
 
   String _getBoardHashFromState(int state) {
     final buffer = StringBuffer();
@@ -206,6 +272,13 @@ class Board {
       remaining ~/= 3;
     }
     return buffer.toString();
+  }
+
+  void _initializeZobrist() {
+    final rand = Random(0xC0DEFEED); // deterministic seed for reproducibility
+    _zBlack = List<int>.generate(size * size, (_) => rand.nextInt(1 << 32));
+    _zWhite = List<int>.generate(size * size, (_) => rand.nextInt(1 << 32));
+    _zHash = 0; // empty board hash
   }
 }
 

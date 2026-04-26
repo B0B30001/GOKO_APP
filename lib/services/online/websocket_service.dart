@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import '../../models/app_settings.dart';
 import 'package:uuid/uuid.dart';
 
 /// WebSocket service for real-time online multiplayer
@@ -144,10 +145,12 @@ class WebSocketService {
 
     _socket!.connect();
 
-    // Listen to all events for debugging
-    _socket!.onAny((event, data) {
-      debugPrint('🔊 [WebSocket] Event: $event | Data: $data');
-    });
+    // Listen to all events for debugging (very noisy) - gated by verboseLogs
+    if (AppSettings.verboseLogs) {
+      _socket!.onAny((event, data) {
+        debugPrint('🔊 [WebSocket] Event: $event | Data: $data');
+      });
+    }
   }
 
   /// Disconnect from server
