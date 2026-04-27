@@ -26,6 +26,9 @@ echo "==> Extracting Flutter to $HOME..."
 tar xf /tmp/flutter.tar.xz -C "$HOME"
 rm /tmp/flutter.tar.xz
 
+echo "==> Fixing git safe directory (Vercel runs as root)..."
+git config --global --add safe.directory "$FLUTTER_HOME"
+
 echo "==> Configuring Flutter..."
 flutter config --no-analytics
 flutter config --enable-web
