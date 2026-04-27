@@ -1,22 +1,30 @@
 #!/bin/bash
 set -e
 
-echo "==> Fetching Flutter download URL for latest stable..."
+FLUTTER_HOME="$HOME/flutter"
+export PATH="$PATH:$FLUTTER_HOME/bin"
 
-# Fetch the releases JSON and extract the latest stable download URL
-RELEASES_JSON=$(curl -s "https://storage.googleapis.com/flutter_infra_release/releases/releases_linux.json")
-STABLE_HASH=$(echo "$RELEASES_JSON" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d['current_release']['stable'])")
-BASE_URL=$(echo "$RELEASES_JSON" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d['base_url'])")
-ARCHIVE=$(echo "$RELEASES_JSON" | python3 -c "import json,sys; d=json.load(sys.stdin); [print(r['archive']) for r in d['releases'] if r['hash']=='$STABLE_HASH']" | head -1)
-FLUTTER_URL="$BASE_URL/$ARCHIVE"
+echo "==> Fetching Flutter stable download URL..."
+
+# Get the full download URL in one Python call
+FLUTTER_URL=$(curl -s "https://storage.googleapis.com/flutter_infra_release/releases/releases_linux.json" | python3 - <<'EOF'
+import json, sys
+d = json.load(sys.stdin)
+stable_hash = d["current_release"]["stable"]
+base_url = d["base_url"]
+for r in d["releases"]:
+    if r["hash"] == stable_hash:
+        print(base_url + "/" + r["archive"])
+        break
+EOF
+)
 
 echo "==> Downloading Flutter from: $FLUTTER_URL"
-curl -sL "$FLUTTER_URL" -o /tmp/flutter.tar.xz
+curl -L --progress-bar "$FLUTTER_URL" -o /tmp/flutter.tar.xz
 
-echo "==> Extracting Flutter..."
-tar xf /tmp/flutter.tar.xz -C /opt/
-
-export PATH="$PATH:/opt/flutter/bin"
+echo "==> Extracting Flutter to $HOME..."
+tar xf /tmp/flutter.tar.xz -C "$HOME"
+rm /tmp/flutter.tar.xz
 
 echo "==> Configuring Flutter..."
 flutter config --no-analytics
