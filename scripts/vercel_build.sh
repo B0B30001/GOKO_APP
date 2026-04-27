@@ -6,18 +6,18 @@ export PATH="$PATH:$FLUTTER_HOME/bin"
 
 echo "==> Fetching Flutter stable download URL..."
 
-# Get the full download URL in one Python call
-FLUTTER_URL=$(curl -s "https://storage.googleapis.com/flutter_infra_release/releases/releases_linux.json" | python3 - <<'EOF'
+# Get the full download URL - store curl output first, then parse with python3 -c
+FLUTTER_JSON=$(curl -s "https://storage.googleapis.com/flutter_infra_release/releases/releases_linux.json")
+FLUTTER_URL=$(echo "$FLUTTER_JSON" | python3 -c "
 import json, sys
 d = json.load(sys.stdin)
-stable_hash = d["current_release"]["stable"]
-base_url = d["base_url"]
-for r in d["releases"]:
-    if r["hash"] == stable_hash:
-        print(base_url + "/" + r["archive"])
+stable_hash = d['current_release']['stable']
+base_url = d['base_url']
+for r in d['releases']:
+    if r['hash'] == stable_hash:
+        print(base_url + '/' + r['archive'])
         break
-EOF
-)
+")
 
 echo "==> Downloading Flutter from: $FLUTTER_URL"
 curl -L --progress-bar "$FLUTTER_URL" -o /tmp/flutter.tar.xz
