@@ -5,7 +5,7 @@ import 'dart:math';
 class Board {
   final int size;
   late Uint8List _board;
-  final List<int> _history = [];
+  final List<String> _history = [];
   int _capturedByBlack = 0;
   int _capturedByWhite = 0;
   final _boardStateCache = HashMap<String, bool>();
@@ -28,7 +28,7 @@ class Board {
   set capturedByWhite(int value) => _capturedByWhite = value;
 
   int getStone(int i, int j) => _board[i * size + j];
-  
+
   /// Sets a stone directly (bypassing rule checks).
   /// Use placeStone for validated moves. This is for reconstructing board state from server data.
   void setStone(int i, int j, int value) => _setStoneHashed(i, j, value);
@@ -134,12 +134,11 @@ class Board {
       return false;
     }
 
-    _history.add(_getCompressedBoardState());
+    _history.add(boardHash);
     _boardStateCache[boardHash] = true;
 
     if (_history.length > _boardHashHistoryLimit) {
-      final oldState = _history.removeAt(0);
-      _boardStateCache.remove(_getBoardHashFromState(oldState));
+      _boardStateCache.remove(_history.removeAt(0));
     }
 
     return true;
@@ -149,12 +148,11 @@ class Board {
   /// Use this after reconstructing board from external data.
   void recordCurrentState() {
     final boardHash = _getBoardHash();
-    _history.add(_getCompressedBoardState());
+    _history.add(boardHash);
     _boardStateCache[boardHash] = true;
 
     if (_history.length > _boardHashHistoryLimit) {
-      final oldState = _history.removeAt(0);
-      _boardStateCache.remove(_getBoardHashFromState(oldState));
+      _boardStateCache.remove(_history.removeAt(0));
     }
   }
 
@@ -254,30 +252,12 @@ class Board {
     return points;
   }
 
-  int _getCompressedBoardState() {
-    var hash = 0;
-    for (var i = 0; i < size * size; i++) {
-      hash = hash * 3 + _board[i];
-    }
-    return hash;
-  }
-
   String _getBoardHash() => _zHash.toRadixString(16);
-
-  String _getBoardHashFromState(int state) {
-    final buffer = StringBuffer();
-    var remaining = state;
-    for (var i = 0; i < size * size; i++) {
-      buffer.write(remaining % 3);
-      remaining ~/= 3;
-    }
-    return buffer.toString();
-  }
 
   void _initializeZobrist() {
     final rand = Random(0xC0DEFEED); // deterministic seed for reproducibility
-    _zBlack = List<int>.generate(size * size, (_) => rand.nextInt(1 << 32));
-    _zWhite = List<int>.generate(size * size, (_) => rand.nextInt(1 << 32));
+    _zBlack = List<int>.generate(size * size, (_) => rand.nextInt(0xFFFFFFFF));
+    _zWhite = List<int>.generate(size * size, (_) => rand.nextInt(0xFFFFFFFF));
     _zHash = 0; // empty board hash
   }
 }

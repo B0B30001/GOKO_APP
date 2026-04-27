@@ -29,7 +29,9 @@ class _DrillScreenState extends State<DrillScreen> {
   void initState() {
     super.initState();
     _timeRemaining = widget.drill.timeLimit;
-    _puzzleQueue = List.from(widget.drill.puzzles.take(widget.drill.targetCount));
+    _puzzleQueue = List.from(
+      widget.drill.puzzles.take(widget.drill.targetCount),
+    );
     _puzzleQueue.shuffle(); // Randomize puzzle order
   }
 
@@ -53,7 +55,7 @@ class _DrillScreenState extends State<DrillScreen> {
         timer.cancel();
         return;
       }
-      
+
       setState(() {
         _timeRemaining--;
         if (_timeRemaining <= 0) {
@@ -71,52 +73,54 @@ class _DrillScreenState extends State<DrillScreen> {
       return;
     }
 
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => PuzzleScreen(
-          puzzle: _puzzleQueue[_currentPuzzleIndex],
-          isDrillMode: true,
-        ),
-      ),
-    ).then((result) {
-      if (!mounted) return;
-      
-      // Result: {solved: bool, mistakes: int}
-      if (result is Map<String, dynamic>) {
-        final solved = result['solved'] as bool? ?? false;
-        final mistakes = result['mistakes'] as int? ?? 0;
-        
-        setState(() {
-          if (solved) {
-            _solvedCount++;
-          }
-          _mistakeCount += mistakes;
-          _currentPuzzleIndex++;
-        });
+    Navigator.of(context)
+        .push(
+          MaterialPageRoute(
+            builder: (context) => PuzzleScreen(
+              puzzle: _puzzleQueue[_currentPuzzleIndex],
+              isDrillMode: true,
+            ),
+          ),
+        )
+        .then((result) {
+          if (!mounted) return;
 
-        // Check if drill should continue
-        if (_timeRemaining > 0 &&
-            _solvedCount < widget.drill.targetCount &&
-            _currentPuzzleIndex < _puzzleQueue.length) {
-          // Small delay before next puzzle
-          Future.delayed(const Duration(milliseconds: 300), () {
-            if (mounted) _showCurrentPuzzle();
-          });
-        } else {
-          _completeDrill();
-        }
-      } else {
-        // User backed out - end drill
-        _completeDrill();
-      }
-    });
+          // Result: {solved: bool, mistakes: int}
+          if (result is Map<String, dynamic>) {
+            final solved = result['solved'] as bool? ?? false;
+            final mistakes = result['mistakes'] as int? ?? 0;
+
+            setState(() {
+              if (solved) {
+                _solvedCount++;
+              }
+              _mistakeCount += mistakes;
+              _currentPuzzleIndex++;
+            });
+
+            // Check if drill should continue
+            if (_timeRemaining > 0 &&
+                _solvedCount < widget.drill.targetCount &&
+                _currentPuzzleIndex < _puzzleQueue.length) {
+              // Small delay before next puzzle
+              Future.delayed(const Duration(milliseconds: 300), () {
+                if (mounted) _showCurrentPuzzle();
+              });
+            } else {
+              _completeDrill();
+            }
+          } else {
+            // User backed out - end drill
+            _completeDrill();
+          }
+        });
   }
 
   void _completeDrill() {
     _timer?.cancel();
-    
+
     if (_drillCompleted) return;
-    
+
     final timeUsed = widget.drill.timeLimit - _timeRemaining;
     final score = widget.drill.calculateScore(
       solved: _solvedCount,
@@ -142,7 +146,7 @@ class _DrillScreenState extends State<DrillScreen> {
       mistakes: _mistakeCount,
       stars: stars,
     );
-    
+
     debugPrint('Drill completed: ${result.toJson()}');
   }
 
@@ -161,9 +165,7 @@ class _DrillScreenState extends State<DrillScreen> {
 
   Widget _buildIntroScreen(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.drill.title),
-      ),
+      appBar: AppBar(title: Text(widget.drill.title)),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -177,9 +179,9 @@ class _DrillScreenState extends State<DrillScreen> {
             const SizedBox(height: 24),
             Text(
               widget.drill.title,
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
@@ -207,7 +209,8 @@ class _DrillScreenState extends State<DrillScreen> {
               context,
               icon: Icons.star,
               label: 'Difficulty',
-              value: '${'⭐' * widget.drill.minDifficulty}'
+              value:
+                  '${'⭐' * widget.drill.minDifficulty}'
                   '${widget.drill.maxDifficulty > widget.drill.minDifficulty ? ' - ${'⭐' * widget.drill.maxDifficulty}' : ''}',
             ),
             const SizedBox(height: 48),
@@ -261,9 +264,9 @@ class _DrillScreenState extends State<DrillScreen> {
               Text(
                 _formatTime(_timeRemaining),
                 style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: _timeRemaining <= 10 ? Colors.red : null,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: _timeRemaining <= 10 ? Colors.red : null,
+                ),
               ),
               const SizedBox(height: 16),
               LinearProgressIndicator(
@@ -296,7 +299,7 @@ class _DrillScreenState extends State<DrillScreen> {
   Widget _buildResultsScreen(BuildContext context) {
     final percentage = (_solvedCount / widget.drill.targetCount * 100).round();
     final passed = _finalStars > 0;
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Drill Complete'),
@@ -314,9 +317,9 @@ class _DrillScreenState extends State<DrillScreen> {
             const SizedBox(height: 24),
             Text(
               passed ? 'Well Done!' : 'Keep Practicing!',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Row(
@@ -434,16 +437,13 @@ class _DrillScreenState extends State<DrillScreen> {
         children: [
           Icon(icon, color: Theme.of(context).primaryColor),
           const SizedBox(width: 16),
-          Text(
-            label,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
+          Text(label, style: Theme.of(context).textTheme.titleMedium),
           const Spacer(),
           Text(
             value,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -460,25 +460,22 @@ class _DrillScreenState extends State<DrillScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
           Icon(icon, color: color),
           const SizedBox(width: 16),
-          Text(
-            label,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
+          Text(label, style: Theme.of(context).textTheme.titleMedium),
           const Spacer(),
           Text(
             value,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
           ),
         ],
       ),
@@ -490,9 +487,7 @@ class _DrillScreenState extends State<DrillScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Quit Drill?'),
-        content: const Text(
-          'Your progress will not be saved if you quit now.',
-        ),
+        content: const Text('Your progress will not be saved if you quit now.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -503,10 +498,7 @@ class _DrillScreenState extends State<DrillScreen> {
               Navigator.of(context).pop(); // Close dialog
               Navigator.of(context).pop(); // Exit drill screen
             },
-            child: const Text(
-              'Quit',
-              style: TextStyle(color: Colors.red),
-            ),
+            child: const Text('Quit', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),

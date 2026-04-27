@@ -7,6 +7,7 @@ import '../widgets/login_dialog.dart';
 import '../services/ogs_service.dart';
 import './game_board_screen.dart';
 import './online/online_lobby_screen.dart';
+import '../services/ai/go_ai_service.dart';
 import './board_comparison_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -129,7 +130,7 @@ class HomeScreen extends StatelessWidget {
                 height: 200,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.08),
+                  color: Colors.white.withValues(alpha: 0.08),
                 ),
               ),
             ),
@@ -150,7 +151,7 @@ class HomeScreen extends StatelessWidget {
                   Text(
                     'Everything works offline - no account needed!',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                     ),
                   ),
                 ],
@@ -310,7 +311,7 @@ class HomeScreen extends StatelessWidget {
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),
@@ -427,27 +428,65 @@ class HomeScreen extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
-            _buildSizeButton(context, '9×9', 9),
+            _buildSizeButton(context, '9×9', 9, isComputer: isComputer),
             const SizedBox(height: 16),
-            _buildSizeButton(context, '13×13', 13),
+            _buildSizeButton(context, '13×13', 13, isComputer: isComputer),
             const SizedBox(height: 16),
-            _buildSizeButton(context, '19×19', 19),
+            _buildSizeButton(context, '19×19', 19, isComputer: isComputer),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSizeButton(BuildContext context, String label, int size) {
+  Widget _buildSizeButton(
+    BuildContext context,
+    String label,
+    int size, {
+    required bool isComputer,
+  }) {
     return ElevatedButton(
-      onPressed: () {
-        Navigator.pop(context); // Close board size sheet
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => GameBoardScreen(boardSize: size),
-          ),
-        );
+      onPressed: () async {
+        if (isComputer) {
+          final difficulty = await showDialog<AIDifficulty>(
+            context: context,
+            builder: (ctx) => SimpleDialog(
+              title: const Text('Select Difficulty'),
+              children: AIDifficulty.values
+                  .map(
+                    (d) => SimpleDialogOption(
+                      onPressed: () => Navigator.pop(ctx, d),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Text(d.label),
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+          );
+          if (difficulty == null) return;
+          if (!context.mounted) return;
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => GameBoardScreen(
+                boardSize: size,
+                isComputerMode: true,
+                aiDifficulty: difficulty,
+              ),
+            ),
+          );
+        } else {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => GameBoardScreen(boardSize: size),
+            ),
+          );
+        }
       },
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 16),

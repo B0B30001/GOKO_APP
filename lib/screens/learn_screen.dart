@@ -123,7 +123,7 @@ class _LearnScreenState extends State<LearnScreen> {
           gradient: LinearGradient(
             colors: [
               Theme.of(context).primaryColor,
-              Theme.of(context).primaryColor.withOpacity(0.7),
+              Theme.of(context).primaryColor.withValues(alpha: 0.7),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -144,7 +144,7 @@ class _LearnScreenState extends State<LearnScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
@@ -170,7 +170,7 @@ class _LearnScreenState extends State<LearnScreen> {
                       Text(
                         'Fresh puzzle every day • ${_solvedToday}/3 solved today',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                           fontSize: 14,
                         ),
                       ),
@@ -469,7 +469,7 @@ class _LearnScreenState extends State<LearnScreen> {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: isActive
-              ? Theme.of(context).primaryColor.withOpacity(0.05)
+              ? Theme.of(context).primaryColor.withValues(alpha: 0.05)
               : Colors.grey.shade50,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
@@ -658,7 +658,7 @@ class _LessonCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isComplete = progress >= 1.0;
     final inProgress = progress > 0 && progress < 1.0;
-    
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: inProgress ? 2 : 1,
@@ -682,10 +682,12 @@ class _LessonCard extends StatelessWidget {
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: isComplete
-                          ? Colors.green.withOpacity(0.1)
+                          ? Colors.green.withValues(alpha: 0.1)
                           : inProgress
-                          ? Theme.of(context).primaryColor.withOpacity(0.1)
-                          : Colors.grey.withOpacity(0.1),
+                          ? Theme.of(
+                              context,
+                            ).primaryColor.withValues(alpha: 0.1)
+                          : Colors.grey.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(
@@ -774,7 +776,7 @@ class _LessonCard extends StatelessWidget {
                                   Theme.of(context).primaryColor,
                                   Theme.of(
                                     context,
-                                  ).primaryColor.withOpacity(0.7),
+                                  ).primaryColor.withValues(alpha: 0.7),
                                 ],
                         ),
                         borderRadius: BorderRadius.circular(4),
@@ -783,7 +785,7 @@ class _LessonCard extends StatelessWidget {
                                 BoxShadow(
                                   color: Theme.of(
                                     context,
-                                  ).primaryColor.withOpacity(0.3),
+                                  ).primaryColor.withValues(alpha: 0.3),
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
                                 ),

@@ -8,6 +8,7 @@ import '../../models/app_settings.dart';
 import '../../utils/error_messages.dart';
 import '../../services/board/board_engine.dart';
 import '../../models/optimized_board.dart';
+import '../../utils/turn.dart';
 
 class OnlineGameScreen extends StatefulWidget {
   final String gameId;
@@ -123,7 +124,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
           // Record current state for ko detection
           _validationBoard!.recordCurrentState();
         }
-        
+
         _phase = data.phase;
         _blackPlayer = data.blackPlayerName;
         _whitePlayer = data.whitePlayerName;
@@ -202,8 +203,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
         }
 
         // Switch turns after move is received
-        // If black (1) just moved, it's now white's (2) turn and vice versa
-        _currentPlayer = move.color == 1 ? 2 : 1;
+        _currentPlayer = nextPlayer(move.color);
         _isMyTurn = (_myColor != null && _myColor == _currentPlayer);
 
         // Reset low-time alert flags on turn change
@@ -296,7 +296,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
         // Store previous times to detect increment
         final prevBlackTime = _blackTime;
         final prevWhiteTime = _whiteTime;
-        
+
         // DO NOT update _currentPlayer from clock events!
         // Clock events can be delayed/stale. Only trust move events for turn changes.
         // Update times and periods
@@ -496,7 +496,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
                   children: [
                     // Game status banner (for non-play phases)
                     if (_phase != 'play') _buildGameStatusBanner(isDarkTheme),
-                    
+
                     // Top: Opponent
                     if (showMeAsBlack)
                       _buildPlayerInfo(false, isDarkTheme) // Opponent is White
@@ -624,7 +624,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
         color: backgroundColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -799,7 +799,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
         color: Theme.of(context).cardColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, -2),
           ),
@@ -917,7 +917,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
 
     if (_phase != 'play') {
       debugPrint('❌ Cannot place stone - game phase is $_phase');
-      
+
       String message;
       if (_phase == 'finished') {
         message = 'Game has ended';
@@ -926,7 +926,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
       } else {
         message = 'Game is in $_phase phase';
       }
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(message),

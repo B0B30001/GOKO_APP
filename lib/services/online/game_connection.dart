@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import '../../utils/sgf_coords.dart';
 import 'websocket_service.dart';
 
 /// Manages connection to a specific online game
@@ -348,22 +349,13 @@ class GameConnection {
   }
 
   String _encodeMove(int row, int col) {
-    // Convert to SGF style coordinates (column + row)
-    // OGS uses straight alphabet sequence without skipping 'i'.
-    // For boards up to 19x19 we therefore use 'abcdefghijklmnopqrs'.
-    const letters = 'abcdefghijklmnopqrs';
-
-    if (row < 0 || col < 0) return '..'; // safeguard / pass fallback
-    if (col >= letters.length || row >= letters.length) {
+    final encoded = encodeMove(row, col);
+    if (encoded == '..' && (row >= 0 && col >= 0)) {
       debugPrint('🚫 [Encoding] Coordinate out of range row=$row col=$col');
-      return '..';
+    } else {
+      debugPrint('🔢 [Encoding] row=$row, col=$col -> $encoded');
     }
-
-    debugPrint(
-      '🔢 [Encoding] row=$row, col=$col -> ${letters[col]}${letters[row]}',
-    );
-
-    return letters[col] + letters[row];
+    return encoded;
   }
 
   void dispose() {
@@ -582,13 +574,9 @@ class GameData {
 
         if (move is String) {
           // SGF format (OGS: sequential letters incl. 'i')
-          if (move == '..' || move.length < 2) {
-            row = col = -1; // pass
-          } else {
-            const letters = 'abcdefghijklmnopqrs';
-            col = letters.indexOf(move[0]);
-            row = letters.indexOf(move[1]);
-          }
+          final decoded = decodeSGF(move);
+          row = decoded[0];
+          col = decoded[1];
         } else if (move is List && move.length >= 2) {
           // Integer array format [col, row, timing]
           col = move[0] as int;
@@ -865,11 +853,10 @@ class MoveData {
         row = col = -1;
         color = move.length > 1 ? move[1] as int : 0;
       } else if (sgf.length >= 2) {
-        // Decode SGF: first char = col, second char = row
-        const letters = 'abcdefghijklmnopqrs';
-        col = letters.indexOf(sgf[0]);
-        row = letters.indexOf(sgf[1]);
-        
+        final decoded = decodeSGF(sgf);
+        row = decoded[0];
+        col = decoded[1];
+
         // Get color from move array if provided, otherwise determine from move number
         if (move.length > 1 && move[1] is int) {
           color = move[1] as int;
@@ -878,11 +865,15 @@ class MoveData {
           // If color not provided, determine from move_number
           // Move 1 = black, Move 2 = white, Move 3 = black, etc.
           final moveNumber = json['move_number'] ?? 0;
-          color = (moveNumber % 2 == 1) ? 1 : 2; // Odd moves = black (1), Even = white (2)
+          color = (moveNumber % 2 == 1)
+              ? 1
+              : 2; // Odd moves = black (1), Even = white (2)
           debugPrint('   Color from move_number $moveNumber: $color');
         }
-        
-        debugPrint('   Decoded SGF: "$sgf" -> row=$row, col=$col, color=$color');
+
+        debugPrint(
+          '   Decoded SGF: "$sgf" -> row=$row, col=$col, color=$color',
+        );
       } else {
         row = col = color = 0;
       }
@@ -892,11 +883,11 @@ class MoveData {
       // OGS sends moves in SGF coordinate order: column first, then row
       col = move.length > 0 ? move[0] as int : 0;
       row = move.length > 1 ? move[1] as int : 0;
-      
+
       // Determine color from move_number (odd = black, even = white)
       final moveNumber = json['move_number'] ?? 0;
       color = (moveNumber % 2 == 1) ? 1 : 2;
-      
+
       debugPrint(
         '   Integer array format: col=$col, row=$row, timing=${move.length > 2 ? move[2] : 0}',
       );
@@ -958,7 +949,7 @@ class ClockData {
     if (currentPlayerValue is int) {
       currentPlayer = currentPlayerValue;
     }
-    
+
     // Parse time values - can be int (seconds) or Map (detailed time info)
     int blackTime = 0;
     int whiteTime = 0;
@@ -966,7 +957,7 @@ class ClockData {
     int? whitePeriods;
     int? periodTime;
     int? timeIncrement;
-    
+
     final blackTimeValue = json['black_time'];
     if (blackTimeValue is int) {
       blackTime = blackTimeValue;
@@ -992,7 +983,7 @@ class ClockData {
         timeIncrement = increment.round();
       }
     }
-    
+
     final whiteTimeValue = json['white_time'];
     if (whiteTimeValue is int) {
       whiteTime = whiteTimeValue;
@@ -1018,7 +1009,7 @@ class ClockData {
         timeIncrement ??= increment.round(); // Use first occurrence
       }
     }
-    
+
     return ClockData(
       gameId: json['game_id'].toString(),
       currentPlayer: currentPlayer,

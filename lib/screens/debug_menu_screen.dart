@@ -175,7 +175,9 @@ class _DebugMenuScreenState extends State<DebugMenuScreen> {
                         _dtdService.disconnect();
                         setState(() {});
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Disconnected from DTD')),
+                          const SnackBar(
+                            content: Text('Disconnected from DTD'),
+                          ),
                         );
                       }
                     : (_isConnecting ? null : _connectToDtd),
@@ -185,9 +187,7 @@ class _DebugMenuScreenState extends State<DebugMenuScreen> {
                         width: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : Text(
-                        _dtdService.isConnected ? 'Disconnect' : 'Connect',
-                      ),
+                    : Text(_dtdService.isConnected ? 'Disconnect' : 'Connect'),
               ),
             ),
           ],
@@ -221,7 +221,8 @@ class _DebugMenuScreenState extends State<DebugMenuScreen> {
                       _dtdService.enableWidgetInspector();
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                            content: Text('Widget inspector enabled')),
+                          content: Text('Widget inspector enabled'),
+                        ),
                       );
                     }
                   : null,
@@ -277,8 +278,10 @@ class _DebugMenuScreenState extends State<DebugMenuScreen> {
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
-            _buildInfoRow('Connection Status',
-                debugInfo['connected'] ? 'Connected' : 'Disconnected'),
+            _buildInfoRow(
+              'Connection Status',
+              debugInfo['connected'] ? 'Connected' : 'Disconnected',
+            ),
             _buildInfoRow('DTD URI', debugInfo['uri'] ?? 'Not set'),
             _buildInfoRow('Last Updated', debugInfo['timestamp']),
             const SizedBox(height: 16),
@@ -318,18 +321,10 @@ class _DebugMenuScreenState extends State<DebugMenuScreen> {
             width: 120,
             child: Text(
               label,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 13,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
             ),
           ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(fontSize: 13),
-            ),
-          ),
+          Expanded(child: Text(value, style: const TextStyle(fontSize: 13))),
         ],
       ),
     );

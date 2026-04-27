@@ -455,7 +455,7 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
     if (concept == null) return const SizedBox.shrink();
 
     return Card(
-      color: Colors.blue.withOpacity(0.1),
+      color: Colors.blue.withValues(alpha: 0.1),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(

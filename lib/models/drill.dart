@@ -34,13 +34,13 @@ class Drill {
   }) {
     // Base score: 100 points per puzzle solved
     int baseScore = solved * 100;
-    
+
     // Time bonus: up to 50 points per puzzle for speed
     int timeBonus = (timeRemaining * 50 / timeLimit).round();
-    
+
     // Accuracy penalty: -20 points per mistake
     int accuracyPenalty = mistakes * 20;
-    
+
     return (baseScore + timeBonus - accuracyPenalty).clamp(0, 99999);
   }
 
@@ -54,13 +54,7 @@ class Drill {
   }
 }
 
-enum DrillType {
-  capture,
-  lifeAndDeath,
-  ko,
-  tesuji,
-  mixed,
-}
+enum DrillType { capture, lifeAndDeath, ko, tesuji, mixed }
 
 class DrillData {
   static final List<Drill> allDrills = [
@@ -286,19 +280,34 @@ class DrillData {
   }
 
   static List<Puzzle> _generateMixedPuzzles(
-      int count, int minDiff, int maxDiff) {
+    int count,
+    int minDiff,
+    int maxDiff,
+  ) {
     List<Puzzle> mixed = [];
-    
+
     // Get puzzles from different categories
-    mixed.addAll(PuzzleData.getPuzzlesForTopic('Captures')
-        .where((p) => p.difficulty >= minDiff && p.difficulty <= maxDiff));
-    mixed.addAll(PuzzleData.getPuzzlesForTopic('Liberties')
-        .where((p) => p.difficulty >= minDiff && p.difficulty <= maxDiff));
-    mixed.addAll(PuzzleData.getPuzzlesForTopic('Life & Death')
-        .where((p) => p.difficulty >= minDiff && p.difficulty <= maxDiff));
-    mixed.addAll(PuzzleData.getPuzzlesForTopic('Ko Basics')
-        .where((p) => p.difficulty >= minDiff && p.difficulty <= maxDiff));
-    
+    mixed.addAll(
+      PuzzleData.getPuzzlesForTopic(
+        'Captures',
+      ).where((p) => p.difficulty >= minDiff && p.difficulty <= maxDiff),
+    );
+    mixed.addAll(
+      PuzzleData.getPuzzlesForTopic(
+        'Liberties',
+      ).where((p) => p.difficulty >= minDiff && p.difficulty <= maxDiff),
+    );
+    mixed.addAll(
+      PuzzleData.getPuzzlesForTopic(
+        'Life & Death',
+      ).where((p) => p.difficulty >= minDiff && p.difficulty <= maxDiff),
+    );
+    mixed.addAll(
+      PuzzleData.getPuzzlesForTopic(
+        'Ko Basics',
+      ).where((p) => p.difficulty >= minDiff && p.difficulty <= maxDiff),
+    );
+
     // Shuffle and take requested count
     mixed.shuffle();
     return mixed.take(count).toList();
@@ -332,24 +341,24 @@ class DrillResult {
   });
 
   Map<String, dynamic> toJson() => {
-        'drillId': drillId,
-        'completedAt': completedAt.toIso8601String(),
-        'score': score,
-        'solved': solved,
-        'total': total,
-        'timeUsed': timeUsed,
-        'mistakes': mistakes,
-        'stars': stars,
-      };
+    'drillId': drillId,
+    'completedAt': completedAt.toIso8601String(),
+    'score': score,
+    'solved': solved,
+    'total': total,
+    'timeUsed': timeUsed,
+    'mistakes': mistakes,
+    'stars': stars,
+  };
 
   factory DrillResult.fromJson(Map<String, dynamic> json) => DrillResult(
-        drillId: json['drillId'] as String,
-        completedAt: DateTime.parse(json['completedAt'] as String),
-        score: json['score'] as int,
-        solved: json['solved'] as int,
-        total: json['total'] as int,
-        timeUsed: json['timeUsed'] as int,
-        mistakes: json['mistakes'] as int,
-        stars: json['stars'] as int,
-      );
+    drillId: json['drillId'] as String,
+    completedAt: DateTime.parse(json['completedAt'] as String),
+    score: json['score'] as int,
+    solved: json['solved'] as int,
+    total: json['total'] as int,
+    timeUsed: json['timeUsed'] as int,
+    mistakes: json['mistakes'] as int,
+    stars: json['stars'] as int,
+  );
 }

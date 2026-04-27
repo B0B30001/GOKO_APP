@@ -11,6 +11,16 @@ import 'dart:ui' as ui;
 /// 4. GPU-accelerated Positioned widgets
 /// 5. Paint object caching to avoid recreation
 /// 6. Minimal rebuilds - only changed stones update
+///
+/// Deliberately NOT done (analyzed and rejected):
+///  - Hover-validation memoization: hover only checks `board[i][j] == 0`
+///    (see `_updateHoverPosition`); there is no BFS to cache.
+///  - Per-stone `ui.Image` cache: each stone is already wrapped in a
+///    `RepaintBoundary` with `willChange: false`, so Flutter rasterizes it
+///    once and the engine reuses the layer.
+///  - Manual widget pooling: `ValueKey('s$i$j')` lets Flutter's element
+///    reconciliation reuse stone elements across builds — manual pooling on
+///    top of this is an anti-pattern.
 class FastGameBoard extends StatefulWidget {
   final List<List<int>> board;
   final Function(int i, int j) onTap;
@@ -189,7 +199,7 @@ class _FastGameBoardState extends State<FastGameBoard> {
           // Use unique key so Flutter can identify and reuse the widget
           stones.add(
             Positioned(
-              key: ValueKey('s$i$j'),
+              key: ValueKey('s${i}_$j'),
               left: center.dx - adjustedCellSize * 0.45,
               top: center.dy - adjustedCellSize * 0.45,
               width: adjustedCellSize * 0.9,

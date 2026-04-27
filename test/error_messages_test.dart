@@ -9,7 +9,10 @@ void main() {
     });
 
     test('occupied', () {
-      expect(mapGameError('stone_already_placed_here'), 'A stone is already there');
+      expect(
+        mapGameError('stone_already_placed_here'),
+        'A stone is already there',
+      );
       expect(mapGameError('occupied'), 'A stone is already there');
     });
 
@@ -33,7 +36,10 @@ void main() {
 
     test('busy / rate limit', () {
       expect(mapGameError('server busy'), 'Server is busy, please try again');
-      expect(mapGameError('rate limit exceeded'), 'Server is busy, please try again');
+      expect(
+        mapGameError('rate limit exceeded'),
+        'Server is busy, please try again',
+      );
     });
 
     test('timeouts', () {
@@ -42,7 +48,10 @@ void main() {
     });
 
     test('play phase', () {
-      expect(mapGameError('game_is_not_in_play_phase'), 'Game is not in play phase');
+      expect(
+        mapGameError('game_is_not_in_play_phase'),
+        'Game is not in play phase',
+      );
       expect(mapGameError('not in play'), 'Game is not in play phase');
     });
 

@@ -304,12 +304,12 @@ class _StaticBoardPainter extends CustomPainter {
 
     final colors = isDarkTheme
         ? [
-            const Color(0xFF2C2C2C).withOpacity(0.7),
-            const Color(0xFF1A1A1A).withOpacity(0.3),
+            const Color(0xFF2C2C2C).withValues(alpha: 0.7),
+            const Color(0xFF1A1A1A).withValues(alpha: 0.3),
           ]
         : [
-            const Color(0xFFDEB887).withOpacity(0.7),
-            const Color(0xFFD2691E).withOpacity(0.3),
+            const Color(0xFFDEB887).withValues(alpha: 0.7),
+            const Color(0xFFD2691E).withValues(alpha: 0.3),
           ];
 
     final rect = Offset.zero & size;
@@ -481,8 +481,8 @@ class _DynamicBoardPainter extends CustomPainter {
       final hoverPaint = _getCachedPaint('hover_$isValidMove', () {
         return Paint()
           ..color = isValidMove
-              ? Colors.green.withOpacity(0.3)
-              : Colors.red.withOpacity(0.3)
+              ? Colors.green.withValues(alpha: 0.3)
+              : Colors.red.withValues(alpha: 0.3)
           ..style = PaintingStyle.fill;
       });
 
@@ -495,8 +495,8 @@ class _DynamicBoardPainter extends CustomPainter {
       final hoverBorderPaint = _getCachedPaint('hover_border_$isValidMove', () {
         return Paint()
           ..color = isValidMove
-              ? Colors.green.withOpacity(0.8)
-              : Colors.red.withOpacity(0.8)
+              ? Colors.green.withValues(alpha: 0.8)
+              : Colors.red.withValues(alpha: 0.8)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 2.0;
       });
@@ -542,8 +542,8 @@ class _DynamicBoardPainter extends CustomPainter {
         ..shader =
             RadialGradient(
               colors: [
-                Colors.white.withOpacity(0.5),
-                Colors.white.withOpacity(0),
+                Colors.white.withValues(alpha: 0.5),
+                Colors.white.withValues(alpha: 0),
               ],
             ).createShader(
               Rect.fromCircle(center: const Offset(0, 0), radius: radius * 0.8),

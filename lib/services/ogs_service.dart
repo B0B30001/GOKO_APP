@@ -21,7 +21,7 @@ class OgsService extends ChangeNotifier {
   bool get isAuthenticated => _userData != null && _chatAuth != null;
   WebSocketService get webSocketService => _wsService;
   Stream<bool> get connectionState => _wsService.connectionState;
-  
+
   // Simple game summary model for recent/finished games
   Future<List<GameSummary>> fetchRecentGames({int limit = 20}) async {
     if (_userData == null) return [];

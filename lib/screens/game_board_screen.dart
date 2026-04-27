@@ -4,11 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:zaibal/models/optimized_game.dart';
 import 'package:zaibal/models/app_settings.dart';
 import 'package:zaibal/widgets/fast_game_board.dart';
+import 'package:zaibal/services/ai/go_ai_service.dart';
 
 class GameBoardScreen extends StatefulWidget {
   final int boardSize;
+  final bool isComputerMode;
+  final AIDifficulty aiDifficulty;
 
-  const GameBoardScreen({required this.boardSize, super.key});
+  const GameBoardScreen({
+    required this.boardSize,
+    this.isComputerMode = false,
+    this.aiDifficulty = AIDifficulty.medium,
+    super.key,
+  });
 
   @override
   _GameBoardScreenState createState() => _GameBoardScreenState();
@@ -16,6 +24,10 @@ class GameBoardScreen extends StatefulWidget {
 
 class _GameBoardScreenState extends State<GameBoardScreen> {
   late Game _game;
+  bool _isAiThinking = false;
+
+  // Player 1 = Black (human), Player 2 = White (AI) in computer mode.
+  static const _aiPlayer = 2;
 
   @override
   void initState() {
@@ -24,17 +36,19 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
   }
 
   void _onTapBoard(int i, int j) {
-    if (_game.isGameOver) return;
+    if (_game.isGameOver || _isAiThinking) return;
 
-    // Play turn without setState to check if valid first
+    // In computer mode, ignore taps when it's the AI's turn.
+    if (widget.isComputerMode && !_game.isBlackTurn) return;
+
     final success = _game.playTurn(i, j);
-
     if (success) {
-      // Only rebuild if move was successful
       setState(() {});
+      if (_game.isGameOver) return;
 
-      // Check for no valid moves after a frame delay to avoid jank
-      if (!_game.hasValidMoves()) {
+      if (widget.isComputerMode) {
+        _triggerAiMove();
+      } else if (!_game.hasValidMoves()) {
         Future.microtask(() {
           if (mounted) {
             _showSnack('No legal moves available. Press Pass to continue.');
@@ -44,14 +58,46 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
     }
   }
 
+  Future<void> _triggerAiMove() async {
+    setState(() => _isAiThinking = true);
+
+    final move = await GoAIService.getBestMove(
+      board: _game.board.board,
+      boardSize: widget.boardSize,
+      player: _aiPlayer,
+      difficulty: widget.aiDifficulty,
+    );
+
+    if (!mounted) return;
+
+    if (move != null) {
+      _game.playTurn(move[0], move[1]);
+    } else {
+      // AI passes.
+      _game.pass();
+    }
+
+    setState(() => _isAiThinking = false);
+
+    if (_game.isGameOver) {
+      Future.microtask(() {
+        if (mounted) _showGameOverDialog();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final forceLight = AppSettings.forceLightThemeInGame;
+    final title = widget.isComputerMode
+        ? 'vs Computer (${widget.aiDifficulty.label})'
+        : 'GO Game ${widget.boardSize}x${widget.boardSize}';
+
     final scaffold = Scaffold(
       appBar: AppBar(
         backgroundColor: forceLight ? Colors.white : null,
         title: Text(
-          'GO Game ${widget.boardSize}x${widget.boardSize}',
+          title,
           style: forceLight ? const TextStyle(color: Colors.black87) : null,
         ),
         centerTitle: true,
@@ -69,25 +115,67 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
               color: forceLight ? Colors.black87 : null,
             ),
             onPressed: () {
-              _game = Game(widget.boardSize);
-              setState(() {});
+              setState(() {
+                _game = Game(widget.boardSize);
+                _isAiThinking = false;
+              });
             },
           ),
         ],
         elevation: 0,
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          if (constraints.maxWidth > 600) {
-            return _buildDesktopLayout(constraints);
-          } else {
-            return _buildMobileLayout(constraints);
-          }
-        },
+      body: Stack(
+        children: [
+          LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth > 600) {
+                return _buildDesktopLayout(constraints);
+              } else {
+                return _buildMobileLayout(constraints);
+              }
+            },
+          ),
+          if (_isAiThinking)
+            Positioned(
+              top: 8,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.black87,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        'AI thinking…',
+                        style: TextStyle(color: Colors.white, fontSize: 13),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: Colors.grey.withOpacity(0.2))),
+          border: Border(
+            top: BorderSide(color: Colors.grey.withValues(alpha: 0.2)),
+          ),
         ),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -96,9 +184,13 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
             children: [
               IconButton(
                 icon: const Icon(Icons.undo),
-                onPressed: _game.canUndo
+                onPressed: (!_isAiThinking && _game.canUndo)
                     ? () {
+                        // In computer mode, undo twice (player + AI move).
                         _game.undo();
+                        if (widget.isComputerMode && _game.canUndo) {
+                          _game.undo();
+                        }
                         setState(() {});
                       }
                     : null,
@@ -106,20 +198,28 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
               ),
               IconButton(
                 icon: const Icon(Icons.skip_next),
-                onPressed: () {
-                  _game.pass();
-                  setState(() {});
-                  if (!_game.hasValidMoves()) {
-                    Future.microtask(() {
-                      if (mounted) _showGameOverDialog();
-                    });
-                  }
-                },
+                onPressed: (!_isAiThinking && !_game.isGameOver)
+                    ? () {
+                        _game.pass();
+                        setState(() {});
+                        if (_game.isGameOver) {
+                          Future.microtask(() {
+                            if (mounted) _showGameOverDialog();
+                          });
+                        } else if (widget.isComputerMode) {
+                          _triggerAiMove();
+                        } else if (!_game.hasValidMoves()) {
+                          Future.microtask(() {
+                            if (mounted) _showGameOverDialog();
+                          });
+                        }
+                      }
+                    : null,
                 tooltip: 'Pass turn',
               ),
               IconButton(
                 icon: const Icon(Icons.redo),
-                onPressed: _game.canRedo
+                onPressed: (!_isAiThinking && _game.canRedo)
                     ? () {
                         _game.redo();
                         setState(() {});
@@ -132,6 +232,7 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
                 onPressed: () {
                   setState(() {
                     _game = Game(widget.boardSize);
+                    _isAiThinking = false;
                   });
                 },
                 tooltip: 'New game',
@@ -226,7 +327,9 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
               child: Column(
                 children: [
                   Text(
-                    'Current Turn:',
+                    widget.isComputerMode
+                        ? (_game.isBlackTurn ? 'Your Turn' : 'AI\'s Turn')
+                        : 'Current Turn:',
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 8),
@@ -239,6 +342,13 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
                       border: Border.all(color: Colors.black),
                     ),
                   ),
+                  if (widget.isComputerMode) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      _game.isBlackTurn ? 'You (Black)' : 'AI (White)',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -274,11 +384,14 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               ElevatedButton.icon(
-                onPressed: () {
-                  setState(() {
-                    _game = Game(widget.boardSize);
-                  });
-                },
+                onPressed: _isAiThinking
+                    ? null
+                    : () {
+                        setState(() {
+                          _game = Game(widget.boardSize);
+                          _isAiThinking = false;
+                        });
+                      },
                 icon: const Icon(Icons.refresh),
                 label: const Text('New Game'),
                 style: ElevatedButton.styleFrom(
@@ -289,14 +402,18 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
                 ),
               ),
               ElevatedButton.icon(
-                onPressed: () {
-                  setState(() {
-                    _game.pass();
-                    if (_game.isGameOver) {
-                      _showGameOverDialog();
-                    }
-                  });
-                },
+                onPressed: (_isAiThinking || _game.isGameOver)
+                    ? null
+                    : () {
+                        setState(() {
+                          _game.pass();
+                          if (_game.isGameOver) {
+                            _showGameOverDialog();
+                          } else if (widget.isComputerMode) {
+                            _triggerAiMove();
+                          }
+                        });
+                      },
                 icon: const Icon(Icons.skip_next),
                 label: const Text('Pass'),
                 style: ElevatedButton.styleFrom(
@@ -374,6 +491,7 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
               Navigator.of(context).pop();
               setState(() {
                 _game = Game(widget.boardSize);
+                _isAiThinking = false;
               });
             },
             child: const Text('New Game'),

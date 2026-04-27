@@ -85,8 +85,8 @@ class GoBoardTheme {
     lineColor: Colors.black87,
     textColor: Colors.black87,
     boardGradient: [
-      const Color(0xFFDEB887).withOpacity(0.7),
-      const Color(0xFFD2691E).withOpacity(0.3),
+      const Color(0xFFDEB887).withValues(alpha: 0.7),
+      const Color(0xFFD2691E).withValues(alpha: 0.3),
     ],
     blackStoneColor: Colors.black,
     whiteStoneColor: Colors.white,
@@ -98,8 +98,8 @@ class GoBoardTheme {
     lineColor: Colors.white70,
     textColor: Colors.white70,
     boardGradient: [
-      const Color(0xFF2C2C2C).withOpacity(0.7),
-      const Color(0xFF1A1A1A).withOpacity(0.3),
+      const Color(0xFF2C2C2C).withValues(alpha: 0.7),
+      const Color(0xFF1A1A1A).withValues(alpha: 0.3),
     ],
     blackStoneColor: Colors.black,
     whiteStoneColor: Colors.white,

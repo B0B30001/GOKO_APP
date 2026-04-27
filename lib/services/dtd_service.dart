@@ -22,14 +22,14 @@ class DtdService {
   Future<bool> connect(String uri) async {
     try {
       _dtdUri = uri;
-      
+
       // In a real implementation, this would establish a WebSocket connection
       // For now, we'll simulate the connection
       debugPrint('🔧 [DTD] Attempting to connect to: $uri');
-      
+
       // Simulate connection delay
       await Future.delayed(const Duration(milliseconds: 500));
-      
+
       _isConnected = true;
       debugPrint('✅ [DTD] Connected successfully');
       return true;
@@ -56,7 +56,7 @@ class DtdService {
       debugPrint('⚠️ [DTD] Not connected - cannot enable widget inspector');
       return;
     }
-    
+
     debugPrint('🔍 [DTD] Widget inspector enabled');
     // In real implementation, send DTD command to enable inspector
   }
@@ -67,7 +67,7 @@ class DtdService {
       debugPrint('⚠️ [DTD] Not connected - cannot trigger hot reload');
       return false;
     }
-    
+
     debugPrint('🔥 [DTD] Triggering hot reload...');
     // In real implementation, send DTD command for hot reload
     await Future.delayed(const Duration(milliseconds: 200));
