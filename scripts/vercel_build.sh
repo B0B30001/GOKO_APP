@@ -11,7 +11,7 @@ ARCHIVE=$(echo "$RELEASES_JSON" | python3 -c "import json,sys; d=json.load(sys.s
 FLUTTER_URL="$BASE_URL/$ARCHIVE"
 
 echo "==> Downloading Flutter from: $FLUTTER_URL"
-wget -q "$FLUTTER_URL" -O /tmp/flutter.tar.xz
+curl -sL "$FLUTTER_URL" -o /tmp/flutter.tar.xz
 
 echo "==> Extracting Flutter..."
 tar xf /tmp/flutter.tar.xz -C /opt/
