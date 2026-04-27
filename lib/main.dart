@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
+import 'package:zaibal/utils/stone_shader_warmup.dart';
 import 'package:zaibal/screens/home_screen.dart';
 import 'package:zaibal/screens/learn_screen.dart';
 import 'package:zaibal/screens/history_screen.dart';
@@ -12,21 +13,28 @@ import 'package:zaibal/models/app_settings.dart';
 import 'package:zaibal/services/ogs_service.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
   // Trim logs in release or when verboseLogs is false
   if (kReleaseMode || !AppSettings.verboseLogs) {
     debugPrint = (String? message, {int? wrapWidth}) {};
   }
-  runApp(const ZaibalApp());
+
+  // Pre-compile the radial-gradient + shadow shaders used by stones so the
+  // first stone placement doesn't drop a frame. No-op on Impeller.
+  PaintingBinding.shaderWarmUp = const StoneShaderWarmUp();
+
+  runApp(const GokoApp());
 }
 
-class ZaibalApp extends StatefulWidget {
-  const ZaibalApp({super.key});
+class GokoApp extends StatefulWidget {
+  const GokoApp({super.key});
 
   @override
-  State<ZaibalApp> createState() => _ZaibalAppState();
+  State<GokoApp> createState() => _GokoAppState();
 }
 
-class _ZaibalAppState extends State<ZaibalApp> {
+class _GokoAppState extends State<GokoApp> {
   bool _isDarkTheme = false;
 
   void toggleTheme() {
@@ -46,7 +54,7 @@ class _ZaibalAppState extends State<ZaibalApp> {
     return ChangeNotifierProvider(
       create: (_) => OgsService(),
       child: MaterialApp(
-        title: 'Zaibal',
+        title: 'GOKO',
         theme: GoTheme.light,
         darkTheme: GoTheme.dark,
         themeMode: _isDarkTheme ? ThemeMode.dark : ThemeMode.light,
