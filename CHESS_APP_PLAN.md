@@ -8,7 +8,7 @@
 - **File:** `lib/models/game.dart` (the legacy, non-optimised version)
 - **Line 15–20:** `void playTurn(int i, int j)` — returns nothing.
 - **Usage in screen (`game_board_screen.dart` line 30):** `final success = _game.playTurn(i, j)` — this relies on a `bool` return value that only exists in `optimized_game.dart`.
-- **Impact:** If the project is ever switched back to the old `Game` class the condition `if (success)` silently evaluates to `true` for every tap (Dart treats `null` as falsy, but the old method returns `void`, which would be a compile error in sound null-safety mode — so this dual-class situation is a time bomb).
+- **Impact:** Assigning a `void`-returning function to a `bool` variable is a **compile-time error** in Dart with sound null-safety. The project only compiles today because `game_board_screen.dart` imports `optimized_game.dart` (which correctly returns `bool`). If that import were accidentally changed back to the legacy `game.dart`, the build would fail immediately — making this dual-class situation a maintenance hazard.
 
 #### Ko-Rule Revert Bug (`board.dart`)
 - **File:** `lib/models/board.dart`, lines 64–71.
@@ -868,11 +868,10 @@ export const metadata: Metadata = {
 };
 ```
 
-8. Create `next.config.ts` (final version):
-```ts
-import type { NextConfig } from 'next';
-
-const nextConfig: NextConfig = {
+8. Create `next.config.js` (final version):
+```js
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   async headers() {
     return [
       {
@@ -890,7 +889,7 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;
 ```
 
 9. Create `README.md`:
