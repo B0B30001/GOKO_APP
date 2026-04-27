@@ -3,7 +3,11 @@
     "allow": [
       "Bash(dart format *)",
       "Bash(flutter analyze *)",
-      "Bash(flutter test *)"
+      "Bash(flutter test *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(git remote *)"
     ]
   }
 }
