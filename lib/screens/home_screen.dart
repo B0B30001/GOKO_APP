@@ -8,7 +8,6 @@ import '../services/ogs_service.dart';
 import './game_board_screen.dart';
 import './online/online_lobby_screen.dart';
 import '../services/ai/go_ai_service.dart';
-import './board_comparison_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final Function onThemeToggle;
@@ -27,36 +26,7 @@ class HomeScreen extends StatelessWidget {
                   floating: true,
                   pinned: true,
                   expandedHeight: 180,
-                  actions: [
-                    // Developer menu with board comparison
-                    PopupMenuButton<String>(
-                      icon: const Icon(Icons.bug_report),
-                      tooltip: 'Developer Tools',
-                      onSelected: (value) {
-                        if (value == 'board_comparison') {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const BoardComparisonScreen(),
-                            ),
-                          );
-                        }
-                      },
-                      itemBuilder: (context) => [
-                        const PopupMenuItem(
-                          value: 'board_comparison',
-                          child: Row(
-                            children: [
-                              Icon(Icons.speed),
-                              SizedBox(width: 8),
-                              Text('Board Performance Test'),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+
                   flexibleSpace: FlexibleSpaceBar(
                     titlePadding: const EdgeInsets.only(left: 16, bottom: 12),
                     title: const Text(''), // No title per request
@@ -482,9 +452,7 @@ class HomeScreen extends StatelessWidget {
           Navigator.pop(context);
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (_) => GameBoardScreen(boardSize: size),
-            ),
+            MaterialPageRoute(builder: (_) => GameBoardScreen(boardSize: size)),
           );
         }
       },

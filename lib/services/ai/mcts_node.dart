@@ -21,7 +21,7 @@ class MctsNode {
     this.move,
     Random? rng,
   }) : _untriedMoves = validMoves(board, boardSize, playerToMove)
-           ..shuffle(rng ?? Random());
+         ..shuffle(rng ?? Random());
 
   bool get isFullyExpanded => _untriedMoves.isEmpty;
   bool get isTerminal => children.isEmpty && _untriedMoves.isEmpty;
@@ -31,8 +31,9 @@ class MctsNode {
     return wins / visits + sqrt(2.0 * log(parentVisits) / visits);
   }
 
-  MctsNode selectBestChild() =>
-      children.reduce((a, b) => a.ucbScore(visits) > b.ucbScore(visits) ? a : b);
+  MctsNode selectBestChild() => children.reduce(
+    (a, b) => a.ucbScore(visits) > b.ucbScore(visits) ? a : b,
+  );
 
   MctsNode expand(Random rng) {
     final idx = _untriedMoves.removeLast();
@@ -109,12 +110,19 @@ class MctsNode {
   }
 
   // Returns a new board with the stone placed and opponent captures applied.
-  static Uint8List applyMove(Uint8List board, int size, int r, int c, int player) {
+  static Uint8List applyMove(
+    Uint8List board,
+    int size,
+    int r,
+    int c,
+    int player,
+  ) {
     final b = Uint8List.fromList(board);
     b[r * size + c] = player;
     final opp = 3 - player;
     for (final n in _adj(r, c, size)) {
-      if (b[n[0] * size + n[1]] == opp && _liberties(b, size, n[0], n[1]) == 0) {
+      if (b[n[0] * size + n[1]] == opp &&
+          _liberties(b, size, n[0], n[1]) == 0) {
         _removeGroup(b, size, n[0], n[1]);
       }
     }
@@ -122,7 +130,13 @@ class MctsNode {
   }
 
   // Mutates board in place — used in fast rollouts to avoid allocation.
-  static void applyMoveInPlace(Uint8List board, int size, int r, int c, int player) {
+  static void applyMoveInPlace(
+    Uint8List board,
+    int size,
+    int r,
+    int c,
+    int player,
+  ) {
     board[r * size + c] = player;
     final opp = 3 - player;
     for (final n in _adj(r, c, size)) {

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/puzzle.dart';
 import '../models/optimized_game.dart';
 import '../widgets/fast_game_board.dart';
 import '../models/app_settings.dart';
+import '../services/subscription_service.dart';
+import 'paywall_screen.dart';
 
 class PuzzleScreen extends StatefulWidget {
   final Puzzle puzzle;
@@ -25,11 +28,33 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
   int _moveCount = 0;
   int _mistakeCount = 0;
 
+  /// Coordinates of the last wrong move ("row,col") so the fail dialog can
+  /// show a targeted explanation when one exists.
+  String? _lastWrongMoveKey;
+
   @override
   void initState() {
     super.initState();
     _game = Game(widget.puzzle.boardSize);
     _loadPuzzlePosition();
+    if (!widget.isDrillMode) {
+      // Defer until first frame so we have a valid context for navigation.
+      WidgetsBinding.instance.addPostFrameCallback((_) => _checkPuzzleQuota());
+    }
+  }
+
+  Future<void> _checkPuzzleQuota() async {
+    if (!mounted) return;
+    final subscription = context.read<SubscriptionService>();
+    if (!subscription.canSolveAnotherPuzzle()) {
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const PaywallScreen()),
+      );
+      return;
+    }
+    await subscription.recordPuzzleAttempted();
   }
 
   void _loadPuzzlePosition() {
@@ -75,6 +100,7 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
           } else {
             // Wrong move
             _mistakeCount++;
+            _lastWrongMoveKey = '$i,$j';
             if (widget.isDrillMode) {
               // In drill mode, show quick feedback and return
               ScaffoldMessenger.of(context).showSnackBar(
@@ -85,6 +111,9 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
               );
               _resetPuzzle();
             } else {
+              // Show the user's wrong move on the board so they can see what
+              // they did before stepping back.
+              _game.board.setStone(i, j, widget.puzzle.playerColor);
               _failed = true;
               _showFailDialog();
             }
@@ -139,35 +168,82 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
   }
 
   void _showFailDialog() {
+    final targeted = _lastWrongMoveKey != null
+        ? widget.puzzle.failureReasons[_lastWrongMoveKey!]
+        : null;
+    final reason = targeted ?? widget.puzzle.hint;
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Row(
           children: const [
             Icon(Icons.close, color: Colors.red, size: 32),
             SizedBox(width: 8),
-            Text('Not Quite!'),
+            Text('Not quite'),
           ],
         ),
-        content: Text('That\'s not the right move. ${widget.puzzle.hint}'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(reason),
+            if (targeted != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                'General hint: ${widget.puzzle.hint}',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
+              ),
+            ],
+          ],
+        ),
         actions: [
-          TextButton(
+          TextButton.icon(
+            icon: const Icon(Icons.undo),
+            label: const Text('Step back'),
+            onPressed: () {
+              Navigator.pop(context);
+              _stepBack();
+            },
+          ),
+          TextButton.icon(
+            icon: const Icon(Icons.refresh),
+            label: const Text('Try again'),
             onPressed: () {
               Navigator.pop(context);
               _resetPuzzle();
             },
-            child: const Text('Try Again'),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               Navigator.pop(context); // Go back
             },
-            child: const Text('Give Up'),
+            child: const Text('Give up'),
           ),
         ],
       ),
     );
+  }
+
+  /// Reverts the most recent wrong move only, leaving previous correct moves
+  /// in place so the user can keep working from where they were.
+  void _stepBack() {
+    setState(() {
+      if (_lastWrongMoveKey != null) {
+        final parts = _lastWrongMoveKey!.split(',');
+        final r = int.parse(parts[0]);
+        final c = int.parse(parts[1]);
+        _game.board.setStone(r, c, 0);
+        _lastWrongMoveKey = null;
+      }
+      _failed = false;
+    });
   }
 
   void _resetPuzzle() {
@@ -177,6 +253,7 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
       _solved = false;
       _failed = false;
       _moveCount = 0;
+      _lastWrongMoveKey = null;
     });
   }
 

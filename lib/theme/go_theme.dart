@@ -105,4 +105,95 @@ class GoBoardTheme {
     whiteStoneColor: Colors.white,
     stoneShadowColor: Colors.black45,
   );
+
+  /// Named variants selectable from Settings.
+  static final classic = light;
+
+  static final walnut = GoBoardTheme(
+    boardColor: const Color(0xFF8B5A2B),
+    lineColor: Colors.black87,
+    textColor: Colors.black87,
+    boardGradient: [
+      const Color(0xFF8B5A2B).withValues(alpha: 0.85),
+      const Color(0xFF5C3317).withValues(alpha: 0.45),
+    ],
+    blackStoneColor: Colors.black,
+    whiteStoneColor: Colors.white,
+    stoneShadowColor: Colors.black45,
+  );
+
+  static final slate = GoBoardTheme(
+    boardColor: const Color(0xFF607D8B),
+    lineColor: Colors.black87,
+    textColor: Colors.black87,
+    boardGradient: [
+      const Color(0xFF607D8B).withValues(alpha: 0.85),
+      const Color(0xFF37474F).withValues(alpha: 0.45),
+    ],
+    blackStoneColor: Colors.black,
+    whiteStoneColor: Colors.white,
+    stoneShadowColor: Colors.black54,
+  );
+
+  static final night = dark;
+
+  static GoBoardTheme byId(String id) {
+    switch (id) {
+      case 'walnut':
+        return walnut;
+      case 'slate':
+        return slate;
+      case 'night':
+        return night;
+      case 'classic':
+      default:
+        return classic;
+    }
+  }
+}
+
+/// Background appearance variants for app surfaces (scaffold/canvas behind the
+/// board). Resolved by id from settings.
+class GoBackgroundTheme {
+  final Color scaffoldColor;
+  final List<Color> gradient;
+
+  const GoBackgroundTheme({
+    required this.scaffoldColor,
+    required this.gradient,
+  });
+
+  static const standard = GoBackgroundTheme(
+    scaffoldColor: Color(0xFF1A1A1A),
+    gradient: [Color(0xFF1A1A1A), Color(0xFF111111)],
+  );
+
+  static const minimal = GoBackgroundTheme(
+    scaffoldColor: Color(0xFF202020),
+    gradient: [Color(0xFF202020), Color(0xFF202020)],
+  );
+
+  static const warm = GoBackgroundTheme(
+    scaffoldColor: Color(0xFF2A1F18),
+    gradient: [Color(0xFF2A1F18), Color(0xFF1A130E)],
+  );
+
+  static const cool = GoBackgroundTheme(
+    scaffoldColor: Color(0xFF15202B),
+    gradient: [Color(0xFF15202B), Color(0xFF0E141B)],
+  );
+
+  static GoBackgroundTheme byId(String id) {
+    switch (id) {
+      case 'minimal':
+        return minimal;
+      case 'warm':
+        return warm;
+      case 'cool':
+        return cool;
+      case 'standard':
+      default:
+        return standard;
+    }
+  }
 }

@@ -22,6 +22,12 @@ class OnlineGameScreen extends StatefulWidget {
 class _OnlineGameScreenState extends State<OnlineGameScreen> {
   GameConnection? _gameConnection;
   List<List<int>>? _board;
+
+  /// Bumped on every mutation of [_board] so the child board widget rebuilds
+  /// even if Flutter sees the same outer List reference. Without this, in-place
+  /// mutations from move/capture events do not trigger a re-render and
+  /// captured stones stay visible until another full state refresh.
+  int _boardVersion = 0;
   String _blackPlayer = 'Black';
   String _whitePlayer = 'White';
   int _moveNumber = 0;
@@ -104,6 +110,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
         _board = [
           for (var row in data.board) [...row],
         ];
+        _boardVersion++;
 
         // Sync validation board for client-side rule checking
         if (_board != null && _board!.isNotEmpty) {
@@ -270,6 +277,15 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
                 // Record state for ko detection
                 _validationBoard!.recordCurrentState();
               }
+
+              // Replace _board with a fresh deep copy so the child board
+              // widget sees a new reference and re-renders. Without this,
+              // in-place mutations above do not trigger FastGameBoard to
+              // rebuild and captured stones remain visible.
+              _board = [
+                for (final row in _board!) [...row],
+              ];
+              _boardVersion++;
             } else {
               debugPrint(
                 '⚠️ Cell already occupied locally at (${move.row}, ${move.col}); skipping provisional overwrite',
@@ -412,6 +428,10 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
             _provCol! < _board![0].length) {
           // Only revert if the board still shows our color (optimistic placement)
           _board![_provRow!][_provCol!] = 0;
+          _board = [
+            for (final row in _board!) [...row],
+          ];
+          _boardVersion++;
         }
         _provRow = null;
         _provCol = null;
@@ -518,6 +538,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
                               children: [
                                 // Base board
                                 FastGameBoard(
+                                  key: ValueKey<int>(_boardVersion),
                                   board: _board!,
                                   onTap: _onTapBoard,
                                   isDarkTheme: isDarkTheme,
@@ -1002,6 +1023,13 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
             }
           }
         }
+
+        // Replace _board reference and bump version so the child board widget
+        // re-renders with the optimistic placement and any captures.
+        _board = [
+          for (final row in _board!) [...row],
+        ];
+        _boardVersion++;
       }
     });
 
@@ -1023,6 +1051,10 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
               _provRow! < _board!.length &&
               _provCol! < _board![0].length) {
             _board![_provRow!][_provCol!] = 0;
+            _board = [
+              for (final row in _board!) [...row],
+            ];
+            _boardVersion++;
           }
           _provRow = null;
           _provCol = null;

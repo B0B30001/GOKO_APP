@@ -1,8 +1,88 @@
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+/// Identifiers for board appearance variants. Resolved to GoBoardTheme via
+/// GoBoardTheme.byId(...).
+class BoardThemeId {
+  static const classic = 'classic';
+  static const walnut = 'walnut';
+  static const slate = 'slate';
+  static const night = 'night';
+
+  static const all = <String>[classic, walnut, slate, night];
+}
+
+/// Identifiers for app background appearance variants.
+class BackgroundThemeId {
+  static const standard = 'standard';
+  static const minimal = 'minimal';
+  static const warm = 'warm';
+  static const cool = 'cool';
+
+  static const all = <String>[standard, minimal, warm, cool];
+}
+
+/// Global, app-wide settings.
+///
+/// Static fields preserve compatibility with existing call sites
+/// (e.g. `AppSettings.showCoordinates`). [revision] is bumped when any field
+/// changes so widgets that need to react to settings changes can rebuild via a
+/// `ValueListenableBuilder`. Persistence is via shared_preferences.
 class AppSettings {
-  // Global, simple app settings without external dependencies
+  // ----- Existing fields -----
   static bool showCoordinates = false;
-  // When true, the Game screen forces light theme regardless of global theme
   static bool forceLightThemeInGame = true;
-  // Verbose logging toggle (console). Set to true only when diagnosing issues.
   static bool verboseLogs = false;
+
+  // ----- New fields -----
+  static ThemeMode themeMode = ThemeMode.dark;
+  static String boardThemeId = BoardThemeId.classic;
+  static String backgroundThemeId = BackgroundThemeId.standard;
+
+  /// Bumped on every save so listeners can rebuild.
+  static final ValueNotifier<int> revision = ValueNotifier<int>(0);
+
+  static const _kShowCoordinates = 'showCoordinates';
+  static const _kForceLightInGame = 'forceLightThemeInGame';
+  static const _kThemeMode = 'themeMode';
+  static const _kBoardThemeId = 'boardThemeId';
+  static const _kBackgroundThemeId = 'backgroundThemeId';
+
+  /// Reads persisted values into the static fields. Must be called once at
+  /// startup before runApp().
+  static Future<void> load() async {
+    final prefs = await SharedPreferences.getInstance();
+    showCoordinates = prefs.getBool(_kShowCoordinates) ?? showCoordinates;
+    forceLightThemeInGame =
+        prefs.getBool(_kForceLightInGame) ?? forceLightThemeInGame;
+    themeMode = _decodeThemeMode(prefs.getString(_kThemeMode)) ?? themeMode;
+    boardThemeId = prefs.getString(_kBoardThemeId) ?? boardThemeId;
+    backgroundThemeId =
+        prefs.getString(_kBackgroundThemeId) ?? backgroundThemeId;
+    revision.value++;
+  }
+
+  /// Persists all values and notifies listeners.
+  static Future<void> save() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_kShowCoordinates, showCoordinates);
+    await prefs.setBool(_kForceLightInGame, forceLightThemeInGame);
+    await prefs.setString(_kThemeMode, _encodeThemeMode(themeMode));
+    await prefs.setString(_kBoardThemeId, boardThemeId);
+    await prefs.setString(_kBackgroundThemeId, backgroundThemeId);
+    revision.value++;
+  }
+
+  static String _encodeThemeMode(ThemeMode m) => switch (m) {
+    ThemeMode.system => 'system',
+    ThemeMode.light => 'light',
+    ThemeMode.dark => 'dark',
+  };
+
+  static ThemeMode? _decodeThemeMode(String? s) => switch (s) {
+    'system' => ThemeMode.system,
+    'light' => ThemeMode.light,
+    'dark' => ThemeMode.dark,
+    _ => null,
+  };
 }

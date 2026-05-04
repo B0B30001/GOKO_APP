@@ -20,17 +20,15 @@ class GoAIService {
     required int player,
     AIDifficulty difficulty = AIDifficulty.medium,
   }) {
-    return compute(
-      _runAI,
-      [board, boardSize, player, difficulty.simulations],
-    );
+    return compute(_runAI, [board, boardSize, player, difficulty.simulations]);
   }
 }
 
 // Top-level function required by compute().
 List<int>? _runAI(List<dynamic> args) {
-  final board =
-      (args[0] as List).map((row) => (row as List).cast<int>()).toList();
+  final board = (args[0] as List)
+      .map((row) => (row as List).cast<int>())
+      .toList();
   final boardSize = args[1] as int;
   final player = args[2] as int;
   final simulations = args[3] as int;

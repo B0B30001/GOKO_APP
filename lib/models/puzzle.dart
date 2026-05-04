@@ -11,6 +11,11 @@ class Puzzle {
   final String hint;
   final String explanation; // Explains why the solution works
 
+  /// Optional per-mistake explanations. Keyed by "row,col" of the wrong move.
+  /// When the user plays a wrong move that has a matching entry, the failure
+  /// dialog shows this targeted reason instead of the generic [hint].
+  final Map<String, String> failureReasons;
+
   Puzzle({
     required this.id,
     required this.title,
@@ -23,6 +28,7 @@ class Puzzle {
     required this.solution,
     required this.hint,
     this.explanation = '',
+    this.failureReasons = const {},
   });
 }
 
@@ -74,6 +80,12 @@ class PuzzleData {
       playerColor: 1,
       solution: [PuzzleMove(3, 1, 1)],
       hint: 'Look for the white stone with only one liberty remaining',
+      failureReasons: {
+        '3,4':
+            'That fills your own stone\'s liberty without removing white\'s last one. Look at white\'s remaining liberty instead.',
+        '4,2':
+            'White still has a liberty at (3,1) — capture from there directly.',
+      },
       explanation:
           '''The white stone at (3,2) has only one liberty at (3,1). Playing there captures it immediately.
 

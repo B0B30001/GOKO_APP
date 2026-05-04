@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
-import 'debug_menu_screen.dart';
+import 'package:zaibal/models/app_settings.dart';
+import 'package:zaibal/theme/go_theme.dart';
 
 class SettingsScreen extends StatefulWidget {
   final bool isDark;
@@ -9,6 +9,10 @@ class SettingsScreen extends StatefulWidget {
   final ValueChanged<bool> onCoordinatesChanged;
   final bool forceLightGame;
   final ValueChanged<bool> onForceLightGameChanged;
+  final String boardThemeId;
+  final ValueChanged<String> onBoardThemeChanged;
+  final String backgroundThemeId;
+  final ValueChanged<String> onBackgroundThemeChanged;
 
   const SettingsScreen({
     required this.isDark,
@@ -17,11 +21,15 @@ class SettingsScreen extends StatefulWidget {
     required this.onCoordinatesChanged,
     required this.forceLightGame,
     required this.onForceLightGameChanged,
+    required this.boardThemeId,
+    required this.onBoardThemeChanged,
+    required this.backgroundThemeId,
+    required this.onBackgroundThemeChanged,
     super.key,
   });
 
   @override
-  _SettingsScreenState createState() => _SettingsScreenState();
+  State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
@@ -31,12 +39,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String _selectedLanguage = 'English';
   bool _showCoordinates = false;
   bool _forceLightGame = true;
+  late String _boardThemeId;
+  late String _backgroundThemeId;
+  late bool _isDark;
 
   @override
   void initState() {
     super.initState();
     _showCoordinates = widget.showCoordinates;
     _forceLightGame = widget.forceLightGame;
+    _boardThemeId = widget.boardThemeId;
+    _backgroundThemeId = widget.backgroundThemeId;
+    _isDark = widget.isDark;
   }
 
   @override
@@ -45,6 +59,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
       appBar: AppBar(title: const Text('Settings'), centerTitle: true),
       body: ListView(
         children: [
+          _buildSection('Appearance', [
+            SwitchListTile(
+              title: const Text('Dark mode'),
+              subtitle: const Text('Switch between light and dark themes'),
+              value: _isDark,
+              onChanged: (v) {
+                setState(() => _isDark = v);
+                widget.onThemeChanged(v);
+              },
+            ),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: Text('Board theme'),
+            ),
+            _buildBoardThemePicker(),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: Text('Background theme'),
+            ),
+            _buildBackgroundThemePicker(),
+          ]),
           _buildSection('General', [
             SwitchListTile(
               title: const Text('Show board coordinates'),
@@ -129,24 +164,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
             ),
           ]),
-          // Debug menu - only show in debug mode
-          if (kDebugMode)
-            _buildSection('Developer', [
-              ListTile(
-                title: const Text('Debug Menu'),
-                subtitle: const Text('DTD connection & debug tools'),
-                leading: const Icon(Icons.bug_report),
-                trailing: const Icon(Icons.arrow_forward_ios),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const DebugMenuScreen(),
-                    ),
-                  );
-                },
-              ),
-            ]),
         ],
       ),
     );
@@ -190,6 +207,70 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  Widget _buildBoardThemePicker() {
+    return SizedBox(
+      height: 96,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        children: BoardThemeId.all.map((id) {
+          final theme = GoBoardTheme.byId(id);
+          final selected = id == _boardThemeId;
+          return _ThemeSwatch(
+            label: _boardThemeLabel(id),
+            selected: selected,
+            primary: theme.boardColor,
+            secondary: theme.lineColor,
+            onTap: () {
+              setState(() => _boardThemeId = id);
+              widget.onBoardThemeChanged(id);
+            },
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildBackgroundThemePicker() {
+    return SizedBox(
+      height: 96,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        children: BackgroundThemeId.all.map((id) {
+          final theme = GoBackgroundTheme.byId(id);
+          final selected = id == _backgroundThemeId;
+          return _ThemeSwatch(
+            label: _backgroundThemeLabel(id),
+            selected: selected,
+            primary: theme.scaffoldColor,
+            secondary: theme.gradient.last,
+            onTap: () {
+              setState(() => _backgroundThemeId = id);
+              widget.onBackgroundThemeChanged(id);
+            },
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  String _boardThemeLabel(String id) => switch (id) {
+    BoardThemeId.classic => 'Classic',
+    BoardThemeId.walnut => 'Walnut',
+    BoardThemeId.slate => 'Slate',
+    BoardThemeId.night => 'Night',
+    _ => id,
+  };
+
+  String _backgroundThemeLabel(String id) => switch (id) {
+    BackgroundThemeId.standard => 'Standard',
+    BackgroundThemeId.minimal => 'Minimal',
+    BackgroundThemeId.warm => 'Warm',
+    BackgroundThemeId.cool => 'Cool',
+    _ => id,
+  };
+
   Widget _buildLanguageOption(String language) {
     return ListTile(
       title: Text(language),
@@ -200,6 +281,57 @@ class _SettingsScreenState extends State<SettingsScreen> {
         setState(() => _selectedLanguage = language);
         Navigator.pop(context);
       },
+    );
+  }
+}
+
+class _ThemeSwatch extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final Color primary;
+  final Color secondary;
+  final VoidCallback onTap;
+
+  const _ThemeSwatch({
+    required this.label,
+    required this.selected,
+    required this.primary,
+    required this.secondary,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+      child: GestureDetector(
+        onTap: onTap,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 64,
+              height: 56,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [primary, secondary],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: selected
+                      ? Theme.of(context).colorScheme.primary
+                      : Colors.transparent,
+                  width: 3,
+                ),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(label, style: const TextStyle(fontSize: 12)),
+          ],
+        ),
+      ),
     );
   }
 }

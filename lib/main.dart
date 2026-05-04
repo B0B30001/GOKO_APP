@@ -11,9 +11,16 @@ import 'package:zaibal/screens/topic_detail_screen.dart';
 import 'package:zaibal/theme/go_theme.dart';
 import 'package:zaibal/models/app_settings.dart';
 import 'package:zaibal/services/ogs_service.dart';
+import 'package:zaibal/services/user_service.dart';
+import 'package:zaibal/services/subscription_service.dart';
+import 'package:zaibal/services/match_history_service.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Load persisted settings before runApp so the first frame uses the user's
+  // saved theme, board variant, etc.
+  await AppSettings.load();
 
   // Trim logs in release or when verboseLogs is false
   if (kReleaseMode || !AppSettings.verboseLogs) {
@@ -24,61 +31,113 @@ void main() {
   // first stone placement doesn't drop a frame. No-op on Impeller.
   PaintingBinding.shaderWarmUp = const StoneShaderWarmUp();
 
-  runApp(const GokoApp());
+  final userService = UserService();
+  final subscriptionService = SubscriptionService();
+  final matchHistoryService = MatchHistoryService();
+
+  await Future.wait([
+    userService.load(),
+    subscriptionService.load(),
+    matchHistoryService.load(),
+  ]);
+
+  runApp(
+    GokoApp(
+      userService: userService,
+      subscriptionService: subscriptionService,
+      matchHistoryService: matchHistoryService,
+    ),
+  );
 }
 
 class GokoApp extends StatefulWidget {
-  const GokoApp({super.key});
+  final UserService userService;
+  final SubscriptionService subscriptionService;
+  final MatchHistoryService matchHistoryService;
+
+  const GokoApp({
+    super.key,
+    required this.userService,
+    required this.subscriptionService,
+    required this.matchHistoryService,
+  });
 
   @override
   State<GokoApp> createState() => _GokoAppState();
 }
 
 class _GokoAppState extends State<GokoApp> {
-  bool _isDarkTheme = false;
-
-  void toggleTheme() {
+  void _setTheme(bool isDark) {
     setState(() {
-      _isDarkTheme = !_isDarkTheme;
+      AppSettings.themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
     });
+    AppSettings.save();
   }
 
-  void setTheme(bool value) {
+  void _toggleTheme() {
+    _setTheme(AppSettings.themeMode != ThemeMode.dark);
+  }
+
+  void _onCoordinatesChanged(bool v) {
     setState(() {
-      _isDarkTheme = value;
+      AppSettings.showCoordinates = v;
     });
+    AppSettings.save();
+  }
+
+  void _onForceLightGameChanged(bool v) {
+    setState(() {
+      AppSettings.forceLightThemeInGame = v;
+    });
+    AppSettings.save();
+  }
+
+  void _onBoardThemeChanged(String id) {
+    setState(() {
+      AppSettings.boardThemeId = id;
+    });
+    AppSettings.save();
+  }
+
+  void _onBackgroundThemeChanged(String id) {
+    setState(() {
+      AppSettings.backgroundThemeId = id;
+    });
+    AppSettings.save();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => OgsService(),
+    final isDark = AppSettings.themeMode == ThemeMode.dark;
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => OgsService()),
+        ChangeNotifierProvider.value(value: widget.userService),
+        ChangeNotifierProvider.value(value: widget.subscriptionService),
+        ChangeNotifierProvider.value(value: widget.matchHistoryService),
+      ],
       child: MaterialApp(
         title: 'GOKO',
         theme: GoTheme.light,
         darkTheme: GoTheme.dark,
-        themeMode: _isDarkTheme ? ThemeMode.dark : ThemeMode.light,
+        themeMode: AppSettings.themeMode,
         initialRoute: '/home',
         routes: {
-          '/home': (context) => HomeScreen(onThemeToggle: toggleTheme),
+          '/home': (context) => HomeScreen(onThemeToggle: _toggleTheme),
           '/learn': (context) => const LearnScreen(),
           '/history': (context) => const HistoryScreen(),
           '/profile': (context) => const ProfileScreen(),
           '/settings': (context) => SettingsScreen(
-            isDark: _isDarkTheme,
-            onThemeChanged: setTheme,
+            isDark: isDark,
+            onThemeChanged: _setTheme,
             showCoordinates: AppSettings.showCoordinates,
-            onCoordinatesChanged: (v) {
-              setState(() {
-                AppSettings.showCoordinates = v;
-              });
-            },
+            onCoordinatesChanged: _onCoordinatesChanged,
             forceLightGame: AppSettings.forceLightThemeInGame,
-            onForceLightGameChanged: (v) {
-              setState(() {
-                AppSettings.forceLightThemeInGame = v;
-              });
-            },
+            onForceLightGameChanged: _onForceLightGameChanged,
+            boardThemeId: AppSettings.boardThemeId,
+            onBoardThemeChanged: _onBoardThemeChanged,
+            backgroundThemeId: AppSettings.backgroundThemeId,
+            onBackgroundThemeChanged: _onBackgroundThemeChanged,
           ),
           '/topic': (context) => const TopicDetailScreen(),
         },
