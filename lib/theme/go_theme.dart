@@ -1,27 +1,107 @@
 import 'package:flutter/material.dart';
 
+/// Top-level visual presets the user can switch between in Settings.
+/// Each preset bundles a brightness, a scaffold/surface palette, and an
+/// accent color. The board (stones, wood, lines) is themed separately via
+/// [GoBoardTheme] so users can mix-and-match.
+enum ThemePreset {
+  /// Chess.com-style premium dark navy. New default — deep blue background
+  /// with a vivid blue accent for active states / primary buttons.
+  darkBlue,
+
+  /// True black for OLED screens. Same blue accent.
+  oledBlack,
+
+  /// Warm wood tones. Light brightness. Browns and tans.
+  classicWood,
+
+  /// Clean light mode with deep blue accents.
+  lightMode,
+}
+
+class ThemePresetIds {
+  static const darkBlue = 'darkBlue';
+  static const oledBlack = 'oledBlack';
+  static const classicWood = 'classicWood';
+  static const lightMode = 'lightMode';
+
+  static const all = <String>[darkBlue, oledBlack, classicWood, lightMode];
+
+  static ThemePreset toEnum(String id) => switch (id) {
+    oledBlack => ThemePreset.oledBlack,
+    classicWood => ThemePreset.classicWood,
+    lightMode => ThemePreset.lightMode,
+    _ => ThemePreset.darkBlue,
+  };
+
+  static String fromEnum(ThemePreset p) => switch (p) {
+    ThemePreset.darkBlue => darkBlue,
+    ThemePreset.oledBlack => oledBlack,
+    ThemePreset.classicWood => classicWood,
+    ThemePreset.lightMode => lightMode,
+  };
+
+  /// Display name shown in the Settings preset picker.
+  static String displayName(ThemePreset p) => switch (p) {
+    ThemePreset.darkBlue => 'Dark Blue',
+    ThemePreset.oledBlack => 'OLED Black',
+    ThemePreset.classicWood => 'Classic Wood',
+    ThemePreset.lightMode => 'Light Mode',
+  };
+}
+
 class GoTheme {
-  static ThemeData get light {
-    final base = ThemeData.light();
-    return base.copyWith(
-      brightness: Brightness.light,
-      // Light, friendly blue palette
-      primaryColor: const Color(0xFF42A5F5), // Blue 400
-      scaffoldBackgroundColor: Colors.white,
+  /// Builds a [ThemeData] for the given [preset]. Replaces the older
+  /// static `light` / `dark` getters; those remain for back-compat below.
+  static ThemeData fromPreset(ThemePreset preset) {
+    switch (preset) {
+      case ThemePreset.darkBlue:
+        return _buildDarkBlue();
+      case ThemePreset.oledBlack:
+        return _buildOledBlack();
+      case ThemePreset.classicWood:
+        return _buildClassicWood();
+      case ThemePreset.lightMode:
+        return _buildLightMode();
+    }
+  }
+
+  /// Backward-compatible default light theme — alias of Light Mode preset.
+  static ThemeData get light => _buildLightMode();
+
+  /// Backward-compatible default dark theme — alias of Dark Blue preset.
+  static ThemeData get dark => _buildDarkBlue();
+
+  // ----- Preset builders -----
+
+  static ThemeData _buildDarkBlue() {
+    const scaffold = Color(0xFF0E1525);
+    const surface = Color(0xFF16213E);
+    const primary = Color(0xFF4F8EF7);
+    return ThemeData(
+      brightness: Brightness.dark,
+      scaffoldBackgroundColor: scaffold,
+      colorScheme: const ColorScheme.dark(
+        primary: primary,
+        onPrimary: Colors.white,
+        secondary: Color(0xFF7BA8F8),
+        surface: surface,
+        onSurface: Color(0xFFE6ECF7),
+      ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFF42A5F5),
-        foregroundColor: Colors.white,
+        backgroundColor: scaffold,
+        foregroundColor: Color(0xFFE6ECF7),
         elevation: 0,
       ),
-      colorScheme: ColorScheme.light(
-        primary: const Color(0xFF42A5F5),
-        secondary: Color(0xFF90CAF9), // Blue 200
+      cardTheme: const CardThemeData(
+        color: surface,
+        elevation: 1,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF42A5F5),
+          backgroundColor: primary,
           foregroundColor: Colors.white,
-          elevation: 4,
+          elevation: 2,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -31,26 +111,108 @@ class GoTheme {
     );
   }
 
-  static ThemeData get dark {
-    final base = ThemeData.dark();
-    return base.copyWith(
+  static ThemeData _buildOledBlack() {
+    const scaffold = Color(0xFF000000);
+    const surface = Color(0xFF0E0E0E);
+    const primary = Color(0xFF4F8EF7);
+    return ThemeData(
       brightness: Brightness.dark,
-      primaryColor: const Color(0xFF2C2C2C),
-      scaffoldBackgroundColor: const Color(0xFF1A1A1A),
+      scaffoldBackgroundColor: scaffold,
+      colorScheme: const ColorScheme.dark(
+        primary: primary,
+        onPrimary: Colors.white,
+        secondary: Color(0xFF7BA8F8),
+        surface: surface,
+        onSurface: Color(0xFFE6ECF7),
+      ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFF2C2C2C),
-        foregroundColor: Colors.white,
+        backgroundColor: scaffold,
+        foregroundColor: Color(0xFFE6ECF7),
         elevation: 0,
       ),
-      colorScheme: ColorScheme.dark(
-        primary: const Color(0xFF2C2C2C),
-        secondary: Colors.grey[700]!,
+      cardTheme: const CardThemeData(
+        color: surface,
+        elevation: 0,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF2C2C2C),
+          backgroundColor: primary,
           foregroundColor: Colors.white,
-          elevation: 4,
+          elevation: 2,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+    );
+  }
+
+  static ThemeData _buildClassicWood() {
+    const scaffold = Color(0xFFF4ECDB);
+    const surface = Color(0xFFFFFFFF);
+    const primary = Color(0xFF6B4423);
+    return ThemeData(
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: scaffold,
+      colorScheme: const ColorScheme.light(
+        primary: primary,
+        onPrimary: Colors.white,
+        secondary: Color(0xFFB58A56),
+        surface: surface,
+        onSurface: Color(0xFF2A1F18),
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: primary,
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
+      cardTheme: const CardThemeData(
+        color: surface,
+        elevation: 1,
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: primary,
+          foregroundColor: Colors.white,
+          elevation: 2,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+    );
+  }
+
+  static ThemeData _buildLightMode() {
+    const scaffold = Color(0xFFFFFFFF);
+    const surface = Color(0xFFF5F7FA);
+    const primary = Color(0xFF1565C0);
+    return ThemeData(
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: scaffold,
+      colorScheme: const ColorScheme.light(
+        primary: primary,
+        onPrimary: Colors.white,
+        secondary: Color(0xFF42A5F5),
+        surface: surface,
+        onSurface: Color(0xFF0E1525),
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: primary,
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
+      cardTheme: const CardThemeData(
+        color: surface,
+        elevation: 1,
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: primary,
+          foregroundColor: Colors.white,
+          elevation: 2,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),

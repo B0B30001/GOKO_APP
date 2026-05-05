@@ -18,7 +18,12 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="GOKO - Play, learn, and improve at Go (Baduk).">
+
+  <!-- Cache busting: ensure mobile browsers always revalidate the entry HTML -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -31,6 +36,29 @@
 
   <title>GOKO</title>
   <link rel="manifest" href="manifest.json">
+
+  <script>
+    // One-shot stale-cache eviction for users on old service-worker bundles.
+    // Runs once per browser; flag is stored in localStorage so we don't keep
+    // unregistering after the new bundle is in place.
+    (function () {
+      try {
+        var EVICT_KEY = 'goko_sw_evicted_v1';
+        if (localStorage.getItem(EVICT_KEY) === '1') return;
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then(function (rs) {
+            rs.forEach(function (r) { r.unregister(); });
+          });
+        }
+        if ('caches' in window) {
+          caches.keys().then(function (ks) {
+            ks.forEach(function (k) { caches.delete(k); });
+          });
+        }
+        localStorage.setItem(EVICT_KEY, '1');
+      } catch (e) { /* best effort */ }
+    })();
+  </script>
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>

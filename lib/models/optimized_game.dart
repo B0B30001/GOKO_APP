@@ -31,17 +31,17 @@ class Game {
   }
 
   void _restoreState(_GameState state) {
-    for (var i = 0; i < boardSize; i++) {
-      for (var j = 0; j < boardSize; j++) {
-        if (board.getStone(i, j) != state.board[i][j]) {
-          board.setStone(i, j, state.board[i][j]);
-        }
-      }
-    }
+    // Single-shot snapshot restore: rebuilds Zobrist hash and resets the ko
+    // window. Doing this cell-by-cell with setStone leaves the ko cache full
+    // of hashes from the discarded timeline, so post-undo Ko checks become
+    // unreliable.
+    board.resetToSnapshot(
+      state.board,
+      capturedByBlack: state.capturedByBlack,
+      capturedByWhite: state.capturedByWhite,
+    );
     _isBlackTurn = state.isBlackTurn;
     _consecutivePasses = state.consecutivePasses;
-    board.capturedByBlack = state.capturedByBlack;
-    board.capturedByWhite = state.capturedByWhite;
     _scoreIsDirty = true;
     _cachedScore = null;
   }

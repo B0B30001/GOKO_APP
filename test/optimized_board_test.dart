@@ -78,6 +78,25 @@ void main() {
     // is not a goal — see Board._boardHashHistoryLimit. The next test pins the
     // window-eviction behavior so a future change to that constant is loud.
 
+    test('resetToSnapshot rebuilds Zobrist hash and clears ko window', () {
+      final b = Board(5);
+      // Play a few moves so the ko window has entries.
+      expect(b.placeStone(0, 0, 1), isTrue);
+      expect(b.placeStone(0, 1, 2), isTrue);
+      expect(b.placeStone(1, 0, 1), isTrue);
+
+      // Snapshot to an EMPTY board. After this, replaying any move should
+      // succeed — the previous ko entries must not block.
+      final emptyBoard = List.generate(5, (_) => List.filled(5, 0));
+      b.resetToSnapshot(emptyBoard, capturedByBlack: 0, capturedByWhite: 0);
+
+      expect(b.capturedByBlack, equals(0));
+      expect(b.capturedByWhite, equals(0));
+      // Recreating the same opening sequence must not be blocked as ko.
+      expect(b.placeStone(0, 0, 1), isTrue);
+      expect(b.placeStone(0, 1, 2), isTrue);
+    });
+
     test('positions older than the 8-move window can recur', () {
       final b = Board(9);
       // Play eight unrelated moves, alternating colors, so the empty-board hash

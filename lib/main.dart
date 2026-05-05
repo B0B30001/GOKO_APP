@@ -106,9 +106,24 @@ class _GokoAppState extends State<GokoApp> {
     AppSettings.save();
   }
 
+  void _onThemePresetChanged(String id) {
+    setState(() {
+      AppSettings.themePresetId = id;
+      // Sync ThemeMode to whatever the preset's brightness is, so the rest of
+      // Flutter (status bar, system UI overlays) stays consistent.
+      final preset = ThemePresetIds.toEnum(id);
+      final isLight = preset == ThemePreset.classicWood ||
+          preset == ThemePreset.lightMode;
+      AppSettings.themeMode = isLight ? ThemeMode.light : ThemeMode.dark;
+    });
+    AppSettings.save();
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = AppSettings.themeMode == ThemeMode.dark;
+    final preset = ThemePresetIds.toEnum(AppSettings.themePresetId);
+    final activeTheme = GoTheme.fromPreset(preset);
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => OgsService()),
@@ -118,8 +133,10 @@ class _GokoAppState extends State<GokoApp> {
       ],
       child: MaterialApp(
         title: 'GOKO',
-        theme: GoTheme.light,
-        darkTheme: GoTheme.dark,
+        // Both `theme` and `darkTheme` resolve to the user's preset; ThemeMode
+        // selects between them but we want the same preset to win regardless.
+        theme: activeTheme,
+        darkTheme: activeTheme,
         themeMode: AppSettings.themeMode,
         initialRoute: '/home',
         routes: {
@@ -138,6 +155,8 @@ class _GokoAppState extends State<GokoApp> {
             onBoardThemeChanged: _onBoardThemeChanged,
             backgroundThemeId: AppSettings.backgroundThemeId,
             onBackgroundThemeChanged: _onBackgroundThemeChanged,
+            themePresetId: AppSettings.themePresetId,
+            onThemePresetChanged: _onThemePresetChanged,
           ),
           '/topic': (context) => const TopicDetailScreen(),
         },

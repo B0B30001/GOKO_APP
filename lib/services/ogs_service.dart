@@ -22,6 +22,57 @@ class OgsService extends ChangeNotifier {
   WebSocketService get webSocketService => _wsService;
   Stream<bool> get connectionState => _wsService.connectionState;
 
+  // ----- OGS profile field accessors -----
+  // The login response stores a `user` blob with these fields. Some are only
+  // present on certain accounts (anonymous users, freshly created profiles),
+  // so all getters are nullable. The numeric `ratings.overall.rating` is the
+  // canonical Glicko-2 rating used for matchmaking.
+
+  /// OGS user id (numeric).
+  int? get userId {
+    final v = _userData?['id'];
+    return v is int ? v : (v is String ? int.tryParse(v) : null);
+  }
+
+  /// Username as shown on OGS.
+  String? get username => _userData?['username']?.toString();
+
+  /// OGS rank string (e.g. `'5k'`, `'2d'`). Comes from the `ranking` field
+  /// when present; otherwise derive via [OgsRank.fromRating] on [rating].
+  String? get rankString {
+    final r = _userData?['ranking'];
+    if (r == null) return null;
+    return r.toString();
+  }
+
+  /// Numeric Glicko-2 rating. Returns null when OGS has not provided one yet.
+  double? get rating {
+    final ratings = _userData?['ratings'];
+    if (ratings is Map) {
+      final overall = ratings['overall'];
+      if (overall is Map && overall['rating'] != null) {
+        return (overall['rating'] as num).toDouble();
+      }
+    }
+    final flat = _userData?['rating'];
+    if (flat is num) return flat.toDouble();
+    return null;
+  }
+
+  /// Avatar URL — OGS returns either a full URL or a Gravatar identifier in
+  /// the `icon` field. Returns null if neither is present.
+  String? get avatarUrl {
+    final icon = _userData?['icon'];
+    if (icon is String && icon.isNotEmpty) return icon;
+    return null;
+  }
+
+  /// Two-letter country code, lowercase.
+  String? get country => _userData?['country']?.toString();
+
+  /// True when the OGS profile is flagged as a professional player.
+  bool get isProfessional => _userData?['professional'] == true;
+
   // Simple game summary model for recent/finished games
   Future<List<GameSummary>> fetchRecentGames({int limit = 20}) async {
     if (_userData == null) return [];

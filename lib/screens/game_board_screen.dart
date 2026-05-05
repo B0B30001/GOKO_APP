@@ -8,6 +8,7 @@ import 'package:zaibal/models/app_settings.dart';
 import 'package:zaibal/widgets/fast_game_board.dart';
 import 'package:zaibal/widgets/player_panel.dart';
 import 'package:zaibal/widgets/score_estimator_bar.dart';
+import 'package:zaibal/widgets/move_history_panel.dart';
 import 'package:zaibal/services/ai/go_ai_service.dart';
 import 'package:zaibal/services/user_service.dart';
 import 'package:zaibal/services/match_history_service.dart';
@@ -177,7 +178,9 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
           children: [
             LayoutBuilder(
               builder: (context, constraints) {
-                if (constraints.maxWidth >= 900) {
+                if (constraints.maxWidth >= 1200) {
+                  return _buildExtraWideLayout(constraints);
+                } else if (constraints.maxWidth >= 720) {
                   return _buildWideLayout(constraints);
                 } else {
                   return _buildMobileLayout(constraints);
@@ -252,6 +255,51 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
           ),
           const SizedBox(width: 16),
           SizedBox(width: 320, child: _buildSidePanel()),
+        ],
+      ),
+    );
+  }
+
+  /// Two-sidebar layout for ≥1200px: board + game-info column + move history.
+  Widget _buildExtraWideLayout(BoxConstraints constraints) {
+    final isDarkTheme = _isEffectiveDark();
+    return Padding(
+      padding: const EdgeInsets.all(12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Center(
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: FastGameBoard(
+                  board: _game.board.board,
+                  onTap: _onTapBoard,
+                  isDarkTheme: isDarkTheme,
+                  showCoordinates: AppSettings.showCoordinates,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          SizedBox(width: 280, child: _buildSidePanel()),
+          const SizedBox(width: 12),
+          SizedBox(
+            width: 320,
+            child: Container(
+              decoration: BoxDecoration(
+                color: isDarkTheme
+                    ? Colors.white.withValues(alpha: 0.04)
+                    : Colors.black.withValues(alpha: 0.03),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: MoveHistoryPanel(
+                moves: _moves,
+                boardSize: widget.boardSize,
+                activeIndex: _moves.isNotEmpty ? _moves.length - 1 : null,
+              ),
+            ),
+          ),
         ],
       ),
     );

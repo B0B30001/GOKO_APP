@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../models/puzzle.dart';
 import '../models/optimized_game.dart';
 import '../widgets/fast_game_board.dart';
+import '../widgets/result_modal.dart';
 import '../models/app_settings.dart';
 import '../services/subscription_service.dart';
 import 'paywall_screen.dart';
@@ -72,98 +73,111 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
 
   void _onTapBoard(int i, int j) {
     if (_solved || _failed) return;
+    // View-only teaching puzzles have no moves — tapping does nothing.
+    if (widget.puzzle.solution.isEmpty) return;
+    if (_game.board.getStone(i, j) != 0) return;
+    if (_moveCount >= widget.puzzle.solution.length) return;
+
+    final expectedMove = widget.puzzle.solution[_moveCount];
+    final isExpectedCoord =
+        i == expectedMove.row && j == expectedMove.col;
+
+    if (!isExpectedCoord) {
+      _handleWrongMove(i, j);
+      return;
+    }
+
+    // Correct coordinate — try to place through the engine. If the engine
+    // refuses (Ko, suicide), the move is illegal even though it matches the
+    // recorded solution; treat it as a wrong move so we don't falsely solve.
+    final placed = _game.board.placeStone(i, j, widget.puzzle.playerColor);
+    if (!placed) {
+      _handleWrongMove(i, j, illegal: true);
+      return;
+    }
 
     setState(() {
-      if (_game.board.getStone(i, j) == 0) {
-        // Check if this is the correct move
-        if (_moveCount < widget.puzzle.solution.length) {
-          final expectedMove = widget.puzzle.solution[_moveCount];
+      _moveCount++;
 
-          if (i == expectedMove.row && j == expectedMove.col) {
-            // Correct move!
-            _game.board.placeStone(i, j, widget.puzzle.playerColor);
-            _moveCount++;
+      final sequenceComplete = _moveCount >= widget.puzzle.solution.length;
+      final winSatisfied =
+          widget.puzzle.winCondition.isSatisfied(_game.board.board);
 
-            // Check if puzzle is complete
-            if (_moveCount >= widget.puzzle.solution.length) {
-              _solved = true;
-              if (widget.isDrillMode) {
-                // In drill mode, immediately return result
-                Navigator.pop(context, {
-                  'solved': true,
-                  'mistakes': _mistakeCount,
-                });
-              } else {
-                _showSuccessDialog();
-              }
-            }
-          } else {
-            // Wrong move
-            _mistakeCount++;
-            _lastWrongMoveKey = '$i,$j';
-            if (widget.isDrillMode) {
-              // In drill mode, show quick feedback and return
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Wrong move! Try again.'),
-                  duration: Duration(seconds: 1),
-                ),
-              );
-              _resetPuzzle();
-            } else {
-              // Show the user's wrong move on the board so they can see what
-              // they did before stepping back.
-              _game.board.setStone(i, j, widget.puzzle.playerColor);
-              _failed = true;
-              _showFailDialog();
-            }
-          }
+      if (sequenceComplete && winSatisfied) {
+        _solved = true;
+        if (widget.isDrillMode) {
+          Navigator.pop(context, {
+            'solved': true,
+            'mistakes': _mistakeCount,
+          });
+        } else {
+          Future.delayed(const Duration(milliseconds: 350), () {
+            if (!mounted) return;
+            _showSuccessDialog();
+          });
         }
       }
     });
   }
 
+  void _handleWrongMove(int i, int j, {bool illegal = false}) {
+    setState(() {
+      _mistakeCount++;
+      _lastWrongMoveKey = '$i,$j';
+    });
+    if (widget.isDrillMode) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            illegal ? 'Illegal move (Ko / suicide).' : 'Wrong move! Try again.',
+          ),
+          duration: const Duration(milliseconds: 900),
+        ),
+      );
+      _resetPuzzle();
+      return;
+    }
+    setState(() {
+      // Only paint the wrong-move stone if it was a legal but wrong choice.
+      // Illegal moves won't go on the board anyway.
+      if (!illegal) {
+        _game.board.setStone(i, j, widget.puzzle.playerColor);
+      }
+      _failed = true;
+    });
+    Future.delayed(const Duration(milliseconds: 350), () {
+      if (!mounted) return;
+      _showFailDialog();
+    });
+  }
+
   void _showSuccessDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: Row(
-          children: const [
-            Icon(Icons.check_circle, color: Colors.green, size: 32),
-            SizedBox(width: 8),
-            Text('Puzzle Solved!'),
-          ],
+    ResultModal.show<void>(
+      context,
+      kind: ResultModalKind.success,
+      title: 'Puzzle Solved!',
+      body:
+          'Congratulations! You solved "${widget.puzzle.title}".\n'
+          'Difficulty: ${'⭐' * widget.puzzle.difficulty}',
+      actions: [
+        ResultModalAction(
+          label: 'Continue',
+          icon: Icons.arrow_forward,
+          onPressed: () {
+            Navigator.pop(context); // close dialog
+            Navigator.pop(context); // back to list
+          },
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Congratulations! You solved "${widget.puzzle.title}"'),
-            const SizedBox(height: 8),
-            Text(
-              'Difficulty: ${'⭐' * widget.puzzle.difficulty}',
-              style: const TextStyle(fontSize: 16),
-            ),
-          ],
+        ResultModalAction(
+          label: 'Try Again',
+          icon: Icons.refresh,
+          isPrimary: true,
+          onPressed: () {
+            Navigator.pop(context);
+            _resetPuzzle();
+          },
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context); // Close dialog
-              Navigator.pop(context); // Go back to puzzle list
-            },
-            child: const Text('Continue'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _resetPuzzle();
-            },
-            child: const Text('Try Again'),
-          ),
-        ],
-      ),
+      ],
     );
   }
 
@@ -172,62 +186,41 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
         ? widget.puzzle.failureReasons[_lastWrongMoveKey!]
         : null;
     final reason = targeted ?? widget.puzzle.hint;
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: Row(
-          children: const [
-            Icon(Icons.close, color: Colors.red, size: 32),
-            SizedBox(width: 8),
-            Text('Not quite'),
-          ],
+    final body = targeted != null
+        ? '$reason\n\nGeneral hint: ${widget.puzzle.hint}'
+        : reason;
+    ResultModal.show<void>(
+      context,
+      kind: ResultModalKind.failure,
+      title: 'Not quite',
+      body: body,
+      actions: [
+        ResultModalAction(
+          label: 'Step back',
+          icon: Icons.undo,
+          onPressed: () {
+            Navigator.pop(context);
+            _stepBack();
+          },
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(reason),
-            if (targeted != null) ...[
-              const SizedBox(height: 8),
-              Text(
-                'General hint: ${widget.puzzle.hint}',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.6),
-                ),
-              ),
-            ],
-          ],
+        ResultModalAction(
+          label: 'Give up',
+          icon: Icons.close,
+          onPressed: () {
+            Navigator.pop(context);
+            Navigator.pop(context);
+          },
         ),
-        actions: [
-          TextButton.icon(
-            icon: const Icon(Icons.undo),
-            label: const Text('Step back'),
-            onPressed: () {
-              Navigator.pop(context);
-              _stepBack();
-            },
-          ),
-          TextButton.icon(
-            icon: const Icon(Icons.refresh),
-            label: const Text('Try again'),
-            onPressed: () {
-              Navigator.pop(context);
-              _resetPuzzle();
-            },
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context); // Go back
-            },
-            child: const Text('Give up'),
-          ),
-        ],
-      ),
+        ResultModalAction(
+          label: 'Try again',
+          icon: Icons.refresh,
+          isPrimary: true,
+          onPressed: () {
+            Navigator.pop(context);
+            _resetPuzzle();
+          },
+        ),
+      ],
     );
   }
 
@@ -423,24 +416,38 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
                 : Colors.white,
           ),
           const SizedBox(height: 12),
-          _buildInfoCard(
-            'Moves',
-            '$_moveCount / ${widget.puzzle.solution.length}',
-            Icons.timeline,
-          ),
+          if (widget.puzzle.solution.isNotEmpty)
+            _buildInfoCard(
+              'Moves',
+              '$_moveCount / ${widget.puzzle.solution.length}',
+              Icons.timeline,
+            ),
           if (widget.puzzle.explanation.isNotEmpty) ...[
             const SizedBox(height: 12),
             _buildTheorySection(),
           ],
           const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: _showHint,
-              icon: const Icon(Icons.lightbulb_outline),
-              label: const Text('Show Hint'),
+          if (widget.puzzle.solution.isEmpty && !_solved)
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  setState(() => _solved = true);
+                  _showSuccessDialog();
+                },
+                icon: const Icon(Icons.check_circle_outline),
+                label: const Text('Mark as Learned ✓'),
+              ),
+            )
+          else
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: _showHint,
+                icon: const Icon(Icons.lightbulb_outline),
+                label: const Text('Show Hint'),
+              ),
             ),
-          ),
         ],
       ),
     );

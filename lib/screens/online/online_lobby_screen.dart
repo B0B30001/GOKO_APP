@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'dart:async';
 import '../../services/ogs_service.dart';
 import '../../services/online/active_games_repository.dart';
+import '../../utils/ogs_rank.dart';
 import 'online_game_screen.dart';
 import 'connection_test_screen.dart';
 
@@ -80,11 +81,90 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
           ? _buildNotLoggedIn()
           : Column(
               children: [
+                _buildOgsProfileHeader(ogsService),
                 _buildQuickPlaySection(ogsService),
                 const Divider(),
                 _buildActiveGamesSection(ogsService),
               ],
             ),
+    );
+  }
+
+  Widget _buildOgsProfileHeader(OgsService ogs) {
+    final username = ogs.username ?? 'OGS Player';
+    final rank = OgsRank.bestLabel(
+      rankString: ogs.rankString,
+      rating: ogs.rating,
+    );
+    final rating = ogs.rating;
+    final avatarUrl = ogs.avatarUrl;
+    final cs = Theme.of(context).colorScheme;
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: cs.primary.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: cs.primary.withValues(alpha: 0.25)),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 22,
+            backgroundColor: cs.primary.withValues(alpha: 0.25),
+            backgroundImage:
+                (avatarUrl != null && avatarUrl.isNotEmpty)
+                    ? NetworkImage(avatarUrl)
+                    : null,
+            child: (avatarUrl == null || avatarUrl.isEmpty)
+                ? Icon(Icons.person, color: cs.primary)
+                : null,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  username,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                  ),
+                ),
+                if (rating != null)
+                  Text(
+                    'Rating ${rating.toStringAsFixed(0)}',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: cs.onSurface.withValues(alpha: 0.7),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          if (rank != null)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: cs.primary,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                rank,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 

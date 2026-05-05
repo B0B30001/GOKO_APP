@@ -1,0 +1,547 @@
+[
+  {
+    "id": "liberties",
+    "title": "Liberties",
+    "summary": "Liberties are the empty points adjacent to a stone or group. Counting liberties is the foundation of every Go tactic.",
+    "category": "fundamentals",
+    "boardSize": 7,
+    "source": "Sensei's Library — Liberties (paraphrased)",
+    "steps": [
+      {
+        "title": "A single stone has 4 liberties",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 1, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "markedRow": 3,
+        "markedCol": 3,
+        "body": "A stone in the center of the board has 4 liberties: up, down, left, right. Diagonal points are NOT liberties — only orthogonal ones count."
+      },
+      {
+        "title": "Edge stones have 3 liberties",
+        "board": [
+          [0, 0, 0, 1, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "markedRow": 0,
+        "markedCol": 3,
+        "body": "On the edge, the board boundary blocks one liberty. The black stone here has 3: left, right, and down."
+      },
+      {
+        "title": "Corner stones have only 2 liberties",
+        "board": [
+          [1, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "markedRow": 0,
+        "markedCol": 0,
+        "body": "The corner stone has just 2 liberties — right and down. This is why corner stones are easier to attack but also easier to defend efficiently."
+      },
+      {
+        "title": "Connected stones share liberties",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 1, 0, 0, 0],
+          [0, 0, 0, 1, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "Two black stones connected vertically form one group with 6 liberties total. The point between them is shared, not counted twice. Larger groups can have more liberties — but they can also be captured all at once."
+      }
+    ]
+  },
+  {
+    "id": "capturing-and-atari",
+    "title": "Capturing & Atari",
+    "summary": "When a stone or group runs out of liberties it is captured and removed from the board. Atari is the warning state — one liberty left.",
+    "category": "fundamentals",
+    "boardSize": 7,
+    "source": "Sensei's Library — Atari / Capture (paraphrased)",
+    "steps": [
+      {
+        "title": "White is in atari",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 1, 0, 0, 0, 0],
+          [0, 1, 2, 1, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "The white stone has only one liberty left (the point below it). This state is called atari — the stone is one move from being captured. In friendly games, players sometimes call out 'atari' as a warning."
+      },
+      {
+        "title": "Black captures",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 1, 0, 0, 0, 0],
+          [0, 1, 0, 1, 0, 0, 0],
+          [0, 0, 1, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "markedRow": 3,
+        "markedCol": 2,
+        "body": "Black plays the last liberty. The white stone has zero liberties and is removed from the board immediately. Black's capture count goes up by 1."
+      }
+    ]
+  },
+  {
+    "id": "ko-rule",
+    "title": "The Ko Rule",
+    "summary": "Ko prevents an infinite loop of capture-and-recapture. After capturing in a ko, you must play elsewhere before you can recapture.",
+    "category": "rules",
+    "boardSize": 7,
+    "source": "Sensei's Library — Ko (paraphrased)",
+    "steps": [
+      {
+        "title": "A ko shape",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 1, 2, 0, 0, 0],
+          [0, 1, 2, 0, 2, 0, 0],
+          [0, 0, 1, 2, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "The empty point at the center is a 'ko' — whoever plays there captures the opposing stone next to it. Without a rule, the game could loop forever."
+      },
+      {
+        "title": "Black takes the ko",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 1, 2, 0, 0, 0],
+          [0, 1, 0, 1, 2, 0, 0],
+          [0, 0, 1, 2, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "markedRow": 2,
+        "markedCol": 3,
+        "body": "Black plays at the center, capturing the white stone that was at (2,2). White is NOT allowed to immediately retake this capture; they must play elsewhere first."
+      },
+      {
+        "title": "Ko threats",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 1, 2, 0, 0, 0],
+          [0, 1, 0, 1, 2, 0, 0],
+          [0, 0, 1, 2, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "Strong play in a ko involves 'ko threats' — moves elsewhere on the board that the opponent must answer. If they ignore your threat, you recapture. If they answer, you've gained a move while keeping ko alive. Whole games have been decided by ko fights."
+      }
+    ]
+  },
+  {
+    "id": "eyes-and-life",
+    "title": "Eyes and Life",
+    "summary": "A group with two separate eyes (empty interior points completely surrounded by your stones) cannot be captured. This is the most important survival concept in Go.",
+    "category": "life-death",
+    "boardSize": 7,
+    "source": "Sensei's Library — Two Eyes (paraphrased)",
+    "steps": [
+      {
+        "title": "One eye is not enough",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 1, 1, 1, 1, 0, 0],
+          [0, 1, 0, 1, 0, 0, 0],
+          [0, 1, 1, 1, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "This black group has only one eye (the empty point at (2,2)) and one outside liberty. White can fill the outside liberty, then play inside the eye, and black is captured. One eye dies."
+      },
+      {
+        "title": "Two eyes — alive forever",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 1, 1, 1, 1, 1, 0],
+          [0, 1, 0, 1, 0, 1, 0],
+          [0, 1, 1, 1, 1, 1, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "Now the group has TWO separate eyes — at (2,2) and (2,4). White cannot fill either: any white stone played in an eye has zero liberties (suicide). Two eyes = unconditional life. The proverb: 'Two eyes live, one eye dies.'"
+      }
+    ]
+  },
+  {
+    "id": "false-eyes",
+    "title": "False Eyes",
+    "summary": "Not every empty interior point is a real eye. A 'false eye' looks like an eye but collapses when its diagonal stones are captured.",
+    "category": "life-death",
+    "boardSize": 7,
+    "source": "Sensei's Library — False Eye (paraphrased)",
+    "steps": [
+      {
+        "title": "A real eye in the center",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 1, 1, 1, 0, 0],
+          [0, 0, 1, 0, 1, 0, 0],
+          [0, 0, 1, 1, 1, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "All four orthogonal AND all four diagonal points around the empty space are black. This is a real eye — it cannot be invaded."
+      },
+      {
+        "title": "A false eye on the edge",
+        "board": [
+          [1, 0, 1, 0, 0, 0, 0],
+          [0, 1, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "The empty point at (0,1) looks like an eye — both orthogonal neighbors are black. But the corner diagonal at (1,0) is empty. If white can capture stones around the diagonal, the 'eye' falls apart. False eyes are why edge and corner shapes need extra attention."
+      },
+      {
+        "title": "The diagonal rule",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "The shorthand: for an interior eye, you usually need 3 of the 4 diagonals to be your color (all 4 in the corner; 2 of 2 on the edge). If too many diagonals are missing or the opponent's, you have a false eye and should treat it as if it were filled."
+      }
+    ]
+  },
+  {
+    "id": "ladders",
+    "title": "Ladders (Shicho)",
+    "summary": "A ladder is a sequence of moves that chases a stone in a zigzag path toward the edge. Master this basic capturing technique.",
+    "category": "fundamentals",
+    "boardSize": 7,
+    "source": "Sensei's Library — Ladder (paraphrased)",
+    "steps": [
+      {
+        "title": "What is a ladder?",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 2, 0, 0, 0],
+          [0, 0, 1, 1, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "A ladder (shicho) traps a stone by putting it in atari repeatedly. Each escape attempt leads to another atari. White at (2,3) is in atari — if White runs, Black gives atari again diagonally."
+      },
+      {
+        "title": "The zigzag chase",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 1, 0, 0],
+          [0, 0, 0, 1, 2, 0, 0],
+          [0, 0, 1, 2, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "White tried to escape and Black gave atari again. The chase creates a diagonal zigzag pattern. Black stays one step ahead each time."
+      },
+      {
+        "title": "The edge is the wall",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 1, 2, 0, 0, 0, 0],
+          [1, 2, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "When the ladder reaches the edge of the board, White runs out of space to escape. Black captures the entire chain. Always read whether the ladder works before starting it."
+      },
+      {
+        "title": "Ladder breakers",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 2, 0, 0, 0],
+          [0, 0, 0, 0, 2, 0, 0],
+          [0, 0, 1, 2, 0, 0, 0],
+          [0, 1, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "A 'ladder breaker' is a White stone placed in the path of the ladder. When the ladder reaches it, White suddenly has two liberties and escapes. Always check for ladder breakers before committing!"
+      },
+      {
+        "title": "Read before you play",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 2, 0, 0, 0],
+          [0, 0, 1, 1, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "Before starting a ladder, mentally trace the full path to the edge. If a friendly stone sits in the ladder's path — ladder breaker! — don't start it. Beginners who play ladders blindly often lose stones."
+      }
+    ]
+  },
+  {
+    "id": "atari_escape",
+    "title": "Atari & Escape",
+    "summary": "Atari means your group has only one liberty left. Learn to recognise and respond to atari threats — both giving and escaping them.",
+    "category": "fundamentals",
+    "boardSize": 7,
+    "source": "Sensei's Library — Atari (paraphrased)",
+    "steps": [
+      {
+        "title": "What is atari?",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 1, 0, 0, 0],
+          [0, 0, 1, 2, 1, 0, 0],
+          [0, 0, 0, 1, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "White at (3,3) has four Black stones around it — only one liberty remains above at (2,3). This is atari: one move away from capture. In Japanese Go, the attacker says 'atari' to warn the opponent."
+      },
+      {
+        "title": "Escaping atari — extend",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 1, 0, 0, 0, 0],
+          [0, 1, 2, 1, 0, 0, 0],
+          [0, 0, 1, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "When in atari, escape by extending (running) to a point with more liberties. White at (3,2) is in atari — playing at (3,3) extends the group and gains new liberties to the right."
+      },
+      {
+        "title": "Escaping atari — capture the attacker",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 1, 0, 0, 0],
+          [0, 0, 2, 1, 2, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "Another escape: if the attacking stone is isolated, put it in atari instead! White plays at (4,3), reducing Black(3,3) to atari. If Black doesn't respond, White captures. This counter-attack is called a 'snapback' set-up."
+      },
+      {
+        "title": "Atari is a warning, not a capture",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 1, 0, 0, 0],
+          [0, 0, 1, 2, 1, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "Remember: atari is not capture — it's one move away from capture. The group still has exactly one liberty. Always respond to atari unless you have a deliberate reason not to (e.g., a ko threat or a sacrifice)."
+      }
+    ]
+  },
+  {
+    "id": "connecting_stones",
+    "title": "Connecting Stones",
+    "summary": "Connected stones share liberties and are much harder to capture. Learn the key connection shapes: solid, diagonal, one-point jump, knight's move.",
+    "category": "fundamentals",
+    "boardSize": 7,
+    "source": "Sensei's Library — Connection (paraphrased)",
+    "steps": [
+      {
+        "title": "Solid connection",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 1, 1, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "The simplest connection: two stones sharing a side. Black at (3,2) and (3,3) are solidly connected — they count as one group with shared liberties. An opponent cannot cut between them."
+      },
+      {
+        "title": "Tiger's mouth (hanging connection)",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 1, 0, 1, 0, 0],
+          [0, 0, 0, 1, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "Three stones forming a 'mouth' shape. Any opponent stone played inside would be captured immediately (self-atari). This makes the connection unbreakable. It is called tobi in Japanese."
+      },
+      {
+        "title": "Bamboo joint",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 1, 0, 1, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 1, 0, 1, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "Four stones in a 2×2-with-gaps pattern. The two empty interior points mean an opponent can never cut because playing on either point causes immediate capture. Bamboo joints are very common in real games."
+      },
+      {
+        "title": "One-point jump (tobi)",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 1, 0, 1, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "Two stones with one empty point between them. This is NOT solidly connected — an opponent can play the middle point to cut. However, the one-point jump is fast and efficient; a cut can often be handled tactically."
+      }
+    ]
+  },
+  {
+    "id": "territory_basics",
+    "title": "Territory Basics",
+    "summary": "Go is ultimately about territory — empty points enclosed by your stones. Learn how territory is formed, counted, and contested.",
+    "category": "strategy",
+    "boardSize": 7,
+    "source": "Sensei's Library — Territory (paraphrased)",
+    "steps": [
+      {
+        "title": "What counts as territory?",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 1, 1, 1, 1, 0, 0],
+          [0, 1, 0, 0, 1, 0, 0],
+          [0, 1, 0, 0, 1, 0, 0],
+          [0, 1, 1, 1, 1, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "Territory is the set of empty points entirely enclosed by one player's stones. The four empty points inside the Black rectangle all count as Black territory — 4 points. No white stones can enter safely."
+      },
+      {
+        "title": "Territory vs. influence",
+        "board": [
+          [1, 1, 1, 1, 1, 0, 0],
+          [1, 0, 0, 0, 0, 0, 0],
+          [1, 0, 0, 0, 0, 0, 0],
+          [1, 0, 0, 0, 0, 0, 0],
+          [1, 0, 0, 0, 0, 0, 0],
+          [1, 0, 0, 0, 0, 0, 0],
+          [1, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "Black controls the top-left corner and the left edge, but the interior is large and open — it is influence (moyo), not yet territory. Influence can become territory if Black seals it off, or white can invade and reduce it."
+      },
+      {
+        "title": "Counting at game end",
+        "board": [
+          [1, 1, 1, 2, 2, 2, 2],
+          [1, 0, 1, 2, 0, 0, 2],
+          [1, 1, 1, 2, 0, 0, 2],
+          [0, 0, 0, 2, 2, 2, 2],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "At game end, count territory (empty points surrounded) minus captured prisoners. Black has 1 point (top-left interior), White has 2 (top-right interior). The rest is dame (neutral). Japanese rules count territory + prisoners; Chinese rules count stones + territory."
+      }
+    ]
+  },
+  {
+    "id": "opening_principles",
+    "title": "Opening Principles",
+    "summary": "The opening (fuseki) sets the direction of the whole game. Learn the classic priorities: corners, sides, then centre.",
+    "category": "strategy",
+    "boardSize": 9,
+    "source": "Sensei's Library — Fuseki (paraphrased)",
+    "steps": [
+      {
+        "title": "Corners first",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 1, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "Corners are the most efficient place to start. With only two sides of the board to defend, you can claim large territory with fewer stones. The 3-3, 3-4 (komoku), and 4-4 (star point / hoshi) are common first moves."
+      },
+      {
+        "title": "Sides second",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 1, 0, 0, 0, 2, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 1, 0, 0, 0, 2, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "Once corners are claimed, expand to the sides. A stone on the side (third or fourth line) can develop territory efficiently using the edge as a natural boundary. Connecting corners via side moves builds large frameworks."
+      },
+      {
+        "title": "Centre last",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 1, 0, 0, 0, 2, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 1, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 1, 0, 0, 0, 2, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "Centre stones have influence in all directions but no edge to lean on — they need more stones to build enclosed territory. Play centre only after securing corners and sides, or as a response to opponent's framework. 'A game begins at the corners' is a fundamental Go proverb."
+      }
+    ]
+  }
+]

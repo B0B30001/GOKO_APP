@@ -156,6 +156,45 @@ class Board {
     }
   }
 
+  /// Replaces the entire board with [stones], rebuilds the Zobrist hash from
+  /// scratch, and clears the ko-history window. Used by undo/redo and by
+  /// any code that hands the engine an arbitrary historical position. Without
+  /// this, cell-by-cell `setStone` calls keep the incremental Zobrist hash
+  /// consistent only by accident, and the ko window keeps stale hashes from
+  /// the future timeline of the move stack.
+  void resetToSnapshot(
+    List<List<int>> stones, {
+    required int capturedByBlack,
+    required int capturedByWhite,
+  }) {
+    // Rewrite the underlying buffer.
+    for (var i = 0; i < size; i++) {
+      for (var j = 0; j < size; j++) {
+        _board[i * size + j] = stones[i][j];
+      }
+    }
+    // Recompute Zobrist hash from scratch — XOR every present stone in.
+    _zHash = 0;
+    for (var idx = 0; idx < size * size; idx++) {
+      final v = _board[idx];
+      if (v == 1) {
+        _zHash ^= _zBlack[idx];
+      } else if (v == 2) {
+        _zHash ^= _zWhite[idx];
+      }
+    }
+    _capturedByBlack = capturedByBlack;
+    _capturedByWhite = capturedByWhite;
+    // Drop the ko window — the previous timeline no longer applies. Seed it
+    // with the current position so an immediate Ko-style recapture into THIS
+    // position is still blocked.
+    _history.clear();
+    _boardStateCache.clear();
+    final h = _getBoardHash();
+    _history.add(h);
+    _boardStateCache[h] = true;
+  }
+
   /// Calculate which stones would be captured by placing a stone at (i, j).
   /// Returns a list of linear indices (r * size + c) of captured stones.
   /// Does not modify the board state.

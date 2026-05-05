@@ -39,6 +39,10 @@ class AppSettings {
   static String boardThemeId = BoardThemeId.classic;
   static String backgroundThemeId = BackgroundThemeId.standard;
 
+  /// Top-level theme preset id (see [ThemePresetIds] in `theme/go_theme.dart`).
+  /// Defaults to the new Chess.com-style dark blue preset.
+  static String themePresetId = 'darkBlue';
+
   /// Bumped on every save so listeners can rebuild.
   static final ValueNotifier<int> revision = ValueNotifier<int>(0);
 
@@ -47,6 +51,7 @@ class AppSettings {
   static const _kThemeMode = 'themeMode';
   static const _kBoardThemeId = 'boardThemeId';
   static const _kBackgroundThemeId = 'backgroundThemeId';
+  static const _kThemePresetId = 'themePresetId';
 
   /// Reads persisted values into the static fields. Must be called once at
   /// startup before runApp().
@@ -59,6 +64,7 @@ class AppSettings {
     boardThemeId = prefs.getString(_kBoardThemeId) ?? boardThemeId;
     backgroundThemeId =
         prefs.getString(_kBackgroundThemeId) ?? backgroundThemeId;
+    themePresetId = prefs.getString(_kThemePresetId) ?? themePresetId;
     revision.value++;
   }
 
@@ -70,6 +76,7 @@ class AppSettings {
     await prefs.setString(_kThemeMode, _encodeThemeMode(themeMode));
     await prefs.setString(_kBoardThemeId, boardThemeId);
     await prefs.setString(_kBackgroundThemeId, backgroundThemeId);
+    await prefs.setString(_kThemePresetId, themePresetId);
     revision.value++;
   }
 

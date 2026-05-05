@@ -1,0 +1,234 @@
+[
+  {
+    "id": "json-cap-1",
+    "title": "Atari Capture",
+    "description": "Capture the white stone in atari.",
+    "category": "capture",
+    "difficulty": 1,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 0, 0, 0, 0],
+      [0, 1, 2, 0, 0, 0, 0],
+      [0, 0, 1, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 2, "col": 3, "color": 1}],
+    "hint": "White's last liberty is on the right.",
+    "explanation": "The white stone has only the point at (2,3) for a liberty. Black plays there, white has zero liberties, capture.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 2, "col": 2, "color": 2}]
+    }
+  },
+  {
+    "id": "json-cap-2",
+    "title": "Two Stone Capture",
+    "description": "Both white stones share their last liberty. Find it.",
+    "category": "capture",
+    "difficulty": 1,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 1, 0, 0, 0],
+      [0, 1, 2, 2, 1, 0, 0],
+      [0, 0, 0, 1, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 3, "col": 2, "color": 1}],
+    "hint": "Connected white stones share liberties — find the one they both depend on.",
+    "explanation": "The two connected white stones share their final liberty at (3,2). Filling it captures both.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [
+        {"row": 2, "col": 2, "color": 2},
+        {"row": 2, "col": 3, "color": 2}
+      ]
+    }
+  },
+  {
+    "id": "json-cap-3",
+    "title": "Corner Capture",
+    "description": "Use the corner — fewer liberties means easier captures.",
+    "category": "capture",
+    "difficulty": 2,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [2, 2, 1, 0, 0, 0, 0],
+      [0, 0, 1, 0, 0, 0, 0],
+      [1, 1, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 1, "col": 0, "color": 1}],
+    "hint": "The corner reduces liberties drastically.",
+    "explanation": "Playing (1,0) removes white's last liberty in the corner — both white stones are captured.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [
+        {"row": 0, "col": 0, "color": 2},
+        {"row": 0, "col": 1, "color": 2}
+      ]
+    }
+  },
+  {
+    "id": "json-cap-4",
+    "title": "Snapback",
+    "description": "Sacrifice a stone to capture more.",
+    "category": "tesuji",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 1, 2, 2, 0, 0, 0],
+      [0, 1, 0, 0, 2, 0, 0],
+      [0, 1, 1, 2, 0, 0, 0],
+      [0, 0, 1, 1, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 2, "col": 2, "color": 1}],
+    "hint": "Play inside the white shape — yes, even though it looks suicidal.",
+    "explanation": "Black plays at (2,2), reducing the white group to one liberty. Whether white captures the lone black stone or not, black follows up to capture all three white stones (snapback)."
+  },
+  {
+    "id": "json-ld-1",
+    "title": "Make Two Eyes",
+    "description": "Black to play and live.",
+    "category": "life_death",
+    "difficulty": 2,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 2, 2, 2, 2, 0, 0],
+      [0, 2, 1, 1, 2, 0, 0],
+      [0, 2, 0, 0, 2, 0, 0],
+      [0, 2, 2, 2, 2, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 3, "col": 2, "color": 1}],
+    "hint": "Divide the empty space so each half is its own eye.",
+    "explanation": "Playing in the middle of the surrounded space creates two separate empty points (eyes). Two eyes = alive."
+  },
+  {
+    "id": "json-ld-2",
+    "title": "Kill White",
+    "description": "Prevent white from making two eyes.",
+    "category": "life_death",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 1, 1, 1, 1, 0, 0],
+      [0, 1, 2, 0, 1, 0, 0],
+      [0, 1, 0, 2, 1, 0, 0],
+      [0, 1, 1, 1, 1, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 2, "col": 3, "color": 1}],
+    "hint": "There's exactly one vital point inside white's shape.",
+    "explanation": "The vital point at (2,3) prevents white from forming two separate eyes. Whatever white tries next, the group ends with at most one eye and dies."
+  },
+  {
+    "id": "json-ld-3",
+    "title": "L-Group in the Corner",
+    "description": "A classic corner shape. Black to kill.",
+    "category": "life_death",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [2, 2, 0, 0, 0, 0, 0],
+      [0, 2, 0, 0, 0, 0, 0],
+      [2, 2, 1, 0, 0, 0, 0],
+      [1, 1, 1, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 1, "col": 0, "color": 1}],
+    "hint": "Reduce the eye space to a known dead shape.",
+    "explanation": "Playing inside the corner reduces white's eye space. The classic L-group is dead when correctly attacked first; white cannot make two eyes."
+  },
+  {
+    "id": "json-ko-1",
+    "title": "Take the Ko",
+    "description": "Capture in this ko shape.",
+    "category": "ko",
+    "difficulty": 2,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 2, 0, 0, 0],
+      [0, 1, 2, 0, 2, 0, 0],
+      [0, 0, 1, 2, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 2, "col": 3, "color": 1}],
+    "hint": "Find the empty point that captures a single white stone.",
+    "explanation": "Black plays (2,3), capturing the white stone at (2,2). Note: white cannot retake immediately — the ko rule forbids it.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 2, "col": 2, "color": 2}]
+    }
+  },
+  {
+    "id": "json-ko-2",
+    "title": "Connect Out of Ko",
+    "description": "White threatens ko. Black plays to remove the ko entirely by connecting.",
+    "category": "ko",
+    "difficulty": 2,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 2, 0, 0, 0],
+      [0, 1, 0, 1, 2, 0, 0],
+      [0, 0, 1, 2, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 2, "col": 2, "color": 1}],
+    "hint": "If you fill the ko point yourself, no recapture is possible.",
+    "explanation": "Connecting at (2,2) ends the ko: you no longer have a one-stone vulnerability there. Sometimes connecting is worth more than fighting the ko."
+  },
+  {
+    "id": "json-end-1",
+    "title": "Endgame Sente",
+    "description": "Black plays a move worth points and forcing.",
+    "category": "endgame",
+    "difficulty": 2,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [1, 1, 1, 0, 0, 2, 2],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 2, 2, 2, 2],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 2, "col": 4, "color": 1}],
+    "hint": "Push along the boundary to gain points and force white to respond.",
+    "explanation": "Playing (2,4) reduces white's territory by one and threatens to push further. White must respond, so black keeps the initiative (sente). Endgame is about counting these small but crucial moves."
+  }
+]

@@ -13,6 +13,8 @@ class SettingsScreen extends StatefulWidget {
   final ValueChanged<String> onBoardThemeChanged;
   final String backgroundThemeId;
   final ValueChanged<String> onBackgroundThemeChanged;
+  final String themePresetId;
+  final ValueChanged<String> onThemePresetChanged;
 
   const SettingsScreen({
     required this.isDark,
@@ -25,6 +27,8 @@ class SettingsScreen extends StatefulWidget {
     required this.onBoardThemeChanged,
     required this.backgroundThemeId,
     required this.onBackgroundThemeChanged,
+    required this.themePresetId,
+    required this.onThemePresetChanged,
     super.key,
   });
 
@@ -41,6 +45,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _forceLightGame = true;
   late String _boardThemeId;
   late String _backgroundThemeId;
+  late String _themePresetId;
   late bool _isDark;
 
   @override
@@ -50,6 +55,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _forceLightGame = widget.forceLightGame;
     _boardThemeId = widget.boardThemeId;
     _backgroundThemeId = widget.backgroundThemeId;
+    _themePresetId = widget.themePresetId;
     _isDark = widget.isDark;
   }
 
@@ -60,6 +66,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         children: [
           _buildSection('Appearance', [
+            const Padding(
+              padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+              child: Text('Theme'),
+            ),
+            _buildThemePresetPicker(),
             SwitchListTile(
               title: const Text('Dark mode'),
               subtitle: const Text('Switch between light and dark themes'),
@@ -203,6 +214,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _buildLanguageOption('한국어'),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildThemePresetPicker() {
+    // Each preset's first build pass yields a ThemeData; we sample its
+    // scaffoldBackgroundColor + primary so the swatch matches what the user
+    // will see if they pick it. Cheaper than rendering a hidden Theme widget.
+    return SizedBox(
+      height: 96,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        children: ThemePresetIds.all.map((id) {
+          final preset = ThemePresetIds.toEnum(id);
+          final theme = GoTheme.fromPreset(preset);
+          final selected = id == _themePresetId;
+          return _ThemeSwatch(
+            label: ThemePresetIds.displayName(preset),
+            selected: selected,
+            primary: theme.scaffoldBackgroundColor,
+            secondary: theme.colorScheme.primary,
+            onTap: () {
+              setState(() => _themePresetId = id);
+              widget.onThemePresetChanged(id);
+            },
+          );
+        }).toList(),
       ),
     );
   }
