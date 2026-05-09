@@ -33,12 +33,8 @@ class ResultModal extends StatelessWidget {
     return showDialog<T>(
       context: context,
       barrierDismissible: barrierDismissible,
-      builder: (_) => ResultModal(
-        kind: kind,
-        title: title,
-        body: body,
-        actions: actions,
-      ),
+      builder: (_) =>
+          ResultModal(kind: kind, title: title, body: body, actions: actions),
     );
   }
 
@@ -82,8 +78,8 @@ class ResultModal extends StatelessWidget {
                     child: Text(
                       title,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ],
@@ -91,9 +87,9 @@ class ResultModal extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 body,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      height: 1.4,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(height: 1.4),
               ),
               const SizedBox(height: 20),
               _ActionRow(actions: actions),
@@ -133,13 +129,17 @@ class _ActionRow extends StatelessWidget {
       children: actions.map((a) {
         if (a.isPrimary) {
           return ElevatedButton.icon(
-            icon: a.icon != null ? Icon(a.icon, size: 18) : const SizedBox.shrink(),
+            icon: a.icon != null
+                ? Icon(a.icon, size: 18)
+                : const SizedBox.shrink(),
             label: Text(a.label),
             onPressed: a.onPressed,
           );
         }
         return TextButton.icon(
-          icon: a.icon != null ? Icon(a.icon, size: 18) : const SizedBox.shrink(),
+          icon: a.icon != null
+              ? Icon(a.icon, size: 18)
+              : const SizedBox.shrink(),
           label: Text(a.label),
           onPressed: a.onPressed,
         );

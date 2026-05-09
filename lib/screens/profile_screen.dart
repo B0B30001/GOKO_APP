@@ -57,14 +57,16 @@ class ProfileScreen extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: BottomNavBar(
-        currentIndex: 2,
+        currentIndex: 3,
         onTap: (index) {
-          if (index != 2) {
-            Navigator.pushReplacementNamed(
-              context,
-              index == 0 ? '/home' : '/learn',
-            );
-          }
+          if (index == 3) return;
+          final route = switch (index) {
+            0 => '/home',
+            1 => '/learn',
+            2 => '/puzzles',
+            _ => '/home',
+          };
+          Navigator.pushReplacementNamed(context, route);
         },
       ),
     );

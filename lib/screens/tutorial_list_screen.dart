@@ -11,10 +11,7 @@ class TutorialListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Tutorials'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Tutorials'), centerTitle: true),
       body: FutureBuilder<List<Tutorial>>(
         future: ContentService.loadTutorials(),
         builder: (context, snapshot) {
@@ -42,8 +39,9 @@ class TutorialListScreen extends StatelessWidget {
               return Card(
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundColor:
-                        Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
+                    backgroundColor: Theme.of(
+                      context,
+                    ).colorScheme.primary.withValues(alpha: 0.15),
                     child: Icon(
                       _iconFor(t.category),
                       color: Theme.of(context).colorScheme.primary,

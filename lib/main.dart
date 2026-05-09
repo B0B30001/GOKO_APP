@@ -8,6 +8,7 @@ import 'package:zaibal/screens/history_screen.dart';
 import 'package:zaibal/screens/profile_screen.dart';
 import 'package:zaibal/screens/settings_screen.dart';
 import 'package:zaibal/screens/topic_detail_screen.dart';
+import 'package:zaibal/screens/puzzles_hub_screen.dart';
 import 'package:zaibal/theme/go_theme.dart';
 import 'package:zaibal/models/app_settings.dart';
 import 'package:zaibal/services/ogs_service.dart';
@@ -112,8 +113,8 @@ class _GokoAppState extends State<GokoApp> {
       // Sync ThemeMode to whatever the preset's brightness is, so the rest of
       // Flutter (status bar, system UI overlays) stays consistent.
       final preset = ThemePresetIds.toEnum(id);
-      final isLight = preset == ThemePreset.classicWood ||
-          preset == ThemePreset.lightMode;
+      final isLight =
+          preset == ThemePreset.classicWood || preset == ThemePreset.lightMode;
       AppSettings.themeMode = isLight ? ThemeMode.light : ThemeMode.dark;
     });
     AppSettings.save();
@@ -159,6 +160,7 @@ class _GokoAppState extends State<GokoApp> {
             onThemePresetChanged: _onThemePresetChanged,
           ),
           '/topic': (context) => const TopicDetailScreen(),
+          '/puzzles': (context) => const PuzzlesHubScreen(),
         },
       ),
     );

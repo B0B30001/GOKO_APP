@@ -113,10 +113,9 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
           CircleAvatar(
             radius: 22,
             backgroundColor: cs.primary.withValues(alpha: 0.25),
-            backgroundImage:
-                (avatarUrl != null && avatarUrl.isNotEmpty)
-                    ? NetworkImage(avatarUrl)
-                    : null,
+            backgroundImage: (avatarUrl != null && avatarUrl.isNotEmpty)
+                ? NetworkImage(avatarUrl)
+                : null,
             child: (avatarUrl == null || avatarUrl.isEmpty)
                 ? Icon(Icons.person, color: cs.primary)
                 : null,

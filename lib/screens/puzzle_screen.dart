@@ -79,8 +79,7 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
     if (_moveCount >= widget.puzzle.solution.length) return;
 
     final expectedMove = widget.puzzle.solution[_moveCount];
-    final isExpectedCoord =
-        i == expectedMove.row && j == expectedMove.col;
+    final isExpectedCoord = i == expectedMove.row && j == expectedMove.col;
 
     if (!isExpectedCoord) {
       _handleWrongMove(i, j);
@@ -100,16 +99,14 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
       _moveCount++;
 
       final sequenceComplete = _moveCount >= widget.puzzle.solution.length;
-      final winSatisfied =
-          widget.puzzle.winCondition.isSatisfied(_game.board.board);
+      final winSatisfied = widget.puzzle.winCondition.isSatisfied(
+        _game.board.board,
+      );
 
       if (sequenceComplete && winSatisfied) {
         _solved = true;
         if (widget.isDrillMode) {
-          Navigator.pop(context, {
-            'solved': true,
-            'mistakes': _mistakeCount,
-          });
+          Navigator.pop(context, {'solved': true, 'mistakes': _mistakeCount});
         } else {
           Future.delayed(const Duration(milliseconds: 350), () {
             if (!mounted) return;

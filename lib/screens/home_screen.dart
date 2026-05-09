@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/login_dialog.dart';
+import '../widgets/app_drawer.dart';
 import '../services/ogs_service.dart';
 import './game_board_screen.dart';
 import './online/online_lobby_screen.dart';
@@ -17,6 +18,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const AppDrawer(active: AppDrawerSection.home),
       body: Column(
         children: [
           Expanded(
@@ -26,7 +28,14 @@ class HomeScreen extends StatelessWidget {
                   floating: true,
                   pinned: true,
                   expandedHeight: 180,
-
+                  // Hamburger drawer trigger.
+                  leading: Builder(
+                    builder: (ctx) => IconButton(
+                      icon: const Icon(Icons.menu, color: Colors.white),
+                      tooltip: 'Menu',
+                      onPressed: () => Scaffold.of(ctx).openDrawer(),
+                    ),
+                  ),
                   flexibleSpace: FlexibleSpaceBar(
                     titlePadding: const EdgeInsets.only(left: 16, bottom: 12),
                     title: const Text(''), // No title per request
@@ -295,6 +304,9 @@ class HomeScreen extends StatelessWidget {
               Navigator.pushNamed(context, '/learn');
               break;
             case 2:
+              Navigator.pushNamed(context, '/puzzles');
+              break;
+            case 3:
               Navigator.pushNamed(context, '/profile');
               break;
           }

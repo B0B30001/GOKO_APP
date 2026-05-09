@@ -86,7 +86,9 @@
           [0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0]
         ],
-        "body": "The white stone has only one liberty left (the point below it). This state is called atari — the stone is one move from being captured. In friendly games, players sometimes call out 'atari' as a warning."
+        "interactive": true,
+        "correctMove": [3, 2],
+        "body": "The white stone has only one liberty left — the empty point below it. Tap that point to capture white. (This state is called atari — one move from capture.)"
       },
       {
         "title": "Black captures",
@@ -124,7 +126,9 @@
           [0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0]
         ],
-        "body": "The empty point at the center is a 'ko' — whoever plays there captures the opposing stone next to it. Without a rule, the game could loop forever."
+        "interactive": true,
+        "correctMove": [2, 3],
+        "body": "The empty point at the center is a 'ko' — whoever plays there captures the opposing stone next to it. Tap the ko point to take the white stone. (Without the ko rule, the game could loop forever.)"
       },
       {
         "title": "Black takes the ko",

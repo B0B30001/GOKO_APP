@@ -93,10 +93,7 @@ class GoTheme {
         foregroundColor: Color(0xFFE6ECF7),
         elevation: 0,
       ),
-      cardTheme: const CardThemeData(
-        color: surface,
-        elevation: 1,
-      ),
+      cardTheme: const CardThemeData(color: surface, elevation: 1),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: primary,
@@ -130,10 +127,7 @@ class GoTheme {
         foregroundColor: Color(0xFFE6ECF7),
         elevation: 0,
       ),
-      cardTheme: const CardThemeData(
-        color: surface,
-        elevation: 0,
-      ),
+      cardTheme: const CardThemeData(color: surface, elevation: 0),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: primary,
@@ -167,10 +161,7 @@ class GoTheme {
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      cardTheme: const CardThemeData(
-        color: surface,
-        elevation: 1,
-      ),
+      cardTheme: const CardThemeData(color: surface, elevation: 1),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: primary,
@@ -204,10 +195,7 @@ class GoTheme {
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      cardTheme: const CardThemeData(
-        color: surface,
-        elevation: 1,
-      ),
+      cardTheme: const CardThemeData(color: surface, elevation: 1),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: primary,

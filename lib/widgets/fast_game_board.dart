@@ -47,6 +47,11 @@ class _FastGameBoardState extends State<FastGameBoard> {
   int? _lastBoardSize;
   bool? _lastTheme;
 
+  // Tap debounce — ignore taps within 180 ms of the previous one to avoid
+  // double-fires from sloppy touches and rapid replays.
+  DateTime _lastTapTime = DateTime.fromMillisecondsSinceEpoch(0);
+  static const Duration _tapDebounce = Duration(milliseconds: 180);
+
   // Cache for paint objects to avoid recreation
   final Map<String, Paint> _paintCache = {};
   final Map<int, List<Offset>> _hoshiPointsCache = {};
@@ -469,6 +474,11 @@ class _FastGameBoardState extends State<FastGameBoard> {
     double margin,
     double adjustedCellSize,
   ) {
+    // Debounce: drop fast double-taps so a single intent can't double-place.
+    final now = DateTime.now();
+    if (now.difference(_lastTapTime) < _tapDebounce) return;
+    _lastTapTime = now;
+
     final RenderBox box = context.findRenderObject() as RenderBox;
     final localPos = box.globalToLocal(details.globalPosition);
 
@@ -550,21 +560,54 @@ class _HoverPainter extends CustomPainter {
   }
 }
 
-/// Individual stone widget - uses GPU acceleration
-class _StoneWidget extends StatelessWidget {
+/// Individual stone widget — runs a 120 ms scale-in animation when first
+/// inserted into the tree. Because parent uses `ValueKey('s${i}_$j')`, only
+/// newly-placed stones get fresh State and animate; existing stones reuse
+/// their controller and skip the animation. GPU-accelerated.
+class _StoneWidget extends StatefulWidget {
   final bool isBlack;
   final double size;
 
   const _StoneWidget({required this.isBlack, required this.size});
 
   @override
+  State<_StoneWidget> createState() => _StoneWidgetState();
+}
+
+class _StoneWidgetState extends State<_StoneWidget>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _scaleController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scaleController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 120),
+    );
+    _scaleController.forward();
+  }
+
+  @override
+  void dispose() {
+    _scaleController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return RepaintBoundary(
-      child: CustomPaint(
-        size: Size(size * 2, size * 2),
-        painter: _StonePainter(isBlack: isBlack, radius: size),
-        isComplex: true,
-        willChange: false,
+      child: ScaleTransition(
+        scale: CurvedAnimation(
+          parent: _scaleController,
+          curve: Curves.easeOutBack,
+        ),
+        child: CustomPaint(
+          size: Size(widget.size * 2, widget.size * 2),
+          painter: _StonePainter(isBlack: widget.isBlack, radius: widget.size),
+          isComplex: true,
+          willChange: false,
+        ),
       ),
     );
   }

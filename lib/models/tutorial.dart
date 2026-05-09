@@ -13,12 +13,22 @@ class TutorialStep {
   /// Prose explaining this step.
   final String body;
 
+  /// When true, the user must tap [correctMove] to advance. Used for
+  /// "tap to capture" / "tap to atari" style interactive lessons.
+  final bool interactive;
+
+  /// `[row, col]` of the correct tap target. Required when [interactive] is
+  /// true; null otherwise.
+  final List<int>? correctMove;
+
   const TutorialStep({
     required this.title,
     required this.board,
     required this.body,
     this.markedRow,
     this.markedCol,
+    this.interactive = false,
+    this.correctMove,
   });
 
   factory TutorialStep.fromJson(Map<String, dynamic> json) {
@@ -27,12 +37,22 @@ class TutorialStep {
           (row) => (row as List).map<int>((c) => (c as num).toInt()).toList(),
         )
         .toList();
+    final correctRaw = json['correctMove'];
+    final correct = correctRaw is List
+        ? correctRaw.map<int>((c) => (c as num).toInt()).toList()
+        : null;
     return TutorialStep(
       title: json['title']?.toString() ?? '',
       board: board,
       body: json['body']?.toString() ?? '',
-      markedRow: json['markedRow'] is num ? (json['markedRow'] as num).toInt() : null,
-      markedCol: json['markedCol'] is num ? (json['markedCol'] as num).toInt() : null,
+      markedRow: json['markedRow'] is num
+          ? (json['markedRow'] as num).toInt()
+          : null,
+      markedCol: json['markedCol'] is num
+          ? (json['markedCol'] as num).toInt()
+          : null,
+      interactive: json['interactive'] == true,
+      correctMove: correct,
     );
   }
 }

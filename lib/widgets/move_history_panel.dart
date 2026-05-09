@@ -33,9 +33,9 @@ class MoveHistoryPanel extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 'Moves',
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
               ),
               const Spacer(),
               Text(
@@ -132,10 +132,9 @@ class _MoveRow extends StatelessWidget {
               '$number.',
               style: TextStyle(
                 fontSize: 12,
-                color: Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.5),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.5),
               ),
             ),
           ),

@@ -206,9 +206,11 @@ Key Learning Points:
       solution: [PuzzleMove(1, 3, 1)],
       hint: 'Play above the white stone to close off its escape route',
       failureReasons: {
-        '2,2': 'That puts you in atari immediately — check your own liberties first.',
+        '2,2':
+            'That puts you in atari immediately — check your own liberties first.',
         '2,4': 'Good direction but the wrong side. White can still run upward.',
-        '3,3': 'That captures right now but only because the net was almost complete — try the cleaner net move first.',
+        '3,3':
+            'That captures right now but only because the net was almost complete — try the cleaner net move first.',
       },
       explanation:
           '''Playing at (1,3) closes off the white stone\'s only escape route. White cannot run upward, left (Black at 3,2 cuts off), or right (Black at 3,4 cuts off). This is a net (geta).
@@ -356,8 +358,10 @@ Atari is one of the first Go terms beginners learn. It signals danger!''',
       solution: [PuzzleMove(3, 3, 1)],
       hint: 'Play in the middle of the interior to create two separate eyes',
       failureReasons: {
-        '3,2': 'That creates one large eye space. You need two SEPARATE empty pockets.',
-        '3,4': 'That creates one large eye space. You need two SEPARATE empty pockets.',
+        '3,2':
+            'That creates one large eye space. You need two SEPARATE empty pockets.',
+        '3,4':
+            'That creates one large eye space. You need two SEPARATE empty pockets.',
       },
       explanation:
           '''Playing at (3,3) divides the interior into two separate empty spaces — (3,2) and (3,4) — each completely surrounded by black stones. That gives the black group two eyes and unconditional life.
@@ -396,7 +400,8 @@ Key Learning Points:
     Puzzle(
       id: 'life_death_2',
       title: 'Kill the White Group',
-      description: 'Black to play — take the vital point so white cannot make two eyes',
+      description:
+          'Black to play — take the vital point so white cannot make two eyes',
       category: 'life_death',
       difficulty: 2,
       boardSize: 9,
@@ -415,8 +420,10 @@ Key Learning Points:
       solution: [PuzzleMove(3, 3, 1)],
       hint: 'Play the vital centre point to prevent white from making two eyes',
       failureReasons: {
-        '3,2': 'White plays (3,3) next and creates two eyes — vital point missed!',
-        '3,4': 'White plays (3,3) next and creates two eyes — vital point missed!',
+        '3,2':
+            'White plays (3,3) next and creates two eyes — vital point missed!',
+        '3,4':
+            'White plays (3,3) next and creates two eyes — vital point missed!',
       },
       explanation:
           '''Playing Black at (3,3) — the centre of the interior — leaves white with two separate single-point spaces at (3,2) and (3,4). A single-point interior space surrounded by the opponent is not a real eye; white has no way to create a second genuine eye and the group is dead.
@@ -482,7 +489,8 @@ In professional games the vital point principle decides countless endgame battle
       hint: 'Connect your stones along the edge to seal two eyes in the corner',
       failureReasons: {
         '0,0': 'That fills your own eye! Now you only have one eye space.',
-        '1,0': 'Black already has that column covered — look for the gap at the top.',
+        '1,0':
+            'Black already has that column covered — look for the gap at the top.',
       },
       explanation:
           '''Playing Black at (0,1) connects the stones at (0,2) and (1,1), sealing the corner. The black group now has two eye spaces: (0,0) (surrounded by board edge and black stones) and the space at (1,0)/(2,0) area, making the group alive.
@@ -718,9 +726,11 @@ Never count stones individually when they are connected — always think in term
       // Step1: Black(4,3) → white has 1 liberty at (3,4) — atari.
       // Step2: Black(3,4) → white has 0 liberties — captured.
       solution: [PuzzleMove(4, 3, 1), PuzzleMove(3, 4, 1)],
-      hint: 'First fill one liberty to create atari, then capture on the next move',
+      hint:
+          'First fill one liberty to create atari, then capture on the next move',
       failureReasons: {
-        '3,4': 'That only leaves white with one liberty at (4,3) — play (4,3) first to set up atari more directly.',
+        '3,4':
+            'That only leaves white with one liberty at (4,3) — play (4,3) first to set up atari more directly.',
         '2,4': 'That doesn\'t threaten white at all right now.',
       },
       explanation:
@@ -786,7 +796,8 @@ Recognising your own atari before the opponent plays is essential.''',
     Puzzle(
       id: 'liberty_5',
       title: 'Avoid Self-Atari',
-      description: 'Recognise moves that would immediately capture your own stone',
+      description:
+          'Recognise moves that would immediately capture your own stone',
       category: 'liberties',
       difficulty: 2,
       boardSize: 9,
@@ -803,7 +814,8 @@ Recognising your own atari before the opponent plays is essential.''',
       ]),
       playerColor: 1,
       solution: [],
-      hint: 'Look at (3,3) — if Black played there, how many liberties would the stone have?',
+      hint:
+          'Look at (3,3) — if Black played there, how many liberties would the stone have?',
       explanation:
           '''If Black played at (3,3), the stone would be surrounded on all four sides by white stones: (2,3), (3,2), (3,4), (4,3) are all white. The black stone would have zero liberties and be immediately captured. This is called a "self-atari" (or suicide).
 
@@ -965,9 +977,7 @@ False eye recognition is a critical skill for accurate life & death reading.''',
       // White at (3,3): neighbors (2,3)=B✗,(4,3)=B✗,(3,2)=B✗,(3,4)=empty✓. White in atari.
       solution: [PuzzleMove(3, 4, 1)],
       hint: 'White is in atari — capture it to enter the Ko',
-      failureReasons: {
-        '3,2': 'That is already occupied by black.',
-      },
+      failureReasons: {'3,2': 'That is already occupied by black.'},
       explanation:
           '''Playing Black at (3,4) captures the white stone at (3,3). This creates the Ko shape — now white could recapture at (3,3), but only after playing elsewhere first (the Ko rule).
 
@@ -999,7 +1009,8 @@ Key Learning Points:
       ]),
       playerColor: 1,
       solution: [],
-      hint: 'A Ko threat must be urgent enough that your opponent has to respond',
+      hint:
+          'A Ko threat must be urgent enough that your opponent has to respond',
       explanation:
           '''In this position there is a Ko fight in the centre AND a white group in the bottom-left that is almost captured. If Black captures in Ko, White can play a Ko threat (threatening the black group bottom-left). Black must respond to the threat, then White retakes the Ko.
 
@@ -1071,7 +1082,8 @@ Connection and cutting are mirror-image concepts. If you connect, they cannot cu
       ]),
       playerColor: 1,
       solution: [],
-      hint: 'The bamboo joint (竹節) is the 2×2 square with two opposite corners — it cannot be cut',
+      hint:
+          'The bamboo joint (竹節) is the 2×2 square with two opposite corners — it cannot be cut',
       explanation:
           '''The bamboo joint consists of two pairs of Black stones arranged so that cutting is impossible. Even if White tries to cut between any two stones, the other pair reconnects immediately.
 
@@ -1109,7 +1121,8 @@ Study strong shapes like the bamboo joint. They are the vocabulary of Go.''',
       // Or make it a "form the tiger mouth" puzzle: place black so white is trapped.
       // White(3,3): (2,3)=B,(3,2)=B,(3,4)=B,(4,3)=empty. 1 liberty. Capture at (4,3).
       solution: [PuzzleMove(4, 3, 1)],
-      hint: 'Three sides of the white stone are blocked — fill the last liberty',
+      hint:
+          'Three sides of the white stone are blocked — fill the last liberty',
       explanation:
           '''The "tiger\'s mouth" (tobi in Japanese) is a shape where three sides of an enemy stone are covered, leaving only one escape. Playing the final liberty captures the stone.
 
@@ -1142,7 +1155,8 @@ Key Learning Points:
       ]),
       playerColor: 1,
       solution: [],
-      hint: 'White is in atari. If white runs, black can chase in a zigzag pattern to the edge',
+      hint:
+          'White is in atari. If white runs, black can chase in a zigzag pattern to the edge',
       explanation:
           '''White is in atari with only one liberty. If white tries to escape (e.g. plays diagonally), Black chases by always playing the new atari. The white stone zigzags until it hits the edge and is captured. This is a ladder (shicho).
 
@@ -1159,16 +1173,16 @@ Ladders are one of the first tactics patterns every Go player must master.''',
 
   /// Returns all puzzles from all categories.
   static List<Puzzle> get allPuzzles => [
-        ..._capturePuzzles,
-        ..._capturePuzzlesExtra,
-        ..._libertyPuzzles,
-        ..._libertyPuzzlesExtra,
-        ..._lifeDeathPuzzles,
-        ..._lifeDeathPuzzlesExtra,
-        ..._koPuzzles,
-        ..._koPuzzlesExtra,
-        ..._tesujipuzzles,
-      ];
+    ..._capturePuzzles,
+    ..._capturePuzzlesExtra,
+    ..._libertyPuzzles,
+    ..._libertyPuzzlesExtra,
+    ..._lifeDeathPuzzles,
+    ..._lifeDeathPuzzlesExtra,
+    ..._koPuzzles,
+    ..._koPuzzlesExtra,
+    ..._tesujipuzzles,
+  ];
 
   static List<Puzzle> getPuzzlesForTopic(String topic) {
     switch (topic) {

@@ -35,14 +35,12 @@ class ContentService {
           (row) => (row as List).map<int>((c) => (c as num).toInt()).toList(),
         )
         .toList();
-    final solution = (json['solution'] as List)
-        .map<PuzzleMove>((m) {
-          final row = (m['row'] as num).toInt();
-          final col = (m['col'] as num).toInt();
-          final color = (m['color'] as num).toInt();
-          return PuzzleMove(row, col, color);
-        })
-        .toList();
+    final solution = (json['solution'] as List).map<PuzzleMove>((m) {
+      final row = (m['row'] as num).toInt();
+      final col = (m['col'] as num).toInt();
+      final color = (m['color'] as num).toInt();
+      return PuzzleMove(row, col, color);
+    }).toList();
     final winCondition = _winConditionFromJson(json['winCondition']);
     return Puzzle(
       id: json['id']?.toString() ?? '',

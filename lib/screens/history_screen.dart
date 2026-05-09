@@ -64,18 +64,18 @@ class HistoryScreen extends StatelessWidget {
         },
       ),
       bottomNavigationBar: BottomNavBar(
-        currentIndex: 2,
+        // History isn't a top-level tab; highlight Profile (closest match)
+        // since History is reached via Profile in the nav.
+        currentIndex: 3,
         onTap: (index) {
-          if (index != 2) {
-            Navigator.pushReplacementNamed(
-              context,
-              index == 0
-                  ? '/home'
-                  : index == 1
-                  ? '/learn'
-                  : '/profile',
-            );
-          }
+          final route = switch (index) {
+            0 => '/home',
+            1 => '/learn',
+            2 => '/puzzles',
+            3 => '/profile',
+            _ => '/home',
+          };
+          Navigator.pushReplacementNamed(context, route);
         },
       ),
     );
