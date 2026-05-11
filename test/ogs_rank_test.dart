@@ -36,21 +36,12 @@ void main() {
 
   group('OgsRank.bestLabel', () {
     test('prefers rank-shaped string', () {
-      expect(
-        OgsRank.bestLabel(rankString: '5k', rating: 9999),
-        equals('5k'),
-      );
-      expect(
-        OgsRank.bestLabel(rankString: '2d', rating: 9999),
-        equals('2d'),
-      );
+      expect(OgsRank.bestLabel(rankString: '5k', rating: 9999), equals('5k'));
+      expect(OgsRank.bestLabel(rankString: '2d', rating: 9999), equals('2d'));
     });
 
     test('falls back to rating when rankString is just numeric', () {
-      expect(
-        OgsRank.bestLabel(rankString: '30', rating: 1525),
-        equals('20k'),
-      );
+      expect(OgsRank.bestLabel(rankString: '30', rating: 1525), equals('20k'));
     });
 
     test('returns null when nothing usable', () {

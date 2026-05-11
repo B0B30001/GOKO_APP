@@ -1,30 +1,68 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/puzzle.dart';
+import '../models/puzzle_collection.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/app_drawer.dart';
+import '../widgets/menu_fab.dart';
 import '../widgets/fast_game_board.dart';
+import '../services/daily_puzzle_service.dart';
+import '../services/content_service.dart';
 import 'puzzle_screen.dart';
 import 'puzzle_category_screen.dart';
+import 'puzzle_collection_screen.dart';
 
-/// Chess.com-style puzzles hub: rating + streak header, daily puzzle card,
-/// and a 2-column category grid. Reached from the Puzzles bottom-nav tab and
-/// from the hamburger drawer.
-class PuzzlesHubScreen extends StatelessWidget {
+/// Chess.com-style puzzles hub: rating + streak header, daily-set strip
+/// (5 puzzles/day with swap), and a 2-column category grid.
+class PuzzlesHubScreen extends StatefulWidget {
   const PuzzlesHubScreen({super.key});
+
+  @override
+  State<PuzzlesHubScreen> createState() => _PuzzlesHubScreenState();
+}
+
+class _PuzzlesHubScreenState extends State<PuzzlesHubScreen> {
+  late final DailyPuzzleService _daily;
+
+  @override
+  void initState() {
+    super.initState();
+    _daily = DailyPuzzleService();
+    // Refresh-on-pop so solving a daily puzzle updates the strip.
+    _daily.addListener(_onDailyChanged);
+  }
+
+  @override
+  void dispose() {
+    _daily.removeListener(_onDailyChanged);
+    super.dispose();
+  }
+
+  void _onDailyChanged() {
+    if (mounted) setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const AppDrawer(active: AppDrawerSection.puzzles),
       appBar: AppBar(title: const Text('Puzzles'), centerTitle: true),
+      floatingActionButton: const MenuFab(),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
         children: [
           const _HeaderCard(puzzleRating: 1420, streak: 7, solvedToday: 3),
           const SizedBox(height: 16),
-          _DailyPuzzleCard(puzzle: _dailyPuzzle()),
+          ChangeNotifierProvider.value(
+            value: _daily,
+            child: const _DailySetCard(),
+          ),
           const SizedBox(height: 24),
-          _SectionHeader(label: 'Categories', onTap: null),
+          const _SectionHeader(label: 'Collections', onTap: null),
+          const SizedBox(height: 12),
+          const _CollectionsGrid(),
+          const SizedBox(height: 24),
+          const _SectionHeader(label: 'Categories', onTap: null),
           const SizedBox(height: 12),
           _CategoryGrid(categories: _categories()),
         ],
@@ -43,19 +81,6 @@ class PuzzlesHubScreen extends StatelessWidget {
         },
       ),
     );
-  }
-
-  /// Pick a deterministic puzzle for "today" so it changes daily but is
-  /// stable within a single day. Uses local-day index modulo total count.
-  static Puzzle _dailyPuzzle() {
-    final all = PuzzleData.allPuzzles;
-    final dayOfYear = _dayOfYear(DateTime.now());
-    return all[dayOfYear % all.length];
-  }
-
-  static int _dayOfYear(DateTime d) {
-    final start = DateTime(d.year);
-    return d.difference(start).inDays;
   }
 
   static List<_CategorySpec> _categories() => const [
@@ -158,109 +183,230 @@ class _Stat extends StatelessWidget {
   }
 }
 
-class _DailyPuzzleCard extends StatelessWidget {
-  final Puzzle puzzle;
+/// Chess.com-style five-puzzles-per-day strip. Consumes [DailyPuzzleService]
+/// via Provider so solve / swap calls trigger a rebuild without prop drilling.
+class _DailySetCard extends StatelessWidget {
+  const _DailySetCard();
 
-  const _DailyPuzzleCard({required this.puzzle});
+  @override
+  Widget build(BuildContext context) {
+    final svc = context.watch<DailyPuzzleService>();
+    return FutureBuilder<_DailySetSnapshot>(
+      future: _snapshot(svc),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const SizedBox(
+            height: 160,
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+        return _DailySetBody(snapshot: snapshot.data!, service: svc);
+      },
+    );
+  }
+
+  Future<_DailySetSnapshot> _snapshot(DailyPuzzleService svc) async {
+    final puzzles = await svc.todaysPuzzles();
+    final solved = await svc.solvedIds();
+    final swapsLeft = await svc.remainingSwaps();
+    return _DailySetSnapshot(
+      puzzles: puzzles,
+      solvedIds: solved,
+      swapsLeft: swapsLeft,
+    );
+  }
+}
+
+class _DailySetSnapshot {
+  final List<Puzzle> puzzles;
+  final Set<String> solvedIds;
+  final int swapsLeft;
+
+  const _DailySetSnapshot({
+    required this.puzzles,
+    required this.solvedIds,
+    required this.swapsLeft,
+  });
+}
+
+class _DailySetBody extends StatelessWidget {
+  final _DailySetSnapshot snapshot;
+  final DailyPuzzleService service;
+
+  const _DailySetBody({required this.snapshot, required this.service});
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final solved = snapshot.puzzles
+        .where((p) => snapshot.solvedIds.contains(p.id))
+        .length;
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 2,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: () => _open(context),
-        child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 120,
-                height: 120,
-                child: IgnorePointer(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: FastGameBoard(
-                      board: puzzle.initialBoard,
-                      onTap: (_, __) {},
-                      isDarkTheme:
-                          Theme.of(context).brightness == Brightness.dark,
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: cs.primary.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    'DAILY PUZZLES',
+                    style: TextStyle(
+                      fontSize: 10,
+                      letterSpacing: 1.2,
+                      fontWeight: FontWeight.w700,
+                      color: cs.primary,
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: cs.primary.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        'DAILY PUZZLE',
-                        style: TextStyle(
-                          fontSize: 10,
-                          letterSpacing: 1.2,
-                          fontWeight: FontWeight.w700,
-                          color: cs.primary,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      puzzle.title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: List.generate(
-                        5,
-                        (i) => Icon(
-                          i < puzzle.difficulty
-                              ? Icons.star
-                              : Icons.star_border,
-                          size: 16,
-                          color: Colors.amber,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () => _open(context),
-                        child: const Text('Solve →'),
-                      ),
-                    ),
-                  ],
+                const Spacer(),
+                Text(
+                  '$solved/${snapshot.puzzles.length} solved · '
+                  '${snapshot.swapsLeft} swap${snapshot.swapsLeft == 1 ? '' : 's'} left',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 96,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: snapshot.puzzles.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 8),
+                itemBuilder: (context, i) => _DailyTile(
+                  puzzle: snapshot.puzzles[i],
+                  index: i,
+                  solved: snapshot.solvedIds.contains(snapshot.puzzles[i].id),
+                  canSwap: snapshot.swapsLeft > 0,
+                  service: service,
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
+}
 
-  void _open(BuildContext context) {
-    Navigator.push(
+class _DailyTile extends StatelessWidget {
+  final Puzzle puzzle;
+  final int index;
+  final bool solved;
+  final bool canSwap;
+  final DailyPuzzleService service;
+
+  const _DailyTile({
+    required this.puzzle,
+    required this.index,
+    required this.solved,
+    required this.canSwap,
+    required this.service,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return SizedBox(
+      width: 76,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          InkWell(
+            borderRadius: BorderRadius.circular(8),
+            onTap: () => _open(context),
+            child: Column(
+              children: [
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 280),
+                  child: SizedBox(
+                    key: ValueKey(puzzle.id),
+                    width: 64,
+                    height: 64,
+                    child: IgnorePointer(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: FastGameBoard(
+                          board: puzzle.initialBoard,
+                          onTap: (_, __) {},
+                          isDarkTheme:
+                              Theme.of(context).brightness == Brightness.dark,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    3,
+                    (i) => Icon(
+                      i < puzzle.difficulty ? Icons.star : Icons.star_border,
+                      size: 10,
+                      color: Colors.amber,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (solved)
+            Positioned(
+              top: -4,
+              right: -4,
+              child: Container(
+                padding: const EdgeInsets.all(2),
+                decoration: const BoxDecoration(
+                  color: Colors.green,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.check, size: 14, color: Colors.white),
+              ),
+            )
+          else if (canSwap)
+            Positioned(
+              top: -6,
+              right: -6,
+              child: Material(
+                color: cs.surface,
+                shape: const CircleBorder(),
+                elevation: 2,
+                child: IconButton(
+                  iconSize: 14,
+                  padding: const EdgeInsets.all(4),
+                  constraints: const BoxConstraints(),
+                  tooltip: 'Swap puzzle',
+                  icon: const Icon(Icons.swap_horiz),
+                  onPressed: () => service.swap(index),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _open(BuildContext context) async {
+    final result = await Navigator.push<Map<String, dynamic>>(
       context,
       MaterialPageRoute(builder: (_) => PuzzleScreen(puzzle: puzzle)),
     );
+    if (result != null && result['solved'] == true) {
+      await service.markSolved(puzzle.id);
+    }
   }
 }
 
@@ -298,6 +444,106 @@ class _CategorySpec {
   final Color tint;
 
   const _CategorySpec(this.name, this.icon, this.tint);
+}
+
+/// 2-column grid of curated puzzle collections loaded from
+/// `assets/content/collections.json` via [ContentService].
+class _CollectionsGrid extends StatelessWidget {
+  const _CollectionsGrid();
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<PuzzleCollection>>(
+      future: ContentService.loadCollections(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const SizedBox(
+            height: 120,
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+        final cols = snapshot.data ?? const <PuzzleCollection>[];
+        if (cols.isEmpty) return const SizedBox.shrink();
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            childAspectRatio: 1.35,
+          ),
+          itemCount: cols.length,
+          itemBuilder: (context, i) => _CollectionCard(collection: cols[i]),
+        );
+      },
+    );
+  }
+}
+
+class _CollectionCard extends StatelessWidget {
+  final PuzzleCollection collection;
+
+  const _CollectionCard({required this.collection});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 2,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => PuzzleCollectionScreen(collection: collection),
+            ),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: cs.primary.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(_iconFor(collection.iconKey), color: cs.primary),
+              ),
+              const Spacer(),
+              Text(
+                collection.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                '${collection.puzzleIds.length} puzzles',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  IconData _iconFor(String key) => switch (key) {
+    'close' => Icons.close,
+    'warning' => Icons.warning_amber,
+    'loop' => Icons.loop,
+    'psychology' => Icons.psychology,
+    'auto_fix_high' => Icons.auto_fix_high,
+    _ => Icons.extension,
+  };
 }
 
 class _CategoryGrid extends StatelessWidget {

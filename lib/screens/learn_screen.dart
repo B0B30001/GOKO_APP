@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/app_drawer.dart';
+import '../widgets/menu_fab.dart';
 import '../widgets/fast_game_board.dart';
 import '../models/drill.dart';
 import '../models/tutorial.dart';
@@ -8,6 +9,7 @@ import '../services/content_service.dart';
 import 'drill_screen.dart';
 import 'tutorial_screen.dart';
 import 'tutorial_list_screen.dart';
+import 'level_track_screen.dart';
 
 /// Learn hub with two pinned tabs: **Lessons** (tutorials + topic browser) and
 /// **Practice** (quick-start drills + weekly progress).
@@ -31,6 +33,7 @@ class LearnScreen extends StatelessWidget {
           ),
         ),
         body: const TabBarView(children: [_LessonsTab(), _PracticeTab()]),
+        floatingActionButton: const MenuFab(),
         bottomNavigationBar: BottomNavBar(
           currentIndex: 1,
           onTap: (index) {
@@ -66,11 +69,15 @@ class _LessonsTab extends StatelessWidget {
         }
         final tutorials = snapshot.data ?? const <Tutorial>[];
         return ListView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
           children: [
             const _SectionHeader(label: 'Learning Path'),
             const SizedBox(height: 12),
             _LearningPathPager(tutorials: tutorials),
+            const SizedBox(height: 24),
+            const _SectionHeader(label: 'By Level'),
+            const SizedBox(height: 12),
+            const _LevelRail(),
             const SizedBox(height: 24),
             const _SectionHeader(label: 'All Tutorials'),
             const SizedBox(height: 12),
@@ -362,6 +369,109 @@ class _LessonCard extends StatelessWidget {
             ),
             const Icon(Icons.chevron_right),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Three level cards (Beginner / Intermediate / Advanced) — each opens
+/// [LevelTrackScreen] filtered by difficulty. Replaces the dead-link level
+/// sections from the original LearnScreen.
+class _LevelRail extends StatelessWidget {
+  const _LevelRail();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: const [
+        _LevelCard(
+          tier: LevelTier.beginner,
+          title: 'Beginner',
+          subtitle: 'First captures, liberties, the basics.',
+          icon: Icons.eco,
+        ),
+        SizedBox(height: 8),
+        _LevelCard(
+          tier: LevelTier.intermediate,
+          title: 'Intermediate',
+          subtitle: 'Ko, atari sequences, eye shapes.',
+          icon: Icons.trending_up,
+        ),
+        SizedBox(height: 8),
+        _LevelCard(
+          tier: LevelTier.advanced,
+          title: 'Advanced',
+          subtitle: 'Life & death, tesuji, reading.',
+          icon: Icons.emoji_events,
+        ),
+      ],
+    );
+  }
+}
+
+class _LevelCard extends StatelessWidget {
+  final LevelTier tier;
+  final String title;
+  final String subtitle;
+  final IconData icon;
+
+  const _LevelCard({
+    required this.tier,
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 1,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => LevelTrackScreen(tier: tier)),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: cs.primary.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, color: cs.primary),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right, color: cs.primary),
+            ],
+          ),
         ),
       ),
     );

@@ -40,9 +40,19 @@ class SubscriptionService extends ChangeNotifier {
   static const _kSolved = 'dailyPuzzlesSolved';
   static const _kResetAt = 'dailyResetAtMillis';
 
+  /// Injectable clock so tests can advance time across the UTC-midnight
+  /// boundary without sleeping. Returns the current UTC time when null.
+  final DateTime Function() _now;
+
+  SubscriptionService({DateTime Function()? now})
+    : _now = now ?? (() => DateTime.now().toUtc()),
+      _dailyResetAt = _nextUtcMidnight(
+        (now ?? (() => DateTime.now().toUtc()))(),
+      );
+
   SubscriptionTier _tier = SubscriptionTier.free;
   int _dailyPuzzlesSolved = 0;
-  DateTime _dailyResetAt = _nextUtcMidnight(DateTime.now().toUtc());
+  DateTime _dailyResetAt;
 
   SubscriptionTier get tier => _tier;
   int get dailyPuzzlesSolved => _dailyPuzzlesSolved;
@@ -63,7 +73,7 @@ class SubscriptionService extends ChangeNotifier {
     final resetMillis = prefs.getInt(_kResetAt);
     _dailyResetAt = resetMillis != null
         ? DateTime.fromMillisecondsSinceEpoch(resetMillis, isUtc: true)
-        : _nextUtcMidnight(DateTime.now().toUtc());
+        : _nextUtcMidnight(_now());
     _maybeResetDaily();
     notifyListeners();
   }
@@ -99,7 +109,7 @@ class SubscriptionService extends ChangeNotifier {
   }
 
   void _maybeResetDaily() {
-    final nowUtc = DateTime.now().toUtc();
+    final nowUtc = _now();
     if (!nowUtc.isBefore(_dailyResetAt)) {
       _dailyPuzzlesSolved = 0;
       _dailyResetAt = _nextUtcMidnight(nowUtc);

@@ -162,7 +162,11 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
           icon: Icons.arrow_forward,
           onPressed: () {
             Navigator.pop(context); // close dialog
-            Navigator.pop(context); // back to list
+            Navigator.pop(context, {
+              'solved': true,
+              'puzzleId': widget.puzzle.id,
+              'mistakes': _mistakeCount,
+            });
           },
         ),
         ResultModalAction(

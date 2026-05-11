@@ -59,51 +59,52 @@ void main() {
       expect(result.legal, isTrue);
     });
 
-    test('illegal Ko move at the correct coordinate fails (does not solve)',
-        () {
-      // Build a real ko on a 5x5 board, then craft a puzzle whose solution
-      // is the FORBIDDEN immediate-recapture move. The validation gate must
-      // refuse it because placeStone() returns false.
-      final b = Board(5);
-      expect(b.placeStone(0, 1, 1), isTrue); // black
-      expect(b.placeStone(0, 2, 2), isTrue); // white
-      expect(b.placeStone(1, 0, 1), isTrue); // black
-      expect(b.placeStone(1, 1, 2), isTrue); // white center
-      expect(b.placeStone(2, 1, 1), isTrue); // black
-      expect(b.placeStone(2, 2, 2), isTrue); // white
-      expect(b.placeStone(3, 3, 1), isTrue); // filler
-      expect(b.placeStone(4, 4, 2), isTrue); // filler
-      expect(b.placeStone(1, 2, 1), isTrue); // captures (1,1)
+    test(
+      'illegal Ko move at the correct coordinate fails (does not solve)',
+      () {
+        // Build a real ko on a 5x5 board, then craft a puzzle whose solution
+        // is the FORBIDDEN immediate-recapture move. The validation gate must
+        // refuse it because placeStone() returns false.
+        final b = Board(5);
+        expect(b.placeStone(0, 1, 1), isTrue); // black
+        expect(b.placeStone(0, 2, 2), isTrue); // white
+        expect(b.placeStone(1, 0, 1), isTrue); // black
+        expect(b.placeStone(1, 1, 2), isTrue); // white center
+        expect(b.placeStone(2, 1, 1), isTrue); // black
+        expect(b.placeStone(2, 2, 2), isTrue); // white
+        expect(b.placeStone(3, 3, 1), isTrue); // filler
+        expect(b.placeStone(4, 4, 2), isTrue); // filler
+        expect(b.placeStone(1, 2, 1), isTrue); // captures (1,1)
 
-      final puzzle = Puzzle(
-        id: 'ko-bad',
-        title: 'ko-trap',
-        description: '',
-        category: 'ko',
-        difficulty: 2,
-        boardSize: 5,
-        initialBoard: List.generate(5, (_) => List.filled(5, 0)),
-        playerColor: 2,
-        // Solution = white tries the immediate ko recapture (illegal).
-        solution: [PuzzleMove(1, 1, 2)],
-        hint: '',
-      );
+        final puzzle = Puzzle(
+          id: 'ko-bad',
+          title: 'ko-trap',
+          description: '',
+          category: 'ko',
+          difficulty: 2,
+          boardSize: 5,
+          initialBoard: List.generate(5, (_) => List.filled(5, 0)),
+          playerColor: 2,
+          // Solution = white tries the immediate ko recapture (illegal).
+          solution: [PuzzleMove(1, 1, 2)],
+          hint: '',
+        );
 
-      final result = attemptMove(b, puzzle, 0, 1, 1);
-      expect(
-        result.legal,
-        isFalse,
-        reason: 'Engine must reject the ko recapture',
-      );
-      expect(
-        result.solved,
-        isFalse,
-        reason: 'Coord-only match must NOT solve the puzzle when illegal',
-      );
-    });
+        final result = attemptMove(b, puzzle, 0, 1, 1);
+        expect(
+          result.legal,
+          isFalse,
+          reason: 'Engine must reject the ko recapture',
+        );
+        expect(
+          result.solved,
+          isFalse,
+          reason: 'Coord-only match must NOT solve the puzzle when illegal',
+        );
+      },
+    );
 
-    test('CaptureGroup win condition requires target stone to leave board',
-        () {
+    test('CaptureGroup win condition requires target stone to leave board', () {
       // 3x3 micro-board: white at (1,1) with one liberty; black plays it.
       final b = Board(3);
       expect(b.placeStone(0, 1, 1), isTrue); // black

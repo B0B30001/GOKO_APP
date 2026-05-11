@@ -1,0 +1,37 @@
+[
+  {
+    "id": "first-captures",
+    "title": "First Captures",
+    "description": "Your first taste of taking stones off the board. Five tactical captures.",
+    "iconKey": "close",
+    "puzzleIds": ["capture_1", "capture_2", "capture_3", "capture_5", "capture_6"]
+  },
+  {
+    "id": "atari-mastery",
+    "title": "Atari Mastery",
+    "description": "Recognise atari, exploit it, and turn it into a kill.",
+    "iconKey": "warning",
+    "puzzleIds": ["capture_4", "capture_7", "capture_8", "tesuji_1", "tesuji_2"]
+  },
+  {
+    "id": "ko-fundamentals",
+    "title": "Ko Fundamentals",
+    "description": "The rule that prevents infinite loops — and the strategic fights it creates.",
+    "iconKey": "loop",
+    "puzzleIds": ["ko_1", "ko_2", "ko_3", "ko_4"]
+  },
+  {
+    "id": "life-and-death-i",
+    "title": "Life & Death I",
+    "description": "Make two eyes, or stop your opponent from making them.",
+    "iconKey": "psychology",
+    "puzzleIds": ["life_death_1", "life_death_2", "life_death_3", "life_death_4"]
+  },
+  {
+    "id": "endgame-tesuji",
+    "title": "Endgame & Tesuji",
+    "description": "Sharp moves that decide tight games. Intermediate to advanced.",
+    "iconKey": "auto_fix_high",
+    "puzzleIds": ["tesuji_3", "tesuji_4", "life_death_5", "liberty_6"]
+  }
+]

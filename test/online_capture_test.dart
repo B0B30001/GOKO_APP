@@ -33,23 +33,31 @@ void main() {
       await tester.pumpWidget(_BoardHarness(initialBoard: initial()));
 
       final stoneFinder = find.byKey(const ValueKey('s0_1'));
-      expect(stoneFinder, findsOneWidget,
-          reason: 'Black stone should render before capture');
+      expect(
+        stoneFinder,
+        findsOneWidget,
+        reason: 'Black stone should render before capture',
+      );
 
       // Simulate the fixed path: deep-copy the board, zero the captured cell.
-      final state =
-          tester.state<_BoardHarnessState>(find.byType(_BoardHarness));
+      final state = tester.state<_BoardHarnessState>(
+        find.byType(_BoardHarness),
+      );
       state.applyCapture(0, 1);
       await tester.pump();
 
-      expect(stoneFinder, findsNothing,
-          reason:
-              'Captured stone must disappear after parent rebuilds with a fresh board reference');
+      expect(
+        stoneFinder,
+        findsNothing,
+        reason:
+            'Captured stone must disappear after parent rebuilds with a fresh board reference',
+      );
     },
   );
 
-  testWidgets('FastGameBoard re-renders when bumping ValueKey on the widget',
-      (tester) async {
+  testWidgets('FastGameBoard re-renders when bumping ValueKey on the widget', (
+    tester,
+  ) async {
     const size = 5;
 
     List<List<int>> board() =>
@@ -85,13 +93,17 @@ class _BoardHarnessState extends State<_BoardHarness> {
   @override
   void initState() {
     super.initState();
-    _board = [for (final r in widget.initialBoard) [...r]];
+    _board = [
+      for (final r in widget.initialBoard) [...r],
+    ];
   }
 
   void applyCapture(int row, int col) {
     setState(() {
       _board[row][col] = 0;
-      _board = [for (final r in _board) [...r]];
+      _board = [
+        for (final r in _board) [...r],
+      ];
       _version++;
     });
   }

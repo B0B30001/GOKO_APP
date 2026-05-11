@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/puzzle.dart';
-import '../widgets/fast_game_board.dart';
-import 'puzzle_screen.dart';
+import '../widgets/puzzle_list_card.dart';
 
 /// Browse all puzzles in a single category, with a difficulty-filter chip
 /// row above the list. Solved puzzles get a green check overlay.
@@ -79,111 +78,11 @@ class _PuzzleCategoryScreenState extends State<PuzzleCategoryScreen> {
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 96),
       itemCount: list.length,
-      itemBuilder: (context, i) => _PuzzleCard(puzzle: list[i]),
+      itemBuilder: (context, i) => PuzzleListCard(puzzle: list[i]),
     );
   }
 
   void _shuffle() {
     setState(() => _puzzles = List.of(_puzzles)..shuffle());
-  }
-}
-
-class _PuzzleCard extends StatelessWidget {
-  final Puzzle puzzle;
-
-  const _PuzzleCard({required this.puzzle});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 2,
-      clipBehavior: Clip.antiAlias,
-      margin: const EdgeInsets.only(bottom: 8),
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => PuzzleScreen(puzzle: puzzle)),
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 60,
-                height: 60,
-                child: IgnorePointer(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(6),
-                    child: FastGameBoard(
-                      board: puzzle.initialBoard,
-                      onTap: (_, __) {},
-                      isDarkTheme:
-                          Theme.of(context).brightness == Brightness.dark,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      puzzle.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: List.generate(
-                        3,
-                        (i) => Icon(
-                          i < puzzle.difficulty
-                              ? Icons.star
-                              : Icons.star_border,
-                          size: 14,
-                          color: Colors.amber,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      puzzle.description,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 6),
-              // Solved-state badge slot. Persistent solved tracking is a
-              // separate feature; surface a placeholder that the future
-              // tracker can flip.
-              const _SolvedBadge(solved: false),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SolvedBadge extends StatelessWidget {
-  final bool solved;
-
-  const _SolvedBadge({required this.solved});
-
-  @override
-  Widget build(BuildContext context) {
-    if (!solved) return const Icon(Icons.chevron_right, color: Colors.grey);
-    return const Icon(Icons.check_circle, color: Colors.green);
   }
 }

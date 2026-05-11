@@ -1,5 +1,4 @@
-import 'package:flutter/foundation.dart';
-import 'mcts.dart';
+import 'ai_engine_factory.dart';
 
 enum AIDifficulty {
   easy(200, 'Easy'),
@@ -11,31 +10,22 @@ enum AIDifficulty {
   final String label;
 }
 
+/// Thin shim over [AIEngineFactory]. Existing callers don't need to know
+/// which engine (MCTS / KataGo / …) is active — they hit this entry point
+/// and the factory decides at build time via the `ENABLE_KATAGO` define.
 class GoAIService {
-  /// Returns [row, col] of the best move for [player], or null (pass).
-  /// Runs in a separate isolate via compute() to keep the UI responsive.
+  /// Returns [row, col] of the best move for [player], or `null` to pass.
   static Future<List<int>?> getBestMove({
     required List<List<int>> board,
     required int boardSize,
     required int player,
     AIDifficulty difficulty = AIDifficulty.medium,
   }) {
-    return compute(_runAI, [board, boardSize, player, difficulty.simulations]);
+    return AIEngineFactory.current().getBestMove(
+      board: board,
+      boardSize: boardSize,
+      player: player,
+      difficulty: difficulty,
+    );
   }
-}
-
-// Top-level function required by compute().
-List<int>? _runAI(List<dynamic> args) {
-  final board = (args[0] as List)
-      .map((row) => (row as List).cast<int>())
-      .toList();
-  final boardSize = args[1] as int;
-  final player = args[2] as int;
-  final simulations = args[3] as int;
-  return runMCTS(
-    board: board,
-    boardSize: boardSize,
-    player: player,
-    simulations: simulations,
-  );
 }

@@ -70,6 +70,24 @@ class Tutorial {
   /// Source attribution — e.g. "Sensei's Library" or "Janice Kim, Vol 1 p.42".
   final String source;
 
+  /// 1 = beginner, 2 = intermediate, 3 = advanced. Optional in JSON; when
+  /// absent, [difficulty] derives a default from [category] so existing
+  /// content keeps working without editing.
+  final int? _explicitDifficulty;
+
+  /// Effective difficulty. Returns [_explicitDifficulty] if set, otherwise
+  /// derives from [category]: `fundamentals` → 1, `rules` → 2,
+  /// `life-death` → 3, anything else → 2.
+  int get difficulty {
+    if (_explicitDifficulty != null) return _explicitDifficulty;
+    return switch (category) {
+      'fundamentals' => 1,
+      'rules' => 2,
+      'life-death' => 3,
+      _ => 2,
+    };
+  }
+
   const Tutorial({
     required this.id,
     required this.title,
@@ -78,7 +96,8 @@ class Tutorial {
     required this.boardSize,
     required this.steps,
     required this.source,
-  });
+    int? difficulty,
+  }) : _explicitDifficulty = difficulty;
 
   factory Tutorial.fromJson(Map<String, dynamic> json) {
     final stepsJson = (json['steps'] as List).cast<Map<String, dynamic>>();
@@ -90,6 +109,9 @@ class Tutorial {
       boardSize: (json['boardSize'] as num).toInt(),
       steps: stepsJson.map(TutorialStep.fromJson).toList(),
       source: json['source']?.toString() ?? '',
+      difficulty: json['difficulty'] is num
+          ? (json['difficulty'] as num).toInt()
+          : null,
     );
   }
 }
