@@ -15,6 +15,8 @@ class SettingsScreen extends StatefulWidget {
   final ValueChanged<String> onBackgroundThemeChanged;
   final String themePresetId;
   final ValueChanged<String> onThemePresetChanged;
+  final String languageCode;
+  final ValueChanged<String> onLanguageChanged;
 
   const SettingsScreen({
     required this.isDark,
@@ -29,6 +31,8 @@ class SettingsScreen extends StatefulWidget {
     required this.onBackgroundThemeChanged,
     required this.themePresetId,
     required this.onThemePresetChanged,
+    required this.languageCode,
+    required this.onLanguageChanged,
     super.key,
   });
 
@@ -36,17 +40,34 @@ class SettingsScreen extends StatefulWidget {
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
+// Maps the display name shown in the picker to a BCP-47 language code.
+const _kLanguageOptions = <String, String>{
+  'English': 'en',
+  'Русский': 'ru',
+  '中文': 'zh',
+  '日本語': 'ja',
+  '한국어': 'ko',
+};
+
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _soundEnabled = true;
   bool _vibrationEnabled = true;
   bool _notificationsEnabled = true;
-  String _selectedLanguage = 'English';
+  late String _languageCode;
   bool _showCoordinates = false;
   bool _forceLightGame = true;
   late String _boardThemeId;
   late String _backgroundThemeId;
   late String _themePresetId;
   late bool _isDark;
+
+  String get _selectedLanguage =>
+      _kLanguageOptions.entries
+          .firstWhere(
+            (e) => e.value == _languageCode,
+            orElse: () => const MapEntry('English', 'en'),
+          )
+          .key;
 
   @override
   void initState() {
@@ -57,6 +78,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _backgroundThemeId = widget.backgroundThemeId;
     _themePresetId = widget.themePresetId;
     _isDark = widget.isDark;
+    _languageCode = widget.languageCode;
   }
 
   @override
@@ -311,13 +333,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   };
 
   Widget _buildLanguageOption(String language) {
+    final code = _kLanguageOptions[language] ?? 'en';
+    final selected = _languageCode == code;
     return ListTile(
       title: Text(language),
-      trailing: _selectedLanguage == language
-          ? const Icon(Icons.check, color: Colors.green)
-          : null,
+      trailing: selected ? const Icon(Icons.check, color: Colors.green) : null,
       onTap: () {
-        setState(() => _selectedLanguage = language);
+        setState(() => _languageCode = code);
+        widget.onLanguageChanged(code);
         Navigator.pop(context);
       },
     );

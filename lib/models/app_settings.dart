@@ -43,6 +43,9 @@ class AppSettings {
   /// Defaults to the new Chess.com-style dark blue preset.
   static String themePresetId = 'darkBlue';
 
+  /// BCP-47 language code used for the app locale.  Supported: 'en', 'zh', 'ru'.
+  static String languageCode = 'en';
+
   /// Bumped on every save so listeners can rebuild.
   static final ValueNotifier<int> revision = ValueNotifier<int>(0);
 
@@ -52,6 +55,7 @@ class AppSettings {
   static const _kBoardThemeId = 'boardThemeId';
   static const _kBackgroundThemeId = 'backgroundThemeId';
   static const _kThemePresetId = 'themePresetId';
+  static const _kLanguageCode = 'languageCode';
 
   /// Reads persisted values into the static fields. Must be called once at
   /// startup before runApp().
@@ -65,6 +69,7 @@ class AppSettings {
     backgroundThemeId =
         prefs.getString(_kBackgroundThemeId) ?? backgroundThemeId;
     themePresetId = prefs.getString(_kThemePresetId) ?? themePresetId;
+    languageCode = prefs.getString(_kLanguageCode) ?? languageCode;
     revision.value++;
   }
 
@@ -77,6 +82,7 @@ class AppSettings {
     await prefs.setString(_kBoardThemeId, boardThemeId);
     await prefs.setString(_kBackgroundThemeId, backgroundThemeId);
     await prefs.setString(_kThemePresetId, themePresetId);
+    await prefs.setString(_kLanguageCode, languageCode);
     revision.value++;
   }
 

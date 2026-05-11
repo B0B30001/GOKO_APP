@@ -175,7 +175,16 @@ class HomeScreen extends StatelessWidget {
                 () => _showBoardSize(context, isComputer: true),
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildActionCard(
+                context,
+                'Play vs Bot',
+                Icons.smart_toy,
+                () => Navigator.pushNamed(context, '/bots'),
+              ),
+            ),
+            const SizedBox(width: 12),
             Expanded(
               child: _buildActionCard(
                 context,

@@ -149,7 +149,7 @@ class DailyPuzzleService extends ChangeNotifier {
   /// Deterministic shuffle of all puzzle ids seeded by the UTC date string.
   /// Same input → same output across every device.
   List<String> _shuffledForDay(String dateKey) {
-    final all = PuzzleData.allPuzzles.map((p) => p.id).toList();
+    final all = PuzzleData.playablePuzzles.map((p) => p.id).toList();
     // Seed = hash of date key (year-month-day) so a calendar day yields one
     // permutation. The `hashCode` of the string is platform-stable for this
     // use (only used to seed Random; we don't compare across platforms).
@@ -159,7 +159,7 @@ class DailyPuzzleService extends ChangeNotifier {
   }
 
   Puzzle? _lookupPuzzle(String id) {
-    for (final p in PuzzleData.allPuzzles) {
+    for (final p in PuzzleData.playablePuzzles) {
       if (p.id == id) return p;
     }
     return null;

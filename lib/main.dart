@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:zaibal/utils/stone_shader_warmup.dart';
 import 'package:zaibal/screens/home_screen.dart';
@@ -9,6 +10,7 @@ import 'package:zaibal/screens/profile_screen.dart';
 import 'package:zaibal/screens/settings_screen.dart';
 import 'package:zaibal/screens/topic_detail_screen.dart';
 import 'package:zaibal/screens/puzzles_hub_screen.dart';
+import 'package:zaibal/screens/bots_screen.dart';
 import 'package:zaibal/theme/go_theme.dart';
 import 'package:zaibal/models/app_settings.dart';
 import 'package:zaibal/services/ogs_service.dart';
@@ -71,6 +73,15 @@ class _GokoAppState extends State<GokoApp> {
   void _setTheme(bool isDark) {
     setState(() {
       AppSettings.themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
+      // Sync the preset to the requested brightness so the visual change is
+      // immediate (both `theme` and `darkTheme` resolve to the same preset,
+      // so we must actually switch the preset, not just ThemeMode).
+      final preset = ThemePresetIds.toEnum(AppSettings.themePresetId);
+      if (isDark && (preset == ThemePreset.classicWood || preset == ThemePreset.lightMode)) {
+        AppSettings.themePresetId = ThemePresetIds.darkBlue;
+      } else if (!isDark && (preset == ThemePreset.darkBlue || preset == ThemePreset.oledBlack)) {
+        AppSettings.themePresetId = ThemePresetIds.lightMode;
+      }
     });
     AppSettings.save();
   }
@@ -110,13 +121,17 @@ class _GokoAppState extends State<GokoApp> {
   void _onThemePresetChanged(String id) {
     setState(() {
       AppSettings.themePresetId = id;
-      // Sync ThemeMode to whatever the preset's brightness is, so the rest of
-      // Flutter (status bar, system UI overlays) stays consistent.
+      // Sync ThemeMode to the preset's brightness so status-bar overlays stay right.
       final preset = ThemePresetIds.toEnum(id);
       final isLight =
           preset == ThemePreset.classicWood || preset == ThemePreset.lightMode;
       AppSettings.themeMode = isLight ? ThemeMode.light : ThemeMode.dark;
     });
+    AppSettings.save();
+  }
+
+  void _setLanguage(String code) {
+    setState(() => AppSettings.languageCode = code);
     AppSettings.save();
   }
 
@@ -134,11 +149,22 @@ class _GokoAppState extends State<GokoApp> {
       ],
       child: MaterialApp(
         title: 'GOKO',
-        // Both `theme` and `darkTheme` resolve to the user's preset; ThemeMode
-        // selects between them but we want the same preset to win regardless.
         theme: activeTheme,
         darkTheme: activeTheme,
         themeMode: AppSettings.themeMode,
+        locale: Locale(AppSettings.languageCode),
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en'),
+          Locale('zh'),
+          Locale('ru'),
+          Locale('ja'),
+          Locale('ko'),
+        ],
         initialRoute: '/home',
         routes: {
           '/home': (context) => HomeScreen(onThemeToggle: _toggleTheme),
@@ -158,9 +184,12 @@ class _GokoAppState extends State<GokoApp> {
             onBackgroundThemeChanged: _onBackgroundThemeChanged,
             themePresetId: AppSettings.themePresetId,
             onThemePresetChanged: _onThemePresetChanged,
+            languageCode: AppSettings.languageCode,
+            onLanguageChanged: _setLanguage,
           ),
           '/topic': (context) => const TopicDetailScreen(),
           '/puzzles': (context) => const PuzzlesHubScreen(),
+          '/bots': (context) => const BotsScreen(),
         },
       ),
     );

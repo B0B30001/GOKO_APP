@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 /// Identifies which main screen the drawer was opened from, so the
 /// matching item is highlighted.
-enum AppDrawerSection { home, learn, puzzles, history, settings }
+enum AppDrawerSection { home, learn, puzzles, bots, history, settings }
 
 /// App-wide hamburger drawer. Pulls items from the route table — tapping an
 /// item closes the drawer and pushes the named route (or stays put if the
@@ -42,6 +42,12 @@ class AppDrawer extends StatelessWidget {
               label: 'Puzzles',
               selected: active == AppDrawerSection.puzzles,
               onTap: () => _go(context, '/puzzles', AppDrawerSection.puzzles),
+            ),
+            _DrawerItem(
+              icon: Icons.smart_toy,
+              label: 'Play vs Bot',
+              selected: active == AppDrawerSection.bots,
+              onTap: () => _go(context, '/bots', AppDrawerSection.bots),
             ),
             _DrawerItem(
               icon: Icons.history,

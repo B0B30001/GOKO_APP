@@ -1171,6 +1171,12 @@ Ladders are one of the first tactics patterns every Go player must master.''',
     ),
   ];
 
+  /// Returns all puzzles that require interactive stone placement (solution non-empty).
+  /// Theory/counting puzzles (liberty observers with solution:[]) are excluded here;
+  /// they remain accessible from tutorials via [getPuzzlesForTopic].
+  static List<Puzzle> get playablePuzzles =>
+      allPuzzles.where((p) => p.solution.isNotEmpty).toList();
+
   /// Returns all puzzles from all categories.
   static List<Puzzle> get allPuzzles => [
     ..._capturePuzzles,
