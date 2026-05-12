@@ -36,13 +36,22 @@ dependencies:
   # OGS integration packages
   socket_io_client: ^2.0.3
   http: ^1.2.1
-  app_links: ^6.3.2
   url_launcher: ^6.3.0
   provider: ^6.1.2
   uuid: ^4.5.1
 
   # Local persistence for settings, user profile, subscription state, and match history.
   shared_preferences: ^2.2.3
+
+  # Secure storage for OGS auth tokens (Keychain on iOS, EncryptedSharedPrefs on Android,
+  # libsecret on Linux, Credential Locker on Windows, localStorage on web).
+  flutter_secure_storage: ^9.2.2
+
+  # Plain WebSocket client used by KataGo remote engine (works on all platforms).
+  web_socket_channel: ^3.0.1
+
+  # Internationalisation — required by flutter gen-l10n for ARB-based translation.
+  intl: ^0.20.2
   
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -64,6 +73,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  generate: true  # enables flutter gen-l10n for ARB-based localizations
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

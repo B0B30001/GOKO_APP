@@ -46,6 +46,11 @@ class AppSettings {
   /// BCP-47 language code used for the app locale.  Supported: 'en', 'zh', 'ru'.
   static String languageCode = 'en';
 
+  /// URL of a remote KataGo analysis WebSocket server.
+  /// Example: 'ws://192.168.1.10:8080' or 'wss://my-katago-server.example.com'
+  /// Leave empty to disable KataGo and fall back to MCTS.
+  static String kataGoServerUrl = '';
+
   /// Bumped on every save so listeners can rebuild.
   static final ValueNotifier<int> revision = ValueNotifier<int>(0);
 
@@ -56,6 +61,7 @@ class AppSettings {
   static const _kBackgroundThemeId = 'backgroundThemeId';
   static const _kThemePresetId = 'themePresetId';
   static const _kLanguageCode = 'languageCode';
+  static const _kKataGoServerUrl = 'kataGoServerUrl';
 
   /// Reads persisted values into the static fields. Must be called once at
   /// startup before runApp().
@@ -70,6 +76,7 @@ class AppSettings {
         prefs.getString(_kBackgroundThemeId) ?? backgroundThemeId;
     themePresetId = prefs.getString(_kThemePresetId) ?? themePresetId;
     languageCode = prefs.getString(_kLanguageCode) ?? languageCode;
+    kataGoServerUrl = prefs.getString(_kKataGoServerUrl) ?? kataGoServerUrl;
     revision.value++;
   }
 
@@ -83,6 +90,7 @@ class AppSettings {
     await prefs.setString(_kBackgroundThemeId, backgroundThemeId);
     await prefs.setString(_kThemePresetId, themePresetId);
     await prefs.setString(_kLanguageCode, languageCode);
+    await prefs.setString(_kKataGoServerUrl, kataGoServerUrl);
     revision.value++;
   }
 

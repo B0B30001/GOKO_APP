@@ -45,16 +45,22 @@ void main() {
       expect(move, equals([0, 0]));
     });
 
-    test('KataGoEngine stub throws UnimplementedError', () {
-      expect(
-        () => const KataGoEngine().getBestMove(
-          board: const [],
-          boardSize: 0,
-          player: 1,
-          difficulty: AIDifficulty.easy,
-        ),
-        throwsA(isA<UnimplementedError>()),
-      );
-    });
+    test(
+      'KataGoEngine falls back gracefully when server URL is empty',
+      () async {
+        // With no KataGo server URL configured, the engine falls back to the
+        // built-in MCTS engine and returns a move or null — never throws.
+        final engine = const KataGoEngine();
+        expect(
+          () => engine.getBestMove(
+            board: const [],
+            boardSize: 0,
+            player: 1,
+            difficulty: AIDifficulty.easy,
+          ),
+          returnsNormally,
+        );
+      },
+    );
   });
 }

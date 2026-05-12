@@ -39,4 +39,12 @@ flutter pub get
 echo "==> Building Flutter web..."
 flutter build web --release
 
+echo "==> Injecting per-deploy build ID for stale-cache eviction..."
+# Replace the placeholder token in index.html with a unique timestamp so that
+# every deploy triggers a fresh service-worker eviction in every browser,
+# regardless of whether the user has visited before.
+BUILD_ID="goko_sw_evicted_$(date +%s%3N)"
+sed -i "s/GOKO_BUILD_ID_TOKEN/$BUILD_ID/g" build/web/index.html
+echo "==> Build ID: $BUILD_ID"
+
 echo "==> Build complete! Output in build/web"

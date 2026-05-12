@@ -22,9 +22,9 @@ class _PuzzleCategoryScreenState extends State<PuzzleCategoryScreen> {
   void initState() {
     super.initState();
     // Exclude theory/observer puzzles (solution:[]) — those belong in tutorials.
-    _puzzles = PuzzleData.getPuzzlesForTopic(widget.category)
-        .where((p) => p.solution.isNotEmpty)
-        .toList();
+    _puzzles = PuzzleData.getPuzzlesForTopic(
+      widget.category,
+    ).where((p) => p.solution.isNotEmpty).toList();
   }
 
   List<Puzzle> get _visible => _filter == 0

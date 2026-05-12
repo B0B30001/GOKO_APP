@@ -156,7 +156,13 @@
           [0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0]
         ],
-        "body": "Strong play in a ko involves 'ko threats' — moves elsewhere on the board that the opponent must answer. If they ignore your threat, you recapture. If they answer, you've gained a move while keeping ko alive. Whole games have been decided by ko fights."
+        "body": "Strong play in a ko involves 'ko threats' — moves elsewhere on the board that the opponent must answer. Press Play to watch a complete ko exchange.",
+        "demoMoves": [
+          {"row": 5, "col": 5, "color": 2, "caption": "White plays a ko threat on the other side of the board.", "delayMs": 900},
+          {"row": 5, "col": 6, "color": 1, "caption": "Black answers the threat to protect against the threatened damage.", "delayMs": 900},
+          {"row": 2, "col": 2, "color": 2, "caption": "Now the position has changed — White retakes the ko, capturing the black stone.", "delayMs": 1000},
+          {"row": 2, "col": 3, "color": 0, "caption": "The captured black stone is removed from the board. The ko swings back to White.", "delayMs": 700}
+        ]
       }
     ]
   },
@@ -264,7 +270,16 @@
           [0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0]
         ],
-        "body": "A ladder (shicho) traps a stone by putting it in atari repeatedly. Each escape attempt leads to another atari. White at (2,3) is in atari — if White runs, Black gives atari again diagonally."
+        "body": "A ladder (shicho) traps a stone by putting it in atari repeatedly. Each escape attempt leads to another atari. Press Play to watch the zigzag chase unfold.",
+        "demoMoves": [
+          {"row": 2, "col": 2, "color": 1, "caption": "Black plays atari from the west — White must run.", "delayMs": 700},
+          {"row": 2, "col": 4, "color": 2, "caption": "White extends east to escape, gaining a liberty.", "delayMs": 800},
+          {"row": 1, "col": 4, "color": 1, "caption": "Black plays the diagonal shoulder-hit — atari again!", "delayMs": 800},
+          {"row": 2, "col": 5, "color": 2, "caption": "White runs east a second time.", "delayMs": 700},
+          {"row": 1, "col": 5, "color": 1, "caption": "Black stays one step ahead — atari from above.", "delayMs": 700},
+          {"row": 2, "col": 6, "color": 2, "caption": "White hits the edge of the board. No more room to run.", "delayMs": 700},
+          {"row": 1, "col": 6, "color": 1, "caption": "Black captures — the whole white chain is taken.", "delayMs": 900}
+        ]
       },
       {
         "title": "The zigzag chase",
@@ -347,12 +362,18 @@
           [0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0],
           [0, 0, 1, 0, 0, 0, 0],
-          [0, 1, 2, 1, 0, 0, 0],
+          [0, 1, 2, 0, 0, 0, 0],
           [0, 0, 1, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0]
         ],
-        "body": "When in atari, escape by extending (running) to a point with more liberties. White at (3,2) is in atari — playing at (3,3) extends the group and gains new liberties to the right."
+        "body": "White at (3,2) is in atari — its only liberty is to the east. Press Play to see the escape and what happens next.",
+        "demoMoves": [
+          {"row": 3, "col": 3, "color": 2, "caption": "White extends east — the group now has three new liberties.", "delayMs": 800},
+          {"row": 3, "col": 4, "color": 1, "caption": "Black chases — places a stone east of the running group.", "delayMs": 900},
+          {"row": 3, "col": 5, "color": 2, "caption": "White runs again — but each step uses precious liberties.", "delayMs": 900},
+          {"row": 2, "col": 5, "color": 1, "caption": "Black gives atari from the north. White is in trouble again.", "delayMs": 900}
+        ]
       },
       {
         "title": "Escaping atari — capture the attacker",
@@ -414,7 +435,11 @@
           [0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0]
         ],
-        "body": "Three stones forming a 'mouth' shape. Any opponent stone played inside would be captured immediately (self-atari). This makes the connection unbreakable. It is called tobi in Japanese."
+        "body": "Three stones forming a 'mouth' shape. Press Play to see what happens when an opponent tries to cut.",
+        "demoMoves": [
+          {"row": 2, "col": 3, "color": 2, "caption": "White tries to cut by playing inside the mouth.", "delayMs": 900},
+          {"row": 2, "col": 3, "color": 0, "caption": "Self-atari — White has zero liberties and is captured immediately. The mouth holds firm.", "delayMs": 1100}
+        ]
       },
       {
         "title": "Bamboo joint",

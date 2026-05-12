@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:zaibal/gen/l10n/app_localizations.dart';
 import '../models/puzzle.dart';
 import '../models/puzzle_collection.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/menu_fab.dart';
+import '../widgets/app_shell.dart';
 import '../widgets/fast_game_board.dart';
 import '../services/daily_puzzle_service.dart';
 import '../services/content_service.dart';
@@ -15,7 +17,10 @@ import 'puzzle_collection_screen.dart';
 /// Chess.com-style puzzles hub: rating + streak header, daily-set strip
 /// (5 puzzles/day with swap), and a 2-column category grid.
 class PuzzlesHubScreen extends StatefulWidget {
-  const PuzzlesHubScreen({super.key});
+  /// When false the screen is hosted inside [AppShell]; suppress per-screen nav.
+  final bool showBottomNav;
+
+  const PuzzlesHubScreen({super.key, this.showBottomNav = true});
 
   @override
   State<PuzzlesHubScreen> createState() => _PuzzlesHubScreenState();
@@ -44,10 +49,11 @@ class _PuzzlesHubScreenState extends State<PuzzlesHubScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       drawer: const AppDrawer(active: AppDrawerSection.puzzles),
-      appBar: AppBar(title: const Text('Puzzles'), centerTitle: true),
-      floatingActionButton: const MenuFab(),
+      appBar: AppBar(title: Text(l.puzzles), centerTitle: true),
+      floatingActionButton: widget.showBottomNav ? const MenuFab() : null,
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
         children: [
@@ -58,28 +64,25 @@ class _PuzzlesHubScreenState extends State<PuzzlesHubScreen> {
             child: const _DailySetCard(),
           ),
           const SizedBox(height: 24),
-          const _SectionHeader(label: 'Collections', onTap: null),
+          _SectionHeader(label: l.collections, onTap: null),
           const SizedBox(height: 12),
           const _CollectionsGrid(),
           const SizedBox(height: 24),
-          const _SectionHeader(label: 'Categories', onTap: null),
+          _SectionHeader(label: l.categories, onTap: null),
           const SizedBox(height: 12),
           _CategoryGrid(categories: _categories()),
         ],
       ),
-      bottomNavigationBar: BottomNavBar(
-        currentIndex: 2,
-        onTap: (index) {
-          if (index == 2) return;
-          final route = switch (index) {
-            0 => '/home',
-            1 => '/learn',
-            3 => '/profile',
-            _ => '/home',
-          };
-          Navigator.pushReplacementNamed(context, route);
-        },
-      ),
+      bottomNavigationBar: widget.showBottomNav
+          ? BottomNavBar(
+              currentIndex: 2,
+              onTap: (index) {
+                if (index == 2) return;
+                appShellTabIndex.value = index;
+                Navigator.of(context).popUntil((r) => r.isFirst);
+              },
+            )
+          : null,
     );
   }
 
@@ -261,7 +264,7 @@ class _DailySetBody extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
-                    'DAILY PUZZLES',
+                    AppLocalizations.of(context).dailyPuzzles.toUpperCase(),
                     style: TextStyle(
                       fontSize: 10,
                       letterSpacing: 1.2,
@@ -272,8 +275,8 @@ class _DailySetBody extends StatelessWidget {
                 ),
                 const Spacer(),
                 Text(
-                  '$solved/${snapshot.puzzles.length} solved · '
-                  '${snapshot.swapsLeft} swap${snapshot.swapsLeft == 1 ? '' : 's'} left',
+                  '${AppLocalizations.of(context).solvedCount(solved, snapshot.puzzles.length)} · '
+                  '${AppLocalizations.of(context).swapsLeft(snapshot.swapsLeft)}',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
@@ -439,11 +442,22 @@ class _SectionHeader extends StatelessWidget {
 }
 
 class _CategorySpec {
+  /// Internal topic key matching [PuzzleData.getPuzzlesForTopic]. Not displayed.
   final String name;
   final IconData icon;
   final Color tint;
 
   const _CategorySpec(this.name, this.icon, this.tint);
+
+  /// Localized display label.
+  String label(AppLocalizations l) => switch (name) {
+    'Captures' => l.captures,
+    'Liberties' => l.liberties,
+    'Life & Death' => l.lifeDeath,
+    'Ko Basics' => l.koBasics,
+    'Tesuji' => l.tesuji,
+    _ => name,
+  };
 }
 
 /// 2-column grid of curated puzzle collections loaded from
@@ -575,8 +589,9 @@ class _CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final puzzles = PuzzleData.getPuzzlesForTopic(spec.name);
-    final count = puzzles.length;
+    final count = puzzles.where((p) => p.solution.isNotEmpty).length;
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 2,
@@ -609,14 +624,14 @@ class _CategoryCard extends StatelessWidget {
                     ),
                     const Spacer(),
                     Text(
-                      spec.name,
+                      spec.label(l),
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '$count puzzle${count == 1 ? '' : 's'}',
+                      '$count',
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ],

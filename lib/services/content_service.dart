@@ -7,7 +7,7 @@ import '../models/tutorial.dart';
 /// Loads tutorials and puzzles from `assets/content/*.json`. Cached after
 /// first load — content is read-only at runtime.
 class ContentService {
-  static List<Tutorial>? _tutorials;
+  static final Map<String, List<Tutorial>> _tutorialsByLocale = {};
   static List<Puzzle>? _jsonPuzzles;
   static List<PuzzleCollection>? _collections;
 
@@ -20,13 +20,23 @@ class ContentService {
     return _collections!;
   }
 
-  /// Lazy-load and cache the tutorial JSON.
-  static Future<List<Tutorial>> loadTutorials() async {
-    if (_tutorials != null) return _tutorials!;
-    final raw = await rootBundle.loadString('assets/content/tutorials.json');
+  /// Lazy-load and cache the tutorial JSON for the given locale.
+  /// Falls back to `tutorials.json` (English) when the localized variant is
+  /// missing in the bundle.
+  static Future<List<Tutorial>> loadTutorials({String? languageCode}) async {
+    final code = languageCode ?? 'en';
+    if (_tutorialsByLocale.containsKey(code)) return _tutorialsByLocale[code]!;
+    String raw;
+    try {
+      raw = await rootBundle.loadString('assets/content/tutorials_$code.json');
+    } catch (_) {
+      // Fallback: legacy English asset.
+      raw = await rootBundle.loadString('assets/content/tutorials.json');
+    }
     final list = (json.decode(raw) as List).cast<Map<String, dynamic>>();
-    _tutorials = list.map(Tutorial.fromJson).toList();
-    return _tutorials!;
+    final parsed = list.map(Tutorial.fromJson).toList();
+    _tutorialsByLocale[code] = parsed;
+    return parsed;
   }
 
   /// Lazy-load and cache the JSON puzzle set. These are content-curated

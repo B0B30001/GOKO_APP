@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:zaibal/gen/l10n/app_localizations.dart';
+import 'app_shell.dart';
 
 /// Identifies which main screen the drawer was opened from, so the
 /// matching item is highlighted.
@@ -15,6 +17,7 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l = AppLocalizations.of(context);
     return Drawer(
       backgroundColor:
           Theme.of(context).drawerTheme.backgroundColor ??
@@ -27,38 +30,38 @@ class AppDrawer extends StatelessWidget {
             const SizedBox(height: 8),
             _DrawerItem(
               icon: Icons.home,
-              label: 'Home',
+              label: l.home,
               selected: active == AppDrawerSection.home,
               onTap: () => _go(context, '/home', AppDrawerSection.home),
             ),
             _DrawerItem(
               icon: Icons.book,
-              label: 'Learn',
+              label: l.learn,
               selected: active == AppDrawerSection.learn,
               onTap: () => _go(context, '/learn', AppDrawerSection.learn),
             ),
             _DrawerItem(
               icon: Icons.extension,
-              label: 'Puzzles',
+              label: l.puzzles,
               selected: active == AppDrawerSection.puzzles,
               onTap: () => _go(context, '/puzzles', AppDrawerSection.puzzles),
             ),
             _DrawerItem(
               icon: Icons.smart_toy,
-              label: 'Play vs Bot',
+              label: l.playVsBot,
               selected: active == AppDrawerSection.bots,
               onTap: () => _go(context, '/bots', AppDrawerSection.bots),
             ),
             _DrawerItem(
               icon: Icons.history,
-              label: 'History',
+              label: l.history,
               selected: active == AppDrawerSection.history,
               onTap: () => _go(context, '/history', AppDrawerSection.history),
             ),
             const Divider(height: 24),
             _DrawerItem(
               icon: Icons.settings,
-              label: 'Settings',
+              label: l.settings,
               selected: active == AppDrawerSection.settings,
               onTap: () => _go(context, '/settings', AppDrawerSection.settings),
             ),
@@ -113,12 +116,24 @@ class AppDrawer extends StatelessWidget {
   }
 
   void _go(BuildContext context, String route, AppDrawerSection target) {
-    Navigator.pop(context);
+    Navigator.pop(context); // close drawer
     if (active == target) return;
-    if (target == AppDrawerSection.home) {
-      Navigator.pushNamedAndRemoveUntil(context, route, (_) => false);
-    } else {
-      Navigator.pushNamed(context, route);
+
+    // Main tab destinations live inside AppShell — switch the tab index and
+    // pop back to the shell root rather than pushing a standalone route.
+    switch (target) {
+      case AppDrawerSection.home:
+        appShellTabIndex.value = 0;
+        Navigator.of(context).popUntil((r) => r.isFirst);
+      case AppDrawerSection.learn:
+        appShellTabIndex.value = 1;
+        Navigator.of(context).popUntil((r) => r.isFirst);
+      case AppDrawerSection.puzzles:
+        appShellTabIndex.value = 2;
+        Navigator.of(context).popUntil((r) => r.isFirst);
+      default:
+        // Secondary screens (bots, history, settings) push normally.
+        Navigator.pushNamed(context, route);
     }
   }
 }

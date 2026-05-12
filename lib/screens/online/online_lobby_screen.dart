@@ -233,12 +233,12 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
                       ),
                     if (_queuePosition != null)
                       Chip(
-                        label: Text('Queue #${_queuePosition}'),
+                        label: Text('Queue #$_queuePosition'),
                         avatar: const Icon(Icons.people, size: 18),
                       ),
                     if (_poolSize != null)
                       Chip(
-                        label: Text('Pool ${_poolSize}'),
+                        label: Text('Pool $_poolSize'),
                         avatar: const Icon(Icons.group, size: 18),
                       ),
                   ],

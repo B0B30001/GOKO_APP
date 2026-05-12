@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zaibal/gen/l10n/app_localizations.dart';
 import '../services/ai/go_ai_service.dart';
 import 'game_board_screen.dart';
 
@@ -76,8 +77,9 @@ class BotsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Play vs Bot'), centerTitle: true),
+      appBar: AppBar(title: Text(l.playVsBotTitle), centerTitle: true),
       body: ListView.separated(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         itemCount: _bots.length,
@@ -109,8 +111,12 @@ class _BotCard extends StatelessWidget {
               const SizedBox(width: 16),
               Expanded(child: _Info(bot: bot)),
               if (available)
-                Icon(Icons.chevron_right,
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4))
+                Icon(
+                  Icons.chevron_right,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.4),
+                )
               else
                 _ComingSoonChip(),
             ],
@@ -136,8 +142,11 @@ class _Avatar extends StatelessWidget {
   final IconData icon;
   final bool available;
 
-  const _Avatar(
-      {required this.color, required this.icon, required this.available});
+  const _Avatar({
+    required this.color,
+    required this.icon,
+    required this.available,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -145,7 +154,9 @@ class _Avatar extends StatelessWidget {
       width: 56,
       height: 56,
       decoration: BoxDecoration(
-        color: available ? color.withValues(alpha: 0.15) : Colors.grey.withValues(alpha: 0.12),
+        color: available
+            ? color.withValues(alpha: 0.15)
+            : Colors.grey.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(14),
       ),
       child: Icon(icon, size: 30, color: available ? color : Colors.grey),
@@ -166,10 +177,9 @@ class _Info extends StatelessWidget {
           children: [
             Text(
               bot.name,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(fontWeight: FontWeight.w700),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
             ),
             const SizedBox(width: 8),
             Container(
@@ -204,15 +214,16 @@ class _Info extends StatelessWidget {
 class _ComingSoonChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: Colors.grey.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: const Text(
-        'Soon',
-        style: TextStyle(fontSize: 11, color: Colors.grey),
+      child: Text(
+        l.comingSoon,
+        style: const TextStyle(fontSize: 11, color: Colors.grey),
       ),
     );
   }
@@ -231,10 +242,9 @@ class _BoardSizePicker extends StatelessWidget {
         children: [
           Text(
             'Play vs ${bot.name}',
-            style: Theme.of(context)
-                .textTheme
-                .titleLarge
-                ?.copyWith(fontWeight: FontWeight.w700),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 6),
           Text(
@@ -285,8 +295,7 @@ class _SizeButton extends StatelessWidget {
       ),
       child: Text(
         '$size×$size',
-        style:
-            const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
       ),
     );
   }

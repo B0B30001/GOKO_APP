@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zaibal/gen/l10n/app_localizations.dart';
 import '../models/tutorial.dart';
 import '../models/app_settings.dart';
 import '../widgets/fast_game_board.dart';
@@ -28,6 +29,16 @@ class _TutorialScreenState extends State<TutorialScreen>
   /// Drives a horizontal shake on wrong taps. ±8 px translate, 3 cycles.
   late final AnimationController _shakeController;
 
+  /// Mutable copy of the step's board, used during demo playback so each
+  /// placed stone re-renders without mutating the underlying [TutorialStep].
+  /// Null when the current step has no demoMoves (board renders from _step.board).
+  List<List<int>>? _liveBoard;
+
+  /// Demo playback state.
+  bool _demoPlaying = false;
+  bool _demoFinished = false;
+  String? _demoCaption;
+
   @override
   void initState() {
     super.initState();
@@ -35,6 +46,7 @@ class _TutorialScreenState extends State<TutorialScreen>
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
+    _resetDemoForStep();
   }
 
   @override
@@ -46,6 +58,50 @@ class _TutorialScreenState extends State<TutorialScreen>
   TutorialStep get _step => widget.tutorial.steps[_stepIndex];
   bool get _isLast => _stepIndex == widget.tutorial.steps.length - 1;
   bool get _isFirst => _stepIndex == 0;
+  bool get _hasDemo => _step.demoMoves != null && _step.demoMoves!.isNotEmpty;
+
+  /// The board to show right now — live board during/after a demo, otherwise
+  /// the step's static board.
+  List<List<int>> get _renderBoard => _liveBoard ?? _step.board;
+
+  /// Reinitialize demo state when entering a step.
+  void _resetDemoForStep() {
+    _demoPlaying = false;
+    _demoFinished = false;
+    _demoCaption = null;
+    if (_hasDemo) {
+      _liveBoard = _step.board.map((row) => List<int>.from(row)).toList();
+    } else {
+      _liveBoard = null;
+    }
+  }
+
+  /// Plays the current step's demoMoves one at a time, respecting per-move
+  /// delays. Updates [_liveBoard] and [_demoCaption] via setState as it goes.
+  Future<void> _playDemo() async {
+    if (!_hasDemo || _demoPlaying) return;
+    final moves = _step.demoMoves!;
+    // Restart from the step's initial state so Replay always re-runs cleanly.
+    setState(() {
+      _liveBoard = _step.board.map((row) => List<int>.from(row)).toList();
+      _demoPlaying = true;
+      _demoFinished = false;
+      _demoCaption = null;
+    });
+    for (final m in moves) {
+      await Future.delayed(Duration(milliseconds: m.delayMs));
+      if (!mounted) return;
+      setState(() {
+        _liveBoard![m.row][m.col] = m.color;
+        _demoCaption = m.caption.isEmpty ? null : m.caption;
+      });
+    }
+    if (!mounted) return;
+    setState(() {
+      _demoPlaying = false;
+      _demoFinished = true;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +114,7 @@ class _TutorialScreenState extends State<TutorialScreen>
   PreferredSizeWidget _buildAppBar() {
     final total = widget.tutorial.steps.length;
     final value = (_stepIndex + 1) / total;
+    final l = AppLocalizations.of(context);
     return AppBar(
       title: Text(widget.tutorial.title),
       centerTitle: true,
@@ -69,7 +126,7 @@ class _TutorialScreenState extends State<TutorialScreen>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Step ${_stepIndex + 1} of $total',
+                l.stepXofY(_stepIndex + 1, total),
                 style: const TextStyle(color: Colors.white70, fontSize: 12),
               ),
               const SizedBox(height: 4),
@@ -134,8 +191,10 @@ class _TutorialScreenState extends State<TutorialScreen>
     final core = AspectRatio(
       aspectRatio: 1,
       child: FastGameBoard(
-        board: _step.board,
-        onTap: _step.interactive ? _handleInteractiveTap : (_, __) {},
+        board: _renderBoard,
+        onTap: _step.interactive && !_demoPlaying
+            ? _handleInteractiveTap
+            : (_, __) {},
         isDarkTheme: isDarkTheme,
         showCoordinates: AppSettings.showCoordinates,
       ),
@@ -192,6 +251,9 @@ class _TutorialScreenState extends State<TutorialScreen>
   Widget _buildCommentary() {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
+    // During demo playback we replace the static body with the active move's
+    // caption so the reader can follow each placement.
+    final body = _demoCaption ?? _step.body;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -202,10 +264,8 @@ class _TutorialScreenState extends State<TutorialScreen>
           ),
         ),
         const SizedBox(height: 12),
-        Text(
-          _step.body,
-          style: theme.textTheme.bodyMedium?.copyWith(height: 1.5),
-        ),
+        Text(body, style: theme.textTheme.bodyMedium?.copyWith(height: 1.5)),
+        if (_hasDemo) _buildDemoButton(cs),
         if (_step.interactive)
           Padding(
             padding: const EdgeInsets.only(top: 12),
@@ -214,7 +274,7 @@ class _TutorialScreenState extends State<TutorialScreen>
                 Icon(Icons.touch_app, size: 18, color: cs.primary),
                 const SizedBox(width: 6),
                 Text(
-                  'Interactive — tap the board',
+                  AppLocalizations.of(context).interactiveTapBoard,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: cs.primary,
                     fontWeight: FontWeight.w600,
@@ -233,7 +293,7 @@ class _TutorialScreenState extends State<TutorialScreen>
           ),
         const SizedBox(height: 16),
         Text(
-          'Source: ${widget.tutorial.source}',
+          '${AppLocalizations.of(context).sourcePrefix}${widget.tutorial.source}',
           style: theme.textTheme.bodySmall?.copyWith(
             fontStyle: FontStyle.italic,
             color: cs.onSurface.withValues(alpha: 0.5),
@@ -244,24 +304,58 @@ class _TutorialScreenState extends State<TutorialScreen>
   }
 
   Widget _buildControls() {
+    final disabled = _demoPlaying;
+    final l = AppLocalizations.of(context);
     return Row(
       children: [
         Expanded(
           child: OutlinedButton.icon(
             icon: const Icon(Icons.arrow_back),
-            label: const Text('Prev'),
-            onPressed: _isFirst ? null : _goPrev,
+            label: Text(l.prev),
+            onPressed: (_isFirst || disabled) ? null : _goPrev,
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: ElevatedButton.icon(
             icon: Icon(_isLast ? Icons.check : Icons.arrow_forward),
-            label: Text(_isLast ? 'Done' : 'Next'),
-            onPressed: _goNext,
+            label: Text(_isLast ? l.done : l.next),
+            onPressed: disabled ? null : _goNext,
           ),
         ),
       ],
+    );
+  }
+
+  /// Play / Replay button shown when the active step carries [demoMoves].
+  Widget _buildDemoButton(ColorScheme cs) {
+    final l = AppLocalizations.of(context);
+    final IconData icon;
+    final String label;
+    if (_demoPlaying) {
+      icon = Icons.hourglass_top;
+      label = l.playingDemo;
+    } else if (_demoFinished) {
+      icon = Icons.replay;
+      label = l.replayDemo;
+    } else {
+      icon = Icons.play_arrow;
+      label = l.playDemo;
+    }
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: ElevatedButton.icon(
+          onPressed: _demoPlaying ? null : _playDemo,
+          icon: Icon(icon),
+          label: Text(label),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: cs.primary,
+            foregroundColor: cs.onPrimary,
+          ),
+        ),
+      ),
     );
   }
 
@@ -269,6 +363,7 @@ class _TutorialScreenState extends State<TutorialScreen>
     setState(() {
       _stepIndex--;
       _wrongHint = null;
+      _resetDemoForStep();
     });
   }
 
@@ -280,6 +375,7 @@ class _TutorialScreenState extends State<TutorialScreen>
     setState(() {
       _stepIndex++;
       _wrongHint = null;
+      _resetDemoForStep();
     });
   }
 

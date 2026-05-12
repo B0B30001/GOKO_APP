@@ -43,7 +43,7 @@
     // unregistering after the new bundle is in place.
     (function () {
       try {
-        var EVICT_KEY = 'goko_sw_evicted_v1';
+        var EVICT_KEY = 'GOKO_BUILD_ID_TOKEN';
         if (localStorage.getItem(EVICT_KEY) === '1') return;
         if ('serviceWorker' in navigator) {
           navigator.serviceWorker.getRegistrations().then(function (rs) {

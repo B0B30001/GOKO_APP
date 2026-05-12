@@ -1,3 +1,36 @@
+/// A single placement in a step-by-step animated demo sequence.
+/// Used to illustrate concepts like ladders, ko, and shapes by playing
+/// moves out in order.
+class DemoMove {
+  final int row;
+  final int col;
+
+  /// 1 = black, 2 = white.
+  final int color;
+
+  /// Caption shown while this move is on screen. Empty = reuse step body.
+  final String caption;
+
+  /// Milliseconds to wait before placing this move (after the prior one).
+  final int delayMs;
+
+  const DemoMove({
+    required this.row,
+    required this.col,
+    required this.color,
+    this.caption = '',
+    this.delayMs = 700,
+  });
+
+  factory DemoMove.fromJson(Map<String, dynamic> json) => DemoMove(
+    row: (json['row'] as num).toInt(),
+    col: (json['col'] as num).toInt(),
+    color: (json['color'] as num).toInt(),
+    caption: json['caption']?.toString() ?? '',
+    delayMs: json['delayMs'] is num ? (json['delayMs'] as num).toInt() : 700,
+  );
+}
+
 /// One discrete step within a [Tutorial]: a board snapshot with prose
 /// explaining what's happening.
 class TutorialStep {
@@ -21,6 +54,10 @@ class TutorialStep {
   /// true; null otherwise.
   final List<int>? correctMove;
 
+  /// Optional move sequence to animate on top of [board]. When non-null, the
+  /// tutorial screen shows a Play button that plays these moves in order.
+  final List<DemoMove>? demoMoves;
+
   const TutorialStep({
     required this.title,
     required this.board,
@@ -29,6 +66,7 @@ class TutorialStep {
     this.markedCol,
     this.interactive = false,
     this.correctMove,
+    this.demoMoves,
   });
 
   factory TutorialStep.fromJson(Map<String, dynamic> json) {
@@ -40,6 +78,10 @@ class TutorialStep {
     final correctRaw = json['correctMove'];
     final correct = correctRaw is List
         ? correctRaw.map<int>((c) => (c as num).toInt()).toList()
+        : null;
+    final demoRaw = json['demoMoves'];
+    final demo = demoRaw is List
+        ? demoRaw.cast<Map<String, dynamic>>().map(DemoMove.fromJson).toList()
         : null;
     return TutorialStep(
       title: json['title']?.toString() ?? '',
@@ -53,6 +95,7 @@ class TutorialStep {
           : null,
       interactive: json['interactive'] == true,
       correctMove: correct,
+      demoMoves: demo,
     );
   }
 }

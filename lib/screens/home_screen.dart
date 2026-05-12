@@ -2,10 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:zaibal/gen/l10n/app_localizations.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/login_dialog.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/menu_fab.dart';
+import '../widgets/app_shell.dart';
 import '../services/ogs_service.dart';
 import './game_board_screen.dart';
 import './online/online_lobby_screen.dart';
@@ -14,63 +16,73 @@ import '../services/ai/go_ai_service.dart';
 class HomeScreen extends StatelessWidget {
   final Function onThemeToggle;
 
-  const HomeScreen({required this.onThemeToggle, super.key});
+  /// When [showBottomNav] is false the screen is rendered inside [AppShell];
+  /// the shell provides the NavigationBar, so we suppress the per-screen one.
+  final bool showBottomNav;
+
+  const HomeScreen({
+    required this.onThemeToggle,
+    this.showBottomNav = true,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const AppDrawer(active: AppDrawerSection.home),
-      floatingActionButton: const MenuFab(),
-      body: Column(
-        children: [
-          Expanded(
-            child: CustomScrollView(
-              slivers: [
-                SliverAppBar(
-                  floating: true,
-                  pinned: true,
-                  expandedHeight: 180,
-                  automaticallyImplyLeading: false,
-                  flexibleSpace: FlexibleSpaceBar(
-                    titlePadding: const EdgeInsets.only(left: 16, bottom: 12),
-                    title: const Text(''), // No title per request
-                    background: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Theme.of(context).primaryColor,
-                            Theme.of(context).colorScheme.secondary,
-                          ],
-                        ),
-                      ),
-                    ),
+      floatingActionButton: showBottomNav ? const MenuFab() : null,
+      bottomNavigationBar: showBottomNav ? _buildBottomNav(context) : null,
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            floating: true,
+            pinned: true,
+            expandedHeight: 180,
+            automaticallyImplyLeading: false,
+            leading: Builder(
+              builder: (ctx) => IconButton(
+                icon: const Icon(Icons.menu, color: Colors.white),
+                onPressed: () => Scaffold.of(ctx).openDrawer(),
+                tooltip: 'Menu',
+              ),
+            ),
+            flexibleSpace: FlexibleSpaceBar(
+              titlePadding: const EdgeInsets.only(left: 16, bottom: 12),
+              title: const Text(''), // No title per request
+              background: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Theme.of(context).primaryColor,
+                      Theme.of(context).colorScheme.secondary,
+                    ],
                   ),
                 ),
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _buildHeroBanner(context),
-                        const SizedBox(height: 16),
-                        Center(child: _buildPlayButton(context)),
-                        const SizedBox(height: 20),
-                        _buildQuickActions(context),
-                        const SizedBox(height: 24),
-                        _buildDailyChallenge(context),
-                        const SizedBox(height: 24),
-                        _buildRecentHistory(context),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
-          _buildBottomNav(context),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildHeroBanner(context),
+                  const SizedBox(height: 16),
+                  Center(child: _buildPlayButton(context)),
+                  const SizedBox(height: 20),
+                  _buildQuickActions(context),
+                  const SizedBox(height: 24),
+                  _buildDailyChallenge(context),
+                  const SizedBox(height: 24),
+                  _buildRecentHistory(context),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -147,12 +159,12 @@ class HomeScreen extends StatelessWidget {
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: const [
-          Icon(Icons.play_arrow_rounded, size: 28),
-          SizedBox(width: 8),
+        children: [
+          const Icon(Icons.play_arrow_rounded, size: 28),
+          const SizedBox(width: 8),
           Text(
-            'Play',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            AppLocalizations.of(context).play,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -160,17 +172,18 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildQuickActions(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Quick Actions', style: Theme.of(context).textTheme.titleLarge),
+        Text(l.quickActions, style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 16),
         Row(
           children: [
             Expanded(
               child: _buildActionCard(
                 context,
-                'Practice',
+                l.practice,
                 Icons.computer,
                 () => _showBoardSize(context, isComputer: true),
               ),
@@ -179,19 +192,17 @@ class HomeScreen extends StatelessWidget {
             Expanded(
               child: _buildActionCard(
                 context,
-                'Play vs Bot',
+                l.playVsBot,
                 Icons.smart_toy,
                 () => Navigator.pushNamed(context, '/bots'),
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: _buildActionCard(
-                context,
-                'Tutorial',
-                Icons.school,
-                () => Navigator.pushNamed(context, '/learn'),
-              ),
+              child: _buildActionCard(context, l.tutorial, Icons.school, () {
+                appShellTabIndex.value = 1;
+                if (Navigator.canPop(context)) Navigator.pop(context);
+              }),
             ),
           ],
         ),
@@ -277,7 +288,10 @@ class HomeScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Recent Games', style: Theme.of(context).textTheme.titleLarge),
+        Text(
+          AppLocalizations.of(context).recentGames,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
         const SizedBox(height: 12),
         ...items.map(
           (item) => Padding(
@@ -290,32 +304,13 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildBottomNav(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: BottomNavBar(
-        currentIndex: 0,
-        onTap: (index) {
-          switch (index) {
-            case 1:
-              Navigator.pushNamed(context, '/learn');
-              break;
-            case 2:
-              Navigator.pushNamed(context, '/puzzles');
-              break;
-            case 3:
-              Navigator.pushNamed(context, '/profile');
-              break;
-          }
-        },
-      ),
+    return BottomNavBar(
+      currentIndex: 0,
+      onTap: (index) {
+        if (index == 0) return;
+        appShellTabIndex.value = index;
+        Navigator.of(context).popUntil((r) => r.isFirst);
+      },
     );
   }
 
@@ -437,7 +432,7 @@ class HomeScreen extends StatelessWidget {
           final difficulty = await showDialog<AIDifficulty>(
             context: context,
             builder: (ctx) => SimpleDialog(
-              title: const Text('Select Difficulty'),
+              title: Text(AppLocalizations.of(context).selectDifficulty),
               children: AIDifficulty.values
                   .map(
                     (d) => SimpleDialogOption(

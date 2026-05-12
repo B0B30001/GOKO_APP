@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'online/websocket_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'online/active_games_repository.dart';
@@ -11,6 +13,14 @@ class OgsService extends ChangeNotifier {
   String? _chatAuth;
   String? _jwt; // JWT token for WebSocket authentication
   Map<String, dynamic>? _userData;
+
+  // Secure storage keys for persisted session tokens.
+  static const _kUserData = 'ogs_user_data';
+  static const _kChatAuth = 'ogs_chat_auth';
+  static const _kJwt = 'ogs_jwt';
+  static const _storage = FlutterSecureStorage(
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+  );
 
   // WebSocket service for real-time functionality
   final WebSocketService _wsService = WebSocketService();
@@ -117,6 +127,46 @@ class OgsService extends ChangeNotifier {
 
   OgsService() {
     activeGamesRepository = ActiveGamesRepository(_wsService);
+  }
+
+  /// Attempts to restore a previously saved OGS session from secure storage.
+  /// Called once at app startup in [main]; silently no-ops when no saved
+  /// session exists or the stored data is invalid.
+  Future<void> tryAutoLogin() async {
+    try {
+      final userDataStr = await _storage.read(key: _kUserData);
+      final chatAuth = await _storage.read(key: _kChatAuth);
+      final jwt = await _storage.read(key: _kJwt);
+      if (userDataStr == null || chatAuth == null) return;
+      final decoded = json.decode(userDataStr);
+      if (decoded is! Map<String, dynamic>) return;
+      _userData = decoded;
+      _chatAuth = chatAuth;
+      _jwt = jwt;
+      // Reconnect WebSocket with stored credentials.
+      _wsService.connect(
+        userId: _userData!['id'].toString(),
+        authToken: _chatAuth!,
+        jwt: _jwt,
+      );
+      notifyListeners();
+      debugPrint('OGS: auto-login restored for ${_userData!["username"]}');
+    } catch (e) {
+      // Corrupted storage — treat as logged out.
+      debugPrint('OGS: auto-login failed: $e');
+    }
+  }
+
+  /// Persists the current session tokens to secure storage.
+  Future<void> _persistSession() async {
+    if (_userData == null || _chatAuth == null) return;
+    try {
+      await _storage.write(key: _kUserData, value: json.encode(_userData));
+      await _storage.write(key: _kChatAuth, value: _chatAuth!);
+      if (_jwt != null) await _storage.write(key: _kJwt, value: _jwt!);
+    } catch (e) {
+      debugPrint('OGS: failed to persist session: $e');
+    }
   }
 
   // OAuth config (set via --dart-define for client id in builds)
@@ -236,6 +286,9 @@ class OgsService extends ChangeNotifier {
           );
         }
 
+        // Persist session so the user stays logged in after restart.
+        unawaited(_persistSession());
+
         notifyListeners();
         return true;
       } else {
@@ -315,11 +368,15 @@ class OgsService extends ChangeNotifier {
   }
 
   /// Logout - clear all session data
-  void logout() {
+  Future<void> logout() async {
     disconnect();
     _userData = null;
     _chatAuth = null;
     _jwt = null;
+    // Remove persisted tokens so auto-login doesn't fire next launch.
+    try {
+      await _storage.deleteAll();
+    } catch (_) {}
     notifyListeners();
   }
 

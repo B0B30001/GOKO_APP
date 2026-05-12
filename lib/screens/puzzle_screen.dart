@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:zaibal/gen/l10n/app_localizations.dart';
+import 'package:zaibal/l10n/puzzle_translations.dart';
 import '../models/puzzle.dart';
 import '../models/optimized_game.dart';
 import '../widgets/fast_game_board.dart';
@@ -22,26 +24,52 @@ class PuzzleScreen extends StatefulWidget {
   _PuzzleScreenState createState() => _PuzzleScreenState();
 }
 
-class _PuzzleScreenState extends State<PuzzleScreen> {
+class _PuzzleScreenState extends State<PuzzleScreen>
+    with SingleTickerProviderStateMixin {
   late Game _game;
   bool _solved = false;
-  bool _failed = false;
   int _moveCount = 0;
   int _mistakeCount = 0;
 
-  /// Coordinates of the last wrong move ("row,col") so the fail dialog can
-  /// show a targeted explanation when one exists.
+  /// True while waiting for the opponent's auto-response to play.
+  bool _awaitingOpponent = false;
+
+  /// Coordinates of the last wrong move ("row,col") for targeted feedback.
   String? _lastWrongMoveKey;
+
+  // ignore: unused_field (kept for potential future use)
+
+  late final AnimationController _shakeController;
+  late final Animation<double> _shakeAnimation;
 
   @override
   void initState() {
     super.initState();
+    _shakeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 420),
+    );
+    _shakeAnimation =
+        TweenSequence([
+          TweenSequenceItem(tween: Tween(begin: 0.0, end: -10.0), weight: 1),
+          TweenSequenceItem(tween: Tween(begin: -10.0, end: 10.0), weight: 2),
+          TweenSequenceItem(tween: Tween(begin: 10.0, end: -8.0), weight: 2),
+          TweenSequenceItem(tween: Tween(begin: -8.0, end: 8.0), weight: 2),
+          TweenSequenceItem(tween: Tween(begin: 8.0, end: 0.0), weight: 1),
+        ]).animate(
+          CurvedAnimation(parent: _shakeController, curve: Curves.easeInOut),
+        );
     _game = Game(widget.puzzle.boardSize);
     _loadPuzzlePosition();
     if (!widget.isDrillMode) {
-      // Defer until first frame so we have a valid context for navigation.
       WidgetsBinding.instance.addPostFrameCallback((_) => _checkPuzzleQuota());
     }
+  }
+
+  @override
+  void dispose() {
+    _shakeController.dispose();
+    super.dispose();
   }
 
   Future<void> _checkPuzzleQuota() async {
@@ -72,13 +100,18 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
   }
 
   void _onTapBoard(int i, int j) {
-    if (_solved || _failed) return;
+    if (_solved || _awaitingOpponent) return;
     // View-only teaching puzzles have no moves — tapping does nothing.
     if (widget.puzzle.solution.isEmpty) return;
     if (_game.board.getStone(i, j) != 0) return;
     if (_moveCount >= widget.puzzle.solution.length) return;
 
     final expectedMove = widget.puzzle.solution[_moveCount];
+
+    // Skip if this solution step is the opponent's turn (shouldn't be reachable
+    // since we auto-play opponent moves, but guard defensively).
+    if (expectedMove.color != widget.puzzle.playerColor) return;
+
     final isExpectedCoord = i == expectedMove.row && j == expectedMove.col;
 
     if (!isExpectedCoord) {
@@ -86,34 +119,58 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
       return;
     }
 
-    // Correct coordinate — try to place through the engine. If the engine
-    // refuses (Ko, suicide), the move is illegal even though it matches the
-    // recorded solution; treat it as a wrong move so we don't falsely solve.
+    // Correct coordinate — try to place through the engine.
     final placed = _game.board.placeStone(i, j, widget.puzzle.playerColor);
     if (!placed) {
       _handleWrongMove(i, j, illegal: true);
       return;
     }
 
-    setState(() {
-      _moveCount++;
+    setState(() => _moveCount++);
+    _checkWinAndContinue();
+  }
 
-      final sequenceComplete = _moveCount >= widget.puzzle.solution.length;
-      final winSatisfied = widget.puzzle.winCondition.isSatisfied(
-        _game.board.board,
-      );
+  /// After a correct player move, check for win or schedule opponent response.
+  void _checkWinAndContinue() {
+    final sequenceComplete = _moveCount >= widget.puzzle.solution.length;
+    final winSatisfied = widget.puzzle.winCondition.isSatisfied(
+      _game.board.board,
+    );
 
-      if (sequenceComplete && winSatisfied) {
-        _solved = true;
-        if (widget.isDrillMode) {
+    if (sequenceComplete && winSatisfied) {
+      setState(() => _solved = true);
+      if (widget.isDrillMode) {
+        Future.delayed(const Duration(milliseconds: 350), () {
+          if (!mounted) return;
           Navigator.pop(context, {'solved': true, 'mistakes': _mistakeCount});
-        } else {
-          Future.delayed(const Duration(milliseconds: 350), () {
-            if (!mounted) return;
-            _showSuccessDialog();
-          });
-        }
+        });
       }
+      // In normal mode the inline solution panel reveals itself automatically.
+      return;
+    }
+
+    // Auto-play the next move if it belongs to the opponent.
+    if (_moveCount < widget.puzzle.solution.length) {
+      final next = widget.puzzle.solution[_moveCount];
+      if (next.color != widget.puzzle.playerColor) {
+        _scheduleOpponentMove();
+      }
+    }
+  }
+
+  /// Plays the opponent's response automatically after a short delay,
+  /// mimicking the chess.com puzzle experience.
+  void _scheduleOpponentMove() {
+    setState(() => _awaitingOpponent = true);
+    Future.delayed(const Duration(milliseconds: 650), () {
+      if (!mounted) return;
+      final move = widget.puzzle.solution[_moveCount];
+      _game.board.placeStone(move.row, move.col, move.color);
+      setState(() {
+        _moveCount++;
+        _awaitingOpponent = false;
+      });
+      _checkWinAndContinue();
     });
   }
 
@@ -121,47 +178,58 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
     setState(() {
       _mistakeCount++;
       _lastWrongMoveKey = '$i,$j';
-    });
-    if (widget.isDrillMode) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            illegal ? 'Illegal move (Ko / suicide).' : 'Wrong move! Try again.',
-          ),
-          duration: const Duration(milliseconds: 900),
-        ),
-      );
-      _resetPuzzle();
-      return;
-    }
-    setState(() {
-      // Only paint the wrong-move stone if it was a legal but wrong choice.
-      // Illegal moves won't go on the board anyway.
+      // Briefly show the wrong stone so the shake is meaningful.
       if (!illegal) {
         _game.board.setStone(i, j, widget.puzzle.playerColor);
       }
-      _failed = true;
     });
-    Future.delayed(const Duration(milliseconds: 350), () {
+
+    // Shake the board, then remove the wrong stone and let the player retry
+    // (chess.com style — no blocking dialog).
+    _shakeController.forward(from: 0.0).then((_) {
       if (!mounted) return;
-      _showFailDialog();
+      setState(() {
+        if (!illegal && _lastWrongMoveKey != null) {
+          final parts = _lastWrongMoveKey!.split(',');
+          _game.board.setStone(int.parse(parts[0]), int.parse(parts[1]), 0);
+        }
+        _lastWrongMoveKey = null;
+      });
     });
+
+    // Brief snackbar feedback (drill mode or normal).
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(
+            illegal
+                ? 'Illegal move (Ko / suicide).'
+                : 'Wrong move — try again!',
+          ),
+          duration: const Duration(milliseconds: 1200),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+
+    if (widget.isDrillMode) _resetPuzzle();
   }
 
   void _showSuccessDialog() {
+    final l = AppLocalizations.of(context);
     ResultModal.show<void>(
       context,
       kind: ResultModalKind.success,
-      title: 'Puzzle Solved!',
+      title: l.puzzleSolved,
       body:
-          'Congratulations! You solved "${widget.puzzle.title}".\n'
-          'Difficulty: ${'⭐' * widget.puzzle.difficulty}',
+          '"${widget.puzzle.localizedTitle(context)}"\n'
+          '${l.difficulty}: ${'⭐' * widget.puzzle.difficulty}',
       actions: [
         ResultModalAction(
-          label: 'Continue',
+          label: l.continue_,
           icon: Icons.arrow_forward,
           onPressed: () {
-            Navigator.pop(context); // close dialog
+            Navigator.pop(context);
             Navigator.pop(context, {
               'solved': true,
               'puzzleId': widget.puzzle.id,
@@ -170,7 +238,7 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
           },
         ),
         ResultModalAction(
-          label: 'Try Again',
+          label: l.tryAgain,
           icon: Icons.refresh,
           isPrimary: true,
           onPressed: () {
@@ -182,22 +250,25 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
     );
   }
 
+  // ignore: unused_element
   void _showFailDialog() {
+    final l = AppLocalizations.of(context);
     final targeted = _lastWrongMoveKey != null
         ? widget.puzzle.failureReasons[_lastWrongMoveKey!]
         : null;
-    final reason = targeted ?? widget.puzzle.hint;
+    final localizedHint = widget.puzzle.localizedHint(context);
+    final reason = targeted ?? localizedHint;
     final body = targeted != null
-        ? '$reason\n\nGeneral hint: ${widget.puzzle.hint}'
+        ? '$reason\n\n${l.hint}: $localizedHint'
         : reason;
     ResultModal.show<void>(
       context,
       kind: ResultModalKind.failure,
-      title: 'Not quite',
+      title: l.notQuite,
       body: body,
       actions: [
         ResultModalAction(
-          label: 'Step back',
+          label: l.stepBack,
           icon: Icons.undo,
           onPressed: () {
             Navigator.pop(context);
@@ -205,7 +276,7 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
           },
         ),
         ResultModalAction(
-          label: 'Give up',
+          label: l.giveUp,
           icon: Icons.close,
           onPressed: () {
             Navigator.pop(context);
@@ -213,7 +284,7 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
           },
         ),
         ResultModalAction(
-          label: 'Try again',
+          label: l.tryAgain,
           icon: Icons.refresh,
           isPrimary: true,
           onPressed: () {
@@ -236,7 +307,6 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
         _game.board.setStone(r, c, 0);
         _lastWrongMoveKey = null;
       }
-      _failed = false;
     });
   }
 
@@ -245,28 +315,28 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
       _game = Game(widget.puzzle.boardSize);
       _loadPuzzlePosition();
       _solved = false;
-      _failed = false;
       _moveCount = 0;
       _lastWrongMoveKey = null;
     });
   }
 
   void _showHint() {
+    final l = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Row(
-          children: const [
-            Icon(Icons.lightbulb, color: Colors.amber),
-            SizedBox(width: 8),
-            Text('Hint'),
+          children: [
+            const Icon(Icons.lightbulb, color: Colors.amber),
+            const SizedBox(width: 8),
+            Text(l.hint),
           ],
         ),
-        content: Text(widget.puzzle.hint),
+        content: Text(widget.puzzle.localizedHint(context)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Got it'),
+            child: Text(l.continue_),
           ),
         ],
       ),
@@ -284,7 +354,7 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
       appBar: AppBar(
         backgroundColor: forceLight ? Colors.white : null,
         title: Text(
-          widget.puzzle.title,
+          widget.puzzle.localizedTitle(context),
           style: forceLight ? const TextStyle(color: Colors.black87) : null,
         ),
         centerTitle: true,
@@ -302,7 +372,7 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
               color: forceLight ? Colors.black87 : null,
             ),
             onPressed: _showHint,
-            tooltip: 'Show Hint',
+            tooltip: AppLocalizations.of(context).hint,
           ),
           IconButton(
             icon: Icon(
@@ -310,7 +380,7 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
               color: forceLight ? Colors.black87 : null,
             ),
             onPressed: _resetPuzzle,
-            tooltip: 'Reset',
+            tooltip: AppLocalizations.of(context).reset,
           ),
         ],
       ),
@@ -332,14 +402,21 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
         Expanded(
           flex: 3,
           child: Center(
-            child: SizedBox(
-              width: boardSize,
-              height: boardSize,
-              child: FastGameBoard(
-                board: _game.board.board,
-                onTap: _onTapBoard,
-                isDarkTheme: isDarkTheme,
-                showCoordinates: AppSettings.showCoordinates,
+            child: AnimatedBuilder(
+              animation: _shakeAnimation,
+              builder: (context, child) => Transform.translate(
+                offset: Offset(_shakeAnimation.value, 0),
+                child: child,
+              ),
+              child: SizedBox(
+                width: boardSize,
+                height: boardSize,
+                child: FastGameBoard(
+                  board: _game.board.board,
+                  onTap: _onTapBoard,
+                  isDarkTheme: isDarkTheme,
+                  showCoordinates: AppSettings.showCoordinates,
+                ),
               ),
             ),
           ),
@@ -356,14 +433,62 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
         child: Column(
           children: [
             const SizedBox(height: 16),
-            SizedBox(
-              width: boardSize,
-              height: boardSize,
-              child: FastGameBoard(
-                board: _game.board.board,
-                onTap: _onTapBoard,
-                isDarkTheme: isDarkTheme,
-                showCoordinates: AppSettings.showCoordinates,
+            // Progress bar
+            if (widget.puzzle.solution.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Move $_moveCount of ${widget.puzzle.solution.length}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        if (_awaitingOpponent)
+                          const SizedBox(
+                            width: 14,
+                            height: 14,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        value: widget.puzzle.solution.isEmpty
+                            ? 0
+                            : _moveCount / widget.puzzle.solution.length,
+                        minHeight: 6,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                  ],
+                ),
+              ),
+            // Board with shake animation
+            AnimatedBuilder(
+              animation: _shakeAnimation,
+              builder: (context, child) => Transform.translate(
+                offset: Offset(_shakeAnimation.value, 0),
+                child: child,
+              ),
+              child: SizedBox(
+                width: boardSize,
+                height: boardSize,
+                child: FastGameBoard(
+                  board: _game.board.board,
+                  onTap: _onTapBoard,
+                  isDarkTheme: isDarkTheme,
+                  showCoordinates: AppSettings.showCoordinates,
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -393,24 +518,32 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  _solved ? 'Solved!' : 'Puzzle',
+                  _solved
+                      ? AppLocalizations.of(context).puzzleSolved
+                      : AppLocalizations.of(context).puzzles,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 16),
-          _buildInfoCard('Objective', widget.puzzle.description, Icons.flag),
+          _buildInfoCard(
+            AppLocalizations.of(context).objective,
+            widget.puzzle.localizedDescription(context),
+            Icons.flag,
+          ),
           const SizedBox(height: 12),
           _buildInfoCard(
-            'Difficulty',
+            AppLocalizations.of(context).difficulty,
             '⭐' * widget.puzzle.difficulty,
             Icons.bar_chart,
           ),
           const SizedBox(height: 12),
           _buildInfoCard(
-            'Your Turn',
-            widget.puzzle.playerColor == 1 ? 'Black to play' : 'White to play',
+            AppLocalizations.of(context).yourTurn,
+            widget.puzzle.playerColor == 1
+                ? AppLocalizations.of(context).blackToPlay
+                : AppLocalizations.of(context).whiteToPlay,
             Icons.circle,
             iconColor: widget.puzzle.playerColor == 1
                 ? Colors.black
@@ -419,7 +552,7 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
           const SizedBox(height: 12),
           if (widget.puzzle.solution.isNotEmpty)
             _buildInfoCard(
-              'Moves',
+              AppLocalizations.of(context).moves,
               '$_moveCount / ${widget.puzzle.solution.length}',
               Icons.timeline,
             ),
@@ -437,7 +570,7 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
                   _showSuccessDialog();
                 },
                 icon: const Icon(Icons.check_circle_outline),
-                label: const Text('Mark as Learned ✓'),
+                label: Text(AppLocalizations.of(context).markAsLearned),
               ),
             )
           else
@@ -446,7 +579,7 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
               child: ElevatedButton.icon(
                 onPressed: _showHint,
                 icon: const Icon(Icons.lightbulb_outline),
-                label: const Text('Show Hint'),
+                label: Text(AppLocalizations.of(context).hint),
               ),
             ),
         ],
@@ -493,14 +626,15 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
   }
 
   Widget _buildTheorySection() {
+    final l = AppLocalizations.of(context);
     return ExpansionTile(
       leading: const Icon(Icons.school, color: Colors.blue),
-      title: const Text(
-        'Theory & Explanation',
-        style: TextStyle(fontWeight: FontWeight.bold),
+      title: Text(
+        l.theoryExplanation,
+        style: const TextStyle(fontWeight: FontWeight.bold),
       ),
       subtitle: Text(
-        _solved ? 'Learn why this works' : 'Solve to unlock',
+        _solved ? l.learnWhyThisWorks : l.solveToUnlock,
         style: TextStyle(
           fontSize: 12,
           color: _solved ? Colors.green : Colors.grey,
@@ -536,7 +670,8 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
   }
 
   Widget _buildConceptCard() {
-    final concept = _getConcept(widget.puzzle.category);
+    final l = AppLocalizations.of(context);
+    final concept = _getConcept(widget.puzzle.category, l);
     if (concept == null) return const SizedBox.shrink();
 
     return Card(
@@ -551,7 +686,7 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
                 const Icon(Icons.lightbulb, color: Colors.amber, size: 20),
                 const SizedBox(width: 8),
                 Text(
-                  'Key Concept: ${concept['title']}',
+                  '${l.keyConceptPrefix}${concept['title']}',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
@@ -570,32 +705,25 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
     );
   }
 
-  Map<String, String>? _getConcept(String category) {
+  Map<String, String>? _getConcept(String category, AppLocalizations l) {
     switch (category) {
       case 'capture':
         return {
-          'title': 'Liberties & Captures',
-          'description':
-              'Stones are captured when all their liberties (adjacent empty points) are occupied by enemy stones. Connected stones share liberties as a single group.',
+          'title': l.conceptLibertiesCaptures,
+          'description': l.conceptLibertiesCapturesDesc,
         };
       case 'liberties':
         return {
-          'title': 'Liberty Counting',
-          'description':
-              'Each empty point adjacent to a stone or group is a liberty. Connected stones form one group and share all their liberties. When a group has only one liberty left, it\'s in "atari" (check).',
+          'title': l.conceptLibertyCounting,
+          'description': l.conceptLibertyCountingDesc,
         };
       case 'life_death':
         return {
-          'title': 'Life & Death - Two Eyes',
-          'description':
-              'A group with two separate eyes cannot be captured because the opponent cannot fill both eyes simultaneously. This is fundamental to understanding which groups are alive and which can be killed.',
+          'title': l.conceptLifeDeathTwoEyes,
+          'description': l.conceptLifeDeathDesc,
         };
       case 'ko':
-        return {
-          'title': 'Ko Rule',
-          'description':
-              'The Ko rule prevents infinite loops by prohibiting immediate recapture in a repeating position. After capturing in Ko, you must play elsewhere before you can recapture.',
-        };
+        return {'title': l.conceptKoRule, 'description': l.conceptKoRuleDesc};
       default:
         return null;
     }

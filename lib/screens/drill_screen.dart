@@ -508,7 +508,7 @@ class _DrillScreenState extends State<DrillScreen> {
   String _formatTime(int seconds) {
     final minutes = seconds ~/ 60;
     final secs = seconds % 60;
-    return '${minutes}:${secs.toString().padLeft(2, '0')}';
+    return '$minutes:${secs.toString().padLeft(2, '0')}';
   }
 
   IconData _getDrillIcon(DrillType type) {

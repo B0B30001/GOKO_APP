@@ -1,0 +1,404 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for Chinese (`zh`).
+class AppLocalizationsZh extends AppLocalizations {
+  AppLocalizationsZh([String locale = 'zh']) : super(locale);
+
+  @override
+  String get appName => 'GOKO';
+
+  @override
+  String get play => '对弈';
+
+  @override
+  String get learn => '学习';
+
+  @override
+  String get puzzles => '题库';
+
+  @override
+  String get profile => '我的';
+
+  @override
+  String get settings => '设置';
+
+  @override
+  String get quickActions => '快捷操作';
+
+  @override
+  String get practice => '练习';
+
+  @override
+  String get playVsBot => '对战机器人';
+
+  @override
+  String get tutorial => '教程';
+
+  @override
+  String get dailyChallenge => '每日挑战';
+
+  @override
+  String get recentGames => '最近对局';
+
+  @override
+  String get heroPrimary => '下棋 · 学习 · 进步';
+
+  @override
+  String get heroSub => '完全离线可用，无需账号！';
+
+  @override
+  String get selectGameMode => '选择游戏模式';
+
+  @override
+  String get vsComputer => '对战电脑';
+
+  @override
+  String get vsFriend => '与朋友对弈（同一设备）';
+
+  @override
+  String get vsOnline => '在线对战';
+
+  @override
+  String get selectBoardSize => '选择棋盘大小';
+
+  @override
+  String get selectDifficulty => '选择难度';
+
+  @override
+  String get learnGo => '学习围棋';
+
+  @override
+  String get lessons => '课程';
+
+  @override
+  String get practiceTab => '练习';
+
+  @override
+  String get statistics => '统计';
+
+  @override
+  String get games => '对局数';
+
+  @override
+  String get winRate => '胜率';
+
+  @override
+  String get puzzleRating => '题目评分';
+
+  @override
+  String get language => '语言';
+
+  @override
+  String get appLanguage => '应用语言';
+
+  @override
+  String get appearance => '外观';
+
+  @override
+  String get darkMode => '深色模式';
+
+  @override
+  String get darkModeSubtitle => '在浅色和深色主题之间切换';
+
+  @override
+  String get showCoordinates => '显示坐标';
+
+  @override
+  String get lightThemeInGame => '游戏中使用浅色主题';
+
+  @override
+  String get lightThemeInGameSubtitle => '在对局画面强制使用浅色主题';
+
+  @override
+  String get puzzleSolved => '题目已解决！';
+
+  @override
+  String get notQuite => '还差一点';
+
+  @override
+  String get hint => '提示';
+
+  @override
+  String get reset => '重置';
+
+  @override
+  String get tryAgain => '再试一次';
+
+  @override
+  String get giveUp => '放弃';
+
+  @override
+  String get stepBack => '退一步';
+
+  @override
+  String get continue_ => '继续';
+
+  @override
+  String get theoryExplanation => '理论与解析';
+
+  @override
+  String get solveToUnlock => '解题后解锁';
+
+  @override
+  String get learnWhyThisWorks => '了解原因';
+
+  @override
+  String get keyConceptPrefix => '核心概念：';
+
+  @override
+  String get gameHistory => '对局记录';
+
+  @override
+  String get noRecentGames => '暂无最近对局';
+
+  @override
+  String get home => '主页';
+
+  @override
+  String get history => '记录';
+
+  @override
+  String get playVsBotTitle => '对战机器人';
+
+  @override
+  String get kataGoSection => 'AI / KataGo';
+
+  @override
+  String get kataGoServerUrl => 'KataGo 服务器地址';
+
+  @override
+  String get kataGoHint => '留空则使用内置 MCTS 引擎（离线）。';
+
+  @override
+  String get prev => '上一步';
+
+  @override
+  String get next => '下一步';
+
+  @override
+  String get done => '完成';
+
+  @override
+  String get playDemo => '播放演示';
+
+  @override
+  String get replayDemo => '重播演示';
+
+  @override
+  String get playingDemo => '演示中…';
+
+  @override
+  String get interactiveTapBoard => '互动 — 点击棋盘';
+
+  @override
+  String get sourcePrefix => '来源：';
+
+  @override
+  String stepXofY(int current, int total) {
+    return '第 $current 步 / 共 $total 步';
+  }
+
+  @override
+  String get dailyPuzzles => '每日题库';
+
+  @override
+  String get collections => '合集';
+
+  @override
+  String get categories => '分类';
+
+  @override
+  String get captures => '提子';
+
+  @override
+  String get liberties => '气';
+
+  @override
+  String get lifeDeath => '死活';
+
+  @override
+  String get koBasics => '劫的基础';
+
+  @override
+  String get tesuji => '手筋';
+
+  @override
+  String get swap => '更换';
+
+  @override
+  String swapsLeft(int count) {
+    return '剩余更换：$count';
+  }
+
+  @override
+  String solvedCount(int solved, int total) {
+    return '已解 $solved/$total';
+  }
+
+  @override
+  String get learningPath => '学习路径';
+
+  @override
+  String get allTutorials => '全部教程';
+
+  @override
+  String get byLevel => '按级别';
+
+  @override
+  String get beginner => '初级';
+
+  @override
+  String get intermediate => '中级';
+
+  @override
+  String get advanced => '高级';
+
+  @override
+  String get objective => '目标';
+
+  @override
+  String get difficulty => '难度';
+
+  @override
+  String get yourTurn => '你的回合';
+
+  @override
+  String get moves => '手数';
+
+  @override
+  String get markAsLearned => '标记为已学 ✓';
+
+  @override
+  String get blackToPlay => '黑棋落子';
+
+  @override
+  String get whiteToPlay => '白棋落子';
+
+  @override
+  String get comingSoon => '即将推出';
+
+  @override
+  String get general => '通用';
+
+  @override
+  String get gameSettings => '游戏设置';
+
+  @override
+  String get notifications => '通知';
+
+  @override
+  String get soundEffects => '音效';
+
+  @override
+  String get soundEffectsSubtitle => '对局时播放音效';
+
+  @override
+  String get vibration => '震动';
+
+  @override
+  String get vibrationSubtitle => '落子时震动';
+
+  @override
+  String get pushNotifications => '推送通知';
+
+  @override
+  String get pushNotificationsSubtitle => '接收对局相关通知';
+
+  @override
+  String get account => '账号';
+
+  @override
+  String get editProfile => '编辑资料';
+
+  @override
+  String get changePassword => '修改密码';
+
+  @override
+  String get about => '关于';
+
+  @override
+  String get version => '版本';
+
+  @override
+  String get termsOfService => '服务条款';
+
+  @override
+  String get privacyPolicy => '隐私政策';
+
+  @override
+  String get themeLabel => '主题';
+
+  @override
+  String get boardThemeLabel => '棋盘主题';
+
+  @override
+  String get backgroundThemeLabel => '背景主题';
+
+  @override
+  String get themeDarkBlue => '深蓝';
+
+  @override
+  String get themeOledBlack => 'OLED 黑';
+
+  @override
+  String get themeClassicWood => '经典木纹';
+
+  @override
+  String get themeLightMode => '浅色';
+
+  @override
+  String get boardClassic => '经典';
+
+  @override
+  String get boardWalnut => '胡桃木';
+
+  @override
+  String get boardSlate => '石板';
+
+  @override
+  String get boardNight => '夜间';
+
+  @override
+  String get bgStandard => '标准';
+
+  @override
+  String get bgMinimal => '简约';
+
+  @override
+  String get bgWarm => '暖色';
+
+  @override
+  String get bgCool => '冷色';
+
+  @override
+  String get conceptLibertiesCaptures => '气与提子';
+
+  @override
+  String get conceptLibertyCounting => '数气';
+
+  @override
+  String get conceptLifeDeathTwoEyes => '死活 — 两眼';
+
+  @override
+  String get conceptKoRule => '劫规则';
+
+  @override
+  String get conceptLibertiesCapturesDesc =>
+      '当棋子的所有气（相邻空点）都被对方占据时，该棋子被提子。连接的棋子作为一个整体共享气。';
+
+  @override
+  String get conceptLibertyCountingDesc =>
+      '棋子或棋群相邻的每个空点都是一口气。连接的棋子形成一组并共享所有气。当一组只剩一口气时即为「打吃」。';
+
+  @override
+  String get conceptLifeDeathDesc =>
+      '拥有两个独立眼位的棋群无法被提子，因为对方无法同时填入两个眼位。这是判断棋群死活的根本概念。';
+
+  @override
+  String get conceptKoRuleDesc =>
+      '劫规则禁止在重复的局面下立即提回，避免无限循环。提劫之后必须先在别处下一手才能再次提回。';
+}

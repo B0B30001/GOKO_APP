@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:zaibal/gen/l10n/app_localizations.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/menu_fab.dart';
+import '../widgets/app_shell.dart';
 import '../widgets/fast_game_board.dart';
 import '../models/drill.dart';
 import '../models/tutorial.dart';
@@ -14,39 +16,40 @@ import 'level_track_screen.dart';
 /// Learn hub with two pinned tabs: **Lessons** (tutorials + topic browser) and
 /// **Practice** (quick-start drills + weekly progress).
 class LearnScreen extends StatelessWidget {
-  const LearnScreen({super.key});
+  /// When false the screen is hosted inside [AppShell]; suppress per-screen nav.
+  final bool showBottomNav;
+
+  const LearnScreen({super.key, this.showBottomNav = true});
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         drawer: const AppDrawer(active: AppDrawerSection.learn),
         appBar: AppBar(
-          title: const Text('Learn Go'),
+          title: Text(l.learnGo),
           centerTitle: true,
-          bottom: const TabBar(
+          bottom: TabBar(
             tabs: [
-              Tab(icon: Icon(Icons.school), text: 'Lessons'),
-              Tab(icon: Icon(Icons.fitness_center), text: 'Practice'),
+              Tab(icon: const Icon(Icons.school), text: l.lessons),
+              Tab(icon: const Icon(Icons.fitness_center), text: l.practiceTab),
             ],
           ),
         ),
         body: const TabBarView(children: [_LessonsTab(), _PracticeTab()]),
-        floatingActionButton: const MenuFab(),
-        bottomNavigationBar: BottomNavBar(
-          currentIndex: 1,
-          onTap: (index) {
-            if (index == 1) return;
-            final route = switch (index) {
-              0 => '/home',
-              2 => '/puzzles',
-              3 => '/profile',
-              _ => '/home',
-            };
-            Navigator.pushReplacementNamed(context, route);
-          },
-        ),
+        floatingActionButton: showBottomNav ? const MenuFab() : null,
+        bottomNavigationBar: showBottomNav
+            ? BottomNavBar(
+                currentIndex: 1,
+                onTap: (index) {
+                  if (index == 1) return;
+                  appShellTabIndex.value = index;
+                  Navigator.of(context).popUntil((r) => r.isFirst);
+                },
+              )
+            : null,
       ),
     );
   }
@@ -61,8 +64,11 @@ class _LessonsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return FutureBuilder<List<Tutorial>>(
-      future: ContentService.loadTutorials(),
+      future: ContentService.loadTutorials(
+        languageCode: Localizations.localeOf(context).languageCode,
+      ),
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const Center(child: CircularProgressIndicator());
@@ -71,15 +77,15 @@ class _LessonsTab extends StatelessWidget {
         return ListView(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
           children: [
-            const _SectionHeader(label: 'Learning Path'),
+            _SectionHeader(label: l.learningPath),
             const SizedBox(height: 12),
             _LearningPathPager(tutorials: tutorials),
             const SizedBox(height: 24),
-            const _SectionHeader(label: 'By Level'),
+            _SectionHeader(label: l.byLevel),
             const SizedBox(height: 12),
             const _LevelRail(),
             const SizedBox(height: 24),
-            const _SectionHeader(label: 'All Tutorials'),
+            _SectionHeader(label: l.allTutorials),
             const SizedBox(height: 12),
             ..._byCategory(tutorials).entries.map(
               (entry) =>
@@ -383,25 +389,26 @@ class _LevelRail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Column(
-      children: const [
+      children: [
         _LevelCard(
           tier: LevelTier.beginner,
-          title: 'Beginner',
+          title: l.beginner,
           subtitle: 'First captures, liberties, the basics.',
           icon: Icons.eco,
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         _LevelCard(
           tier: LevelTier.intermediate,
-          title: 'Intermediate',
+          title: l.intermediate,
           subtitle: 'Ko, atari sequences, eye shapes.',
           icon: Icons.trending_up,
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         _LevelCard(
           tier: LevelTier.advanced,
-          title: 'Advanced',
+          title: l.advanced,
           subtitle: 'Life & death, tesuji, reading.',
           icon: Icons.emoji_events,
         ),

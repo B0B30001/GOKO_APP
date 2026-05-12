@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:zaibal/gen/l10n/app_localizations.dart';
 import 'package:zaibal/models/user.dart';
 import 'package:zaibal/services/user_service.dart';
 import 'package:zaibal/services/match_history_service.dart';
@@ -8,9 +9,13 @@ import 'package:zaibal/services/subscription_service.dart';
 import 'package:zaibal/screens/paywall_screen.dart';
 import 'package:zaibal/screens/analysis_screen.dart';
 import '../widgets/bottom_nav_bar.dart';
+import '../widgets/app_shell.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  /// When false the screen is hosted inside [AppShell]; suppress per-screen nav.
+  final bool showBottomNav;
+
+  const ProfileScreen({super.key, this.showBottomNav = true});
 
   @override
   Widget build(BuildContext context) {
@@ -56,19 +61,16 @@ class ProfileScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavBar(
-        currentIndex: 3,
-        onTap: (index) {
-          if (index == 3) return;
-          final route = switch (index) {
-            0 => '/home',
-            1 => '/learn',
-            2 => '/puzzles',
-            _ => '/home',
-          };
-          Navigator.pushReplacementNamed(context, route);
-        },
-      ),
+      bottomNavigationBar: showBottomNav
+          ? BottomNavBar(
+              currentIndex: 3,
+              onTap: (index) {
+                if (index == 3) return;
+                appShellTabIndex.value = index;
+                Navigator.of(context).popUntil((r) => r.isFirst);
+              },
+            )
+          : null,
     );
   }
 
@@ -144,7 +146,10 @@ class ProfileScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Statistics', style: Theme.of(context).textTheme.titleLarge),
+            Text(
+              AppLocalizations.of(context).statistics,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,

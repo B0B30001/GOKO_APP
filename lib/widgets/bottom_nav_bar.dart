@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
-/// Four-tab bottom nav: Play (0) | Learn (1) | Puzzles (2) | Profile (3).
+/// Four-tab Material 3 NavigationBar: Play (0) | Learn (1) | Puzzles (2) | Profile (3).
+///
+/// Uses [NavigationBar] (Material 3) so Flutter's Scaffold automatically
+/// handles system-gesture-inset padding, eliminating the overlap with the
+/// Android gesture bar and iPhone home indicator.
 class BottomNavBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
@@ -13,33 +17,28 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return BottomNavigationBar(
-      currentIndex: currentIndex,
-      onTap: onTap,
-      type: BottomNavigationBarType.fixed,
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      selectedItemColor: Theme.of(context).colorScheme.primary,
-      unselectedItemColor: isDark ? Colors.grey[400] : Colors.grey[600],
-      items: const [
-        BottomNavigationBarItem(
+    return NavigationBar(
+      selectedIndex: currentIndex,
+      onDestinationSelected: onTap,
+      destinations: const [
+        NavigationDestination(
           icon: Icon(Icons.play_circle_outline),
-          activeIcon: Icon(Icons.play_circle_filled),
+          selectedIcon: Icon(Icons.play_circle_filled),
           label: 'Play',
         ),
-        BottomNavigationBarItem(
+        NavigationDestination(
           icon: Icon(Icons.book_outlined),
-          activeIcon: Icon(Icons.book),
+          selectedIcon: Icon(Icons.book),
           label: 'Learn',
         ),
-        BottomNavigationBarItem(
+        NavigationDestination(
           icon: Icon(Icons.extension_outlined),
-          activeIcon: Icon(Icons.extension),
+          selectedIcon: Icon(Icons.extension),
           label: 'Puzzles',
         ),
-        BottomNavigationBarItem(
+        NavigationDestination(
           icon: Icon(Icons.person_outline),
-          activeIcon: Icon(Icons.person),
+          selectedIcon: Icon(Icons.person),
           label: 'Profile',
         ),
       ],

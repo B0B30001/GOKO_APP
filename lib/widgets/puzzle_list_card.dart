@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zaibal/l10n/puzzle_translations.dart';
 import '../models/puzzle.dart';
 import '../screens/puzzle_screen.dart';
 import 'fast_game_board.dart';
@@ -91,7 +92,7 @@ class _Meta extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          puzzle.title,
+          puzzle.localizedTitle(context),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: Theme.of(
@@ -111,7 +112,7 @@ class _Meta extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          puzzle.description,
+          puzzle.localizedDescription(context),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: Theme.of(context).textTheme.bodySmall,

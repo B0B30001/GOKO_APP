@@ -44,7 +44,9 @@ class _LevelTrackScreenState extends State<LevelTrackScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(_title), centerTitle: true),
       body: FutureBuilder<List<Tutorial>>(
-        future: ContentService.loadTutorials(),
+        future: ContentService.loadTutorials(
+          languageCode: Localizations.localeOf(context).languageCode,
+        ),
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
             return const Center(child: CircularProgressIndicator());

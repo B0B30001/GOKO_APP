@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zaibal/gen/l10n/app_localizations.dart';
 import 'package:zaibal/models/app_settings.dart';
 import 'package:zaibal/theme/go_theme.dart';
 
@@ -17,6 +18,8 @@ class SettingsScreen extends StatefulWidget {
   final ValueChanged<String> onThemePresetChanged;
   final String languageCode;
   final ValueChanged<String> onLanguageChanged;
+  final String kataGoServerUrl;
+  final ValueChanged<String> onKataGoServerUrlChanged;
 
   const SettingsScreen({
     required this.isDark,
@@ -33,6 +36,8 @@ class SettingsScreen extends StatefulWidget {
     required this.onThemePresetChanged,
     required this.languageCode,
     required this.onLanguageChanged,
+    required this.kataGoServerUrl,
+    required this.onKataGoServerUrlChanged,
     super.key,
   });
 
@@ -60,14 +65,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late String _backgroundThemeId;
   late String _themePresetId;
   late bool _isDark;
+  late TextEditingController _kataGoUrlController;
 
-  String get _selectedLanguage =>
-      _kLanguageOptions.entries
-          .firstWhere(
-            (e) => e.value == _languageCode,
-            orElse: () => const MapEntry('English', 'en'),
-          )
-          .key;
+  String get _selectedLanguage => _kLanguageOptions.entries
+      .firstWhere(
+        (e) => e.value == _languageCode,
+        orElse: () => const MapEntry('English', 'en'),
+      )
+      .key;
 
   @override
   void initState() {
@@ -79,43 +84,51 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _themePresetId = widget.themePresetId;
     _isDark = widget.isDark;
     _languageCode = widget.languageCode;
+    _kataGoUrlController = TextEditingController(text: widget.kataGoServerUrl);
+  }
+
+  @override
+  void dispose() {
+    _kataGoUrlController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings'), centerTitle: true),
+      appBar: AppBar(title: Text(l.settings), centerTitle: true),
       body: ListView(
         children: [
-          _buildSection('Appearance', [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-              child: Text('Theme'),
+          _buildSection(l.appearance, [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+              child: Text(l.themeLabel),
             ),
             _buildThemePresetPicker(),
             SwitchListTile(
-              title: const Text('Dark mode'),
-              subtitle: const Text('Switch between light and dark themes'),
+              title: Text(l.darkMode),
+              subtitle: Text(l.darkModeSubtitle),
               value: _isDark,
               onChanged: (v) {
                 setState(() => _isDark = v);
                 widget.onThemeChanged(v);
               },
             ),
-            const Padding(
-              padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: Text('Board theme'),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: Text(l.boardThemeLabel),
             ),
             _buildBoardThemePicker(),
-            const Padding(
-              padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: Text('Background theme'),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: Text(l.backgroundThemeLabel),
             ),
             _buildBackgroundThemePicker(),
           ]),
-          _buildSection('General', [
+          _buildSection(l.general, [
             SwitchListTile(
-              title: const Text('Show board coordinates'),
+              title: Text(l.showCoordinates),
               value: _showCoordinates,
               onChanged: (v) {
                 setState(() => _showCoordinates = v);
@@ -123,8 +136,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
             ),
             SwitchListTile(
-              title: const Text('Light theme in game'),
-              subtitle: const Text('Force light theme on the Game screen'),
+              title: Text(l.lightThemeInGame),
+              subtitle: Text(l.lightThemeInGameSubtitle),
               value: _forceLightGame,
               onChanged: (v) {
                 setState(() => _forceLightGame = v);
@@ -132,66 +145,88 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
             ),
           ]),
-          _buildSection('Game Settings', [
+          _buildSection(l.gameSettings, [
             SwitchListTile(
-              title: const Text('Sound Effects'),
-              subtitle: const Text('Play sounds during the game'),
+              title: Text(l.soundEffects),
+              subtitle: Text(l.soundEffectsSubtitle),
               value: _soundEnabled,
               onChanged: (value) => setState(() => _soundEnabled = value),
             ),
             SwitchListTile(
-              title: const Text('Vibration'),
-              subtitle: const Text('Vibrate on move'),
+              title: Text(l.vibration),
+              subtitle: Text(l.vibrationSubtitle),
               value: _vibrationEnabled,
               onChanged: (value) => setState(() => _vibrationEnabled = value),
             ),
           ]),
-          _buildSection('Notifications', [
+          _buildSection(l.notifications, [
             SwitchListTile(
-              title: const Text('Push Notifications'),
-              subtitle: const Text('Get notified about your games'),
+              title: Text(l.pushNotifications),
+              subtitle: Text(l.pushNotificationsSubtitle),
               value: _notificationsEnabled,
               onChanged: (value) =>
                   setState(() => _notificationsEnabled = value),
             ),
           ]),
-          _buildSection('Language', [
+          _buildSection(l.language, [
             ListTile(
-              title: const Text('App Language'),
+              title: Text(l.appLanguage),
               subtitle: Text(_selectedLanguage),
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: _showLanguageDialog,
             ),
           ]),
-          _buildSection('Account', [
+          _buildSection(l.kataGoSection, [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+              child: Text(
+                l.kataGoServerUrl,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+              child: TextField(
+                controller: _kataGoUrlController,
+                decoration: InputDecoration(
+                  hintText: 'ws://192.168.1.10:8080',
+                  helperText: l.kataGoHint,
+                  border: const OutlineInputBorder(),
+                  isDense: true,
+                ),
+                keyboardType: TextInputType.url,
+                onChanged: (v) {
+                  widget.onKataGoServerUrlChanged(v.trim());
+                },
+              ),
+            ),
+          ]),
+          _buildSection(l.account, [
             ListTile(
-              title: const Text('Edit Profile'),
+              title: Text(l.editProfile),
               leading: const Icon(Icons.person_outline),
               onTap: () {
                 // TODO: Navigate to profile edit
               },
             ),
             ListTile(
-              title: const Text('Change Password'),
+              title: Text(l.changePassword),
               leading: const Icon(Icons.lock_outline),
               onTap: () {
                 // TODO: Navigate to password change
               },
             ),
           ]),
-          _buildSection('About', [
+          _buildSection(l.about, [
+            ListTile(title: Text(l.version), subtitle: const Text('1.0.0')),
             ListTile(
-              title: const Text('Version'),
-              subtitle: const Text('1.0.0'),
-            ),
-            ListTile(
-              title: const Text('Terms of Service'),
+              title: Text(l.termsOfService),
               onTap: () {
                 // TODO: Show terms
               },
             ),
             ListTile(
-              title: const Text('Privacy Policy'),
+              title: Text(l.privacyPolicy),
               onTap: () {
                 // TODO: Show privacy policy
               },
@@ -222,10 +257,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showLanguageDialog() {
+    final l = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Select Language'),
+        title: Text(l.appLanguage),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -241,9 +277,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildThemePresetPicker() {
-    // Each preset's first build pass yields a ThemeData; we sample its
-    // scaffoldBackgroundColor + primary so the swatch matches what the user
-    // will see if they pick it. Cheaper than rendering a hidden Theme widget.
+    final l = AppLocalizations.of(context);
     return SizedBox(
       height: 96,
       child: ListView(
@@ -254,7 +288,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           final theme = GoTheme.fromPreset(preset);
           final selected = id == _themePresetId;
           return _ThemeSwatch(
-            label: ThemePresetIds.displayName(preset),
+            label: _themePresetLabel(l, preset),
             selected: selected,
             primary: theme.scaffoldBackgroundColor,
             secondary: theme.colorScheme.primary,
@@ -267,6 +301,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
     );
   }
+
+  String _themePresetLabel(AppLocalizations l, ThemePreset p) => switch (p) {
+    ThemePreset.darkBlue => l.themeDarkBlue,
+    ThemePreset.oledBlack => l.themeOledBlack,
+    ThemePreset.classicWood => l.themeClassicWood,
+    ThemePreset.lightMode => l.themeLightMode,
+  };
 
   Widget _buildBoardThemePicker() {
     return SizedBox(
@@ -316,21 +357,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  String _boardThemeLabel(String id) => switch (id) {
-    BoardThemeId.classic => 'Classic',
-    BoardThemeId.walnut => 'Walnut',
-    BoardThemeId.slate => 'Slate',
-    BoardThemeId.night => 'Night',
-    _ => id,
-  };
+  String _boardThemeLabel(String id) {
+    final l = AppLocalizations.of(context);
+    return switch (id) {
+      BoardThemeId.classic => l.boardClassic,
+      BoardThemeId.walnut => l.boardWalnut,
+      BoardThemeId.slate => l.boardSlate,
+      BoardThemeId.night => l.boardNight,
+      _ => id,
+    };
+  }
 
-  String _backgroundThemeLabel(String id) => switch (id) {
-    BackgroundThemeId.standard => 'Standard',
-    BackgroundThemeId.minimal => 'Minimal',
-    BackgroundThemeId.warm => 'Warm',
-    BackgroundThemeId.cool => 'Cool',
-    _ => id,
-  };
+  String _backgroundThemeLabel(String id) {
+    final l = AppLocalizations.of(context);
+    return switch (id) {
+      BackgroundThemeId.standard => l.bgStandard,
+      BackgroundThemeId.minimal => l.bgMinimal,
+      BackgroundThemeId.warm => l.bgWarm,
+      BackgroundThemeId.cool => l.bgCool,
+      _ => id,
+    };
+  }
 
   Widget _buildLanguageOption(String language) {
     final code = _kLanguageOptions[language] ?? 'en';

@@ -1,0 +1,402 @@
+{
+  "@@locale": "en",
+
+  "appName": "GOKO",
+  "@appName": { "description": "Application name" },
+
+  "play": "Play",
+  "@play": { "description": "Play tab label" },
+
+  "learn": "Learn",
+  "@learn": { "description": "Learn tab label" },
+
+  "puzzles": "Puzzles",
+  "@puzzles": { "description": "Puzzles tab label" },
+
+  "profile": "Profile",
+  "@profile": { "description": "Profile tab label" },
+
+  "settings": "Settings",
+  "@settings": { "description": "Settings screen title" },
+
+  "quickActions": "Quick Actions",
+  "@quickActions": { "description": "Home screen section header" },
+
+  "practice": "Practice",
+  "@practice": { "description": "Quick action: practice vs computer" },
+
+  "playVsBot": "Play vs Bot",
+  "@playVsBot": { "description": "Quick action: play against a bot" },
+
+  "tutorial": "Tutorial",
+  "@tutorial": { "description": "Quick action: open tutorials" },
+
+  "dailyChallenge": "Daily Challenge",
+  "@dailyChallenge": { "description": "Daily challenge card title" },
+
+  "recentGames": "Recent Games",
+  "@recentGames": { "description": "Home screen section header" },
+
+  "heroPrimary": "Play • Learn • Improve",
+  "@heroPrimary": { "description": "Hero banner primary text" },
+
+  "heroSub": "Everything works offline – no account needed!",
+  "@heroSub": { "description": "Hero banner subtitle" },
+
+  "selectGameMode": "Select Game Mode",
+  "@selectGameMode": { "description": "Modal title for game mode picker" },
+
+  "vsComputer": "vs Computer",
+  "@vsComputer": { "description": "Game mode option" },
+
+  "vsFriend": "vs Friend (Same Device)",
+  "@vsFriend": { "description": "Game mode option" },
+
+  "vsOnline": "vs Online",
+  "@vsOnline": { "description": "Game mode option" },
+
+  "selectBoardSize": "Select Board Size",
+  "@selectBoardSize": { "description": "Modal title for board size picker" },
+
+  "selectDifficulty": "Select Difficulty",
+  "@selectDifficulty": { "description": "Difficulty picker dialog title" },
+
+  "learnGo": "Learn Go",
+  "@learnGo": { "description": "Learn screen title" },
+
+  "lessons": "Lessons",
+  "@lessons": { "description": "Learn tab: Lessons" },
+
+  "practiceTab": "Practice",
+  "@practiceTab": { "description": "Learn tab: Practice" },
+
+  "statistics": "Statistics",
+  "@statistics": { "description": "Profile stats section title" },
+
+  "games": "Games",
+  "@games": { "description": "Stat label" },
+
+  "winRate": "Win rate",
+  "@winRate": { "description": "Stat label" },
+
+  "puzzleRating": "Puzzle rating",
+  "@puzzleRating": { "description": "Stat label" },
+
+  "language": "Language",
+  "@language": { "description": "Settings: language section" },
+
+  "appLanguage": "App Language",
+  "@appLanguage": { "description": "Settings: language picker tile" },
+
+  "appearance": "Appearance",
+  "@appearance": { "description": "Settings section header" },
+
+  "darkMode": "Dark mode",
+  "@darkMode": { "description": "Settings toggle" },
+
+  "darkModeSubtitle": "Switch between light and dark themes",
+  "@darkModeSubtitle": { "description": "Settings: dark mode subtitle" },
+
+  "showCoordinates": "Show board coordinates",
+  "@showCoordinates": { "description": "Settings toggle" },
+
+  "lightThemeInGame": "Light theme in game",
+  "@lightThemeInGame": { "description": "Settings toggle" },
+
+  "lightThemeInGameSubtitle": "Force light theme on the Game screen",
+  "@lightThemeInGameSubtitle": { "description": "Settings: light-in-game subtitle" },
+
+  "puzzleSolved": "Puzzle Solved!",
+  "@puzzleSolved": { "description": "Puzzle success message" },
+
+  "notQuite": "Not quite",
+  "@notQuite": { "description": "Puzzle failure message" },
+
+  "hint": "Hint",
+  "@hint": { "description": "Puzzle hint label" },
+
+  "reset": "Reset",
+  "@reset": { "description": "Reset button label" },
+
+  "tryAgain": "Try again",
+  "@tryAgain": { "description": "Try again button" },
+
+  "giveUp": "Give up",
+  "@giveUp": { "description": "Give up button" },
+
+  "stepBack": "Step back",
+  "@stepBack": { "description": "Undo last move button" },
+
+  "continue_": "Continue",
+  "@continue_": { "description": "Continue button" },
+
+  "theoryExplanation": "Theory & Explanation",
+  "@theoryExplanation": { "description": "Puzzle theory section title" },
+
+  "solveToUnlock": "Solve to unlock",
+  "@solveToUnlock": { "description": "Theory section subtitle when locked" },
+
+  "learnWhyThisWorks": "Learn why this works",
+  "@learnWhyThisWorks": { "description": "Theory section subtitle when unlocked" },
+
+  "keyConceptPrefix": "Key Concept: ",
+  "@keyConceptPrefix": { "description": "Prefix before concept title" },
+
+  "gameHistory": "Game History",
+  "@gameHistory": { "description": "History screen title" },
+
+  "noRecentGames": "No recent games",
+  "@noRecentGames": { "description": "Empty state for history" },
+
+  "home": "Home",
+  "@home": { "description": "Drawer item" },
+
+  "history": "History",
+  "@history": { "description": "Drawer item" },
+
+  "playVsBotTitle": "Play vs Bot",
+  "@playVsBotTitle": { "description": "Bots screen title" },
+
+  "kataGoSection": "AI / KataGo",
+  "@kataGoSection": { "description": "Settings section for KataGo" },
+
+  "kataGoServerUrl": "KataGo Server URL",
+  "@kataGoServerUrl": { "description": "Settings label for KataGo URL" },
+
+  "kataGoHint": "Leave empty to use built-in MCTS engine offline.",
+  "@kataGoHint": { "description": "KataGo URL helper text" },
+
+  "prev": "Prev",
+  "@prev": { "description": "Previous step button" },
+
+  "next": "Next",
+  "@next": { "description": "Next step button" },
+
+  "done": "Done",
+  "@done": { "description": "Done button" },
+
+  "playDemo": "Play demo",
+  "@playDemo": { "description": "Play move-by-move demo button" },
+
+  "replayDemo": "Replay demo",
+  "@replayDemo": { "description": "Replay demo button" },
+
+  "playingDemo": "Playing…",
+  "@playingDemo": { "description": "Demo playback status label" },
+
+  "interactiveTapBoard": "Interactive — tap the board",
+  "@interactiveTapBoard": { "description": "Tutorial: interactive step hint" },
+
+  "sourcePrefix": "Source: ",
+  "@sourcePrefix": { "description": "Tutorial source attribution prefix" },
+
+  "stepXofY": "Step {current} of {total}",
+  "@stepXofY": {
+    "description": "Tutorial step progress indicator",
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+
+  "dailyPuzzles": "Daily Puzzles",
+  "@dailyPuzzles": { "description": "Daily puzzles section heading" },
+
+  "collections": "Collections",
+  "@collections": { "description": "Puzzle collections section heading" },
+
+  "categories": "Categories",
+  "@categories": { "description": "Puzzle categories section heading" },
+
+  "captures": "Captures",
+  "@captures": { "description": "Puzzle category" },
+
+  "liberties": "Liberties",
+  "@liberties": { "description": "Puzzle category" },
+
+  "lifeDeath": "Life & Death",
+  "@lifeDeath": { "description": "Puzzle category" },
+
+  "koBasics": "Ko Basics",
+  "@koBasics": { "description": "Puzzle category" },
+
+  "tesuji": "Tesuji",
+  "@tesuji": { "description": "Puzzle category" },
+
+  "swap": "Swap",
+  "@swap": { "description": "Swap daily puzzle button" },
+
+  "swapsLeft": "{count} swaps left",
+  "@swapsLeft": {
+    "description": "Daily swap counter",
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "solvedCount": "{solved}/{total} solved",
+  "@solvedCount": {
+    "description": "Daily puzzles solved counter",
+    "placeholders": {
+      "solved": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+
+  "learningPath": "Learning Path",
+  "@learningPath": { "description": "Learn screen section" },
+
+  "allTutorials": "All Tutorials",
+  "@allTutorials": { "description": "Learn screen section" },
+
+  "byLevel": "By Level",
+  "@byLevel": { "description": "Learn screen section header" },
+
+  "beginner": "Beginner",
+  "@beginner": { "description": "Difficulty tier" },
+
+  "intermediate": "Intermediate",
+  "@intermediate": { "description": "Difficulty tier" },
+
+  "advanced": "Advanced",
+  "@advanced": { "description": "Difficulty tier" },
+
+  "objective": "Objective",
+  "@objective": { "description": "Puzzle info card label" },
+
+  "difficulty": "Difficulty",
+  "@difficulty": { "description": "Puzzle info card label" },
+
+  "yourTurn": "Your Turn",
+  "@yourTurn": { "description": "Puzzle info card label" },
+
+  "moves": "Moves",
+  "@moves": { "description": "Puzzle moves counter label" },
+
+  "markAsLearned": "Mark as Learned ✓",
+  "@markAsLearned": { "description": "Puzzle: mark theory-only as learned" },
+
+  "blackToPlay": "Black to play",
+  "@blackToPlay": { "description": "Whose turn label" },
+
+  "whiteToPlay": "White to play",
+  "@whiteToPlay": { "description": "Whose turn label" },
+
+  "comingSoon": "Soon",
+  "@comingSoon": { "description": "Coming soon chip on Bots screen" },
+
+  "general": "General",
+  "@general": { "description": "Settings section header" },
+
+  "gameSettings": "Game Settings",
+  "@gameSettings": { "description": "Settings section header" },
+
+  "notifications": "Notifications",
+  "@notifications": { "description": "Settings section header" },
+
+  "soundEffects": "Sound Effects",
+  "@soundEffects": { "description": "Settings toggle" },
+
+  "soundEffectsSubtitle": "Play sounds during the game",
+  "@soundEffectsSubtitle": { "description": "Settings: sound subtitle" },
+
+  "vibration": "Vibration",
+  "@vibration": { "description": "Settings toggle" },
+
+  "vibrationSubtitle": "Vibrate on move",
+  "@vibrationSubtitle": { "description": "Settings: vibration subtitle" },
+
+  "pushNotifications": "Push Notifications",
+  "@pushNotifications": { "description": "Settings toggle" },
+
+  "pushNotificationsSubtitle": "Get notified about your games",
+  "@pushNotificationsSubtitle": { "description": "Settings: notifications subtitle" },
+
+  "account": "Account",
+  "@account": { "description": "Settings section header" },
+
+  "editProfile": "Edit Profile",
+  "@editProfile": { "description": "Settings tile" },
+
+  "changePassword": "Change Password",
+  "@changePassword": { "description": "Settings tile" },
+
+  "about": "About",
+  "@about": { "description": "Settings section header" },
+
+  "version": "Version",
+  "@version": { "description": "About tile" },
+
+  "termsOfService": "Terms of Service",
+  "@termsOfService": { "description": "Settings tile" },
+
+  "privacyPolicy": "Privacy Policy",
+  "@privacyPolicy": { "description": "Settings tile" },
+
+  "themeLabel": "Theme",
+  "@themeLabel": { "description": "Settings: theme picker section label" },
+
+  "boardThemeLabel": "Board theme",
+  "@boardThemeLabel": { "description": "Settings: board theme section label" },
+
+  "backgroundThemeLabel": "Background theme",
+  "@backgroundThemeLabel": { "description": "Settings: background section label" },
+
+  "themeDarkBlue": "Dark Blue",
+  "@themeDarkBlue": { "description": "Theme preset name" },
+
+  "themeOledBlack": "OLED Black",
+  "@themeOledBlack": { "description": "Theme preset name" },
+
+  "themeClassicWood": "Classic Wood",
+  "@themeClassicWood": { "description": "Theme preset name" },
+
+  "themeLightMode": "Light Mode",
+  "@themeLightMode": { "description": "Theme preset name" },
+
+  "boardClassic": "Classic",
+  "@boardClassic": { "description": "Board theme variant" },
+
+  "boardWalnut": "Walnut",
+  "@boardWalnut": { "description": "Board theme variant" },
+
+  "boardSlate": "Slate",
+  "@boardSlate": { "description": "Board theme variant" },
+
+  "boardNight": "Night",
+  "@boardNight": { "description": "Board theme variant" },
+
+  "bgStandard": "Standard",
+  "@bgStandard": { "description": "Background variant" },
+
+  "bgMinimal": "Minimal",
+  "@bgMinimal": { "description": "Background variant" },
+
+  "bgWarm": "Warm",
+  "@bgWarm": { "description": "Background variant" },
+
+  "bgCool": "Cool",
+  "@bgCool": { "description": "Background variant" },
+
+  "conceptLibertiesCaptures": "Liberties & Captures",
+  "@conceptLibertiesCaptures": { "description": "Puzzle concept name" },
+
+  "conceptLibertyCounting": "Liberty Counting",
+  "@conceptLibertyCounting": { "description": "Puzzle concept name" },
+
+  "conceptLifeDeathTwoEyes": "Life & Death - Two Eyes",
+  "@conceptLifeDeathTwoEyes": { "description": "Puzzle concept name" },
+
+  "conceptKoRule": "Ko Rule",
+  "@conceptKoRule": { "description": "Puzzle concept name" },
+
+  "conceptLibertiesCapturesDesc": "Stones are captured when all their liberties (adjacent empty points) are occupied by enemy stones. Connected stones share liberties as a single group.",
+  "@conceptLibertiesCapturesDesc": { "description": "Concept body text" },
+
+  "conceptLibertyCountingDesc": "Each empty point adjacent to a stone or group is a liberty. Connected stones form one group and share all their liberties. When a group has only one liberty left, it's in \"atari\" (check).",
+  "@conceptLibertyCountingDesc": { "description": "Concept body text" },
+
+  "conceptLifeDeathDesc": "A group with two separate eyes cannot be captured because the opponent cannot fill both eyes simultaneously. This is fundamental to understanding which groups are alive and which can be killed.",
+  "@conceptLifeDeathDesc": { "description": "Concept body text" },
+
+  "conceptKoRuleDesc": "The Ko rule prevents infinite loops by prohibiting immediate recapture in a repeating position. After capturing in Ko, you must play elsewhere before you can recapture.",
+  "@conceptKoRuleDesc": { "description": "Concept body text" }
+}

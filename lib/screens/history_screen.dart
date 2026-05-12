@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:zaibal/gen/l10n/app_localizations.dart';
 import '../widgets/bottom_nav_bar.dart';
+import '../widgets/app_shell.dart';
 import '../services/ogs_service.dart';
 
 class HistoryScreen extends StatelessWidget {
@@ -11,7 +13,7 @@ class HistoryScreen extends StatelessWidget {
     final ogs = Provider.of<OgsService>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Game History'),
+        title: Text(AppLocalizations.of(context).gameHistory),
         centerTitle: true,
         actions: [
           IconButton(
@@ -40,7 +42,7 @@ class HistoryScreen extends StatelessWidget {
                   Icon(Icons.history, size: 64, color: Colors.grey[400]),
                   const SizedBox(height: 16),
                   Text(
-                    'No recent games',
+                    AppLocalizations.of(context).noRecentGames,
                     style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                   ),
                 ],
@@ -64,18 +66,11 @@ class HistoryScreen extends StatelessWidget {
         },
       ),
       bottomNavigationBar: BottomNavBar(
-        // History isn't a top-level tab; highlight Profile (closest match)
-        // since History is reached via Profile in the nav.
+        // History is a secondary screen; highlight Profile (closest tab).
         currentIndex: 3,
         onTap: (index) {
-          final route = switch (index) {
-            0 => '/home',
-            1 => '/learn',
-            2 => '/puzzles',
-            3 => '/profile',
-            _ => '/home',
-          };
-          Navigator.pushReplacementNamed(context, route);
+          appShellTabIndex.value = index;
+          Navigator.of(context).popUntil((r) => r.isFirst);
         },
       ),
     );

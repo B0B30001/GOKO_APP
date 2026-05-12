@@ -13,7 +13,7 @@ class ActiveGamesRepository implements SocketConnectedRepository {
       StreamController<List<OnlineGame>>.broadcast();
 
   Stream<List<OnlineGame>> get activeGames => _activeGamesController.stream;
-  List<OnlineGame> _cachedGames = [];
+  final List<OnlineGame> _cachedGames = [];
 
   ActiveGamesRepository(this._socketService) {
     _socketService.registerRepository(this);
@@ -153,7 +153,7 @@ class OnlineGame {
           periodTime != null &&
           periods != null) {
         tcDisplay =
-            'Byoyomi ${_fmtSeconds(main)} + ${periods}×${_fmtSeconds(periodTime)}';
+            'Byoyomi ${_fmtSeconds(main)} + $periods×${_fmtSeconds(periodTime)}';
       } else if (system == 'fischer' && main != null && increment != null) {
         tcDisplay = 'Fischer ${_fmtSeconds(main)} + ${_fmtSeconds(increment)}';
       } else if (main != null) {

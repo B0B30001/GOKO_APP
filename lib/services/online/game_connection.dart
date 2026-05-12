@@ -172,13 +172,14 @@ class GameConnection {
     });
 
     // Undo request events (subscribe to multiple possible event names)
-    void _handleUndoEvent(dynamic data) {
+    void handleUndoEvent(dynamic data) {
       int moveNumber = 0;
       if (data is Map<String, dynamic>) {
         final mv = data['move_number'];
         if (mv is int) moveNumber = mv;
-        if (moveNumber == 0 && data['move'] is int)
+        if (moveNumber == 0 && data['move'] is int) {
           moveNumber = data['move'] as int;
+        }
       } else if (data is int) {
         moveNumber = data;
       }
@@ -188,13 +189,13 @@ class GameConnection {
 
     _socketService
         .on<dynamic>('game/$gameId/undo/request')
-        .listen(_handleUndoEvent);
+        .listen(handleUndoEvent);
     _socketService
         .on<dynamic>('game/$gameId/undo/requested')
-        .listen(_handleUndoEvent);
+        .listen(handleUndoEvent);
     _socketService
         .on<dynamic>('game/$gameId/undo_requested')
-        .listen(_handleUndoEvent);
+        .listen(handleUndoEvent);
   }
 
   /// Connect to the game (OGS protocol)
@@ -421,7 +422,7 @@ class GameData {
     final width = json['width'] as int? ?? 19;
     final height = json['height'] as int? ?? 19;
 
-    debugPrint('📦 [GameData] Board dimensions: ${width}x${height}');
+    debugPrint('📦 [GameData] Board dimensions: ${width}x$height');
 
     // Parse the board data
     List<List<int>> board;
@@ -454,7 +455,7 @@ class GameData {
           debugPrint('📦 [GameData] Board is flat array, converting to 2D');
 
           // Check first few values to understand encoding
-          if (boardData.length > 0) {
+          if (boardData.isNotEmpty) {
             debugPrint(
               '📦 [GameData] Sample values: ${boardData.take(10).toList()}',
             );
@@ -479,9 +480,9 @@ class GameData {
         int blackCount = 0, whiteCount = 0, emptyCount = 0;
         for (var row in board) {
           for (var cell in row) {
-            if (cell == 1)
+            if (cell == 1) {
               blackCount++;
-            else if (cell == 2)
+            } else if (cell == 2)
               whiteCount++;
             else
               emptyCount++;
@@ -881,7 +882,7 @@ class MoveData {
       // Integer array format [col, row, milliseconds] - SAME as SGF order!
       // NOTE: Third element is NOT color - it's timing info!
       // OGS sends moves in SGF coordinate order: column first, then row
-      col = move.length > 0 ? move[0] as int : 0;
+      col = move.isNotEmpty ? move[0] as int : 0;
       row = move.length > 1 ? move[1] as int : 0;
 
       // Determine color from move_number (odd = black, even = white)

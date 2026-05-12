@@ -213,15 +213,15 @@ Key Learning Points:
             'That captures right now but only because the net was almost complete — try the cleaner net move first.',
       },
       explanation:
-          '''Playing at (1,3) closes off the white stone\'s only escape route. White cannot run upward, left (Black at 3,2 cuts off), or right (Black at 3,4 cuts off). This is a net (geta).
+          '''Playing at (1,3) closes off the white stone's only escape route. White cannot run upward, left (Black at 3,2 cuts off), or right (Black at 3,4 cuts off). This is a net (geta).
 
 Key Learning Points:
 • A net works by controlling squares the stone WOULD escape to
-• You don\'t touch the stone — you block its future moves
+• You don't touch the stone — you block its future moves
 • The trapped stone has zero escape regardless of which direction it tries
 • Nets are more efficient than chasing step-by-step
 
-The geta is one of Go\'s most beautiful shapes. Recognising when a net is possible takes practice but becomes second nature.''',
+The geta is one of Go's most beautiful shapes. Recognising when a net is possible takes practice but becomes second nature.''',
     ),
   ];
 
@@ -1088,7 +1088,7 @@ Connection and cutting are mirror-image concepts. If you connect, they cannot cu
           '''The bamboo joint consists of two pairs of Black stones arranged so that cutting is impossible. Even if White tries to cut between any two stones, the other pair reconnects immediately.
 
 Key Learning Points:
-• A bamboo joint cannot be cut — it is one of Go\'s strongest connection shapes
+• A bamboo joint cannot be cut — it is one of Go's strongest connection shapes
 • It uses only 4 stones but controls a crucial area
 • Recognise bamboo joints when defending connections
 • The shape appears constantly in real games at all levels
@@ -1124,13 +1124,13 @@ Study strong shapes like the bamboo joint. They are the vocabulary of Go.''',
       hint:
           'Three sides of the white stone are blocked — fill the last liberty',
       explanation:
-          '''The "tiger\'s mouth" (tobi in Japanese) is a shape where three sides of an enemy stone are covered, leaving only one escape. Playing the final liberty captures the stone.
+          '''The "tiger's mouth" (tobi in Japanese) is a shape where three sides of an enemy stone are covered, leaving only one escape. Playing the final liberty captures the stone.
 
 Key Learning Points:
-• The tiger\'s mouth is a classic attack formation
+• The tiger's mouth is a classic attack formation
 • Three Black stones surround the enemy with one escape route open
 • When you close the mouth, capture is guaranteed
-• Recognising when you have a tiger\'s mouth shape saves calculation time
+• Recognising when you have a tiger's mouth shape saves calculation time
 • This is one of the first shapes beginners learn to recognise visually''',
     ),
     // Monkey jump: not a simple puzzle (it's an endgame move). Use a simple connection tesuji instead.

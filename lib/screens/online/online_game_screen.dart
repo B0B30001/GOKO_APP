@@ -54,7 +54,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
   Set<int> _localRemoved = <int>{}; // keys: r*width + c
   // Territory ownership (0=neutral, 1=black, 2=white)
   List<int>? _ownership;
-  List<ChatMessage> _chatMessages = [];
+  final List<ChatMessage> _chatMessages = [];
   final TextEditingController _chatController = TextEditingController();
   Timer?
   _countdownTimer; // local countdown to animate clock between server ticks
@@ -620,11 +620,11 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
                 ' by ${margin.toStringAsFixed(margin.truncateToDouble() == margin ? 0 : 1)}';
           }
         } else if (_outcome != null && _outcome!.isNotEmpty) {
-          detail = ' (${_outcome})';
+          detail = ' ($_outcome)';
         }
         message = '$winnerName won$detail';
       } else if (_outcome != null && _outcome!.isNotEmpty) {
-        message = 'Game finished (${_outcome})';
+        message = 'Game finished ($_outcome)';
       } else {
         message = 'Game Finished';
       }
@@ -1534,8 +1534,9 @@ class _OwnershipOverlayPainter extends CustomPainter {
     if (oldDelegate.isDark != isDark) return true;
     if (oldDelegate.board.length != board.length) return true;
     if (oldDelegate.board.isNotEmpty &&
-        oldDelegate.board[0].length != board[0].length)
+        oldDelegate.board[0].length != board[0].length) {
       return true;
+    }
     if (oldDelegate.ownership.length != ownership.length) return true;
     for (int i = 0; i < ownership.length; i++) {
       if (ownership[i] != oldDelegate.ownership[i]) return true;

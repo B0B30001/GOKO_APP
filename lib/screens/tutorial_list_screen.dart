@@ -13,7 +13,9 @@ class TutorialListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Tutorials'), centerTitle: true),
       body: FutureBuilder<List<Tutorial>>(
-        future: ContentService.loadTutorials(),
+        future: ContentService.loadTutorials(
+          languageCode: Localizations.localeOf(context).languageCode,
+        ),
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
             return const Center(child: CircularProgressIndicator());

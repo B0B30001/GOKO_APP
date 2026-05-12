@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:zaibal/gen/l10n/app_localizations.dart';
 import 'package:zaibal/utils/stone_shader_warmup.dart';
-import 'package:zaibal/screens/home_screen.dart';
 import 'package:zaibal/screens/learn_screen.dart';
-import 'package:zaibal/screens/history_screen.dart';
 import 'package:zaibal/screens/profile_screen.dart';
-import 'package:zaibal/screens/settings_screen.dart';
-import 'package:zaibal/screens/topic_detail_screen.dart';
 import 'package:zaibal/screens/puzzles_hub_screen.dart';
+import 'package:zaibal/screens/settings_screen.dart';
+import 'package:zaibal/screens/history_screen.dart';
 import 'package:zaibal/screens/bots_screen.dart';
+import 'package:zaibal/widgets/app_shell.dart';
 import 'package:zaibal/theme/go_theme.dart';
 import 'package:zaibal/models/app_settings.dart';
 import 'package:zaibal/services/ogs_service.dart';
@@ -37,11 +37,13 @@ Future<void> main() async {
   final userService = UserService();
   final subscriptionService = SubscriptionService();
   final matchHistoryService = MatchHistoryService();
+  final ogsService = OgsService();
 
   await Future.wait([
     userService.load(),
     subscriptionService.load(),
     matchHistoryService.load(),
+    ogsService.tryAutoLogin(),
   ]);
 
   runApp(
@@ -49,6 +51,7 @@ Future<void> main() async {
       userService: userService,
       subscriptionService: subscriptionService,
       matchHistoryService: matchHistoryService,
+      ogsService: ogsService,
     ),
   );
 }
@@ -57,12 +60,14 @@ class GokoApp extends StatefulWidget {
   final UserService userService;
   final SubscriptionService subscriptionService;
   final MatchHistoryService matchHistoryService;
+  final OgsService ogsService;
 
   const GokoApp({
     super.key,
     required this.userService,
     required this.subscriptionService,
     required this.matchHistoryService,
+    required this.ogsService,
   });
 
   @override
@@ -77,9 +82,12 @@ class _GokoAppState extends State<GokoApp> {
       // immediate (both `theme` and `darkTheme` resolve to the same preset,
       // so we must actually switch the preset, not just ThemeMode).
       final preset = ThemePresetIds.toEnum(AppSettings.themePresetId);
-      if (isDark && (preset == ThemePreset.classicWood || preset == ThemePreset.lightMode)) {
+      if (isDark &&
+          (preset == ThemePreset.classicWood ||
+              preset == ThemePreset.lightMode)) {
         AppSettings.themePresetId = ThemePresetIds.darkBlue;
-      } else if (!isDark && (preset == ThemePreset.darkBlue || preset == ThemePreset.oledBlack)) {
+      } else if (!isDark &&
+          (preset == ThemePreset.darkBlue || preset == ThemePreset.oledBlack)) {
         AppSettings.themePresetId = ThemePresetIds.lightMode;
       }
     });
@@ -135,6 +143,11 @@ class _GokoAppState extends State<GokoApp> {
     AppSettings.save();
   }
 
+  void _onKataGoServerUrlChanged(String url) {
+    AppSettings.kataGoServerUrl = url;
+    AppSettings.save();
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = AppSettings.themeMode == ThemeMode.dark;
@@ -142,7 +155,7 @@ class _GokoAppState extends State<GokoApp> {
     final activeTheme = GoTheme.fromPreset(preset);
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => OgsService()),
+        ChangeNotifierProvider.value(value: widget.ogsService),
         ChangeNotifierProvider.value(value: widget.userService),
         ChangeNotifierProvider.value(value: widget.subscriptionService),
         ChangeNotifierProvider.value(value: widget.matchHistoryService),
@@ -154,6 +167,7 @@ class _GokoAppState extends State<GokoApp> {
         themeMode: AppSettings.themeMode,
         locale: Locale(AppSettings.languageCode),
         localizationsDelegates: const [
+          AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
@@ -167,7 +181,7 @@ class _GokoAppState extends State<GokoApp> {
         ],
         initialRoute: '/home',
         routes: {
-          '/home': (context) => HomeScreen(onThemeToggle: _toggleTheme),
+          '/home': (context) => AppShell(onThemeToggle: _toggleTheme),
           '/learn': (context) => const LearnScreen(),
           '/history': (context) => const HistoryScreen(),
           '/profile': (context) => const ProfileScreen(),
@@ -186,8 +200,9 @@ class _GokoAppState extends State<GokoApp> {
             onThemePresetChanged: _onThemePresetChanged,
             languageCode: AppSettings.languageCode,
             onLanguageChanged: _setLanguage,
+            kataGoServerUrl: AppSettings.kataGoServerUrl,
+            onKataGoServerUrlChanged: _onKataGoServerUrlChanged,
           ),
-          '/topic': (context) => const TopicDetailScreen(),
           '/puzzles': (context) => const PuzzlesHubScreen(),
           '/bots': (context) => const BotsScreen(),
         },
