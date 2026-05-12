@@ -56,6 +56,19 @@
   "kataGoSection": "AI / KataGo",
   "kataGoServerUrl": "KataGo 服务器地址",
   "kataGoHint": "留空则使用内置 MCTS 引擎（离线）。",
+
+  "leelaServerUrl": "Leela Zero / GTP 服务器地址",
+  "leelaHint": "连接任意 GTP-over-WebSocket 引擎（Leela Zero、ELF OpenGo）。设置了 KataGo 地址时忽略此项。",
+
+  "localEngineTitle": "本地 AI 引擎",
+  "localEngineSubtitle": "自动管理的 KataGo（无需服务器）",
+  "engineStatusReady": "KataGo 就绪",
+  "engineStatusStarting": "启动中…",
+  "engineStatusNotFound": "未安装",
+  "engineStatusError": "错误",
+  "enginesFolderLabel": "引擎文件夹",
+  "downloadKataGo": "下载 KataGo",
+  "engineRestartButton": "重启引擎",
   "prev": "上一步",
   "next": "下一步",
   "done": "完成",
@@ -143,5 +156,15 @@
   "conceptLibertiesCapturesDesc": "当棋子的所有气（相邻空点）都被对方占据时，该棋子被提子。连接的棋子作为一个整体共享气。",
   "conceptLibertyCountingDesc": "棋子或棋群相邻的每个空点都是一口气。连接的棋子形成一组并共享所有气。当一组只剩一口气时即为「打吃」。",
   "conceptLifeDeathDesc": "拥有两个独立眼位的棋群无法被提子，因为对方无法同时填入两个眼位。这是判断棋群死活的根本概念。",
-  "conceptKoRuleDesc": "劫规则禁止在重复的局面下立即提回，避免无限循环。提劫之后必须先在别处下一手才能再次提回。"
+  "conceptKoRuleDesc": "劫规则禁止在重复的局面下立即提回，避免无限循环。提劫之后必须先在别处下一手才能再次提回。",
+
+  "analysisPanelTitle": "分析",
+  "analysisOn": "开启分析",
+  "analysisOff": "关闭分析",
+  "noServerForAnalysis": "请在设置中配置 KataGo 服务器以启用分析功能。",
+  "moveQualityBest": "最佳",
+  "moveQualityGood": "良好",
+  "moveQualityInaccuracy": "不准确",
+  "moveQualityMistake": "失误",
+  "moveQualityBlunder": "大错"
 }

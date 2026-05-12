@@ -50,8 +50,14 @@ dependencies:
   # Plain WebSocket client used by KataGo remote engine (works on all platforms).
   web_socket_channel: ^3.0.1
 
+  # Filesystem paths for the auto-managed KataGo process engine.
+  path_provider: ^2.1.5
+
   # Internationalisation — required by flutter gen-l10n for ARB-based translation.
   intl: ^0.20.2
+
+  # Audio playback for sound effects (stone placement, captures, puzzle feedback).
+  audioplayers: ^6.1.0
   
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -84,6 +90,15 @@ flutter:
   assets:
     - assets/
     - assets/content/
+    - assets/avatars/
+    - assets/logo/
+    # Bundled KataGo binaries (optional — add platform binaries here for zero-config AI)
+    # See assets/engines/README.md for setup instructions.
+    - assets/engines/windows/
+    - assets/engines/macos/
+    - assets/engines/linux/
+    - assets/engines/android/
+    - assets/sounds/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

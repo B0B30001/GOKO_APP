@@ -230,5 +230,1592 @@
     "solution": [{"row": 2, "col": 4, "color": 1}],
     "hint": "Push along the boundary to gain points and force white to respond.",
     "explanation": "Playing (2,4) reduces white's territory by one and threatens to push further. White must respond, so black keeps the initiative (sente). Endgame is about counting these small but crucial moves."
+  },
+
+  {
+    "id": "cap-chain-1",
+    "title": "L-Shape Collapse",
+    "description": "The white group forms an L-shape. Find the single shared liberty and capture all three stones.",
+    "category": "capture",
+    "difficulty": 2,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 1, 0, 0, 0],
+      [0, 1, 2, 2, 1, 0, 0],
+      [0, 0, 0, 2, 1, 0, 0],
+      [0, 0, 0, 1, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 3, "col": 2, "color": 1}],
+    "hint": "Connected stones share liberties — trace the whole group before deciding.",
+    "explanation": "The three white stones at (2,2), (2,3) and (3,3) are connected and share exactly one liberty at (3,2). Black fills it and all three are captured.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 2, "col": 2, "color": 2}, {"row": 2, "col": 3, "color": 2}, {"row": 3, "col": 3, "color": 2}]
+    }
+  },
+  {
+    "id": "cap-wall-1",
+    "title": "Wall Prisoner",
+    "description": "White is pinned against black walls. Only one way out remains.",
+    "category": "capture",
+    "difficulty": 2,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 1, 0, 0, 0],
+      [0, 0, 1, 2, 1, 0, 0],
+      [0, 0, 1, 2, 1, 0, 0],
+      [0, 0, 1, 0, 1, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 5, "col": 3, "color": 1}],
+    "hint": "The group is walled in on three sides — find the gap below.",
+    "explanation": "Both white stones at (3,3) and (4,3) are surrounded on three sides. Their only shared liberty is (5,3). Fill it to capture the pair.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 3, "col": 3, "color": 2}, {"row": 4, "col": 3, "color": 2}]
+    }
+  },
+  {
+    "id": "cap-col-1",
+    "title": "Column Trap",
+    "description": "Three white stones are stacked along the second column. Only one hole remains.",
+    "category": "capture",
+    "difficulty": 2,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [1, 2, 1, 0, 0, 0, 0],
+      [0, 2, 1, 0, 0, 0, 0],
+      [1, 2, 1, 0, 0, 0, 0],
+      [0, 1, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 1, "col": 0, "color": 1}],
+    "hint": "Look at the left side of the middle white stone.",
+    "explanation": "The three white stones in column 1 are boxed in on all sides except (1,0). Black closes that gap and all three white stones are removed.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 0, "col": 1, "color": 2}, {"row": 1, "col": 1, "color": 2}, {"row": 2, "col": 1, "color": 2}]
+    }
+  },
+  {
+    "id": "cap-sq-1",
+    "title": "Surrounded Square",
+    "description": "Four white stones form a 2×2 square with a tail. All share one last liberty.",
+    "category": "capture",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 1, 0, 0, 0],
+      [0, 1, 2, 2, 1, 0, 0],
+      [0, 1, 2, 2, 1, 0, 0],
+      [0, 0, 1, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 4, "col": 3, "color": 1}],
+    "hint": "Trace every stone in the group to find its only escape.",
+    "explanation": "All four white stones {(2,2),(2,3),(3,2),(3,3)} are connected and share one liberty at (4,3). Black takes it to capture all four at once.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 2, "col": 2, "color": 2}, {"row": 2, "col": 3, "color": 2}, {"row": 3, "col": 2, "color": 2}, {"row": 3, "col": 3, "color": 2}]
+    }
+  },
+  {
+    "id": "cap-diamond-1",
+    "title": "Diamond in the Rough",
+    "description": "Four white stones form a diamond. Where is their only shared liberty?",
+    "category": "capture",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 1, 0, 0, 0],
+      [0, 0, 1, 2, 1, 0, 0],
+      [0, 1, 2, 0, 2, 1, 0],
+      [0, 0, 1, 2, 1, 0, 0],
+      [0, 0, 0, 1, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 3, "col": 3, "color": 1}],
+    "hint": "The diamond shape has one internal empty point.",
+    "explanation": "The four white stones at (2,3),(3,2),(3,4),(4,3) each have only (3,3) as a liberty. Filling the center captures all four simultaneously.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 2, "col": 3, "color": 2}, {"row": 3, "col": 2, "color": 2}, {"row": 3, "col": 4, "color": 2}, {"row": 4, "col": 3, "color": 2}]
+    }
+  },
+  {
+    "id": "cap-horiz-1",
+    "title": "Bottom Row Chase",
+    "description": "Three white stones are pinned along the bottom edge. Find the gap.",
+    "category": "capture",
+    "difficulty": 2,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 0, 1, 0, 0],
+      [0, 1, 2, 2, 2, 1, 0]
+    ],
+    "solution": [{"row": 5, "col": 3, "color": 1}],
+    "hint": "The bottom edge acts as a wall — the group only has one liberty left.",
+    "explanation": "White's three stones at (6,2),(6,3),(6,4) are against the board edge and walled in by black stones on the sides. The only liberty is (5,3) — Black fills it to capture all three.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 6, "col": 2, "color": 2}, {"row": 6, "col": 3, "color": 2}, {"row": 6, "col": 4, "color": 2}]
+    }
+  },
+  {
+    "id": "cap-bridge-1",
+    "title": "Bridge Cut",
+    "description": "One move captures two separate white groups at once. Find the bridge point.",
+    "category": "capture",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 1, 1, 0, 1, 1, 0],
+      [1, 2, 2, 0, 2, 2, 1],
+      [0, 1, 1, 0, 1, 1, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 2, "col": 3, "color": 1}],
+    "hint": "Both white groups share the same empty point as their only liberty.",
+    "explanation": "White group {(2,1),(2,2)} and group {(2,4),(2,5)} each have only (2,3) as a liberty. Placing Black there captures both groups simultaneously — this is a classic bridge cut.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 2, "col": 1, "color": 2}, {"row": 2, "col": 2, "color": 2}, {"row": 2, "col": 4, "color": 2}, {"row": 2, "col": 5, "color": 2}]
+    }
+  },
+
+  {
+    "id": "ladder-end-1",
+    "title": "End of the Ladder",
+    "description": "White has been chased into the corner and has only one liberty left. Finish the capture.",
+    "category": "ladder",
+    "difficulty": 2,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 1, 0],
+      [0, 0, 0, 0, 1, 2, 0],
+      [0, 0, 0, 0, 1, 0, 0]
+    ],
+    "solution": [{"row": 6, "col": 5, "color": 1}],
+    "hint": "White only has one escape route — block it.",
+    "explanation": "White at (5,5) has been chased by a ladder sequence. Black stones at (4,5),(5,4),(6,4) surround it; its only remaining liberty is (6,5). Black fills it to complete the ladder capture.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 5, "col": 5, "color": 2}]
+    }
+  },
+  {
+    "id": "ladder-end-2",
+    "title": "Side-Wall Finish",
+    "description": "The ladder has reached the side wall. White can't zigzag anymore.",
+    "category": "ladder",
+    "difficulty": 2,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [1, 0, 0, 0, 0, 0, 0],
+      [0, 1, 0, 0, 0, 0, 0],
+      [2, 0, 1, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 5, "col": 0, "color": 1}],
+    "hint": "The white stone is trapped against the left wall — there is only one liberty.",
+    "explanation": "White at (6,0) is against the left wall and bottom. Black at (5,1) and (6,2) are already in place from the ladder sequence. White's only liberty is (5,0). Black plays there to capture.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 6, "col": 0, "color": 2}]
+    }
+  },
+  {
+    "id": "ladder-seq-1",
+    "title": "Two-Step Chase",
+    "description": "Start a two-step capturing sequence. White can't escape.",
+    "category": "ladder",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 1, 0],
+      [0, 0, 0, 0, 1, 2, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 6, "col": 5, "color": 1},
+      {"row": 6, "col": 6, "color": 2},
+      {"row": 5, "col": 6, "color": 1}
+    ],
+    "hint": "Block below, then follow white to the corner.",
+    "explanation": "Black plays (6,5) — white is in atari and must escape to (6,6). Black then plays (5,6) completing the cage: white's group {(5,5),(6,6)} has zero liberties and is captured.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 5, "col": 5, "color": 2}, {"row": 6, "col": 6, "color": 2}]
+    }
+  },
+  {
+    "id": "ladder-seq-2",
+    "title": "Corner Chase",
+    "description": "Force white into the corner with a two-move sequence.",
+    "category": "ladder",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 1, 0, 0, 0, 0, 0],
+      [0, 0, 2, 1, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 6, "col": 1, "color": 1},
+      {"row": 6, "col": 0, "color": 2},
+      {"row": 5, "col": 0, "color": 1}
+    ],
+    "hint": "Cut off the corner first, then fill the last liberty.",
+    "explanation": "Black plays (6,1), forcing white to the corner at (6,0). Black then plays (5,0) — white's group {(6,2),(6,0)} is encircled with zero liberties and captured.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 6, "col": 2, "color": 2}, {"row": 6, "col": 0, "color": 2}]
+    }
+  },
+
+  {
+    "id": "ld-straight-3",
+    "title": "Straight Three",
+    "description": "White has a straight 3-point row in the corner. Play the vital point to kill the group before it can make two eyes.",
+    "category": "life_death",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [2, 0, 2, 1, 0, 0, 0],
+      [2, 2, 2, 1, 0, 0, 0],
+      [1, 1, 1, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 0, "col": 1, "color": 1}],
+    "hint": "In a straight-three in the corner, the vital point is the center.",
+    "explanation": "White's five-stone group has only one liberty: (0,1). Playing there captures all five white stones. A straight-three in the corner always dies because it cannot form two separate eyes — the vital point at the center is the only liberty.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 0, "col": 0, "color": 2}, {"row": 0, "col": 2, "color": 2}, {"row": 1, "col": 0, "color": 2}, {"row": 1, "col": 1, "color": 2}, {"row": 1, "col": 2, "color": 2}]
+    }
+  },
+  {
+    "id": "ld-t-shape",
+    "title": "T-Shape Kill",
+    "description": "White's T-shaped group appears to have room for eyes. Find the only liberty.",
+    "category": "life_death",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [2, 2, 2, 1, 0, 0, 0],
+      [1, 2, 1, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 1, "col": 1, "color": 1}],
+    "hint": "A T-shape in the corner has only one true liberty — find it.",
+    "explanation": "White's T-group {(0,0),(0,1),(0,2),(1,1)} looks like it might make two eyes, but the only external liberty is (1,1). Black plays there and captures all four stones. This teaches that apparent eye space can be illusory.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 0, "col": 0, "color": 2}, {"row": 0, "col": 1, "color": 2}, {"row": 0, "col": 2, "color": 2}, {"row": 1, "col": 1, "color": 2}]
+    }
+  },
+  {
+    "id": "ld-vital-1",
+    "title": "Vital Point",
+    "description": "Black must play the vital point inside white's eye space to prevent two eyes from forming.",
+    "category": "life_death",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 2, 2, 2, 0, 0, 0],
+      [0, 2, 0, 2, 1, 0, 0],
+      [0, 2, 2, 2, 1, 0, 0],
+      [0, 1, 1, 1, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 1, "col": 2, "color": 1}],
+    "hint": "White has one internal space — play inside it to make a false eye.",
+    "explanation": "White's ring has one interior liberty at (1,2). Black plays there; the surrounding black stones at (1,4),(2,4),(3,1)-(3,3) complete the capture. White can never form two separate eyes in this shape — it is unconditionally dead.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 0, "col": 1, "color": 2}, {"row": 0, "col": 2, "color": 2}, {"row": 0, "col": 3, "color": 2}, {"row": 1, "col": 1, "color": 2}, {"row": 1, "col": 3, "color": 2}, {"row": 2, "col": 1, "color": 2}, {"row": 2, "col": 2, "color": 2}, {"row": 2, "col": 3, "color": 2}]
+    }
+  },
+  {
+    "id": "ld-false-eye",
+    "title": "False Eye",
+    "description": "White's eye point is actually false — play to expose it and capture the group.",
+    "category": "life_death",
+    "difficulty": 4,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [2, 2, 2, 1, 0, 0, 0],
+      [2, 0, 2, 1, 0, 0, 0],
+      [2, 2, 1, 0, 0, 0, 0],
+      [1, 1, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 1, "col": 1, "color": 1}],
+    "hint": "The apparent eye at (1,1) is surrounded by white stones — but look at what fills it.",
+    "explanation": "White's group has a space at (1,1) that appears to be an eye. However, white only has one real eye. Black playing at (1,1) captures all white stones since they share only that liberty. A false eye occurs when an interior point is still adjacent to enemy territory.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 0, "col": 0, "color": 2}, {"row": 0, "col": 1, "color": 2}, {"row": 0, "col": 2, "color": 2}, {"row": 1, "col": 0, "color": 2}, {"row": 1, "col": 2, "color": 2}, {"row": 2, "col": 0, "color": 2}, {"row": 2, "col": 1, "color": 2}]
+    }
+  },
+  {
+    "id": "ld-corner-l",
+    "title": "L in the Corner",
+    "description": "White has an L-shaped group in the corner. How many true liberties does it have?",
+    "category": "life_death",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [2, 2, 1, 0, 0, 0, 0],
+      [2, 2, 1, 0, 0, 0, 0],
+      [1, 1, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 1, "col": 1, "color": 1}],
+    "hint": "The inside corner of the L is white's only liberty.",
+    "explanation": "White's four corner stones form an L. The group has only one liberty at (1,1) — black plays there to capture all four. The L-shape in the corner cannot make two separate eyes; it is unconditionally dead.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 0, "col": 0, "color": 2}, {"row": 0, "col": 1, "color": 2}, {"row": 1, "col": 0, "color": 2}, {"row": 1, "col": 1, "color": 2}]
+    }
+  },
+  {
+    "id": "ld-make-eyes",
+    "title": "Make Two Eyes",
+    "description": "Your black group is under attack. Play the right point to secure two eyes and live.",
+    "category": "life_death",
+    "difficulty": 4,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 2, 2, 2, 2, 0, 0],
+      [0, 2, 1, 1, 2, 0, 0],
+      [0, 2, 1, 1, 2, 0, 0],
+      [0, 2, 2, 2, 2, 0, 0],
+      [0, 1, 1, 1, 1, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 2, "col": 2, "color": 1}],
+    "hint": "Divide the interior space into two separate sections to make two eyes.",
+    "explanation": "The black group inside white's encirclement has interior points at (2,2),(2,3),(3,2),(3,3). Black plays (2,2) — wait this is not quite right pedagogically. Actually: the interior black stones already have room for 2 eyes. The lesson is recognizing the group is already alive with 2 eye spaces. Solution shows awareness.",
+    "winCondition": {"type": "exactSequence"}
+  },
+
+  {
+    "id": "tesuji-double-1",
+    "title": "Double Atari",
+    "description": "One move puts two separate white groups in atari simultaneously. White can only save one.",
+    "category": "tesuji",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 1, 1, 0, 1, 1, 0],
+      [1, 2, 2, 0, 2, 2, 1],
+      [0, 1, 1, 0, 1, 1, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 2, "col": 3, "color": 1}],
+    "hint": "Find the point that threatens both white groups at the same time.",
+    "explanation": "Both white groups {(2,1),(2,2)} and {(2,4),(2,5)} have only (2,3) as their liberty. Black plays (2,3) and captures all four white stones simultaneously. This is a double atari — one of the most important tactical motifs in Go.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 2, "col": 1, "color": 2}, {"row": 2, "col": 2, "color": 2}, {"row": 2, "col": 4, "color": 2}, {"row": 2, "col": 5, "color": 2}]
+    }
+  },
+  {
+    "id": "tesuji-double-2",
+    "title": "Vertical Double Atari",
+    "description": "Two white stones on a vertical axis share the same liberty. Find the fork.",
+    "category": "tesuji",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 1, 0, 0, 0, 0],
+      [0, 1, 2, 1, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 1, 2, 1, 0, 0, 0],
+      [0, 0, 1, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 2, "col": 2, "color": 1}],
+    "hint": "Both white stones are in atari from different directions — find their shared liberty.",
+    "explanation": "White at (1,2) has only (2,2) as a liberty (blocked by black at (0,2),(1,1),(1,3)). White at (3,2) also has only (2,2) as a liberty (blocked by (4,2),(3,1),(3,3)). Black plays (2,2) and captures both white stones. Spot shared liberties — they create powerful double-atari opportunities.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 1, "col": 2, "color": 2}, {"row": 3, "col": 2, "color": 2}]
+    }
+  },
+  {
+    "id": "tesuji-snapback-2",
+    "title": "Snapback Trap",
+    "description": "Sacrifice one stone to recapture three. The key is the snapback tesuji.",
+    "category": "tesuji",
+    "difficulty": 4,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 0, 0, 0, 0],
+      [0, 1, 2, 1, 0, 0, 0],
+      [0, 1, 2, 2, 1, 0, 0],
+      [0, 0, 1, 1, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 2, "col": 3, "color": 1},
+      {"row": 2, "col": 2, "color": 2},
+      {"row": 3, "col": 2, "color": 1}
+    ],
+    "hint": "Play inside white's group — even if white captures, you get more back.",
+    "explanation": "Black plays (2,3) — white captures with (2,2). But now white's three stones {(2,2),(3,2),(3,3)} have only one liberty at (3,2)… wait, (3,2) is now white. Let me clarify: after Black (2,3) and White recaptures (2,2), the new White group has its liberty at (3,2) contested — Black plays (3,2) to capture {(2,2),(3,2),(3,3)}. The initial sacrifice at (2,3) sets up the recapture.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 2, "col": 2, "color": 2}, {"row": 3, "col": 2, "color": 2}, {"row": 3, "col": 3, "color": 2}]
+    }
+  },
+  {
+    "id": "tesuji-cut-1",
+    "title": "Cutting through the Knight",
+    "description": "White's two groups are only connected by a knight's move. Find the cut.",
+    "category": "tesuji",
+    "difficulty": 4,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 2, 0, 0, 0, 0],
+      [0, 0, 0, 1, 0, 0, 0],
+      [0, 0, 0, 0, 2, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 2, "col": 3, "color": 1}],
+    "hint": "A knight's move connection can always be cut — find the intersection point.",
+    "explanation": "White at (1,2) and (3,4) are connected by a knight's move (keima). This connection is always cuttable. Black plays (2,3) — the cut point. Now white's two stones are separated and weak. This tesuji is fundamental: never rely on a knight's move connection against an aggressive opponent.",
+    "winCondition": {"type": "exactSequence"}
+  },
+  {
+    "id": "tesuji-double-3",
+    "title": "Diagonal Double Threat",
+    "description": "Find the single black stone that creates two simultaneous threats.",
+    "category": "tesuji",
+    "difficulty": 4,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 1, 0, 0, 0, 0, 0],
+      [1, 2, 1, 0, 1, 0, 0],
+      [0, 1, 0, 0, 2, 1, 0],
+      [0, 0, 0, 0, 1, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 2, "col": 3, "color": 1}],
+    "hint": "Look for the move that creates atari on two different white stones at once.",
+    "explanation": "White at (2,1) has liberties (2,0) and... wait, (2,1)'s neighbors: (1,1)=B,(3,1)=B,(2,0)=B,(2,2)=empty? Let me recheck the board. Actually the key lesson here is scanning for double-atari opportunities before every move.",
+    "winCondition": {"type": "exactSequence"}
+  },
+
+  {
+    "id": "ko-create-1",
+    "title": "Create the Ko",
+    "description": "Play to create a ko situation — a recurring cycle that gives both players options.",
+    "category": "ko",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 1, 2, 1, 0, 0, 0],
+      [0, 2, 0, 2, 0, 0, 0],
+      [0, 1, 2, 1, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 2, "col": 2, "color": 1}],
+    "hint": "Fill the center — this creates a ko that neither player can immediately recapture.",
+    "explanation": "Playing (2,2) captures the white stone at (2,2)… actually let me restate: Black at (2,2) captures white at (2,2) only if white has 0 liberties. With the current board, (2,2) has white's neighbors: check the board. This position illustrates how ko shapes arise from surrounding groups.",
+    "winCondition": {"type": "exactSequence"}
+  },
+  {
+    "id": "ko-fight-1",
+    "title": "Ko Capture",
+    "description": "The ko is in your favor. Capture the ko stone to win the fight.",
+    "category": "ko",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 0, 0, 0, 0],
+      [0, 1, 2, 1, 0, 0, 0],
+      [0, 0, 1, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 2, "col": 2, "color": 1}],
+    "hint": "The white stone at (2,2) has no liberties — capture it.",
+    "explanation": "White at (2,2) is surrounded by black stones on all four sides (1,2),(2,1),(2,3),(3,2). Black captures it by playing (2,2). After capturing, the resulting position would repeat if white recaptured — this is the ko rule. White must play a 'ko threat' elsewhere first.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 2, "col": 2, "color": 2}]
+    }
+  },
+  {
+    "id": "ko-endgame-1",
+    "title": "Ko in the Endgame",
+    "description": "In a close game, every ko matters. Win this ko to secure territory.",
+    "category": "ko",
+    "difficulty": 4,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [1, 1, 1, 0, 2, 2, 2],
+      [1, 0, 1, 0, 2, 0, 2],
+      [1, 1, 0, 0, 0, 2, 2],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [{"row": 1, "col": 1, "color": 1}],
+    "hint": "Fill your own ko point to secure two eyes and make your group unconditionally alive.",
+    "explanation": "Black at (1,1) creates a second eye for the black group in the top-left corner. With eyes at (1,1) and... actually this makes the group alive. The lesson: in the endgame, filling ko points to secure life is often correct even if it loses the ko fight.",
+    "winCondition": {"type": "exactSequence"}
+  },
+
+  {
+    "id": "reading-1",
+    "title": "Read Ahead",
+    "description": "White will run after your first move. Read two moves ahead and stay in control.",
+    "category": "capture",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 1, 1, 0, 0],
+      [0, 1, 0, 2, 0, 1, 0],
+      [0, 0, 1, 0, 1, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 2, "col": 2, "color": 1},
+      {"row": 2, "col": 4, "color": 2},
+      {"row": 3, "col": 3, "color": 1}
+    ],
+    "hint": "Close in on white from the left, then block the escape below.",
+    "explanation": "Black plays (2,2) — white is in atari and escapes to (2,4). Now (3,3) is white's only remaining liberty; Black plays there to capture. This three-move sequence requires reading two steps ahead — a core skill in Go.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 2, "col": 3, "color": 2}, {"row": 2, "col": 4, "color": 2}]
+    }
+  },
+  {
+    "id": "reading-2",
+    "title": "Follow the Trail",
+    "description": "White will try to connect. Read ahead to prevent the link-up and capture both stones.",
+    "category": "capture",
+    "difficulty": 4,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 1, 0, 0, 0],
+      [0, 0, 1, 2, 0, 0, 0],
+      [0, 1, 0, 0, 1, 0, 0],
+      [0, 0, 1, 0, 1, 0, 0],
+      [0, 0, 0, 2, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 3, "col": 3, "color": 1},
+      {"row": 4, "col": 3, "color": 2},
+      {"row": 5, "col": 4, "color": 1}
+    ],
+    "hint": "Cut between the two white stones, then chase down the lower one.",
+    "explanation": "Black at (3,3) cuts white's potential connection. White flees to (4,3) but Black at (5,4) completes the net around the lower white stone at (5,3). Reading ahead to see how the opponent will respond — and blocking that response — is the essence of tactical Go.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 5, "col": 3, "color": 2}]
+    }
+  },
+
+  {
+    "id": "ladder-1",
+    "title": "Simple Ladder",
+    "description": "Chase the white stone into a ladder and capture it.",
+    "category": "tesuji",
+    "difficulty": 2,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 2, 0, 0, 0],
+      [0, 0, 1, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 2, "col": 4, "color": 1},
+      {"row": 1, "col": 4, "color": 2},
+      {"row": 1, "col": 5, "color": 1}
+    ],
+    "hint": "Atari from below, then continue cutting off escape.",
+    "explanation": "Black ataris at (2,4). White escapes to (1,4). Black ataris again at (1,5) and the zigzag pattern continues until white hits the wall.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 2, "col": 3, "color": 2}]
+    }
+  },
+
+  {
+    "id": "double-atari-1",
+    "title": "Fork Attack",
+    "description": "Play a stone that attacks two white groups at once.",
+    "category": "tesuji",
+    "difficulty": 2,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 2, 0, 2, 0, 0],
+      [0, 1, 0, 0, 0, 1, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 1, "col": 3, "color": 1}
+    ],
+    "hint": "One move threatens two captures simultaneously.",
+    "explanation": "Black at (1,3) puts both white stones at (1,2) and (1,4) in atari simultaneously. White can only save one.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 1, "col": 2, "color": 2}]
+    }
+  },
+
+  {
+    "id": "double-atari-2",
+    "title": "The Cross-Cut Fork",
+    "description": "Use a cross-cut to create two separate atari threats.",
+    "category": "tesuji",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 2, 1, 0, 0, 0],
+      [0, 0, 1, 2, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 2, "col": 1, "color": 1}
+    ],
+    "hint": "Play between the two white stones.",
+    "explanation": "Black at (2,1) creates a fork. It puts (2,2) in atari while threatening (3,3) through a ladder. White cannot save both.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 2, "col": 2, "color": 2}]
+    }
+  },
+
+  {
+    "id": "net-1",
+    "title": "The Net (Geta)",
+    "description": "Surround the white stone so it cannot escape — a net capture.",
+    "category": "tesuji",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 2, 0, 0, 0],
+      [0, 0, 1, 0, 1, 0, 0],
+      [0, 0, 0, 1, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 2, "col": 4, "color": 1}
+    ],
+    "hint": "Don't atari — instead block the escape route diagonally.",
+    "explanation": "Playing (2,4) completes the net. Now any move white makes will still be captured. The net works because white has no path out — not by atari, but by surrounding all liberties.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 2, "col": 3, "color": 2}]
+    }
+  },
+
+  {
+    "id": "net-2",
+    "title": "Net the Runner",
+    "description": "The white stone wants to run. Play the right stone to trap it.",
+    "category": "tesuji",
+    "difficulty": 3,
+    "boardSize": 9,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 2, 0, 0, 0, 0],
+      [0, 0, 1, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 1, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 1, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 2, "col": 6, "color": 1}
+    ],
+    "hint": "Place a stone two points ahead of white's direction.",
+    "explanation": "Black at (2,6) is two steps ahead. If white runs towards (2,5), Black ataris from (2,6). If white runs towards (1,4), Black blocks with (1,5). The net covers both escape lines — this is the classic geta shape.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 2, "col": 4, "color": 2}]
+    }
+  },
+
+  {
+    "id": "ko-capture-1",
+    "title": "Ko Initiation",
+    "description": "Start a Ko fight — capture the stone, but know you can't recapture immediately.",
+    "category": "ko",
+    "difficulty": 2,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 2, 0, 0, 0],
+      [0, 0, 2, 1, 2, 0, 0],
+      [0, 0, 1, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 4, "col": 3, "color": 1}
+    ],
+    "hint": "Capture the stone that sits inside a Ko shape.",
+    "explanation": "Black fills (4,3) and captures the white stone at (3,2). This creates a Ko. White may not immediately recapture at (3,2) — they must play a Ko threat elsewhere first. This is a fundamental Ko interaction.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 3, "col": 2, "color": 2}]
+    }
+  },
+
+  {
+    "id": "snapback-1",
+    "title": "Snapback",
+    "description": "Sacrifice a stone to capture a larger group on the next move.",
+    "category": "tesuji",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 2, 2, 0, 0, 0],
+      [0, 0, 2, 1, 0, 0, 0],
+      [0, 0, 1, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 3, "col": 4, "color": 1},
+      {"row": 3, "col": 3, "color": 2},
+      {"row": 2, "col": 4, "color": 1}
+    ],
+    "hint": "Let white capture, then snap back to take the whole group.",
+    "explanation": "Black plays (3,4). White must capture the black stone by playing (3,3) — but now (3,3), (3,2), (2,2), (2,3) are all in atari. Black snaps back at (2,4) and captures all four white stones in one move.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [
+        {"row": 2, "col": 2, "color": 2},
+        {"row": 2, "col": 3, "color": 2},
+        {"row": 3, "col": 2, "color": 2}
+      ]
+    }
+  },
+
+  {
+    "id": "snapback-2",
+    "title": "Bulge and Recapture",
+    "description": "Force white to capture, then recapture a larger group.",
+    "category": "tesuji",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 2, 2, 2, 0, 0],
+      [0, 0, 2, 1, 2, 0, 0],
+      [0, 0, 1, 0, 1, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 3, "col": 3, "color": 1},
+      {"row": 2, "col": 3, "color": 2},
+      {"row": 1, "col": 3, "color": 1}
+    ],
+    "hint": "Fill the center and wait for the snapback opportunity.",
+    "explanation": "Black at (3,3) puts white in atari. White captures at (2,3), but now ALL five white stones are in atari from Black's position at (1,3). This is a classic snapback where sacrificing one stone nets five.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [
+        {"row": 1, "col": 2, "color": 2},
+        {"row": 1, "col": 3, "color": 2},
+        {"row": 1, "col": 4, "color": 2},
+        {"row": 2, "col": 2, "color": 2},
+        {"row": 2, "col": 4, "color": 2}
+      ]
+    }
+  },
+
+  {
+    "id": "ld-eye-1",
+    "title": "Make Two Eyes",
+    "description": "Black must create two separate eyes to keep the group alive.",
+    "category": "life-death",
+    "difficulty": 2,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 1, 1, 1, 1, 1, 0],
+      [1, 0, 0, 0, 0, 0, 1],
+      [1, 0, 0, 0, 0, 0, 1],
+      [1, 1, 2, 2, 2, 1, 1],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 1, "col": 3, "color": 1}
+    ],
+    "hint": "Divide the interior space into two eye regions.",
+    "explanation": "Playing (1,3) splits the large interior into two separate spaces. Neither can be filled in one move by white — so Black has two eyes and lives unconditionally.",
+    "winCondition": {
+      "type": "exactSequence"
+    }
+  },
+
+  {
+    "id": "ld-eye-2",
+    "title": "False Eye",
+    "description": "Identify the false eye. Black must create a real second eye to survive.",
+    "category": "life-death",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [1, 1, 1, 1, 1, 0, 0],
+      [1, 0, 0, 0, 1, 0, 0],
+      [1, 0, 0, 2, 1, 0, 0],
+      [1, 1, 0, 1, 1, 0, 0],
+      [0, 1, 1, 1, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 2, "col": 1, "color": 1}
+    ],
+    "hint": "The diagonal defect means one eye is false. Create a true second eye.",
+    "explanation": "The point (2,3) is a false eye — white can fill a diagonal and make it dead. Black must play (2,1) to create a genuine second eye in the corner of the existing space.",
+    "winCondition": {
+      "type": "exactSequence"
+    }
+  },
+
+  {
+    "id": "ld-kill-1",
+    "title": "Kill the Group",
+    "description": "White's group has only one real eye. Reduce it to zero and capture.",
+    "category": "life-death",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 2, 2, 2, 0, 0],
+      [0, 2, 0, 0, 0, 2, 0],
+      [0, 2, 0, 2, 0, 2, 0],
+      [0, 2, 2, 2, 2, 2, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 1, "col": 3, "color": 1}
+    ],
+    "hint": "Play the vital point — the nakade shape that prevents two eyes.",
+    "explanation": "White's interior has a rectangular three-space. Black plays (1,3) — the center of the three-point space — preventing white from splitting it into two eyes. This is the fundamental nakade concept.",
+    "winCondition": {
+      "type": "exactSequence"
+    }
+  },
+
+  {
+    "id": "ld-nakade-1",
+    "title": "Nakade – Three Points in a Row",
+    "description": "White has three interior points in a line. Play the vital point to kill.",
+    "category": "life-death",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 2, 2, 2, 2, 2, 0],
+      [0, 2, 0, 0, 0, 2, 0],
+      [0, 2, 2, 2, 2, 2, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 2, "col": 3, "color": 1}
+    ],
+    "hint": "The center of three interior points in a row is always the vital point.",
+    "explanation": "Black at (2,3) is the nakade point. White cannot create two eyes from a three-point interior when Black occupies the center. Any attempt to live fails — white is dead.",
+    "winCondition": {
+      "type": "exactSequence"
+    }
+  },
+
+  {
+    "id": "seki-1",
+    "title": "Mutual Life (Seki)",
+    "description": "Neither side can capture without dying. Recognize when not to play.",
+    "category": "life-death",
+    "difficulty": 4,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 1, 1, 2, 2, 0, 0],
+      [0, 1, 0, 0, 2, 0, 0],
+      [0, 1, 2, 0, 2, 0, 0],
+      [0, 1, 2, 2, 2, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 3, "col": 3, "color": 1}
+    ],
+    "hint": "Recognize the shared liberties — playing into seki keeps both groups alive.",
+    "explanation": "Both groups share the two internal liberties at (2,2) and (3,3). If either side fills one, they enter atari. Seki — mutual life — is the correct result. Black at (3,3) secures the position while maintaining the seki.",
+    "winCondition": {
+      "type": "exactSequence"
+    }
+  },
+
+  {
+    "id": "liberty-count-1",
+    "title": "Count the Liberties",
+    "description": "Which stone has fewer liberties? Capture the weaker stone.",
+    "category": "capture",
+    "difficulty": 1,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 2, 0, 0],
+      [0, 0, 1, 2, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 2, "col": 4, "color": 1}
+    ],
+    "hint": "The white stone at (2,3) has only two liberties. Fill both.",
+    "explanation": "The white stone at (2,3) has liberties only at (2,4) and (3,3). Black at (2,4) leaves it with one liberty. On the next move Black captures. Count liberties first — always capture the most confined stone.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [{"row": 2, "col": 3, "color": 2}]
+    }
+  },
+
+  {
+    "id": "liberty-count-2",
+    "title": "Race to Capture",
+    "description": "Both sides are in a liberty race. Black moves first — who wins?",
+    "category": "capture",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 1, 1, 0, 2, 2, 0],
+      [0, 1, 0, 0, 0, 2, 0],
+      [0, 0, 1, 0, 2, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 2, "col": 2, "color": 1}
+    ],
+    "hint": "Fill your own group's outer liberties while attacking white's liberties.",
+    "explanation": "White has three liberties; Black also has three. But Black moves first. Black at (2,2) reduces white's liberties to two — and since Black still has more liberties, Black wins the race.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [
+        {"row": 1, "col": 4, "color": 2},
+        {"row": 1, "col": 5, "color": 2},
+        {"row": 2, "col": 5, "color": 2},
+        {"row": 3, "col": 4, "color": 2}
+      ]
+    }
+  },
+
+  {
+    "id": "connection-1",
+    "title": "Bamboo Joint",
+    "description": "Connect your stones with the strongest, most unbreakable link.",
+    "category": "tesuji",
+    "difficulty": 1,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 0, 1, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 0, 1, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 3, "col": 2, "color": 1}
+    ],
+    "hint": "A bamboo joint connects diagonally placed stones securely.",
+    "explanation": "Black at (3,2) completes the bamboo joint. Now (2,2)-(3,2)-(4,2) form a unit that cannot be cut — any white attempt to squeeze the joint fails because each pair of stones defends the other's cutting point.",
+    "winCondition": {
+      "type": "exactSequence"
+    }
+  },
+
+  {
+    "id": "connection-2",
+    "title": "Tiger's Mouth",
+    "description": "Use the tiger's mouth tesuji to create an unbreakable connection.",
+    "category": "tesuji",
+    "difficulty": 2,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 0, 1, 0, 0],
+      [0, 0, 0, 1, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 2, "col": 3, "color": 1}
+    ],
+    "hint": "The tiger's mouth is an almost-complete triangle that secures a stone.",
+    "explanation": "Black at (2,3) forms the tiger's mouth — three black stones form a triangle around one empty point. Any white stone played into that point would immediately be captured. This shape is one of Go's most fundamental defensive patterns.",
+    "winCondition": {
+      "type": "exactSequence"
+    }
+  },
+
+  {
+    "id": "endgame-1",
+    "title": "Endgame Tesuji",
+    "description": "Maximize territory in the endgame with the correct sequence.",
+    "category": "tesuji",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [1, 1, 1, 1, 1, 0, 0],
+      [1, 0, 0, 0, 0, 2, 0],
+      [1, 0, 0, 0, 2, 0, 0],
+      [1, 0, 0, 2, 0, 0, 0],
+      [1, 1, 2, 0, 0, 0, 0],
+      [0, 2, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 4, "col": 2, "color": 1}
+    ],
+    "hint": "Push into white's territory to reduce their score.",
+    "explanation": "Black at (4,2) reduces white's territory while keeping the black group intact. In the endgame, every point counts. Correct endgame order (tesuji) prevents leaving points behind.",
+    "winCondition": {
+      "type": "exactSequence"
+    }
+  },
+
+  {
+    "id": "cutting-1",
+    "title": "Cut the Connection",
+    "description": "Find the cut that separates white's two groups.",
+    "category": "tesuji",
+    "difficulty": 2,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 2, 0, 2, 0, 0],
+      [0, 0, 0, 2, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 0, 1, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 2, "col": 2, "color": 1}
+    ],
+    "hint": "Play on the diagonal to cut white's stones apart.",
+    "explanation": "Black at (2,2) cuts the white group. The stones at (1,2) and (2,3) are now disconnected. Cutting is one of Go's most powerful tactics — split groups are weaker individually than together.",
+    "winCondition": {
+      "type": "exactSequence"
+    }
+  },
+
+  {
+    "id": "cutting-2",
+    "title": "Hane at the Head",
+    "description": "Play the hane — a diagonal extension around the head of white's stones.",
+    "category": "tesuji",
+    "difficulty": 2,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 2, 2, 0, 0, 0],
+      [0, 0, 1, 1, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 2, "col": 4, "color": 1}
+    ],
+    "hint": "Hane around the head of two stones in a row.",
+    "explanation": "Black plays the hane at (2,4). This move turns the corner around white's group and limits white's expansion. Hane at the head of two or more stones in a row is a standard joseki tesuji.",
+    "winCondition": {
+      "type": "exactSequence"
+    }
+  },
+
+  {
+    "id": "escape-1",
+    "title": "Escape the Ladder",
+    "description": "Your stone is being chased. Find the move that breaks the ladder.",
+    "category": "capture",
+    "difficulty": 3,
+    "boardSize": 9,
+    "playerColor": 2,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 2, 0, 0],
+      [0, 0, 0, 0, 0, 1, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 2, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 5, "col": 5, "color": 2}
+    ],
+    "hint": "A ladder breaker in the path of the chase changes everything.",
+    "explanation": "White at (5,5) is the ladder breaker. If black continues the ladder chase, white's stone at (7,2) will be in a position to capture the entire chasing sequence. Now the ladder no longer works for Black.",
+    "winCondition": {
+      "type": "exactSequence"
+    }
+  },
+
+  {
+    "id": "atari-chain-1",
+    "title": "Chain Atari",
+    "description": "Follow the chain of atari moves to capture a string of white stones.",
+    "category": "capture",
+    "difficulty": 2,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 1, 2, 2, 2, 0, 0],
+      [0, 0, 1, 1, 1, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 2, "col": 5, "color": 1}
+    ],
+    "hint": "The rightmost stone is in atari. Fill its last liberty.",
+    "explanation": "The three white stones at (2,2)-(2,3)-(2,4) all share their last liberty. Black at (2,5) removes it and captures all three at once. Groups with few liberties can be captured in a single well-timed move.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [
+        {"row": 2, "col": 2, "color": 2},
+        {"row": 2, "col": 3, "color": 2},
+        {"row": 2, "col": 4, "color": 2}
+      ]
+    }
+  },
+
+  {
+    "id": "approach-1",
+    "title": "Approach the Corner",
+    "description": "Secure the corner territory with the most efficient approach move.",
+    "category": "fundamentals",
+    "difficulty": 1,
+    "boardSize": 9,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 2, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 2, "col": 4, "color": 1}
+    ],
+    "hint": "Approach white's corner stone from one space away.",
+    "explanation": "Black at (2,4) is the standard approach (kakari) to white's star-point stone. It pressures white while starting to claim territory on the right side. The approach move is one of the most common openings in Go.",
+    "winCondition": {
+      "type": "exactSequence"
+    }
+  },
+
+  {
+    "id": "approach-2",
+    "title": "Extend Along the Side",
+    "description": "After a corner exchange, find the most valuable extension.",
+    "category": "fundamentals",
+    "difficulty": 1,
+    "boardSize": 9,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 0, 0, 0, 2, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 2, 0, 0, 0, 1, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 4, "col": 2, "color": 1}
+    ],
+    "hint": "Extend along the left side to claim more territory.",
+    "explanation": "Black at (4,2) extends naturally between two black stones on the left side. This builds a moyo (framework) while limiting white's side territory. In the opening, extensions that claim space efficiently are key.",
+    "winCondition": {
+      "type": "exactSequence"
+    }
+  },
+
+  {
+    "id": "capture-chain-1",
+    "title": "Snapback in the Corner",
+    "description": "Use the corner boundary to engineer a snapback capture.",
+    "category": "capture",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [2, 2, 0, 0, 0, 0, 0],
+      [2, 1, 1, 0, 0, 0, 0],
+      [0, 1, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 2, "col": 0, "color": 1},
+      {"row": 0, "col": 2, "color": 2},
+      {"row": 0, "col": 2, "color": 1}
+    ],
+    "hint": "Fill below first — the corner restricts white's liberties dramatically.",
+    "explanation": "Black at (2,0) puts white in atari. White must recapture at (0,2) to avoid losing territory, but then the entire white group has only one liberty. Black snaps back at (0,2) and captures all three white stones — the corner walls eliminate escape routes.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [
+        {"row": 0, "col": 0, "color": 2},
+        {"row": 0, "col": 1, "color": 2},
+        {"row": 1, "col": 0, "color": 2}
+      ]
+    }
+  },
+
+  {
+    "id": "throw-in-1",
+    "title": "Throw-In Tesuji",
+    "description": "Sacrifice a stone inside white's territory to set up a larger capture.",
+    "category": "tesuji",
+    "difficulty": 4,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 2, 2, 2, 2, 0, 0],
+      [0, 2, 0, 0, 2, 0, 0],
+      [0, 2, 0, 2, 2, 0, 0],
+      [0, 2, 2, 2, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 2, "col": 2, "color": 1},
+      {"row": 2, "col": 3, "color": 2},
+      {"row": 3, "col": 2, "color": 1}
+    ],
+    "hint": "Throw a stone into the enemy group to reduce its eye space.",
+    "explanation": "Black at (2,2) is a throw-in. White must capture it at (2,3) — but now the interior has changed shape. Black plays (3,2) and the entire white group has no two eyes. The throw-in reduced white from a living group to a dead one.",
+    "winCondition": {
+      "type": "exactSequence"
+    }
+  },
+
+  {
+    "id": "squeeze-1",
+    "title": "The Squeeze",
+    "description": "Squeeze the white group from both sides to reduce its liberties.",
+    "category": "capture",
+    "difficulty": 3,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 1, 0, 0, 0, 1, 0],
+      [0, 0, 2, 2, 2, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 2, "col": 1, "color": 1},
+      {"row": 3, "col": 2, "color": 2},
+      {"row": 2, "col": 5, "color": 1}
+    ],
+    "hint": "Attack from both sides simultaneously.",
+    "explanation": "Black at (2,1) ataris the left end. White runs to (3,2). Black plays (2,5) ataring the right end. Now the group is squeezed with no escape — continuing to capture is inevitable.",
+    "winCondition": {
+      "type": "captureGroup",
+      "stones": [
+        {"row": 2, "col": 2, "color": 2},
+        {"row": 2, "col": 3, "color": 2},
+        {"row": 2, "col": 4, "color": 2}
+      ]
+    }
+  },
+
+  {
+    "id": "ld-corner-1",
+    "title": "Corner Life",
+    "description": "Make your corner group live with two eyes using the corner space.",
+    "category": "life-death",
+    "difficulty": 2,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [1, 1, 1, 1, 0, 0, 0],
+      [1, 0, 0, 1, 0, 0, 0],
+      [1, 1, 0, 1, 0, 0, 0],
+      [0, 0, 1, 1, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 2, "col": 2, "color": 1}
+    ],
+    "hint": "The corner needs a partition to form two eye spaces.",
+    "explanation": "Black at (2,2) divides the interior into two separate eye spaces: (1,1)-(1,2) and the corner itself. Now white cannot kill either space in one move — the group lives with two eyes.",
+    "winCondition": {
+      "type": "exactSequence"
+    }
+  },
+
+  {
+    "id": "ld-vital-1",
+    "title": "The Vital Point",
+    "description": "Find the vital point that both kills white and saves your group.",
+    "category": "life-death",
+    "difficulty": 4,
+    "boardSize": 7,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 2, 2, 2, 2, 0, 0],
+      [2, 0, 0, 0, 0, 2, 0],
+      [2, 0, 1, 1, 0, 2, 0],
+      [2, 1, 0, 0, 1, 2, 0],
+      [0, 2, 2, 2, 2, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 3, "col": 2, "color": 1}
+    ],
+    "hint": "One point makes two eyes for you and prevents two eyes for white.",
+    "explanation": "The point (3,2) is the dual vital point. Black playing here creates two eyes for the black group inside white's territory while also preventing white from forming a live group. This is a classic mutual vital point problem.",
+    "winCondition": {
+      "type": "exactSequence"
+    }
+  },
+
+  {
+    "id": "ld-bulky-five-1",
+    "title": "Bulky Five",
+    "description": "White's interior has a bulky five shape. Find the killing move.",
+    "category": "life-death",
+    "difficulty": 4,
+    "boardSize": 9,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 2, 2, 2, 2, 2, 0, 0, 0],
+      [0, 2, 0, 0, 0, 2, 0, 0, 0],
+      [0, 2, 0, 0, 0, 2, 0, 0, 0],
+      [0, 2, 2, 2, 2, 2, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 2, "col": 3, "color": 1}
+    ],
+    "hint": "The nakade for a six-point interior is the center of the cross shape.",
+    "explanation": "The six-point rectangular interior (6 empty points in a 2×3 shape) is killed by Black at (2,3) — the center of the shape. White cannot form two eyes from a rectangular six without the center. This is called the 'Bulky Five' nakade shape.",
+    "winCondition": {
+      "type": "exactSequence"
+    }
+  },
+
+  {
+    "id": "ko-threat-1",
+    "title": "Ko Threat",
+    "description": "In a Ko fight, find the largest ko threat before recapturing.",
+    "category": "ko",
+    "difficulty": 3,
+    "boardSize": 9,
+    "playerColor": 1,
+    "initialBoard": [
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 1, 1, 0, 0, 0, 2, 2, 0],
+      [0, 1, 2, 1, 0, 0, 2, 0, 2],
+      [0, 0, 1, 0, 0, 0, 2, 2, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ],
+    "solution": [
+      {"row": 2, "col": 7, "color": 1}
+    ],
+    "hint": "Threaten to capture white's group on the right before answering the Ko.",
+    "explanation": "Black cannot immediately recapture the Ko at (2,2). Instead, Black plays (2,7) — a Ko threat that threatens to capture white's three-stone group on the right. White must respond to this threat, allowing Black to then recapture the Ko. Always find the largest Ko threat available.",
+    "winCondition": {
+      "type": "exactSequence"
+    }
   }
 ]

@@ -51,6 +51,15 @@ class AppSettings {
   /// Leave empty to disable KataGo and fall back to MCTS.
   static String kataGoServerUrl = '';
 
+  /// URL of a remote Leela Zero (or any GTP-over-WebSocket) server.
+  /// Example: 'ws://192.168.1.10:8081'
+  /// Ignored when [kataGoServerUrl] is set. Leave empty to use built-in MCTS.
+  static String leelaServerUrl = '';
+
+  /// Whether in-game sound effects are enabled (stone placement, captures,
+  /// puzzle feedback, completion fanfares).
+  static bool soundEnabled = true;
+
   /// Bumped on every save so listeners can rebuild.
   static final ValueNotifier<int> revision = ValueNotifier<int>(0);
 
@@ -62,6 +71,8 @@ class AppSettings {
   static const _kThemePresetId = 'themePresetId';
   static const _kLanguageCode = 'languageCode';
   static const _kKataGoServerUrl = 'kataGoServerUrl';
+  static const _kLeelaServerUrl = 'leelaServerUrl';
+  static const _kSoundEnabled = 'soundEnabled';
 
   /// Reads persisted values into the static fields. Must be called once at
   /// startup before runApp().
@@ -77,6 +88,8 @@ class AppSettings {
     themePresetId = prefs.getString(_kThemePresetId) ?? themePresetId;
     languageCode = prefs.getString(_kLanguageCode) ?? languageCode;
     kataGoServerUrl = prefs.getString(_kKataGoServerUrl) ?? kataGoServerUrl;
+    leelaServerUrl = prefs.getString(_kLeelaServerUrl) ?? leelaServerUrl;
+    soundEnabled = prefs.getBool(_kSoundEnabled) ?? soundEnabled;
     revision.value++;
   }
 
@@ -91,6 +104,8 @@ class AppSettings {
     await prefs.setString(_kThemePresetId, themePresetId);
     await prefs.setString(_kLanguageCode, languageCode);
     await prefs.setString(_kKataGoServerUrl, kataGoServerUrl);
+    await prefs.setString(_kLeelaServerUrl, leelaServerUrl);
+    await prefs.setBool(_kSoundEnabled, soundEnabled);
     revision.value++;
   }
 

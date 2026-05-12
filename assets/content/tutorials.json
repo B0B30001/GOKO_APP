@@ -257,81 +257,92 @@
     "summary": "A ladder is a sequence of moves that chases a stone in a zigzag path toward the edge. Master this basic capturing technique.",
     "category": "fundamentals",
     "boardSize": 7,
-    "source": "Sensei's Library — Ladder (paraphrased)",
+    "source": "Sensei's Library — Ladder",
     "steps": [
       {
         "title": "What is a ladder?",
         "board": [
           [0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 2, 0, 0, 0],
-          [0, 0, 1, 1, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0]
+          [0, 0, 0, 0, 1, 0, 0],
+          [0, 0, 1, 2, 1, 0, 0],
+          [0, 0, 0, 1, 0, 0, 0]
         ],
-        "body": "A ladder (shicho) traps a stone by putting it in atari repeatedly. Each escape attempt leads to another atari. Press Play to watch the zigzag chase unfold.",
+        "body": "A ladder (shicho) traps a stone by putting it in atari repeatedly. White at (5,3) has exactly one liberty — north at (4,3). Black gives atari, White runs, Black gives atari again. Press Play to watch the zigzag chase.",
         "demoMoves": [
-          {"row": 2, "col": 2, "color": 1, "caption": "Black plays atari from the west — White must run.", "delayMs": 700},
-          {"row": 2, "col": 4, "color": 2, "caption": "White extends east to escape, gaining a liberty.", "delayMs": 800},
-          {"row": 1, "col": 4, "color": 1, "caption": "Black plays the diagonal shoulder-hit — atari again!", "delayMs": 800},
-          {"row": 2, "col": 5, "color": 2, "caption": "White runs east a second time.", "delayMs": 700},
-          {"row": 1, "col": 5, "color": 1, "caption": "Black stays one step ahead — atari from above.", "delayMs": 700},
-          {"row": 2, "col": 6, "color": 2, "caption": "White hits the edge of the board. No more room to run.", "delayMs": 700},
-          {"row": 1, "col": 6, "color": 1, "caption": "Black captures — the whole white chain is taken.", "delayMs": 900}
+          {"row": 4, "col": 3, "color": 2, "caption": "White runs north — the only liberty.", "delayMs": 700},
+          {"row": 3, "col": 3, "color": 1, "caption": "Black gives atari from above-right — one liberty left: west.", "delayMs": 800},
+          {"row": 4, "col": 2, "color": 2, "caption": "White flees west — the zigzag begins.", "delayMs": 700},
+          {"row": 4, "col": 1, "color": 1, "caption": "Atari from the left — Black stays one step ahead.", "delayMs": 800},
+          {"row": 3, "col": 2, "color": 2, "caption": "White runs north again.", "delayMs": 700},
+          {"row": 2, "col": 2, "color": 1, "caption": "Atari from above — the zigzag continues toward the corner.", "delayMs": 800}
         ]
       },
       {
         "title": "The zigzag chase",
         "board": [
           [0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 1, 0, 0],
-          [0, 0, 0, 1, 2, 0, 0],
-          [0, 0, 1, 2, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0]
+          [0, 0, 0, 1, 0, 0, 0],
+          [0, 1, 2, 2, 1, 0, 0],
+          [0, 0, 1, 2, 1, 0, 0],
+          [0, 0, 0, 1, 0, 0, 0]
         ],
-        "body": "White tried to escape and Black gave atari again. The chase creates a diagonal zigzag pattern. Black stays one step ahead each time."
+        "body": "After two escapes the White chain stretches from (5,3) through (4,3) to (4,2) — three stones, all connected. White still has only one liberty at (3,2). The direction alternates: north, west, north, west — a diagonal zigzag toward the corner."
       },
       {
         "title": "The edge is the wall",
         "board": [
           [0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0],
-          [0, 1, 2, 0, 0, 0, 0],
-          [1, 2, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0]
+          [0, 1, 0, 0, 0, 0, 0],
+          [2, 2, 1, 0, 0, 0, 0],
+          [1, 2, 2, 1, 0, 0, 0],
+          [0, 1, 2, 2, 1, 0, 0],
+          [0, 0, 1, 2, 1, 0, 0],
+          [0, 0, 0, 1, 0, 0, 0]
         ],
-        "body": "When the ladder reaches the edge of the board, White runs out of space to escape. Black captures the entire chain. Always read whether the ladder works before starting it."
+        "body": "The full seven-stone White chain has been chased to the left edge. Only one liberty remains at (1,0). The board boundary acts as an extra wall — White cannot escape. Press Play to see Black capture.",
+        "demoMoves": [
+          {"row": 1, "col": 0, "color": 1, "caption": "Black fills the last liberty — all seven White stones are captured!", "delayMs": 900}
+        ]
       },
       {
         "title": "Ladder breakers",
         "board": [
           [0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 2, 0, 0, 0],
-          [0, 0, 0, 0, 2, 0, 0],
-          [0, 0, 1, 2, 0, 0, 0],
-          [0, 1, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0]
+          [0, 2, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 1, 0, 0],
+          [0, 0, 1, 2, 1, 0, 0],
+          [0, 0, 0, 1, 0, 0, 0]
         ],
-        "body": "A 'ladder breaker' is a White stone placed in the path of the ladder. When the ladder reaches it, White suddenly has two liberties and escapes. Always check for ladder breakers before committing!"
+        "body": "A 'ladder breaker' is a White stone placed in the path of the ladder. When the fleeing chain reaches it, the two White groups merge and gain extra liberties — White escapes! Press Play to see the ladder fail.",
+        "demoMoves": [
+          {"row": 4, "col": 3, "color": 2, "caption": "White runs north — same start as before.", "delayMs": 600},
+          {"row": 3, "col": 3, "color": 1, "caption": "Black gives atari.", "delayMs": 700},
+          {"row": 4, "col": 2, "color": 2, "caption": "White flees west.", "delayMs": 600},
+          {"row": 4, "col": 1, "color": 1, "caption": "Atari again.", "delayMs": 700},
+          {"row": 3, "col": 2, "color": 2, "caption": "White runs north.", "delayMs": 600},
+          {"row": 2, "col": 2, "color": 1, "caption": "Black gives atari — but the breaker at (2,1) is in White's next escape point!", "delayMs": 800},
+          {"row": 3, "col": 1, "color": 2, "caption": "White connects to the breaker — three liberties now. The ladder fails!", "delayMs": 1000}
+        ]
       },
       {
         "title": "Read before you play",
         "board": [
           [0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 2, 0, 0, 0],
-          [0, 0, 1, 1, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0]
+          [0, 0, 0, 0, 1, 0, 0],
+          [0, 0, 1, 2, 1, 0, 0],
+          [0, 0, 0, 1, 0, 0, 0]
         ],
-        "body": "Before starting a ladder, mentally trace the full path to the edge. If a friendly stone sits in the ladder's path — ladder breaker! — don't start it. Beginners who play ladders blindly often lose stones."
+        "body": "Before starting a ladder, trace the full diagonal path in your mind all the way to the edge. If a friendly stone sits anywhere along that path — a ladder breaker! — the ladder will fail and you will lose your chasing stones instead. Always read ahead."
       }
     ]
   },

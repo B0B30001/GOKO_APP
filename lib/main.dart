@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'dart:async' show unawaited;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:zaibal/gen/l10n/app_localizations.dart';
@@ -10,6 +11,8 @@ import 'package:zaibal/screens/puzzles_hub_screen.dart';
 import 'package:zaibal/screens/settings_screen.dart';
 import 'package:zaibal/screens/history_screen.dart';
 import 'package:zaibal/screens/bots_screen.dart';
+import 'package:zaibal/screens/ai_engine_screen.dart';
+import 'package:zaibal/screens/auth_gate_screen.dart';
 import 'package:zaibal/widgets/app_shell.dart';
 import 'package:zaibal/theme/go_theme.dart';
 import 'package:zaibal/models/app_settings.dart';
@@ -17,6 +20,8 @@ import 'package:zaibal/services/ogs_service.dart';
 import 'package:zaibal/services/user_service.dart';
 import 'package:zaibal/services/subscription_service.dart';
 import 'package:zaibal/services/match_history_service.dart';
+import 'package:zaibal/services/ai/katago_process_service.dart';
+import 'package:zaibal/services/progress_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,13 +43,24 @@ Future<void> main() async {
   final subscriptionService = SubscriptionService();
   final matchHistoryService = MatchHistoryService();
   final ogsService = OgsService();
+  final progressService = ProgressService();
 
   await Future.wait([
     userService.load(),
     subscriptionService.load(),
     matchHistoryService.load(),
     ogsService.tryAutoLogin(),
+    progressService.load(),
   ]);
+
+  // Discover local KataGo binary in the background. If found, auto-start.
+  unawaited(
+    KataGoProcessService.instance.discover().then((_) {
+      if (KataGoProcessService.instance.isAvailable) {
+        KataGoProcessService.instance.start();
+      }
+    }),
+  );
 
   runApp(
     GokoApp(
@@ -52,6 +68,7 @@ Future<void> main() async {
       subscriptionService: subscriptionService,
       matchHistoryService: matchHistoryService,
       ogsService: ogsService,
+      progressService: progressService,
     ),
   );
 }
@@ -61,6 +78,7 @@ class GokoApp extends StatefulWidget {
   final SubscriptionService subscriptionService;
   final MatchHistoryService matchHistoryService;
   final OgsService ogsService;
+  final ProgressService progressService;
 
   const GokoApp({
     super.key,
@@ -68,6 +86,7 @@ class GokoApp extends StatefulWidget {
     required this.subscriptionService,
     required this.matchHistoryService,
     required this.ogsService,
+    required this.progressService,
   });
 
   @override
@@ -148,6 +167,11 @@ class _GokoAppState extends State<GokoApp> {
     AppSettings.save();
   }
 
+  void _onLeelaServerUrlChanged(String url) {
+    AppSettings.leelaServerUrl = url;
+    AppSettings.save();
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = AppSettings.themeMode == ThemeMode.dark;
@@ -159,6 +183,8 @@ class _GokoAppState extends State<GokoApp> {
         ChangeNotifierProvider.value(value: widget.userService),
         ChangeNotifierProvider.value(value: widget.subscriptionService),
         ChangeNotifierProvider.value(value: widget.matchHistoryService),
+        ChangeNotifierProvider.value(value: widget.progressService),
+        ChangeNotifierProvider.value(value: KataGoProcessService.instance),
       ],
       child: MaterialApp(
         title: 'GOKO',
@@ -179,9 +205,13 @@ class _GokoAppState extends State<GokoApp> {
           Locale('ja'),
           Locale('ko'),
         ],
-        initialRoute: '/home',
+        // Auth gate: show AuthGateScreen until OgsService is authenticated.
+        home: Consumer<OgsService>(
+          builder: (_, ogs, __) => ogs.isAuthenticated
+              ? AppShell(onThemeToggle: _toggleTheme)
+              : const AuthGateScreen(),
+        ),
         routes: {
-          '/home': (context) => AppShell(onThemeToggle: _toggleTheme),
           '/learn': (context) => const LearnScreen(),
           '/history': (context) => const HistoryScreen(),
           '/profile': (context) => const ProfileScreen(),
@@ -202,9 +232,12 @@ class _GokoAppState extends State<GokoApp> {
             onLanguageChanged: _setLanguage,
             kataGoServerUrl: AppSettings.kataGoServerUrl,
             onKataGoServerUrlChanged: _onKataGoServerUrlChanged,
+            leelaServerUrl: AppSettings.leelaServerUrl,
+            onLeelaServerUrlChanged: _onLeelaServerUrlChanged,
           ),
           '/puzzles': (context) => const PuzzlesHubScreen(),
           '/bots': (context) => const BotsScreen(),
+          '/ai-engine': (context) => const AiEngineScreen(),
         },
       ),
     );

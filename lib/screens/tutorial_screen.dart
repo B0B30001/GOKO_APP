@@ -3,6 +3,7 @@ import 'package:zaibal/gen/l10n/app_localizations.dart';
 import '../models/tutorial.dart';
 import '../models/app_settings.dart';
 import '../widgets/fast_game_board.dart';
+import '../services/sfx_service.dart';
 
 /// Step-through viewer for a single [Tutorial]. Each step shows a board
 /// snapshot + commentary; users navigate with Prev/Next, or tap the board
@@ -369,6 +370,7 @@ class _TutorialScreenState extends State<TutorialScreen>
 
   void _goNext() {
     if (_isLast) {
+      SfxService.instance.play(SfxSound.lessonComplete);
       Navigator.pop(context);
       return;
     }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:zaibal/gen/l10n/app_localizations.dart';
 import '../services/ai/go_ai_service.dart';
+import '../services/ai/katago_process_service.dart';
 import 'game_board_screen.dart';
 
 /// A single bot profile shown on the Bots screen.
@@ -12,12 +14,16 @@ class _BotProfile {
   final IconData icon;
   final Color color;
 
+  /// Asset path to the bot avatar image, e.g. 'assets/avatars/panda.png'.
+  final String avatarAsset;
+
   const _BotProfile({
     required this.name,
     required this.rank,
     required this.description,
     required this.icon,
     required this.color,
+    required this.avatarAsset,
     this.difficulty,
   });
 }
@@ -31,6 +37,7 @@ const _bots = <_BotProfile>[
     difficulty: AIDifficulty.easy,
     icon: Icons.sentiment_very_satisfied,
     color: Color(0xFF4CAF50),
+    avatarAsset: 'assets/avatars/panda.png',
   ),
   _BotProfile(
     name: 'Tanuki',
@@ -40,6 +47,7 @@ const _bots = <_BotProfile>[
     difficulty: AIDifficulty.easy,
     icon: Icons.park,
     color: Color(0xFF8BC34A),
+    avatarAsset: 'assets/avatars/tanuki.png',
   ),
   _BotProfile(
     name: 'Kitsune',
@@ -49,6 +57,7 @@ const _bots = <_BotProfile>[
     difficulty: AIDifficulty.medium,
     icon: Icons.auto_awesome,
     color: Color(0xFFFF9800),
+    avatarAsset: 'assets/avatars/kitsune.png',
   ),
   _BotProfile(
     name: 'Tengu',
@@ -58,6 +67,7 @@ const _bots = <_BotProfile>[
     difficulty: AIDifficulty.hard,
     icon: Icons.whatshot,
     color: Color(0xFFE91E63),
+    avatarAsset: 'assets/avatars/tengu.png',
   ),
   _BotProfile(
     name: 'KataGo',
@@ -67,6 +77,7 @@ const _bots = <_BotProfile>[
     difficulty: null, // not yet available
     icon: Icons.smart_toy,
     color: Color(0xFF7C4DFF),
+    avatarAsset: 'assets/avatars/katago.png',
   ),
 ];
 
@@ -78,13 +89,18 @@ class BotsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final kataGoReady = context.watch<KataGoProcessService>().isAvailable;
     return Scaffold(
       appBar: AppBar(title: Text(l.playVsBotTitle), centerTitle: true),
       body: ListView.separated(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         itemCount: _bots.length,
         separatorBuilder: (_, __) => const SizedBox(height: 8),
-        itemBuilder: (context, i) => _BotCard(bot: _bots[i]),
+        itemBuilder: (context, i) {
+          final bot = _bots[i];
+          final isKataGo = bot.name == 'KataGo';
+          return _BotCard(bot: bot, forceAvailable: isKataGo && kataGoReady);
+        },
       ),
     );
   }
@@ -92,11 +108,14 @@ class BotsScreen extends StatelessWidget {
 
 class _BotCard extends StatelessWidget {
   final _BotProfile bot;
-  const _BotCard({required this.bot});
+  /// When true, overrides `bot.difficulty == null` so the card is enabled.
+  final bool forceAvailable;
+
+  const _BotCard({required this.bot, this.forceAvailable = false});
 
   @override
   Widget build(BuildContext context) {
-    final available = bot.difficulty != null;
+    final available = bot.difficulty != null || forceAvailable;
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
@@ -107,7 +126,7 @@ class _BotCard extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              _Avatar(color: bot.color, icon: bot.icon, available: available),
+              _Avatar(bot: bot, available: available),
               const SizedBox(width: 16),
               Expanded(child: _Info(bot: bot)),
               if (available)
@@ -127,26 +146,24 @@ class _BotCard extends StatelessWidget {
   }
 
   void _pickBoardSize(BuildContext context) {
+    // KataGo may have null difficulty but be enabled via forceAvailable.
+    final effectiveDifficulty = bot.difficulty ?? AIDifficulty.hard;
     showModalBottomSheet<void>(
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (ctx) => _BoardSizePicker(bot: bot),
+      builder: (ctx) =>
+          _BoardSizePicker(bot: bot, effectiveDifficulty: effectiveDifficulty),
     );
   }
 }
 
 class _Avatar extends StatelessWidget {
-  final Color color;
-  final IconData icon;
+  final _BotProfile bot;
   final bool available;
 
-  const _Avatar({
-    required this.color,
-    required this.icon,
-    required this.available,
-  });
+  const _Avatar({required this.bot, required this.available});
 
   @override
   Widget build(BuildContext context) {
@@ -155,11 +172,20 @@ class _Avatar extends StatelessWidget {
       height: 56,
       decoration: BoxDecoration(
         color: available
-            ? color.withValues(alpha: 0.15)
+            ? bot.color.withValues(alpha: 0.15)
             : Colors.grey.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(14),
       ),
-      child: Icon(icon, size: 30, color: available ? color : Colors.grey),
+      clipBehavior: Clip.antiAlias,
+      child: Image.asset(
+        bot.avatarAsset,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => Icon(
+          bot.icon,
+          size: 30,
+          color: available ? bot.color : Colors.grey,
+        ),
+      ),
     );
   }
 }
@@ -231,7 +257,12 @@ class _ComingSoonChip extends StatelessWidget {
 
 class _BoardSizePicker extends StatelessWidget {
   final _BotProfile bot;
-  const _BoardSizePicker({required this.bot});
+  final AIDifficulty effectiveDifficulty;
+
+  const _BoardSizePicker({
+    required this.bot,
+    required this.effectiveDifficulty,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -266,7 +297,7 @@ class _BoardSizePicker extends StatelessWidget {
                         builder: (_) => GameBoardScreen(
                           boardSize: size,
                           isComputerMode: true,
-                          aiDifficulty: bot.difficulty!,
+                          aiDifficulty: effectiveDifficulty,
                         ),
                       ),
                     );

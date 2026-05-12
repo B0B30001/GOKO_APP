@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:zaibal/gen/l10n/app_localizations.dart';
 import 'package:zaibal/models/app_settings.dart';
+import 'package:zaibal/services/ai/katago_process_service.dart';
 import 'package:zaibal/theme/go_theme.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -20,6 +22,8 @@ class SettingsScreen extends StatefulWidget {
   final ValueChanged<String> onLanguageChanged;
   final String kataGoServerUrl;
   final ValueChanged<String> onKataGoServerUrlChanged;
+  final String leelaServerUrl;
+  final ValueChanged<String> onLeelaServerUrlChanged;
 
   const SettingsScreen({
     required this.isDark,
@@ -38,6 +42,8 @@ class SettingsScreen extends StatefulWidget {
     required this.onLanguageChanged,
     required this.kataGoServerUrl,
     required this.onKataGoServerUrlChanged,
+    required this.leelaServerUrl,
+    required this.onLeelaServerUrlChanged,
     super.key,
   });
 
@@ -66,6 +72,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late String _themePresetId;
   late bool _isDark;
   late TextEditingController _kataGoUrlController;
+  late TextEditingController _leelaUrlController;
 
   String get _selectedLanguage => _kLanguageOptions.entries
       .firstWhere(
@@ -84,12 +91,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _themePresetId = widget.themePresetId;
     _isDark = widget.isDark;
     _languageCode = widget.languageCode;
+    _soundEnabled = AppSettings.soundEnabled;
     _kataGoUrlController = TextEditingController(text: widget.kataGoServerUrl);
+    _leelaUrlController = TextEditingController(text: widget.leelaServerUrl);
   }
 
   @override
   void dispose() {
     _kataGoUrlController.dispose();
+    _leelaUrlController.dispose();
     super.dispose();
   }
 
@@ -119,6 +129,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: Text(l.boardThemeLabel),
             ),
+            _MiniBoardPreview(theme: GoBoardTheme.byId(_boardThemeId)),
             _buildBoardThemePicker(),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -150,7 +161,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               title: Text(l.soundEffects),
               subtitle: Text(l.soundEffectsSubtitle),
               value: _soundEnabled,
-              onChanged: (value) => setState(() => _soundEnabled = value),
+              onChanged: (value) {
+                setState(() => _soundEnabled = value);
+                AppSettings.soundEnabled = value;
+                AppSettings.save();
+              },
             ),
             SwitchListTile(
               title: Text(l.vibration),
@@ -177,6 +192,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ]),
           _buildSection(l.kataGoSection, [
+            // Local engine tile — zero-config KataGo process management.
+            _LocalEngineTile(l: l),
+            const Divider(indent: 16, endIndent: 16),
+            // Power-user: remote WebSocket overrides.
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
               child: Text(
@@ -197,6 +216,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 keyboardType: TextInputType.url,
                 onChanged: (v) {
                   widget.onKataGoServerUrlChanged(v.trim());
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+              child: Text(
+                l.leelaServerUrl,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+              child: TextField(
+                controller: _leelaUrlController,
+                decoration: InputDecoration(
+                  hintText: 'ws://192.168.1.10:8081',
+                  helperText: l.leelaHint,
+                  border: const OutlineInputBorder(),
+                  isDense: true,
+                ),
+                keyboardType: TextInputType.url,
+                onChanged: (v) {
+                  widget.onLeelaServerUrlChanged(v.trim());
                 },
               ),
             ),
@@ -443,4 +485,141 @@ class _ThemeSwatch extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Settings tile that shows the local KataGo engine status and navigates to
+/// the [AiEngineScreen] for setup / detail.
+class _LocalEngineTile extends StatelessWidget {
+  const _LocalEngineTile({required this.l});
+
+  final AppLocalizations l;
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<KataGoProcessService>(
+      builder: (context, service, _) {
+        final (color, icon) = switch (service.status) {
+          EngineStatus.ready => (Colors.green, Icons.check_circle),
+          EngineStatus.starting => (
+            Theme.of(context).colorScheme.primary,
+            Icons.sync,
+          ),
+          EngineStatus.error => (
+            Theme.of(context).colorScheme.error,
+            Icons.error_outline,
+          ),
+          EngineStatus.notFound => (
+            Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+            Icons.radio_button_unchecked,
+          ),
+        };
+        return ListTile(
+          leading: Icon(icon, color: color),
+          title: Text(l.localEngineTitle),
+          subtitle: Text(
+            service.status == EngineStatus.ready
+                ? l.engineStatusReady
+                : service.isAvailable
+                ? l.engineStatusStarting
+                : l.localEngineSubtitle,
+          ),
+          trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+          onTap: () => Navigator.pushNamed(context, '/ai-engine'),
+        );
+      },
+    );
+  }
+}
+
+// ── Live board theme preview ───────────────────────────────────────────────
+
+class _MiniBoardPreview extends StatelessWidget {
+  final GoBoardTheme theme;
+
+  const _MiniBoardPreview({required this.theme});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: SizedBox(
+          height: 180,
+          child: CustomPaint(painter: _MiniBoardPainter(theme: theme)),
+        ),
+      ),
+    );
+  }
+}
+
+class _MiniBoardPainter extends CustomPainter {
+  final GoBoardTheme theme;
+
+  const _MiniBoardPainter({required this.theme});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // Board background
+    canvas.drawRect(Offset.zero & size, Paint()..color = theme.boardColor);
+
+    const gridLines = 9;
+    final margin = size.width * 0.08;
+    final step = (size.width - margin * 2) / (gridLines - 1);
+
+    final linePaint = Paint()
+      ..color = theme.lineColor.withValues(alpha: 0.6)
+      ..strokeWidth = 0.8;
+
+    // Grid lines
+    for (var i = 0; i < gridLines; i++) {
+      final x = margin + i * step;
+      final y = margin + i * step;
+      canvas.drawLine(
+        Offset(x, margin),
+        Offset(x, size.height - margin),
+        linePaint,
+      );
+      canvas.drawLine(
+        Offset(margin, y),
+        Offset(size.width - margin, y),
+        linePaint,
+      );
+    }
+
+    // Hoshi (star points) at tengen + 4 corners
+    final hoshiPaint = Paint()..color = theme.lineColor.withValues(alpha: 0.7);
+    for (final (ix, iy) in [(2, 2), (6, 2), (4, 4), (2, 6), (6, 6)]) {
+      canvas.drawCircle(
+        Offset(margin + ix * step, margin + iy * step),
+        3,
+        hoshiPaint,
+      );
+    }
+
+    // Example stones
+    final blackPaint = Paint()..color = theme.blackStoneColor;
+    final whitePaint = Paint()..color = theme.whiteStoneColor;
+    final borderPaint = Paint()
+      ..color = theme.lineColor.withValues(alpha: 0.5)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 0.8;
+    final r = step * 0.44;
+
+    void stone(int gx, int gy, Paint fill) {
+      final center = Offset(margin + gx * step, margin + gy * step);
+      canvas.drawCircle(center, r, fill);
+      if (fill == whitePaint) canvas.drawCircle(center, r, borderPaint);
+    }
+
+    stone(3, 3, blackPaint);
+    stone(4, 3, whitePaint);
+    stone(3, 4, whitePaint);
+    stone(4, 4, blackPaint);
+    stone(5, 3, blackPaint);
+    stone(5, 4, whitePaint);
+  }
+
+  @override
+  bool shouldRepaint(_MiniBoardPainter old) => old.theme != theme;
 }

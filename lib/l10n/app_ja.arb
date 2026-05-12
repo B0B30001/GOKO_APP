@@ -56,6 +56,19 @@
   "kataGoSection": "AI / KataGo",
   "kataGoServerUrl": "KataGo サーバー URL",
   "kataGoHint": "空のままにすると内蔵 MCTS エンジン（オフライン）を使用します。",
+
+  "leelaServerUrl": "Leela Zero / GTP サーバー URL",
+  "leelaHint": "GTP-over-WebSocket エンジン（Leela Zero、ELF OpenGo）を接続します。KataGo URL が設定されている場合は無視されます。",
+
+  "localEngineTitle": "ローカル AI エンジン",
+  "localEngineSubtitle": "自動管理 KataGo（サーバー不要）",
+  "engineStatusReady": "KataGo 準備完了",
+  "engineStatusStarting": "起動中…",
+  "engineStatusNotFound": "未インストール",
+  "engineStatusError": "エラー",
+  "enginesFolderLabel": "エンジンフォルダ",
+  "downloadKataGo": "KataGo をダウンロード",
+  "engineRestartButton": "エンジンを再起動",
   "prev": "前へ",
   "next": "次へ",
   "done": "完了",
@@ -143,5 +156,15 @@
   "conceptLibertiesCapturesDesc": "石はその全てのダメ（隣接する空点）が相手の石で塞がれると取られます。連結した石はダメを共有するひとつの群となります。",
   "conceptLibertyCountingDesc": "石または群に隣接する各空点がダメです。連結した石は一つの群となり、すべてのダメを共有します。残りダメが一つだけの状態を「アタリ」と呼びます。",
   "conceptLifeDeathDesc": "二つの独立した眼を持つ群は、相手が両方を同時に塞ぐことができないため取られません。これは群の生死を判断する基本概念です。",
-  "conceptKoRuleDesc": "コウのルールは無限ループを防ぐため、同じ局面の即座の取り返しを禁止します。コウを取った後は別の場所に打ってから取り返す必要があります。"
+  "conceptKoRuleDesc": "コウのルールは無限ループを防ぐため、同じ局面の即座の取り返しを禁止します。コウを取った後は別の場所に打ってから取り返す必要があります。",
+
+  "analysisPanelTitle": "検討",
+  "analysisOn": "検討を有効にする",
+  "analysisOff": "検討を無効にする",
+  "noServerForAnalysis": "検討機能を使うには、設定で KataGo サーバーを設定してください。",
+  "moveQualityBest": "最善手",
+  "moveQualityGood": "良手",
+  "moveQualityInaccuracy": "緩手",
+  "moveQualityMistake": "悪手",
+  "moveQualityBlunder": "大悪手"
 }

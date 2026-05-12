@@ -174,6 +174,40 @@ class AppLocalizationsEn extends AppLocalizations {
   String get kataGoHint => 'Leave empty to use built-in MCTS engine offline.';
 
   @override
+  String get leelaServerUrl => 'Leela Zero / GTP Server URL';
+
+  @override
+  String get leelaHint =>
+      'Connect any GTP-over-WebSocket engine (Leela Zero, ELF OpenGo). Ignored when KataGo URL is set.';
+
+  @override
+  String get localEngineTitle => 'Local AI Engine';
+
+  @override
+  String get localEngineSubtitle => 'Auto-managed KataGo (no server needed)';
+
+  @override
+  String get engineStatusReady => 'KataGo ready';
+
+  @override
+  String get engineStatusStarting => 'Starting…';
+
+  @override
+  String get engineStatusNotFound => 'Not installed';
+
+  @override
+  String get engineStatusError => 'Error';
+
+  @override
+  String get enginesFolderLabel => 'Engines Folder';
+
+  @override
+  String get downloadKataGo => 'Download KataGo';
+
+  @override
+  String get engineRestartButton => 'Restart Engine';
+
+  @override
   String get prev => 'Prev';
 
   @override
@@ -401,4 +435,32 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get conceptKoRuleDesc =>
       'The Ko rule prevents infinite loops by prohibiting immediate recapture in a repeating position. After capturing in Ko, you must play elsewhere before you can recapture.';
+
+  @override
+  String get analysisPanelTitle => 'Analysis';
+
+  @override
+  String get analysisOn => 'Enable Analysis';
+
+  @override
+  String get analysisOff => 'Disable Analysis';
+
+  @override
+  String get noServerForAnalysis =>
+      'Configure a KataGo server in Settings to enable analysis.';
+
+  @override
+  String get moveQualityBest => 'Best';
+
+  @override
+  String get moveQualityGood => 'Good';
+
+  @override
+  String get moveQualityInaccuracy => 'Inaccuracy';
+
+  @override
+  String get moveQualityMistake => 'Mistake';
+
+  @override
+  String get moveQualityBlunder => 'Blunder';
 }

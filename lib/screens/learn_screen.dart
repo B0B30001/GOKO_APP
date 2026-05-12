@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:zaibal/gen/l10n/app_localizations.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/app_drawer.dart';
@@ -6,9 +7,13 @@ import '../widgets/menu_fab.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/fast_game_board.dart';
 import '../models/drill.dart';
+import '../models/puzzle.dart';
+import '../models/puzzle_collection.dart';
 import '../models/tutorial.dart';
 import '../services/content_service.dart';
+import '../services/progress_service.dart';
 import 'drill_screen.dart';
+import 'puzzle_screen.dart';
 import 'tutorial_screen.dart';
 import 'tutorial_list_screen.dart';
 import 'level_track_screen.dart';
@@ -514,17 +519,62 @@ class _PracticeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        const _SectionHeader(label: 'Quick Drills'),
-        const SizedBox(height: 12),
-        _DrillButtonGrid(drills: _drills()),
-        const SizedBox(height: 24),
-        const _SectionHeader(label: 'This Week'),
-        const SizedBox(height: 12),
-        const _WeeklyProgress(),
-      ],
+    return FutureBuilder<List<Object>>(
+      future: Future.wait([
+        ContentService.loadPuzzles(),
+        ContentService.loadCollections(),
+      ]),
+      builder: (context, snapshot) {
+        final allPuzzles = snapshot.data != null
+            ? (snapshot.data![0] as List<Puzzle>)
+            : PuzzleData.allPuzzles;
+        final collections = snapshot.data != null
+            ? (snapshot.data![1] as List<PuzzleCollection>)
+            : const <PuzzleCollection>[];
+
+        // Deterministic daily puzzle: rotate through all puzzles by UTC day.
+        final dayIndex = DateTime.now()
+            .toUtc()
+            .difference(DateTime.utc(2020))
+            .inDays;
+        final dailyPuzzle = allPuzzles.isNotEmpty
+            ? allPuzzles[dayIndex % allPuzzles.length]
+            : null;
+
+        return ListView(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
+          children: [
+            // ── Puzzle rating card ──────────────────────────────────────────
+            const _PuzzleRatingCard(),
+            const SizedBox(height: 20),
+            // ── Daily puzzle ────────────────────────────────────────────────
+            if (dailyPuzzle != null) ...[
+              const _SectionHeader(label: 'Daily Puzzle'),
+              const SizedBox(height: 12),
+              _DailyPuzzleCard(puzzle: dailyPuzzle),
+              const SizedBox(height: 24),
+            ],
+            // ── Puzzle packs ────────────────────────────────────────────────
+            if (collections.isNotEmpty) ...[
+              const _SectionHeader(label: 'Puzzle Packs'),
+              const SizedBox(height: 12),
+              _CollectionsGrid(
+                collections: collections,
+                allPuzzles: allPuzzles,
+              ),
+              const SizedBox(height: 24),
+            ],
+            // ── Quick drills ────────────────────────────────────────────────
+            const _SectionHeader(label: 'Quick Drills'),
+            const SizedBox(height: 12),
+            _DrillButtonGrid(drills: _drills()),
+            const SizedBox(height: 24),
+            const _SectionHeader(label: 'This Week'),
+            const SizedBox(height: 12),
+            const _WeeklyProgress(),
+          ],
+        );
+      },
     );
   }
 
@@ -537,6 +587,326 @@ class _PracticeTab extends StatelessWidget {
     ];
   }
 }
+
+// =============================================================================
+// Puzzle rating card
+// =============================================================================
+
+class _PuzzleRatingCard extends StatelessWidget {
+  const _PuzzleRatingCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = context.watch<ProgressService>();
+    final cs = Theme.of(context).colorScheme;
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: cs.primary.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(Icons.insights, color: cs.primary),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Puzzle Rating',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: cs.onSurface.withValues(alpha: 0.6),
+                    ),
+                  ),
+                  Text(
+                    '${progress.puzzleRating}',
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: cs.primary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  '${progress.solvedCount} solved',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.local_fire_department,
+                      size: 14,
+                      color: Colors.orange,
+                    ),
+                    const SizedBox(width: 2),
+                    Text(
+                      '${progress.streak} day streak',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// =============================================================================
+// Daily puzzle card
+// =============================================================================
+
+class _DailyPuzzleCard extends StatelessWidget {
+  final Puzzle puzzle;
+
+  const _DailyPuzzleCard({required this.puzzle});
+
+  String get _todayKey {
+    final now = DateTime.now().toUtc();
+    return 'daily_${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = context.watch<ProgressService>();
+    final done = progress.isPuzzleSolved(_todayKey);
+    final cs = Theme.of(context).colorScheme;
+
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      elevation: 2,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(14),
+        onTap: done
+            ? null
+            : () async {
+                final result = await Navigator.push<Map<String, dynamic>>(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        PuzzleScreen(puzzle: puzzle, isDrillMode: false),
+                  ),
+                );
+                if (result?['solved'] == true && context.mounted) {
+                  context.read<ProgressService>().markPuzzleSolved(_todayKey);
+                }
+              },
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            children: [
+              // Board thumbnail
+              SizedBox(
+                width: 72,
+                height: 72,
+                child: IgnorePointer(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: FastGameBoard(
+                      board: puzzle.initialBoard,
+                      onTap: (_, __) {},
+                      isDarkTheme:
+                          Theme.of(context).brightness == Brightness.dark,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      puzzle.title,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: List.generate(
+                        3,
+                        (i) => Icon(
+                          i < puzzle.difficulty
+                              ? Icons.star
+                              : Icons.star_border,
+                          size: 14,
+                          color: Colors.amber,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      puzzle.description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              done
+                  ? Icon(Icons.check_circle, color: cs.primary, size: 28)
+                  : Icon(
+                      Icons.play_circle_outline,
+                      color: cs.primary,
+                      size: 28,
+                    ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// =============================================================================
+// Collections grid
+// =============================================================================
+
+class _CollectionsGrid extends StatelessWidget {
+  final List<PuzzleCollection> collections;
+  final List<Puzzle> allPuzzles;
+
+  const _CollectionsGrid({required this.collections, required this.allPuzzles});
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        childAspectRatio: 1.3,
+      ),
+      itemCount: collections.length,
+      itemBuilder: (context, i) =>
+          _CollectionCard(collection: collections[i], allPuzzles: allPuzzles),
+    );
+  }
+}
+
+class _CollectionCard extends StatelessWidget {
+  final PuzzleCollection collection;
+  final List<Puzzle> allPuzzles;
+
+  const _CollectionCard({required this.collection, required this.allPuzzles});
+
+  static const _iconMap = <String, IconData>{
+    'close': Icons.close,
+    'warning': Icons.warning_amber,
+    'loop': Icons.loop,
+    'psychology': Icons.psychology,
+    'extension': Icons.extension,
+    'auto_fix_high': Icons.auto_fix_high,
+    'fitness_center': Icons.fitness_center,
+    'emoji_events': Icons.emoji_events,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = context.watch<ProgressService>();
+    final cs = Theme.of(context).colorScheme;
+    final icon = _iconMap[collection.iconKey] ?? Icons.extension;
+
+    // Count how many of the collection's puzzles are in allPuzzles + solved.
+    final puzzleIds = collection.puzzleIds.toSet();
+    final total = puzzleIds.length;
+    final solved = puzzleIds.where((id) => progress.isPuzzleSolved(id)).length;
+    final pct = total > 0 ? solved / total : 0.0;
+
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 1,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () {
+          // Filter allPuzzles to this collection's ids.
+          final filtered = allPuzzles
+              .where((p) => puzzleIds.contains(p.id))
+              .toList();
+          if (filtered.isEmpty) return;
+          // Navigate to first puzzle for now; a dedicated collection screen
+          // can be added later.
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) =>
+                  PuzzleScreen(puzzle: filtered.first, isDrillMode: false),
+            ),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: cs.primary.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(icon, color: cs.primary, size: 18),
+                  ),
+                  const Spacer(),
+                  Text(
+                    '$solved/$total',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: cs.onSurface.withValues(alpha: 0.55),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                collection.title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              const Spacer(),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: LinearProgressIndicator(
+                  value: pct,
+                  minHeight: 5,
+                  backgroundColor: cs.onSurface.withValues(alpha: 0.1),
+                  valueColor: AlwaysStoppedAnimation<Color>(cs.primary),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// =============================================================================
+// Drill widgets
+// =============================================================================
 
 class _DrillButtonGrid extends StatelessWidget {
   final List<Drill> drills;

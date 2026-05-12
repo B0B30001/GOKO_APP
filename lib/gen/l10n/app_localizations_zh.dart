@@ -174,6 +174,40 @@ class AppLocalizationsZh extends AppLocalizations {
   String get kataGoHint => '留空则使用内置 MCTS 引擎（离线）。';
 
   @override
+  String get leelaServerUrl => 'Leela Zero / GTP 服务器地址';
+
+  @override
+  String get leelaHint =>
+      '连接任意 GTP-over-WebSocket 引擎（Leela Zero、ELF OpenGo）。设置了 KataGo 地址时忽略此项。';
+
+  @override
+  String get localEngineTitle => '本地 AI 引擎';
+
+  @override
+  String get localEngineSubtitle => '自动管理的 KataGo（无需服务器）';
+
+  @override
+  String get engineStatusReady => 'KataGo 就绪';
+
+  @override
+  String get engineStatusStarting => '启动中…';
+
+  @override
+  String get engineStatusNotFound => '未安装';
+
+  @override
+  String get engineStatusError => '错误';
+
+  @override
+  String get enginesFolderLabel => '引擎文件夹';
+
+  @override
+  String get downloadKataGo => '下载 KataGo';
+
+  @override
+  String get engineRestartButton => '重启引擎';
+
+  @override
   String get prev => '上一步';
 
   @override
@@ -401,4 +435,31 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get conceptKoRuleDesc =>
       '劫规则禁止在重复的局面下立即提回，避免无限循环。提劫之后必须先在别处下一手才能再次提回。';
+
+  @override
+  String get analysisPanelTitle => '分析';
+
+  @override
+  String get analysisOn => '开启分析';
+
+  @override
+  String get analysisOff => '关闭分析';
+
+  @override
+  String get noServerForAnalysis => '请在设置中配置 KataGo 服务器以启用分析功能。';
+
+  @override
+  String get moveQualityBest => '最佳';
+
+  @override
+  String get moveQualityGood => '良好';
+
+  @override
+  String get moveQualityInaccuracy => '不准确';
+
+  @override
+  String get moveQualityMistake => '失误';
+
+  @override
+  String get moveQualityBlunder => '大错';
 }

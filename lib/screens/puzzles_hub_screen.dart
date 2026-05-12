@@ -10,6 +10,7 @@ import '../widgets/app_shell.dart';
 import '../widgets/fast_game_board.dart';
 import '../services/daily_puzzle_service.dart';
 import '../services/content_service.dart';
+import '../services/progress_service.dart';
 import 'puzzle_screen.dart';
 import 'puzzle_category_screen.dart';
 import 'puzzle_collection_screen.dart';
@@ -57,7 +58,13 @@ class _PuzzlesHubScreenState extends State<PuzzlesHubScreen> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
         children: [
-          const _HeaderCard(puzzleRating: 1420, streak: 7, solvedToday: 3),
+          Consumer<ProgressService>(
+            builder: (context, progress, _) => _HeaderCard(
+              puzzleRating: progress.puzzleRating,
+              streak: progress.streak,
+              solvedToday: progress.solvedCount,
+            ),
+          ),
           const SizedBox(height: 16),
           ChangeNotifierProvider.value(
             value: _daily,

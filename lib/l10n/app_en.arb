@@ -166,6 +166,39 @@
   "kataGoHint": "Leave empty to use built-in MCTS engine offline.",
   "@kataGoHint": { "description": "KataGo URL helper text" },
 
+  "leelaServerUrl": "Leela Zero / GTP Server URL",
+  "@leelaServerUrl": { "description": "Settings label for Leela Zero / GTP engine URL" },
+
+  "leelaHint": "Connect any GTP-over-WebSocket engine (Leela Zero, ELF OpenGo). Ignored when KataGo URL is set.",
+  "@leelaHint": { "description": "Leela Zero URL helper text" },
+
+  "localEngineTitle": "Local AI Engine",
+  "@localEngineTitle": { "description": "Settings tile and screen title for local KataGo process" },
+
+  "localEngineSubtitle": "Auto-managed KataGo (no server needed)",
+  "@localEngineSubtitle": { "description": "Settings tile subtitle" },
+
+  "engineStatusReady": "KataGo ready",
+  "@engineStatusReady": { "description": "Engine status: process running" },
+
+  "engineStatusStarting": "Starting…",
+  "@engineStatusStarting": { "description": "Engine status: process starting" },
+
+  "engineStatusNotFound": "Not installed",
+  "@engineStatusNotFound": { "description": "Engine status: binary not found" },
+
+  "engineStatusError": "Error",
+  "@engineStatusError": { "description": "Engine status: process errored" },
+
+  "enginesFolderLabel": "Engines Folder",
+  "@enginesFolderLabel": { "description": "Label for the engines directory path" },
+
+  "downloadKataGo": "Download KataGo",
+  "@downloadKataGo": { "description": "Button to open KataGo download page" },
+
+  "engineRestartButton": "Restart Engine",
+  "@engineRestartButton": { "description": "Button to restart the KataGo process" },
+
   "prev": "Prev",
   "@prev": { "description": "Previous step button" },
 
@@ -398,5 +431,32 @@
   "@conceptLifeDeathDesc": { "description": "Concept body text" },
 
   "conceptKoRuleDesc": "The Ko rule prevents infinite loops by prohibiting immediate recapture in a repeating position. After capturing in Ko, you must play elsewhere before you can recapture.",
-  "@conceptKoRuleDesc": { "description": "Concept body text" }
+  "@conceptKoRuleDesc": { "description": "Concept body text" },
+
+  "analysisPanelTitle": "Analysis",
+  "@analysisPanelTitle": { "description": "Analysis screen title" },
+
+  "analysisOn": "Enable Analysis",
+  "@analysisOn": { "description": "Tooltip: turn on KataGo analysis" },
+
+  "analysisOff": "Disable Analysis",
+  "@analysisOff": { "description": "Tooltip: turn off KataGo analysis" },
+
+  "noServerForAnalysis": "Configure a KataGo server in Settings to enable analysis.",
+  "@noServerForAnalysis": { "description": "Warning shown when KataGo URL is empty" },
+
+  "moveQualityBest": "Best",
+  "@moveQualityBest": { "description": "Move quality label" },
+
+  "moveQualityGood": "Good",
+  "@moveQualityGood": { "description": "Move quality label" },
+
+  "moveQualityInaccuracy": "Inaccuracy",
+  "@moveQualityInaccuracy": { "description": "Move quality label" },
+
+  "moveQualityMistake": "Mistake",
+  "@moveQualityMistake": { "description": "Move quality label" },
+
+  "moveQualityBlunder": "Blunder",
+  "@moveQualityBlunder": { "description": "Move quality label" }
 }

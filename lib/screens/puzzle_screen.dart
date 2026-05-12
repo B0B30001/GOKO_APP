@@ -8,6 +8,8 @@ import '../widgets/fast_game_board.dart';
 import '../widgets/result_modal.dart';
 import '../models/app_settings.dart';
 import '../services/subscription_service.dart';
+import '../services/progress_service.dart';
+import '../services/sfx_service.dart';
 import 'paywall_screen.dart';
 
 class PuzzleScreen extends StatefulWidget {
@@ -126,6 +128,7 @@ class _PuzzleScreenState extends State<PuzzleScreen>
       return;
     }
 
+    SfxService.instance.play(SfxSound.correct);
     setState(() => _moveCount++);
     _checkWinAndContinue();
   }
@@ -139,6 +142,9 @@ class _PuzzleScreenState extends State<PuzzleScreen>
 
     if (sequenceComplete && winSatisfied) {
       setState(() => _solved = true);
+      SfxService.instance.play(SfxSound.complete);
+      // Persist the solve in ProgressService (fire-and-forget, non-blocking).
+      context.read<ProgressService>().markPuzzleSolved(widget.puzzle.id);
       if (widget.isDrillMode) {
         Future.delayed(const Duration(milliseconds: 350), () {
           if (!mounted) return;
@@ -186,6 +192,7 @@ class _PuzzleScreenState extends State<PuzzleScreen>
 
     // Shake the board, then remove the wrong stone and let the player retry
     // (chess.com style — no blocking dialog).
+    SfxService.instance.play(SfxSound.wrong);
     _shakeController.forward(from: 0.0).then((_) {
       if (!mounted) return;
       setState(() {

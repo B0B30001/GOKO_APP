@@ -174,6 +174,40 @@ class AppLocalizationsJa extends AppLocalizations {
   String get kataGoHint => '空のままにすると内蔵 MCTS エンジン（オフライン）を使用します。';
 
   @override
+  String get leelaServerUrl => 'Leela Zero / GTP サーバー URL';
+
+  @override
+  String get leelaHint =>
+      'GTP-over-WebSocket エンジン（Leela Zero、ELF OpenGo）を接続します。KataGo URL が設定されている場合は無視されます。';
+
+  @override
+  String get localEngineTitle => 'ローカル AI エンジン';
+
+  @override
+  String get localEngineSubtitle => '自動管理 KataGo（サーバー不要）';
+
+  @override
+  String get engineStatusReady => 'KataGo 準備完了';
+
+  @override
+  String get engineStatusStarting => '起動中…';
+
+  @override
+  String get engineStatusNotFound => '未インストール';
+
+  @override
+  String get engineStatusError => 'エラー';
+
+  @override
+  String get enginesFolderLabel => 'エンジンフォルダ';
+
+  @override
+  String get downloadKataGo => 'KataGo をダウンロード';
+
+  @override
+  String get engineRestartButton => 'エンジンを再起動';
+
+  @override
   String get prev => '前へ';
 
   @override
@@ -401,4 +435,31 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get conceptKoRuleDesc =>
       'コウのルールは無限ループを防ぐため、同じ局面の即座の取り返しを禁止します。コウを取った後は別の場所に打ってから取り返す必要があります。';
+
+  @override
+  String get analysisPanelTitle => '検討';
+
+  @override
+  String get analysisOn => '検討を有効にする';
+
+  @override
+  String get analysisOff => '検討を無効にする';
+
+  @override
+  String get noServerForAnalysis => '検討機能を使うには、設定で KataGo サーバーを設定してください。';
+
+  @override
+  String get moveQualityBest => '最善手';
+
+  @override
+  String get moveQualityGood => '良手';
+
+  @override
+  String get moveQualityInaccuracy => '緩手';
+
+  @override
+  String get moveQualityMistake => '悪手';
+
+  @override
+  String get moveQualityBlunder => '大悪手';
 }

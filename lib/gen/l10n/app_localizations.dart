@@ -434,6 +434,72 @@ abstract class AppLocalizations {
   /// **'Leave empty to use built-in MCTS engine offline.'**
   String get kataGoHint;
 
+  /// Settings label for Leela Zero / GTP engine URL
+  ///
+  /// In en, this message translates to:
+  /// **'Leela Zero / GTP Server URL'**
+  String get leelaServerUrl;
+
+  /// Leela Zero URL helper text
+  ///
+  /// In en, this message translates to:
+  /// **'Connect any GTP-over-WebSocket engine (Leela Zero, ELF OpenGo). Ignored when KataGo URL is set.'**
+  String get leelaHint;
+
+  /// Settings tile and screen title for local KataGo process
+  ///
+  /// In en, this message translates to:
+  /// **'Local AI Engine'**
+  String get localEngineTitle;
+
+  /// Settings tile subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-managed KataGo (no server needed)'**
+  String get localEngineSubtitle;
+
+  /// Engine status: process running
+  ///
+  /// In en, this message translates to:
+  /// **'KataGo ready'**
+  String get engineStatusReady;
+
+  /// Engine status: process starting
+  ///
+  /// In en, this message translates to:
+  /// **'Starting…'**
+  String get engineStatusStarting;
+
+  /// Engine status: binary not found
+  ///
+  /// In en, this message translates to:
+  /// **'Not installed'**
+  String get engineStatusNotFound;
+
+  /// Engine status: process errored
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get engineStatusError;
+
+  /// Label for the engines directory path
+  ///
+  /// In en, this message translates to:
+  /// **'Engines Folder'**
+  String get enginesFolderLabel;
+
+  /// Button to open KataGo download page
+  ///
+  /// In en, this message translates to:
+  /// **'Download KataGo'**
+  String get downloadKataGo;
+
+  /// Button to restart the KataGo process
+  ///
+  /// In en, this message translates to:
+  /// **'Restart Engine'**
+  String get engineRestartButton;
+
   /// Previous step button
   ///
   /// In en, this message translates to:
@@ -871,6 +937,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The Ko rule prevents infinite loops by prohibiting immediate recapture in a repeating position. After capturing in Ko, you must play elsewhere before you can recapture.'**
   String get conceptKoRuleDesc;
+
+  /// Analysis screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Analysis'**
+  String get analysisPanelTitle;
+
+  /// Tooltip: turn on KataGo analysis
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Analysis'**
+  String get analysisOn;
+
+  /// Tooltip: turn off KataGo analysis
+  ///
+  /// In en, this message translates to:
+  /// **'Disable Analysis'**
+  String get analysisOff;
+
+  /// Warning shown when KataGo URL is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Configure a KataGo server in Settings to enable analysis.'**
+  String get noServerForAnalysis;
+
+  /// Move quality label
+  ///
+  /// In en, this message translates to:
+  /// **'Best'**
+  String get moveQualityBest;
+
+  /// Move quality label
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get moveQualityGood;
+
+  /// Move quality label
+  ///
+  /// In en, this message translates to:
+  /// **'Inaccuracy'**
+  String get moveQualityInaccuracy;
+
+  /// Move quality label
+  ///
+  /// In en, this message translates to:
+  /// **'Mistake'**
+  String get moveQualityMistake;
+
+  /// Move quality label
+  ///
+  /// In en, this message translates to:
+  /// **'Blunder'**
+  String get moveQualityBlunder;
 }
 
 class _AppLocalizationsDelegate

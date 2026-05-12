@@ -12,6 +12,7 @@ import 'package:zaibal/widgets/move_history_panel.dart';
 import 'package:zaibal/services/ai/go_ai_service.dart';
 import 'package:zaibal/services/user_service.dart';
 import 'package:zaibal/services/match_history_service.dart';
+import 'package:zaibal/services/sfx_service.dart';
 
 class GameBoardScreen extends StatefulWidget {
   final int boardSize;
@@ -50,8 +51,17 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
     if (widget.isComputerMode && !_game.isBlackTurn) return;
 
     final color = _game.isBlackTurn ? 1 : 2;
+    final capturesBefore =
+        _game.board.capturedByBlack + _game.board.capturedByWhite;
     final success = _game.playTurn(i, j);
     if (success) {
+      final capturesAfter =
+          _game.board.capturedByBlack + _game.board.capturedByWhite;
+      if (capturesAfter > capturesBefore) {
+        SfxService.instance.play(SfxSound.capture);
+      } else {
+        SfxService.instance.play(SfxSound.stonePlace);
+      }
       _moves.add(HistoryMove(i, j, color));
       setState(() {});
       if (_game.isGameOver) return;
@@ -81,8 +91,17 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
     if (!mounted) return;
 
     if (move != null) {
+      final capturesBefore =
+          _game.board.capturedByBlack + _game.board.capturedByWhite;
       _game.playTurn(move[0], move[1]);
+      final capturesAfter =
+          _game.board.capturedByBlack + _game.board.capturedByWhite;
       _moves.add(HistoryMove(move[0], move[1], _aiPlayer));
+      if (capturesAfter > capturesBefore) {
+        SfxService.instance.play(SfxSound.capture);
+      } else {
+        SfxService.instance.play(SfxSound.stonePlace);
+      }
     } else {
       _game.pass();
       _moves.add(HistoryMove(-1, -1, _aiPlayer));

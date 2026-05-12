@@ -362,6 +362,152 @@ class OgsService extends ChangeNotifier {
     _wsService.send('automatch/cancel', uuid);
   }
 
+  // ---------------------------------------------------------------------------
+  // Bot challenge API
+  // ---------------------------------------------------------------------------
+
+  /// Known OGS bot accounts mapped by display level.
+  ///
+  /// These are long-running community bots that accept challenges automatically.
+  /// Ordered Easy → Hard within each board size family.
+  static const Map<String, String> _botUsernames = {
+    'easy': 'GnuGo',
+    'medium': 'leela-one-click',
+    'hard': 'katago-master-20',
+  };
+
+  /// Look up a player's numeric OGS id by username.
+  ///
+  /// Returns null if the request fails or the user is not found.
+  Future<int?> findBotId(String username) async {
+    try {
+      final uri = Uri.https('online-go.com', '/api/v1/players/', {
+        'username': username,
+        'page_size': '3',
+      });
+      final headers = _authHeaders();
+      final resp = await http.get(uri, headers: headers);
+      if (resp.statusCode != 200) return null;
+      final body = json.decode(resp.body);
+      final results = body['results'];
+      if (results is! List || results.isEmpty) return null;
+      // Pick exact-match username (case-insensitive).
+      for (final r in results) {
+        if (r is Map &&
+            r['username']?.toString().toLowerCase() == username.toLowerCase()) {
+          final id = r['id'];
+          return id is int ? id : int.tryParse('$id');
+        }
+      }
+      // Fallback: first result.
+      final first = results.first;
+      if (first is Map) {
+        final id = first['id'];
+        return id is int ? id : int.tryParse('$id');
+      }
+    } catch (e) {
+      debugPrint('OGS: findBotId($username) failed: $e');
+    }
+    return null;
+  }
+
+  /// Create a challenge against an OGS bot and wait for it to auto-accept.
+  ///
+  /// [botId] is the numeric player id of the bot (from [findBotId]).
+  /// [boardSize] should be 9, 13, or 19.
+  ///
+  /// Returns the created game id on success, or null on failure.
+  Future<int?> challengeBot(int botId, int boardSize) async {
+    if (!isAuthenticated) return null;
+    try {
+      final headers = _authHeaders()..['Content-Type'] = 'application/json';
+      final body = json.encode({
+        'player': botId,
+        'game': {
+          'name': 'GOKO vs bot',
+          'rules': 'japanese',
+          'width': boardSize,
+          'height': boardSize,
+          'komi': 6.5,
+          'handicap': 0,
+          'time_control': 'byoyomi',
+          'time_control_parameters': {
+            'system': 'byoyomi',
+            'speed': 'live',
+            'main_time': 300,
+            'period_time': 30,
+            'periods': 3,
+            'pause_on_weekends': false,
+          },
+          'initial_player': 'black',
+          'private': false,
+          'ranked': false,
+          'aga_rated': false,
+        },
+      });
+      final challengeResp = await http.post(
+        Uri.https('online-go.com', '/api/v1/challenges/'),
+        headers: headers,
+        body: body,
+      );
+      if (challengeResp.statusCode != 200 && challengeResp.statusCode != 201) {
+        debugPrint(
+          'OGS: challengeBot failed: ${challengeResp.statusCode} '
+          '${challengeResp.body}',
+        );
+        return null;
+      }
+      final challengeData = json.decode(challengeResp.body);
+      // The challenge response includes `game` or `game_id`.
+      final gameId = _extractGameId(challengeData);
+      if (gameId != null) return gameId;
+
+      // Some OGS versions require an explicit accept call.
+      final challengeId = challengeData['id'];
+      if (challengeId == null) return null;
+      final acceptResp = await http.post(
+        Uri.https('online-go.com', '/api/v1/challenges/$challengeId/accept/'),
+        headers: headers,
+      );
+      if (acceptResp.statusCode == 200 || acceptResp.statusCode == 201) {
+        final acceptData = json.decode(acceptResp.body);
+        return _extractGameId(acceptData);
+      }
+    } catch (e) {
+      debugPrint('OGS: challengeBot error: $e');
+    }
+    return null;
+  }
+
+  /// Returns the bot username for the given difficulty string ('easy',
+  /// 'medium', 'hard').
+  static String botUsernameForLevel(String level) =>
+      _botUsernames[level] ?? _botUsernames['hard']!;
+
+  Map<String, String> _authHeaders() {
+    final headers = <String, String>{'Accept': 'application/json'};
+    if (_jwt != null && _jwt!.isNotEmpty) {
+      headers['Authorization'] = 'Bearer $_jwt';
+    }
+    return headers;
+  }
+
+  static int? _extractGameId(dynamic data) {
+    if (data is! Map) return null;
+    final game = data['game'];
+    if (game is Map) {
+      final id = game['id'];
+      return id is int ? id : int.tryParse('$id');
+    }
+    final gameId = data['game_id'] ?? data['gameId'];
+    if (gameId != null) {
+      return gameId is int ? gameId : int.tryParse('$gameId');
+    }
+    return null;
+  }
+
+  // ---------------------------------------------------------------------------
+
   /// Disconnect from WebSocket
   void disconnect() {
     _wsService.disconnect();

@@ -11,6 +11,7 @@ import '../widgets/app_shell.dart';
 import '../services/ogs_service.dart';
 import './game_board_screen.dart';
 import './online/online_lobby_screen.dart';
+import './online/online_game_screen.dart';
 import '../services/ai/go_ai_service.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -28,16 +29,18 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ogs = context.watch<OgsService>();
     return Scaffold(
       drawer: const AppDrawer(active: AppDrawerSection.home),
       floatingActionButton: showBottomNav ? const MenuFab() : null,
       bottomNavigationBar: showBottomNav ? _buildBottomNav(context) : null,
       body: CustomScrollView(
         slivers: [
+          // ── Slimmer app bar with greeting ──────────────────────────────
           SliverAppBar(
             floating: true,
             pinned: true,
-            expandedHeight: 180,
+            expandedHeight: 110,
             automaticallyImplyLeading: false,
             leading: Builder(
               builder: (ctx) => IconButton(
@@ -47,36 +50,70 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             flexibleSpace: FlexibleSpaceBar(
-              titlePadding: const EdgeInsets.only(left: 16, bottom: 12),
-              title: const Text(''), // No title per request
+              collapseMode: CollapseMode.pin,
               background: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                     colors: [
                       Theme.of(context).primaryColor,
                       Theme.of(context).colorScheme.secondary,
                     ],
                   ),
                 ),
+                child: SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 8,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _greeting(ogs),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        if (ogs.username != null)
+                          Text(
+                            ogs.rankString ?? 'Unranked',
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.8),
+                              fontSize: 12,
+                            ),
+                          ),
+                        const SizedBox(height: 8),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
+
+          // ── Content ────────────────────────────────────────────────────
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _buildHeroBanner(context),
-                  const SizedBox(height: 16),
-                  Center(child: _buildPlayButton(context)),
-                  const SizedBox(height: 20),
-                  _buildQuickActions(context),
+                  // Play strip: big button + inline board size chips
+                  _buildPlayStrip(context),
                   const SizedBox(height: 24),
-                  _buildDailyChallenge(context),
+                  // Daily puzzle card
+                  _buildDailyPuzzleCard(context),
                   const SizedBox(height: 24),
+                  // 2-col feature grid
+                  _buildFeatureGrid(context),
+                  const SizedBox(height: 24),
+                  // Recent games
                   _buildRecentHistory(context),
                   const SizedBox(height: 24),
                 ],
@@ -88,145 +125,129 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeroBanner(BuildContext context) {
-    final primary = Theme.of(context).primaryColor;
-    final secondary = Theme.of(context).colorScheme.secondary;
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: AspectRatio(
-        aspectRatio: 16 / 9,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [primary, secondary],
-                ),
-              ),
-            ),
-            // Decorative elements to hint a Go board theme
-            Positioned(
-              right: -40,
-              top: -40,
-              child: Container(
-                width: 200,
-                height: 200,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.08),
-                ),
-              ),
-            ),
-            Positioned(
-              left: 16,
-              bottom: 12,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Play • Learn • Improve',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'Everything works offline - no account needed!',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.white.withValues(alpha: 0.9),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+  String _greeting(OgsService ogs) {
+    final hour = DateTime.now().hour;
+    final name = ogs.username;
+    final greeting = hour < 12
+        ? 'Good morning'
+        : hour < 18
+        ? 'Good afternoon'
+        : 'Good evening';
+    return name != null ? '$greeting, $name!' : '$greeting!';
   }
 
-  Widget _buildPlayButton(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () => _showGameModes(context),
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 32),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        elevation: 6,
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.play_arrow_rounded, size: 28),
-          const SizedBox(width: 8),
-          Text(
-            AppLocalizations.of(context).play,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildQuickActions(BuildContext context) {
-    final l = AppLocalizations.of(context);
+  Widget _buildPlayStrip(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(l.quickActions, style: Theme.of(context).textTheme.titleLarge),
-        const SizedBox(height: 16),
+        FilledButton.icon(
+          icon: const Icon(Icons.play_arrow_rounded, size: 26),
+          label: Text(
+            AppLocalizations.of(context).play,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          style: FilledButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: 18),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+          onPressed: () => _showGameModes(context),
+        ),
+        const SizedBox(height: 10),
+        // Quick-start board-size chips
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              child: _buildActionCard(
-                context,
-                l.practice,
-                Icons.computer,
-                () => _showBoardSize(context, isComputer: true),
+            for (final size in [9, 13, 19]) ...[
+              _QuickSizeChip(
+                size: size,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => GameBoardScreen(boardSize: size),
+                    ),
+                  );
+                },
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildActionCard(
-                context,
-                l.playVsBot,
-                Icons.smart_toy,
-                () => Navigator.pushNamed(context, '/bots'),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildActionCard(context, l.tutorial, Icons.school, () {
-                appShellTabIndex.value = 1;
-                if (Navigator.canPop(context)) Navigator.pop(context);
-              }),
-            ),
+              if (size != 19) const SizedBox(width: 8),
+            ],
           ],
         ),
       ],
     );
   }
 
-  Widget _buildActionCard(
-    BuildContext context,
-    String title,
-    IconData icon,
-    VoidCallback onTap,
-  ) {
+  Widget _buildDailyPuzzleCard(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Card(
+      elevation: 0,
+      color: cs.primaryContainer,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => Navigator.pushNamed(context, '/puzzles'),
         child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
+          padding: const EdgeInsets.all(16),
+          child: Row(
             children: [
-              Icon(icon, size: 24),
-              const SizedBox(height: 6),
-              Text(title, style: Theme.of(context).textTheme.bodyMedium),
+              // Mini board thumbnail
+              Container(
+                width: 72,
+                height: 72,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFDCB468), // classic board tan
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.18),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: CustomPaint(painter: _MiniBoardThumbPainter()),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.stars, size: 16, color: Colors.amber),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Daily Puzzle',
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                color: cs.onPrimaryContainer.withValues(
+                                  alpha: 0.7,
+                                ),
+                                fontWeight: FontWeight.w600,
+                              ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Solve today\'s challenge',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: cs.onPrimaryContainer,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Tap to solve →',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: cs.onPrimaryContainer.withValues(alpha: 0.7),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -234,47 +255,71 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDailyChallenge(BuildContext context) {
-    return Card(
-      child: InkWell(
+  Widget _buildFeatureGrid(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final cs = Theme.of(context).colorScheme;
+    final items = [
+      _GridItem(
+        label: l.lessons,
+        icon: Icons.school_rounded,
+        color: Colors.blue,
         onTap: () {
-          // TODO: Navigate to daily challenge
+          appShellTabIndex.value = 1;
+          if (Navigator.canPop(context)) Navigator.pop(context);
         },
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Daily Challenge',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const Icon(Icons.stars, color: Colors.amber),
-                ],
-              ),
-              const SizedBox(height: 8),
-              const Text('Solve today\'s GO puzzle'),
-              const SizedBox(height: 16),
-              LinearProgressIndicator(
-                value: 0.3,
-                backgroundColor: Colors.grey[300],
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  Theme.of(context).primaryColor,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                '30% Complete',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            ],
-          ),
-        ),
       ),
+      _GridItem(
+        label: l.puzzles,
+        icon: Icons.grid_view_rounded,
+        color: Colors.green,
+        onTap: () => Navigator.pushNamed(context, '/puzzles'),
+      ),
+      _GridItem(
+        label: l.playVsBot,
+        icon: Icons.smart_toy_rounded,
+        color: Colors.orange,
+        onTap: () => Navigator.pushNamed(context, '/bots'),
+      ),
+      _GridItem(
+        label: l.vsOnline,
+        icon: Icons.wifi_rounded,
+        color: Colors.purple,
+        onTap: () async {
+          final ogsService = Provider.of<OgsService>(context, listen: false);
+          if (ogsService.isAuthenticated) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const OnlineLobbyScreen()),
+            );
+          } else {
+            await showLoginDialog(context);
+          }
+        },
+      ),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Quick access',
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 12),
+        GridView.count(
+          crossAxisCount: 4,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 8,
+          childAspectRatio: 0.9,
+          children: items
+              .map((item) => _FeatureGridCell(item: item, cs: cs))
+              .toList(),
+        ),
+      ],
     );
   }
 
@@ -367,8 +412,106 @@ class HomeScreen extends StatelessWidget {
                 );
               }
             }),
+            const SizedBox(height: 16),
+            _buildModeButton(
+              context,
+              'vs AI (Online – KataGo)',
+              Icons.smart_toy_outlined,
+              () => _showBotPicker(context),
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showBotPicker(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetCtx) => _BotPickerSheet(
+        onPick: (level, boardSize) async {
+          Navigator.pop(sheetCtx);
+          final ogsService = Provider.of<OgsService>(context, listen: false);
+          if (!ogsService.isAuthenticated) {
+            await showLoginDialog(context);
+            if (!ogsService.isAuthenticated) return;
+          }
+          if (!context.mounted) return;
+          _launchBotChallenge(context, ogsService, level, boardSize);
+        },
+      ),
+    );
+  }
+
+  void _launchBotChallenge(
+    BuildContext context,
+    OgsService ogsService,
+    String level,
+    int boardSize,
+  ) async {
+    final username = OgsService.botUsernameForLevel(level);
+    if (!context.mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const AlertDialog(
+        content: Row(
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(width: 16),
+            Text('Finding bot…'),
+          ],
+        ),
+      ),
+    );
+    final botId = await ogsService.findBotId(username);
+    if (!context.mounted) return;
+    Navigator.pop(context); // dismiss loading dialog
+
+    if (botId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Bot "$username" is currently offline. Try again later.',
+          ),
+        ),
+      );
+      return;
+    }
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const AlertDialog(
+        content: Row(
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(width: 16),
+            Text('Creating game…'),
+          ],
+        ),
+      ),
+    );
+    final gameId = await ogsService.challengeBot(botId, boardSize);
+    if (!context.mounted) return;
+    Navigator.pop(context); // dismiss loading dialog
+
+    if (gameId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Could not create bot game. Please try again.'),
+        ),
+      );
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => OnlineGameScreen(gameId: gameId.toString()),
       ),
     );
   }
@@ -516,6 +659,215 @@ class _HistoryCard extends StatelessWidget {
         onTap: () {
           Navigator.pushNamed(context, '/history');
         },
+      ),
+    );
+  }
+}
+
+// ── Helper data class ──────────────────────────────────────────────────────
+
+class _GridItem {
+  final String label;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _GridItem({
+    required this.label,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+}
+
+// ── Feature grid cell ──────────────────────────────────────────────────────
+
+class _FeatureGridCell extends StatelessWidget {
+  final _GridItem item;
+  final ColorScheme cs;
+
+  const _FeatureGridCell({required this.item, required this.cs});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 0,
+      color: item.color.withValues(alpha: 0.12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      child: InkWell(
+        onTap: item.onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(item.icon, size: 28, color: item.color),
+            const SizedBox(height: 6),
+            Text(
+              item.label,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: item.color,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Quick size chip ────────────────────────────────────────────────────────
+
+class _QuickSizeChip extends StatelessWidget {
+  final int size;
+  final VoidCallback onTap;
+
+  const _QuickSizeChip({required this.size, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return ActionChip(
+      label: Text('$size×$size'),
+      onPressed: onTap,
+      visualDensity: VisualDensity.compact,
+    );
+  }
+}
+
+// ── Mini board thumbnail painter ──────────────────────────────────────────
+
+class _MiniBoardThumbPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    const lines = 5;
+    final paint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.45)
+      ..strokeWidth = 0.8;
+
+    final step = size.width / (lines + 1);
+    for (var i = 1; i <= lines; i++) {
+      final pos = step * i;
+      canvas.drawLine(
+        Offset(pos, step),
+        Offset(pos, size.height - step),
+        paint,
+      );
+      canvas.drawLine(Offset(step, pos), Offset(size.width - step, pos), paint);
+    }
+
+    // Draw a few example stones
+    final black = Paint()..color = Colors.black87;
+    final white = Paint()..color = Colors.white;
+    final border = Paint()
+      ..color = Colors.black54
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 0.8;
+
+    void stone(double x, double y, Paint fill) {
+      final r = step * 0.38;
+      canvas.drawCircle(Offset(x, y), r, fill);
+      if (fill.color == Colors.white) {
+        canvas.drawCircle(Offset(x, y), r, border);
+      }
+    }
+
+    stone(step * 2, step * 2, black);
+    stone(step * 3, step * 2, white);
+    stone(step * 2, step * 3, white);
+    stone(step * 3, step * 3, black);
+    stone(step * 4, step * 2, black);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+/// Bottom sheet that lets the user pick bot level + board size before
+/// launching a challenge against an OGS bot.
+class _BotPickerSheet extends StatefulWidget {
+  final void Function(String level, int boardSize) onPick;
+
+  const _BotPickerSheet({required this.onPick});
+
+  @override
+  State<_BotPickerSheet> createState() => _BotPickerSheetState();
+}
+
+class _BotPickerSheetState extends State<_BotPickerSheet> {
+  String _level = 'medium';
+  int _size = 9;
+
+  static const _levels = [
+    ('easy', 'Easy', 'GnuGo — great for beginners'),
+    ('medium', 'Medium', 'Leela Zero — intermediate'),
+    ('hard', 'Hard', 'KataGo — strong AI'),
+  ];
+  static const _sizes = [9, 13, 19];
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Play vs AI Online',
+              style: Theme.of(context).textTheme.titleLarge,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Powered by OGS bots (requires login)',
+              style: Theme.of(context).textTheme.bodySmall,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            Text('Difficulty', style: Theme.of(context).textTheme.titleSmall),
+            const SizedBox(height: 8),
+            ...(_levels.map((rec) {
+              final (key, label, desc) = rec;
+              return RadioListTile<String>(
+                value: key,
+                groupValue: _level,
+                title: Text(label),
+                subtitle: Text(desc),
+                onChanged: (v) => setState(() => _level = v!),
+                dense: true,
+              );
+            })),
+            const SizedBox(height: 12),
+            Text('Board size', style: Theme.of(context).textTheme.titleSmall),
+            const SizedBox(height: 8),
+            SegmentedButton<int>(
+              segments: _sizes
+                  .map(
+                    (s) => ButtonSegment<int>(value: s, label: Text('$s×$s')),
+                  )
+                  .toList(),
+              selected: {_size},
+              onSelectionChanged: (s) => setState(() => _size = s.first),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => widget.onPick(_level, _size),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: cs.primary,
+                foregroundColor: cs.onPrimary,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Text('Start Game', style: TextStyle(fontSize: 16)),
+            ),
+          ],
+        ),
       ),
     );
   }

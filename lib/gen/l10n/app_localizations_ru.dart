@@ -176,6 +176,40 @@ class AppLocalizationsRu extends AppLocalizations {
       'Оставьте пустым, чтобы использовать встроенный движок MCTS.';
 
   @override
+  String get leelaServerUrl => 'URL сервера Leela Zero / GTP';
+
+  @override
+  String get leelaHint =>
+      'Подключите любой GTP-движок через WebSocket (Leela Zero, ELF OpenGo). Игнорируется, если задан URL KataGo.';
+
+  @override
+  String get localEngineTitle => 'Локальный движок ИИ';
+
+  @override
+  String get localEngineSubtitle => 'Авто-управляемый KataGo (без сервера)';
+
+  @override
+  String get engineStatusReady => 'KataGo готов';
+
+  @override
+  String get engineStatusStarting => 'Запуск…';
+
+  @override
+  String get engineStatusNotFound => 'Не установлен';
+
+  @override
+  String get engineStatusError => 'Ошибка';
+
+  @override
+  String get enginesFolderLabel => 'Папка движков';
+
+  @override
+  String get downloadKataGo => 'Скачать KataGo';
+
+  @override
+  String get engineRestartButton => 'Перезапустить движок';
+
+  @override
   String get prev => 'Назад';
 
   @override
@@ -403,4 +437,32 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get conceptKoRuleDesc =>
       'Правило ко запрещает мгновенный повторный захват в повторяющейся позиции, чтобы избежать бесконечных циклов. После захвата в ко нужно сыграть в другом месте, прежде чем снова захватывать.';
+
+  @override
+  String get analysisPanelTitle => 'Анализ';
+
+  @override
+  String get analysisOn => 'Включить анализ';
+
+  @override
+  String get analysisOff => 'Выключить анализ';
+
+  @override
+  String get noServerForAnalysis =>
+      'Настройте сервер KataGo в разделе «Настройки» для включения анализа.';
+
+  @override
+  String get moveQualityBest => 'Лучший ход';
+
+  @override
+  String get moveQualityGood => 'Хороший';
+
+  @override
+  String get moveQualityInaccuracy => 'Неточность';
+
+  @override
+  String get moveQualityMistake => 'Ошибка';
+
+  @override
+  String get moveQualityBlunder => 'Зевок';
 }

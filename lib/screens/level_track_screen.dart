@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/puzzle.dart';
 import '../models/tutorial.dart';
 import '../services/content_service.dart';
+import '../services/progress_service.dart';
 import '../widgets/puzzle_list_card.dart';
 import 'tutorial_screen.dart';
 
@@ -21,7 +23,6 @@ class LevelTrackScreen extends StatefulWidget {
 }
 
 class _LevelTrackScreenState extends State<LevelTrackScreen> {
-  final Set<String> _solved = <String>{};
 
   String get _title => switch (widget.tier) {
     LevelTier.beginner => 'Beginner',
@@ -61,6 +62,7 @@ class _LevelTrackScreenState extends State<LevelTrackScreen> {
   }
 
   Widget _buildBody(List<Tutorial> tutorials, List<Puzzle> puzzles) {
+    final progress = context.watch<ProgressService>();
     return ListView(
       padding: const EdgeInsets.fromLTRB(12, 16, 12, 24),
       children: [
@@ -68,7 +70,9 @@ class _LevelTrackScreenState extends State<LevelTrackScreen> {
           tier: widget.tier,
           tutorialCount: tutorials.length,
           puzzleCount: puzzles.length,
-          solvedCount: _solved.length,
+          solvedCount: puzzles
+              .where((p) => progress.isPuzzleSolved(p.id))
+              .length,
         ),
         const SizedBox(height: 16),
         if (tutorials.isNotEmpty) ...[
@@ -83,8 +87,11 @@ class _LevelTrackScreenState extends State<LevelTrackScreen> {
           ...puzzles.map(
             (p) => PuzzleListCard(
               puzzle: p,
-              solved: _solved.contains(p.id),
-              onSolved: (id) => setState(() => _solved.add(id)),
+              solved: context.watch<ProgressService>().isPuzzleSolved(p.id),
+              onSolved: (_) {
+                // Progress is persisted by PuzzleScreen → ProgressService.
+                // ProgressService is a ChangeNotifier so context.watch rebuilds.
+              },
             ),
           ),
         ],

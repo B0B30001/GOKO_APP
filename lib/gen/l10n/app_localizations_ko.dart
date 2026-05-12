@@ -174,6 +174,40 @@ class AppLocalizationsKo extends AppLocalizations {
   String get kataGoHint => '비워두면 내장 MCTS 엔진(오프라인)을 사용합니다.';
 
   @override
+  String get leelaServerUrl => 'Leela Zero / GTP 서버 URL';
+
+  @override
+  String get leelaHint =>
+      'GTP-over-WebSocket 엔진(Leela Zero, ELF OpenGo)을 연결하세요. KataGo URL이 설정된 경우 무시됩니다.';
+
+  @override
+  String get localEngineTitle => '로컈 AI 엔진';
+
+  @override
+  String get localEngineSubtitle => '자동 관리 KataGo (서버 불필요)';
+
+  @override
+  String get engineStatusReady => 'KataGo 준비완료';
+
+  @override
+  String get engineStatusStarting => '시작 중…';
+
+  @override
+  String get engineStatusNotFound => '설치되지 않음';
+
+  @override
+  String get engineStatusError => '오류';
+
+  @override
+  String get enginesFolderLabel => '엔진 폴더';
+
+  @override
+  String get downloadKataGo => 'KataGo 다운로드';
+
+  @override
+  String get engineRestartButton => '엔진 재시작';
+
+  @override
   String get prev => '이전';
 
   @override
@@ -401,4 +435,31 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get conceptKoRuleDesc =>
       '패 규칙은 같은 모양의 즉시 다시 따냄을 금지하여 무한 반복을 방지합니다. 패를 따낸 후에는 다른 곳에 한 수를 두어야 다시 따낼 수 있습니다.';
+
+  @override
+  String get analysisPanelTitle => '분석';
+
+  @override
+  String get analysisOn => '분석 활성화';
+
+  @override
+  String get analysisOff => '분석 비활성화';
+
+  @override
+  String get noServerForAnalysis => '분석을 활성화하려면 설정에서 KataGo 서버를 구성하세요.';
+
+  @override
+  String get moveQualityBest => '최선';
+
+  @override
+  String get moveQualityGood => '좋음';
+
+  @override
+  String get moveQualityInaccuracy => '부정확';
+
+  @override
+  String get moveQualityMistake => '실수';
+
+  @override
+  String get moveQualityBlunder => '대실수';
 }
