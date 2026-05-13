@@ -24,19 +24,14 @@ class AuthGateScreen extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  cs.primary.withValues(alpha: 0.85),
-                  cs.surface,
-                ],
+                colors: [cs.primary.withValues(alpha: 0.85), cs.surface],
                 stops: const [0.0, 0.65],
               ),
             ),
           ),
 
           // ── Decorative Go board lines ────────────────────────────────────
-          Positioned.fill(
-            child: CustomPaint(painter: _GoPatternPainter(cs)),
-          ),
+          Positioned.fill(child: CustomPaint(painter: _GoPatternPainter(cs))),
 
           // ── Content ──────────────────────────────────────────────────────
           SafeArea(
@@ -79,31 +74,37 @@ class AuthGateScreen extends StatelessWidget {
                   Text(
                     'GOKO',
                     style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                          color: cs.onSurface,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 6,
-                        ),
+                      color: cs.onSurface,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 6,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Master the ancient game of Go',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: cs.onSurface.withValues(alpha: 0.7),
-                        ),
+                      color: cs.onSurface.withValues(alpha: 0.7),
+                    ),
                   ),
 
                   const Spacer(),
 
                   // Feature bullets
-                  _FeaturePill(Icons.smart_toy_outlined,
-                      'Play vs KataGo & online bots'),
+                  _FeaturePill(
+                    Icons.smart_toy_outlined,
+                    'Play vs KataGo & online bots',
+                  ),
                   const SizedBox(height: 10),
                   _FeaturePill(
-                      Icons.school_outlined, 'Puzzles, lessons & daily drills'),
+                    Icons.school_outlined,
+                    'Puzzles, lessons & daily drills',
+                  ),
                   const SizedBox(height: 10),
                   _FeaturePill(
-                      Icons.people_outline, 'Live games on Online Go Server'),
+                    Icons.people_outline,
+                    'Live games on Online Go Server',
+                  ),
 
                   const SizedBox(height: 40),
 
@@ -115,7 +116,9 @@ class AuthGateScreen extends StatelessWidget {
                       label: const Text(
                         'Sign in with OGS',
                         style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       style: FilledButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 18),
@@ -153,8 +156,8 @@ class AuthGateScreen extends StatelessWidget {
                     'Your account unlocks bots, puzzles and live play.',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: cs.onSurface.withValues(alpha: 0.5),
-                        ),
+                      color: cs.onSurface.withValues(alpha: 0.5),
+                    ),
                   ),
                   const SizedBox(height: 32),
                 ],
@@ -190,9 +193,7 @@ class _FeaturePill extends StatelessWidget {
       decoration: BoxDecoration(
         color: cs.surfaceContainerHighest.withValues(alpha: 0.55),
         borderRadius: BorderRadius.circular(40),
-        border: Border.all(
-          color: cs.outline.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: cs.outline.withValues(alpha: 0.2)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -201,9 +202,9 @@ class _FeaturePill extends StatelessWidget {
           const SizedBox(width: 10),
           Text(
             label,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w500,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
           ),
         ],
       ),
@@ -230,9 +231,15 @@ class _GoPatternPainter extends CustomPainter {
 
     for (int i = 1; i <= lines; i++) {
       canvas.drawLine(
-          Offset(stepX * i, 0), Offset(stepX * i, size.height), paint);
+        Offset(stepX * i, 0),
+        Offset(stepX * i, size.height),
+        paint,
+      );
       canvas.drawLine(
-          Offset(0, stepY * i), Offset(size.width, stepY * i), paint);
+        Offset(0, stepY * i),
+        Offset(size.width, stepY * i),
+        paint,
+      );
     }
   }
 

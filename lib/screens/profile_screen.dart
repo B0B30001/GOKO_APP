@@ -3,11 +3,14 @@ import 'package:provider/provider.dart';
 
 import 'package:zaibal/gen/l10n/app_localizations.dart';
 import 'package:zaibal/models/user.dart';
+import 'package:zaibal/services/ogs_service.dart';
 import 'package:zaibal/services/user_service.dart';
 import 'package:zaibal/services/match_history_service.dart';
 import 'package:zaibal/services/subscription_service.dart';
 import 'package:zaibal/screens/paywall_screen.dart';
 import 'package:zaibal/screens/analysis_screen.dart';
+import 'package:zaibal/utils/ogs_rank.dart';
+import 'package:zaibal/widgets/login_dialog.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/app_shell.dart';
 
@@ -22,7 +25,16 @@ class ProfileScreen extends StatelessWidget {
     final user = context.watch<UserService>().currentUser;
     final history = context.watch<MatchHistoryService>();
     final subscription = context.watch<SubscriptionService>();
+    final ogs = context.watch<OgsService>();
     final agg = history.aggregate();
+
+    // Prefer OGS identity when signed in — that's the user's "public" profile.
+    final displayName = ogs.isAuthenticated && ogs.username != null
+        ? ogs.username!
+        : (user?.displayName ?? 'Player');
+    final rank = ogs.isAuthenticated
+        ? OgsRank.bestLabel(rankString: ogs.rankString, rating: ogs.rating)
+        : user?.rank;
 
     return Scaffold(
       body: CustomScrollView(
@@ -46,13 +58,14 @@ class ProfileScreen extends StatelessWidget {
               ),
             ],
             flexibleSpace: FlexibleSpaceBar(
-              title: Text(user?.displayName ?? 'Player'),
-              background: _buildHeader(context, user, subscription),
+              title: Text(displayName),
+              background: _buildHeader(context, user, subscription, ogs, rank),
             ),
           ),
           SliverToBoxAdapter(
             child: Column(
               children: [
+                if (!ogs.isAuthenticated) _buildOgsCta(context),
                 _buildStatsCard(context, agg, user),
                 _buildPremiumSection(context, subscription),
                 _buildRecentGames(context, history),
@@ -78,6 +91,8 @@ class ProfileScreen extends StatelessWidget {
     BuildContext context,
     User? user,
     SubscriptionService subscription,
+    OgsService ogs,
+    String? rank,
   ) {
     final cs = Theme.of(context).colorScheme;
     return Container(
@@ -104,7 +119,7 @@ class ProfileScreen extends StatelessWidget {
                   : null,
             ),
             const SizedBox(height: 8),
-            if (user?.rank != null)
+            if (rank != null)
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
@@ -112,7 +127,7 @@ class ProfileScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
-                  user!.rank!,
+                  rank,
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
@@ -120,6 +135,24 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
               ),
+            if (ogs.isAuthenticated) ...[
+              const SizedBox(height: 4),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.cloud_done, size: 12, color: Colors.white70),
+                  const SizedBox(width: 4),
+                  Text(
+                    'OGS',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.8),
+                      fontSize: 11,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ],
+              ),
+            ],
             if (subscription.isPremium) ...[
               const SizedBox(height: 4),
               const Chip(
@@ -131,6 +164,22 @@ class ProfileScreen extends StatelessWidget {
             ],
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildOgsCta(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Card(
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      child: ListTile(
+        leading: Icon(Icons.cloud_outlined, color: cs.primary),
+        title: const Text('Sign in to OGS'),
+        subtitle: const Text(
+          'See your rank, online games, and play live opponents.',
+        ),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () => showLoginDialog(context),
       ),
     );
   }

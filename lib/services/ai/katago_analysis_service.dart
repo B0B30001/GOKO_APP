@@ -6,11 +6,11 @@ import '../../models/app_settings.dart';
 /// Quality label for a single played move, computed by comparing the move's
 /// win-rate delta against empirical thresholds (same scale as Chess.com).
 enum MoveQuality {
-  best,       // best or within 0.5 % of best
-  good,       // within 2 %
+  best, // best or within 0.5 % of best
+  good, // within 2 %
   inaccuracy, // within 5 %
-  mistake,    // within 10 %
-  blunder,    // > 10 % loss
+  mistake, // within 10 %
+  blunder, // > 10 % loss
 }
 
 /// Win-rate and score evaluation for a single board position returned by the

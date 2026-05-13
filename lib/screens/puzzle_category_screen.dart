@@ -81,7 +81,8 @@ class _PuzzleCategoryScreenState extends State<PuzzleCategoryScreen> {
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 96),
       itemCount: list.length,
-      itemBuilder: (context, i) => PuzzleListCard(puzzle: list[i]),
+      itemBuilder: (context, i) =>
+          PuzzleListCard(puzzle: list[i], sequence: list, sequenceIndex: i),
     );
   }
 

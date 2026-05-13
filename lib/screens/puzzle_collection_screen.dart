@@ -41,11 +41,13 @@ class _PuzzleCollectionScreenState extends State<PuzzleCollectionScreen> {
             totalCount: puzzles.length,
           ),
           const SizedBox(height: 12),
-          ...puzzles.map(
-            (p) => PuzzleListCard(
-              puzzle: p,
-              solved: _localSolved.contains(p.id),
+          ...puzzles.asMap().entries.map(
+            (entry) => PuzzleListCard(
+              puzzle: entry.value,
+              solved: _localSolved.contains(entry.value.id),
               onSolved: (id) => setState(() => _localSolved.add(id)),
+              sequence: puzzles,
+              sequenceIndex: entry.key,
             ),
           ),
         ],

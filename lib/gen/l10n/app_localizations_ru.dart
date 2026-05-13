@@ -139,6 +139,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get continue_ => 'Продолжить';
 
   @override
+  String get nextPuzzle => 'Следующая задача';
+
+  @override
   String get theoryExplanation => 'Теория и объяснение';
 
   @override
@@ -385,6 +388,15 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get themeLightMode => 'Светлая';
+
+  @override
+  String get themeHalloween => 'Хэллоуин';
+
+  @override
+  String get themeWinter => 'Зима';
+
+  @override
+  String get themeForest => 'Лес';
 
   @override
   String get boardClassic => 'Классическая';

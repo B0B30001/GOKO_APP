@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zaibal/gen/l10n/app_localizations.dart';
+import '../models/app_settings.dart';
 import '../services/ai/go_ai_service.dart';
 import '../services/ai/katago_process_service.dart';
 import 'game_board_screen.dart';
@@ -89,7 +90,14 @@ class BotsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final kataGoReady = context.watch<KataGoProcessService>().isAvailable;
+    // KataGo is "available" whenever ANY of the supported routes is set up:
+    // a local KataGo native process, a remote WebSocket server URL in
+    // Settings, or the FFI bundle (`kataGoMode == 'native'`). The engine
+    // factory routes to the right backend based on the same flags.
+    final kataGoReady =
+        context.watch<KataGoProcessService>().isAvailable ||
+        AppSettings.kataGoServerUrl.trim().isNotEmpty ||
+        AppSettings.kataGoMode == 'native';
     return Scaffold(
       appBar: AppBar(title: Text(l.playVsBotTitle), centerTitle: true),
       body: ListView.separated(
@@ -108,6 +116,7 @@ class BotsScreen extends StatelessWidget {
 
 class _BotCard extends StatelessWidget {
   final _BotProfile bot;
+
   /// When true, overrides `bot.difficulty == null` so the card is enabled.
   final bool forceAvailable;
 

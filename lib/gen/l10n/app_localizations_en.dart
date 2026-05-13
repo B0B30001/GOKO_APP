@@ -138,6 +138,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get continue_ => 'Continue';
 
   @override
+  String get nextPuzzle => 'Next puzzle';
+
+  @override
   String get theoryExplanation => 'Theory & Explanation';
 
   @override
@@ -383,6 +386,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get themeLightMode => 'Light Mode';
+
+  @override
+  String get themeHalloween => 'Halloween';
+
+  @override
+  String get themeWinter => 'Winter';
+
+  @override
+  String get themeForest => 'Forest';
 
   @override
   String get boardClassic => 'Classic';

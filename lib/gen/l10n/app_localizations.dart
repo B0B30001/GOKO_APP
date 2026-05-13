@@ -362,6 +362,12 @@ abstract class AppLocalizations {
   /// **'Continue'**
   String get continue_;
 
+  /// Chains to the next puzzle in a sequence
+  ///
+  /// In en, this message translates to:
+  /// **'Next puzzle'**
+  String get nextPuzzle;
+
   /// Puzzle theory section title
   ///
   /// In en, this message translates to:
@@ -841,6 +847,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Light Mode'**
   String get themeLightMode;
+
+  /// Seasonal theme preset name
+  ///
+  /// In en, this message translates to:
+  /// **'Halloween'**
+  String get themeHalloween;
+
+  /// Seasonal theme preset name
+  ///
+  /// In en, this message translates to:
+  /// **'Winter'**
+  String get themeWinter;
+
+  /// Seasonal theme preset name
+  ///
+  /// In en, this message translates to:
+  /// **'Forest'**
+  String get themeForest;
 
   /// Board theme variant
   ///

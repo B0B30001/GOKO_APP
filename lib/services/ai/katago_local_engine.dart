@@ -48,10 +48,7 @@ class KataGoLocalEngine implements AIEngine {
       for (int c = 0; c < boardSize; c++) {
         final stone = board[r][c];
         if (stone != 0) {
-          initialStones.add([
-            stone == 1 ? 'B' : 'W',
-            _toGtp(r, c, boardSize),
-          ]);
+          initialStones.add([stone == 1 ? 'B' : 'W', _toGtp(r, c, boardSize)]);
         }
       }
     }

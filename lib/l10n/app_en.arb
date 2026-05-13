@@ -130,6 +130,9 @@
   "continue_": "Continue",
   "@continue_": { "description": "Continue button" },
 
+  "nextPuzzle": "Next puzzle",
+  "@nextPuzzle": { "description": "Chains to the next puzzle in a sequence" },
+
   "theoryExplanation": "Theory & Explanation",
   "@theoryExplanation": { "description": "Puzzle theory section title" },
 
@@ -384,6 +387,15 @@
 
   "themeLightMode": "Light Mode",
   "@themeLightMode": { "description": "Theme preset name" },
+
+  "themeHalloween": "Halloween",
+  "@themeHalloween": { "description": "Seasonal theme preset name" },
+
+  "themeWinter": "Winter",
+  "@themeWinter": { "description": "Seasonal theme preset name" },
+
+  "themeForest": "Forest",
+  "@themeForest": { "description": "Seasonal theme preset name" },
 
   "boardClassic": "Classic",
   "@boardClassic": { "description": "Board theme variant" },

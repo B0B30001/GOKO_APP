@@ -349,6 +349,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     ThemePreset.oledBlack => l.themeOledBlack,
     ThemePreset.classicWood => l.themeClassicWood,
     ThemePreset.lightMode => l.themeLightMode,
+    ThemePreset.halloween => l.themeHalloween,
+    ThemePreset.winter => l.themeWinter,
+    ThemePreset.forest => l.themeForest,
   };
 
   Widget _buildBoardThemePicker() {

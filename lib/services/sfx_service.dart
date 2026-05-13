@@ -43,13 +43,13 @@ class SfxService {
 
   /// Maps each sound to its asset filename inside `assets/sounds/`.
   static String _assetFor(SfxSound sound) => switch (sound) {
-        SfxSound.stonePlace => 'assets/sounds/stone_place.mp3',
-        SfxSound.capture => 'assets/sounds/capture.mp3',
-        SfxSound.correct => 'assets/sounds/correct.mp3',
-        SfxSound.wrong => 'assets/sounds/wrong.mp3',
-        SfxSound.complete => 'assets/sounds/complete.mp3',
-        SfxSound.lessonComplete => 'assets/sounds/lesson_complete.mp3',
-      };
+    SfxSound.stonePlace => 'assets/sounds/stone_place.mp3',
+    SfxSound.capture => 'assets/sounds/capture.mp3',
+    SfxSound.correct => 'assets/sounds/correct.mp3',
+    SfxSound.wrong => 'assets/sounds/wrong.mp3',
+    SfxSound.complete => 'assets/sounds/complete.mp3',
+    SfxSound.lessonComplete => 'assets/sounds/lesson_complete.mp3',
+  };
 
   /// Plays [sound] unless [AppSettings.soundEnabled] is false.
   /// Silently swallowed if the asset file is missing.
@@ -57,7 +57,9 @@ class SfxService {
     if (!AppSettings.soundEnabled) return;
     try {
       final player = _players.putIfAbsent(sound, AudioPlayer.new);
-      await player.play(AssetSource(_assetFor(sound).replaceFirst('assets/', '')));
+      await player.play(
+        AssetSource(_assetFor(sound).replaceFirst('assets/', '')),
+      );
     } catch (_) {
       // Missing audio file or platform error — degrade gracefully.
     }

@@ -109,71 +109,77 @@ class _FastGameBoardState extends State<FastGameBoard> {
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1.0,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final size = Size(constraints.maxWidth, constraints.maxWidth);
-          final boardSize = widget.board.length;
-          final cellSize = size.width / (boardSize - 1);
-          final margin = cellSize;
-          final playArea = size.width - margin * 2;
-          final adjustedCellSize = playArea / (boardSize - 1);
+    return RepaintBoundary(
+      child: AspectRatio(
+        aspectRatio: 1.0,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final size = Size(constraints.maxWidth, constraints.maxWidth);
+            final boardSize = widget.board.length;
+            final cellSize = size.width / (boardSize - 1);
+            final margin = cellSize;
+            final playArea = size.width - margin * 2;
+            final adjustedCellSize = playArea / (boardSize - 1);
 
-          // Update cached board if needed
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            _updateCachedBoard(size);
-          });
+            // Update cached board if needed
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _updateCachedBoard(size);
+            });
 
-          return MouseRegion(
-            onHover: (event) =>
-                _updateHoverPosition(event, context, margin, adjustedCellSize),
-            onExit: (_) {
-              setState(() {
-                _hoverPosition = null;
-                _isValidMove = false;
-              });
-            },
-            child: GestureDetector(
-              onTapDown: (details) =>
-                  _handleTap(details, context, margin, adjustedCellSize),
-              child: Stack(
-                children: [
-                  // Layer 1: Static board (cached)
-                  if (_cachedBoard != null)
-                    RepaintBoundary(
-                      child: CustomPaint(
-                        size: size,
-                        painter: _CachedBoardPainter(_cachedBoard!),
-                      ),
-                    ),
-
-                  // Layer 2: Hover indicator (separate layer to avoid stone rebuilds)
-                  if (_hoverPosition != null)
-                    RepaintBoundary(
-                      child: CustomPaint(
-                        size: size,
-                        painter: _HoverPainter(
-                          _hoverPosition!,
-                          adjustedCellSize,
-                          _isValidMove,
-                          _paintCache,
+            return MouseRegion(
+              onHover: (event) => _updateHoverPosition(
+                event,
+                context,
+                margin,
+                adjustedCellSize,
+              ),
+              onExit: (_) {
+                setState(() {
+                  _hoverPosition = null;
+                  _isValidMove = false;
+                });
+              },
+              child: GestureDetector(
+                onTapDown: (details) =>
+                    _handleTap(details, context, margin, adjustedCellSize),
+                child: Stack(
+                  children: [
+                    // Layer 1: Static board (cached)
+                    if (_cachedBoard != null)
+                      RepaintBoundary(
+                        child: CustomPaint(
+                          size: size,
+                          painter: _CachedBoardPainter(_cachedBoard!),
                         ),
                       ),
-                    ),
 
-                  // Layer 3: Stones as widgets (GPU accelerated, smart diffing)
-                  // Wrapped in IgnorePointer so hover events pass through
-                  IgnorePointer(
-                    child: Stack(
-                      children: buildStoneWidgets(margin, adjustedCellSize),
+                    // Layer 2: Hover indicator (separate layer to avoid stone rebuilds)
+                    if (_hoverPosition != null)
+                      RepaintBoundary(
+                        child: CustomPaint(
+                          size: size,
+                          painter: _HoverPainter(
+                            _hoverPosition!,
+                            adjustedCellSize,
+                            _isValidMove,
+                            _paintCache,
+                          ),
+                        ),
+                      ),
+
+                    // Layer 3: Stones as widgets (GPU accelerated, smart diffing)
+                    // Wrapped in IgnorePointer so hover events pass through
+                    IgnorePointer(
+                      child: Stack(
+                        children: buildStoneWidgets(margin, adjustedCellSize),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

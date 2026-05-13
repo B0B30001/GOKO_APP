@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:zaibal/gen/l10n/app_localizations.dart';
 import 'package:zaibal/l10n/puzzle_translations.dart';
@@ -16,9 +17,17 @@ class PuzzleScreen extends StatefulWidget {
   final Puzzle puzzle;
   final bool isDrillMode;
 
+  /// Optional puzzle queue. When provided, the success modal shows a
+  /// "Next puzzle" button that pushes the next entry in [sequence] without
+  /// returning to the list, so users can chain puzzles like chess.com.
+  final List<Puzzle>? sequence;
+  final int? sequenceIndex;
+
   const PuzzleScreen({
     required this.puzzle,
     this.isDrillMode = false,
+    this.sequence,
+    this.sequenceIndex,
     super.key,
   });
 
@@ -143,6 +152,7 @@ class _PuzzleScreenState extends State<PuzzleScreen>
     if (sequenceComplete && winSatisfied) {
       setState(() => _solved = true);
       SfxService.instance.play(SfxSound.complete);
+      if (AppSettings.hapticsEnabled) HapticFeedback.mediumImpact();
       // Persist the solve in ProgressService (fire-and-forget, non-blocking).
       context.read<ProgressService>().markPuzzleSolved(widget.puzzle.id);
       if (widget.isDrillMode) {
@@ -224,6 +234,10 @@ class _PuzzleScreenState extends State<PuzzleScreen>
 
   void _showSuccessDialog() {
     final l = AppLocalizations.of(context);
+    final hasNext =
+        widget.sequence != null &&
+        widget.sequenceIndex != null &&
+        widget.sequenceIndex! + 1 < widget.sequence!.length;
     ResultModal.show<void>(
       context,
       kind: ResultModalKind.success,
@@ -232,9 +246,30 @@ class _PuzzleScreenState extends State<PuzzleScreen>
           '"${widget.puzzle.localizedTitle(context)}"\n'
           '${l.difficulty}: ${'⭐' * widget.puzzle.difficulty}',
       actions: [
+        if (hasNext)
+          ResultModalAction(
+            label: l.nextPuzzle,
+            icon: Icons.skip_next,
+            isPrimary: true,
+            onPressed: () {
+              Navigator.pop(context); // close modal
+              final nextIndex = widget.sequenceIndex! + 1;
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => PuzzleScreen(
+                    puzzle: widget.sequence![nextIndex],
+                    sequence: widget.sequence,
+                    sequenceIndex: nextIndex,
+                  ),
+                ),
+              );
+            },
+          ),
         ResultModalAction(
           label: l.continue_,
           icon: Icons.arrow_forward,
+          isPrimary: !hasNext,
           onPressed: () {
             Navigator.pop(context);
             Navigator.pop(context, {
@@ -247,7 +282,6 @@ class _PuzzleScreenState extends State<PuzzleScreen>
         ResultModalAction(
           label: l.tryAgain,
           icon: Icons.refresh,
-          isPrimary: true,
           onPressed: () {
             Navigator.pop(context);
             _resetPuzzle();

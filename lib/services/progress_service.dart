@@ -54,10 +54,8 @@ class ProgressService extends ChangeNotifier {
   /// Load persisted state. Must be awaited before first UI frame.
   Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();
-    _solvedPuzzles =
-        (prefs.getStringList(_kSolvedPuzzles) ?? []).toSet();
-    _completedLessons =
-        (prefs.getStringList(_kCompletedLessons) ?? []).toSet();
+    _solvedPuzzles = (prefs.getStringList(_kSolvedPuzzles) ?? []).toSet();
+    _completedLessons = (prefs.getStringList(_kCompletedLessons) ?? []).toSet();
     _xp = prefs.getInt(_kXp) ?? 0;
     _streak = prefs.getInt(_kStreak) ?? 0;
     // No need to notify on load — widgets haven't built yet.
@@ -94,9 +92,9 @@ class ProgressService extends ChangeNotifier {
     SharedPreferences.getInstance().then((prefs) {
       final last = prefs.getString(_kLastStreakDate);
       if (last == today) return; // Already counted today.
-      final yesterday = _dayKey(DateTime.now().toUtc().subtract(
-        const Duration(days: 1),
-      ));
+      final yesterday = _dayKey(
+        DateTime.now().toUtc().subtract(const Duration(days: 1)),
+      );
       if (last == yesterday) {
         _streak++;
       } else {

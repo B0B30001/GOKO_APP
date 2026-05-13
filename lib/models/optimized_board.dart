@@ -65,7 +65,11 @@ class Board {
     return hasLiberties || capturesOpponent;
   }
 
-  void _setStone(int i, int j, int value) => _board[i * size + j] = value;
+  void _setStone(int i, int j, int value) {
+    _board[i * size + j] = value;
+    _viewCache = null;
+  }
+
   void _setStoneHashed(int i, int j, int value) {
     final idx = i * size + j;
     final oldVal = _board[idx];
@@ -83,12 +87,19 @@ class Board {
       _zHash ^= _zWhite[idx];
     }
     _board[idx] = value;
+    _viewCache = null;
   }
 
+  /// Cached `List<List<int>>` view of the board. Invalidated by any cell
+  /// mutation. Without this, every widget rebuild that reads `board.board`
+  /// allocates N×N fresh Lists — a major source of jank on 13×13/19×19.
+  List<List<int>>? _viewCache;
+
   List<List<int>> get board {
-    return List.generate(
+    return _viewCache ??= List.generate(
       size,
-      (i) => List.generate(size, (j) => getStone(i, j)),
+      (i) => List.generate(size, (j) => getStone(i, j), growable: false),
+      growable: false,
     );
   }
 
@@ -173,6 +184,7 @@ class Board {
         _board[i * size + j] = stones[i][j];
       }
     }
+    _viewCache = null;
     // Recompute Zobrist hash from scratch — XOR every present stone in.
     _zHash = 0;
     for (var idx = 0; idx < size * size; idx++) {

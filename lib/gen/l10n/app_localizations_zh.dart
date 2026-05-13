@@ -138,6 +138,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get continue_ => '继续';
 
   @override
+  String get nextPuzzle => '下一题';
+
+  @override
   String get theoryExplanation => '理论与解析';
 
   @override
@@ -383,6 +386,15 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get themeLightMode => '浅色';
+
+  @override
+  String get themeHalloween => '万圣节';
+
+  @override
+  String get themeWinter => '冬季';
+
+  @override
+  String get themeForest => '森林';
 
   @override
   String get boardClassic => '经典';

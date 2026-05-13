@@ -9,6 +9,7 @@ import '../widgets/app_drawer.dart';
 import '../widgets/menu_fab.dart';
 import '../widgets/app_shell.dart';
 import '../services/ogs_service.dart';
+import '../services/match_history_service.dart';
 import './game_board_screen.dart';
 import './online/online_lobby_screen.dart';
 import './online/online_game_screen.dart';
@@ -324,11 +325,8 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildRecentHistory(BuildContext context) {
-    final items = [
-      _HistoryItem('vs Player A', '19×19', '+7.5', true, '2h ago'),
-      _HistoryItem('vs Player B', '13×13', '-3.0', false, '1d ago'),
-      _HistoryItem('vs Player C', '9×9', '+2.5', true, '3d ago'),
-    ];
+    final history = context.watch<MatchHistoryService>();
+    final records = history.records.take(3).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -338,14 +336,44 @@ class HomeScreen extends StatelessWidget {
           style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: 12),
-        ...items.map(
-          (item) => Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: _HistoryCard(item: item),
+        if (records.isEmpty)
+          _RecentGamesEmptyState()
+        else
+          ...records.map(
+            (record) => Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: _HistoryCard(item: _historyItemFor(record)),
+            ),
           ),
-        ),
       ],
     );
+  }
+
+  /// Converts a [MatchRecord] to the [_HistoryItem] shape consumed by
+  /// [_HistoryCard]. Centralizes the formatting (score delta, time-ago).
+  _HistoryItem _historyItemFor(MatchRecord record) {
+    final win = record.result == MatchResult.win;
+    final delta = switch (record.result) {
+      MatchResult.win => '+',
+      MatchResult.loss => '-',
+      MatchResult.draw => '=',
+      MatchResult.unfinished => '…',
+    };
+    return _HistoryItem(
+      'vs ${record.opponent}',
+      '${record.boardSize}×${record.boardSize}',
+      delta,
+      win,
+      _timeAgo(record.playedAt),
+    );
+  }
+
+  String _timeAgo(DateTime then) {
+    final diff = DateTime.now().difference(then);
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    if (diff.inDays < 30) return '${diff.inDays}d ago';
+    return '${(diff.inDays / 30).floor()}mo ago';
   }
 
   Widget _buildBottomNav(BuildContext context) {
@@ -615,6 +643,39 @@ class HomeScreen extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       child: Text(label),
+    );
+  }
+}
+
+/// Friendly placeholder shown on the home screen when [MatchHistoryService]
+/// has no records yet. Replaces the prior 3-fake-game hardcoded list.
+class _RecentGamesEmptyState extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Row(
+          children: [
+            Icon(
+              Icons.sports_esports,
+              size: 28,
+              color: cs.onSurface.withValues(alpha: 0.35),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Text(
+                'Play your first game — it will show up here.',
+                style: TextStyle(
+                  color: cs.onSurface.withValues(alpha: 0.6),
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -21,13 +21,9 @@ class AiEngineScreen extends StatelessWidget {
     return ChangeNotifierProvider.value(
       value: KataGoProcessService.instance,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(l.localEngineTitle),
-          centerTitle: true,
-        ),
+        appBar: AppBar(title: Text(l.localEngineTitle), centerTitle: true),
         body: Consumer<KataGoProcessService>(
-          builder: (context, service, _) =>
-              _AiEngineBody(service: service),
+          builder: (context, service, _) => _AiEngineBody(service: service),
         ),
       ),
     );
@@ -49,8 +45,9 @@ class _AiEngineBody extends StatelessWidget {
       children: [
         // ── Status card ──────────────────────────────────────────────────────
         Card(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
@@ -63,26 +60,23 @@ class _AiEngineBody extends StatelessWidget {
                     children: [
                       Text(
                         'KataGo',
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium
+                        style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(fontWeight: FontWeight.w700),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         _statusLabel(l, service.status),
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: _statusColor(context, service.status),
-                            ),
+                          color: _statusColor(context, service.status),
+                        ),
                       ),
                       if (service.errorMessage != null) ...[
                         const SizedBox(height: 4),
                         Text(
                           service.errorMessage!,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(color: cs.error),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodySmall?.copyWith(color: cs.error),
                         ),
                       ],
                     ],
@@ -111,8 +105,9 @@ class _AiEngineBody extends StatelessWidget {
         // ── Engines folder ───────────────────────────────────────────────────
         _SectionHeader(label: l.enginesFolderLabel),
         Card(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Column(
@@ -120,10 +115,9 @@ class _AiEngineBody extends StatelessWidget {
               children: [
                 Text(
                   service.enginesDirectory ?? '(loading…)',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(fontFamily: 'monospace'),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontFamily: 'monospace'),
                 ),
                 const SizedBox(height: 8),
                 Row(
@@ -134,12 +128,14 @@ class _AiEngineBody extends StatelessWidget {
                       onPressed: service.enginesDirectory == null
                           ? null
                           : () {
-                              Clipboard.setData(ClipboardData(
-                                  text: service.enginesDirectory!));
+                              Clipboard.setData(
+                                ClipboardData(text: service.enginesDirectory!),
+                              );
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                    content: Text('Path copied'),
-                                    duration: Duration(seconds: 2)),
+                                  content: Text('Path copied'),
+                                  duration: Duration(seconds: 2),
+                                ),
                               );
                             },
                     ),
@@ -184,8 +180,9 @@ class _AiEngineBody extends StatelessWidget {
         // ── Install instructions ─────────────────────────────────────────────
         _SectionHeader(label: 'Installation guide'),
         Card(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -206,7 +203,8 @@ class _AiEngineBody extends StatelessWidget {
                 ),
                 _Step(
                   number: '3',
-                  text: 'Copy both files into the Engines Folder shown above. '
+                  text:
+                      'Copy both files into the Engines Folder shown above. '
                       'Rename the binary to katago (or katago.exe on Windows) '
                       'if it has a different name.',
                 ),
@@ -237,8 +235,7 @@ class _AiEngineBody extends StatelessWidget {
           icon: const Icon(Icons.download),
           label: Text(l.downloadKataGo),
           onPressed: () => launchUrl(
-            Uri.parse(
-                'https://github.com/lightvector/KataGo/releases/latest'),
+            Uri.parse('https://github.com/lightvector/KataGo/releases/latest'),
             mode: LaunchMode.externalApplication,
           ),
         ),
@@ -249,11 +246,11 @@ class _AiEngineBody extends StatelessWidget {
   }
 
   String _statusLabel(AppLocalizations l, EngineStatus s) => switch (s) {
-        EngineStatus.ready => l.engineStatusReady,
-        EngineStatus.starting => l.engineStatusStarting,
-        EngineStatus.notFound => l.engineStatusNotFound,
-        EngineStatus.error => l.engineStatusError,
-      };
+    EngineStatus.ready => l.engineStatusReady,
+    EngineStatus.starting => l.engineStatusStarting,
+    EngineStatus.notFound => l.engineStatusNotFound,
+    EngineStatus.error => l.engineStatusError,
+  };
 
   Color _statusColor(BuildContext context, EngineStatus s) {
     final cs = Theme.of(context).colorScheme;
@@ -278,8 +275,9 @@ class _StatusDot extends StatelessWidget {
     final color = switch (status) {
       EngineStatus.ready => Colors.green,
       EngineStatus.starting => Theme.of(context).colorScheme.primary,
-      EngineStatus.notFound =>
-        Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
+      EngineStatus.notFound => Theme.of(
+        context,
+      ).colorScheme.onSurface.withValues(alpha: 0.3),
       EngineStatus.error => Theme.of(context).colorScheme.error,
     };
     if (status == EngineStatus.starting) {
@@ -309,10 +307,9 @@ class _SectionHeader extends StatelessWidget {
       child: Text(
         label.toUpperCase(),
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              letterSpacing: 1.1,
-              color:
-                  Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-            ),
+          letterSpacing: 1.1,
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+        ),
       ),
     );
   }
@@ -340,10 +337,9 @@ class _FileRow extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodySmall
-                  ?.copyWith(fontFamily: 'monospace'),
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -368,8 +364,9 @@ class _Step extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 12,
-            backgroundColor:
-                Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
+            backgroundColor: Theme.of(
+              context,
+            ).colorScheme.primary.withValues(alpha: 0.15),
             child: Text(
               number,
               style: TextStyle(

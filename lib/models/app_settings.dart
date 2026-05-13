@@ -60,6 +60,16 @@ class AppSettings {
   /// puzzle feedback, completion fanfares).
   static bool soundEnabled = true;
 
+  /// Whether short haptic feedback fires on puzzle solve, capture, etc.
+  /// Vibration motor only; ignored on devices without one (web, desktop).
+  static bool hapticsEnabled = true;
+
+  /// Which KataGo backend to prefer when [kataGoServerUrl] is empty.
+  /// One of `'off'` (MCTS only), `'remote'` (use server URL),
+  /// `'native'` (use bundled FFI binary). See [`katago_ffi_engine.dart`]
+  /// and `assets/engines/README.md` for the native-build pipeline.
+  static String kataGoMode = 'off';
+
   /// Bumped on every save so listeners can rebuild.
   static final ValueNotifier<int> revision = ValueNotifier<int>(0);
 
@@ -73,6 +83,8 @@ class AppSettings {
   static const _kKataGoServerUrl = 'kataGoServerUrl';
   static const _kLeelaServerUrl = 'leelaServerUrl';
   static const _kSoundEnabled = 'soundEnabled';
+  static const _kHapticsEnabled = 'hapticsEnabled';
+  static const _kKataGoMode = 'kataGoMode';
 
   /// Reads persisted values into the static fields. Must be called once at
   /// startup before runApp().
@@ -90,6 +102,8 @@ class AppSettings {
     kataGoServerUrl = prefs.getString(_kKataGoServerUrl) ?? kataGoServerUrl;
     leelaServerUrl = prefs.getString(_kLeelaServerUrl) ?? leelaServerUrl;
     soundEnabled = prefs.getBool(_kSoundEnabled) ?? soundEnabled;
+    hapticsEnabled = prefs.getBool(_kHapticsEnabled) ?? hapticsEnabled;
+    kataGoMode = prefs.getString(_kKataGoMode) ?? kataGoMode;
     revision.value++;
   }
 
@@ -106,6 +120,8 @@ class AppSettings {
     await prefs.setString(_kKataGoServerUrl, kataGoServerUrl);
     await prefs.setString(_kLeelaServerUrl, leelaServerUrl);
     await prefs.setBool(_kSoundEnabled, soundEnabled);
+    await prefs.setBool(_kHapticsEnabled, hapticsEnabled);
+    await prefs.setString(_kKataGoMode, kataGoMode);
     revision.value++;
   }
 

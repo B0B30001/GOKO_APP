@@ -98,8 +98,9 @@ class LeelaEngine implements AIEngine {
       await channel.stream
           .timeout(const Duration(seconds: 15))
           .forEach((msg) {
-        responseBuffer.write(msg as String);
-      }).catchError((_) {}); // timeout or closed stream — use what we have
+            responseBuffer.write(msg as String);
+          })
+          .catchError((_) {}); // timeout or closed stream — use what we have
 
       await channel.sink.close();
 

@@ -1,5 +1,6 @@
 import 'ai_engine.dart';
 import 'katago_engine.dart';
+import 'katago_ffi_engine.dart';
 import 'katago_local_engine.dart';
 import 'katago_process_service.dart';
 import 'leela_engine.dart';
@@ -35,6 +36,14 @@ class AIEngineFactory {
   /// Returns the engine to use for the current move request.
   static AIEngine current() {
     if (_override != null) return _override!;
+
+    // FFI-bundled KataGo. Highest priority when the user opted into it AND
+    // the native library actually loads (so a missing `.so`/`.dylib` never
+    // blocks playable AI).
+    if (AppSettings.kataGoMode == 'native' && KataGoFfiEngine.isLoadable) {
+      final ffi = KataGoFfiEngine.tryCreate();
+      if (ffi != null) return ffi;
+    }
 
     // Local KataGo process — zero config for the end-user once files are in place.
     if (KataGoProcessService.instance.isAvailable ||

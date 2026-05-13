@@ -20,12 +20,18 @@ class MctsEngine implements AIEngine {
     required int player,
     required AIDifficulty difficulty,
   }) {
-    return compute(_runMcts, [
-      board,
-      boardSize,
-      player,
-      difficulty.simulations,
-    ]);
+    // Cap simulations on large boards. A 19×19 MCTS expands a search tree
+    // ~4× deeper than 9×9 per simulation, so the same sim count multiplies
+    // wall-time. Hard 2500 sims on 19×19 was the source of UI freezes when
+    // the isolate result arrived late; 1200 keeps strength acceptable for
+    // amateur play and halves move latency.
+    var sims = difficulty.simulations;
+    if (boardSize >= 19 && sims > 1200) {
+      sims = 1200;
+    } else if (boardSize >= 13 && sims > 1800) {
+      sims = 1800;
+    }
+    return compute(_runMcts, [board, boardSize, player, sims]);
   }
 }
 

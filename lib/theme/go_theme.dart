@@ -17,6 +17,15 @@ enum ThemePreset {
 
   /// Clean light mode with deep blue accents.
   lightMode,
+
+  /// Seasonal: deep purple + pumpkin orange.
+  halloween,
+
+  /// Seasonal: icy blues + cool whites.
+  winter,
+
+  /// Seasonal: deep forest green + amber.
+  forest,
 }
 
 class ThemePresetIds {
@@ -24,13 +33,27 @@ class ThemePresetIds {
   static const oledBlack = 'oledBlack';
   static const classicWood = 'classicWood';
   static const lightMode = 'lightMode';
+  static const halloween = 'halloween';
+  static const winter = 'winter';
+  static const forest = 'forest';
 
-  static const all = <String>[darkBlue, oledBlack, classicWood, lightMode];
+  static const all = <String>[
+    darkBlue,
+    oledBlack,
+    classicWood,
+    lightMode,
+    halloween,
+    winter,
+    forest,
+  ];
 
   static ThemePreset toEnum(String id) => switch (id) {
     oledBlack => ThemePreset.oledBlack,
     classicWood => ThemePreset.classicWood,
     lightMode => ThemePreset.lightMode,
+    halloween => ThemePreset.halloween,
+    winter => ThemePreset.winter,
+    forest => ThemePreset.forest,
     _ => ThemePreset.darkBlue,
   };
 
@@ -39,6 +62,9 @@ class ThemePresetIds {
     ThemePreset.oledBlack => oledBlack,
     ThemePreset.classicWood => classicWood,
     ThemePreset.lightMode => lightMode,
+    ThemePreset.halloween => halloween,
+    ThemePreset.winter => winter,
+    ThemePreset.forest => forest,
   };
 
   /// Display name shown in the Settings preset picker.
@@ -47,6 +73,9 @@ class ThemePresetIds {
     ThemePreset.oledBlack => 'OLED Black',
     ThemePreset.classicWood => 'Classic Wood',
     ThemePreset.lightMode => 'Light Mode',
+    ThemePreset.halloween => 'Halloween',
+    ThemePreset.winter => 'Winter',
+    ThemePreset.forest => 'Forest',
   };
 }
 
@@ -63,6 +92,12 @@ class GoTheme {
         return _buildClassicWood();
       case ThemePreset.lightMode:
         return _buildLightMode();
+      case ThemePreset.halloween:
+        return _buildHalloween();
+      case ThemePreset.winter:
+        return _buildWinter();
+      case ThemePreset.forest:
+        return _buildForest();
     }
   }
 
@@ -74,30 +109,153 @@ class GoTheme {
 
   // ----- Preset builders -----
 
+  /// Trust-blue: minimal, low-saturation navy that reads as serious and
+  /// dependable. Flat cards (zero elevation), single accent color, generous
+  /// padding. Tuned to match chess.com's premium feel.
   static ThemeData _buildDarkBlue() {
-    const scaffold = Color(0xFF0E1525);
-    const surface = Color(0xFF16213E);
-    const primary = Color(0xFF4F8EF7);
+    const scaffold = Color(0xFF0F1729); // deeper, less-saturated navy
+    const surface = Color(0xFF192237); // card / app-bar surface
+    const primary = Color(0xFF3B82F6); // single trust-blue accent
+    const onSurface = Color(0xFFE7EBF5);
     return ThemeData(
       brightness: Brightness.dark,
       scaffoldBackgroundColor: scaffold,
       colorScheme: const ColorScheme.dark(
         primary: primary,
         onPrimary: Colors.white,
-        secondary: Color(0xFF7BA8F8),
+        secondary: Color(0xFF60A5FA),
         surface: surface,
-        onSurface: Color(0xFFE6ECF7),
+        onSurface: onSurface,
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: scaffold,
-        foregroundColor: Color(0xFFE6ECF7),
+        foregroundColor: onSurface,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+      ),
+      cardTheme: CardThemeData(
+        color: surface,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          side: const BorderSide(color: Color(0xFF26334D), width: 1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      textTheme: const TextTheme(
+        titleLarge: TextStyle(fontWeight: FontWeight.w700, letterSpacing: -0.2),
+        titleMedium: TextStyle(
+          fontWeight: FontWeight.w600,
+          letterSpacing: -0.1,
+        ),
+        bodyMedium: TextStyle(height: 1.5),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: primary,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      ),
+      dividerTheme: const DividerThemeData(color: Color(0xFF26334D), space: 1),
+    );
+  }
+
+  static ThemeData _buildHalloween() {
+    const scaffold = Color(0xFF1A0B2E); // deep purple
+    const surface = Color(0xFF2D1B47);
+    const primary = Color(0xFFFF8C00); // pumpkin orange
+    return ThemeData(
+      brightness: Brightness.dark,
+      scaffoldBackgroundColor: scaffold,
+      colorScheme: const ColorScheme.dark(
+        primary: primary,
+        onPrimary: Colors.black,
+        secondary: Color(0xFFFFC857),
+        surface: surface,
+        onSurface: Color(0xFFFFE9C4),
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: scaffold,
+        foregroundColor: Color(0xFFFFE9C4),
         elevation: 0,
       ),
       cardTheme: const CardThemeData(color: surface, elevation: 1),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: primary,
+          foregroundColor: Colors.black,
+          elevation: 2,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+    );
+  }
+
+  static ThemeData _buildWinter() {
+    const scaffold = Color(0xFFEAF4FB); // icy blue-white
+    const surface = Color(0xFFFFFFFF);
+    const primary = Color(0xFF2C7DA0); // glacier blue
+    return ThemeData(
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: scaffold,
+      colorScheme: const ColorScheme.light(
+        primary: primary,
+        onPrimary: Colors.white,
+        secondary: Color(0xFF89C2D9),
+        surface: surface,
+        onSurface: Color(0xFF1A3A52),
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: scaffold,
+        foregroundColor: Color(0xFF1A3A52),
+        elevation: 0,
+      ),
+      cardTheme: const CardThemeData(color: surface, elevation: 2),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: primary,
           foregroundColor: Colors.white,
+          elevation: 1,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+    );
+  }
+
+  static ThemeData _buildForest() {
+    const scaffold = Color(0xFF14241B); // deep forest
+    const surface = Color(0xFF1F3328);
+    const primary = Color(0xFFE4A82C); // amber
+    return ThemeData(
+      brightness: Brightness.dark,
+      scaffoldBackgroundColor: scaffold,
+      colorScheme: const ColorScheme.dark(
+        primary: primary,
+        onPrimary: Colors.black,
+        secondary: Color(0xFF6FB17C),
+        surface: surface,
+        onSurface: Color(0xFFE6F2E6),
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: scaffold,
+        foregroundColor: Color(0xFFE6F2E6),
+        elevation: 0,
+      ),
+      cardTheme: const CardThemeData(color: surface, elevation: 1),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: primary,
+          foregroundColor: Colors.black,
           elevation: 2,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           shape: RoundedRectangleBorder(

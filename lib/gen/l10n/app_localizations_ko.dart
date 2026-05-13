@@ -138,6 +138,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get continue_ => '계속';
 
   @override
+  String get nextPuzzle => '다음 퍼즐';
+
+  @override
   String get theoryExplanation => '이론 및 해설';
 
   @override
@@ -383,6 +386,15 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get themeLightMode => '라이트';
+
+  @override
+  String get themeHalloween => '할로윈';
+
+  @override
+  String get themeWinter => '겨울';
+
+  @override
+  String get themeForest => '포레스트';
 
   @override
   String get boardClassic => '클래식';

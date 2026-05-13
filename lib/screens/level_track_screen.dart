@@ -23,7 +23,6 @@ class LevelTrackScreen extends StatefulWidget {
 }
 
 class _LevelTrackScreenState extends State<LevelTrackScreen> {
-
   String get _title => switch (widget.tier) {
     LevelTier.beginner => 'Beginner',
     LevelTier.intermediate => 'Intermediate',

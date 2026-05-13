@@ -101,12 +101,13 @@ class _GokoAppState extends State<GokoApp> {
       // immediate (both `theme` and `darkTheme` resolve to the same preset,
       // so we must actually switch the preset, not just ThemeMode).
       final preset = ThemePresetIds.toEnum(AppSettings.themePresetId);
-      if (isDark &&
-          (preset == ThemePreset.classicWood ||
-              preset == ThemePreset.lightMode)) {
+      final isCurrentlyLight =
+          preset == ThemePreset.classicWood ||
+          preset == ThemePreset.lightMode ||
+          preset == ThemePreset.winter;
+      if (isDark && isCurrentlyLight) {
         AppSettings.themePresetId = ThemePresetIds.darkBlue;
-      } else if (!isDark &&
-          (preset == ThemePreset.darkBlue || preset == ThemePreset.oledBlack)) {
+      } else if (!isDark && !isCurrentlyLight) {
         AppSettings.themePresetId = ThemePresetIds.lightMode;
       }
     });
@@ -151,7 +152,9 @@ class _GokoAppState extends State<GokoApp> {
       // Sync ThemeMode to the preset's brightness so status-bar overlays stay right.
       final preset = ThemePresetIds.toEnum(id);
       final isLight =
-          preset == ThemePreset.classicWood || preset == ThemePreset.lightMode;
+          preset == ThemePreset.classicWood ||
+          preset == ThemePreset.lightMode ||
+          preset == ThemePreset.winter;
       AppSettings.themeMode = isLight ? ThemeMode.light : ThemeMode.dark;
     });
     AppSettings.save();

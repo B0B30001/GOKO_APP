@@ -119,22 +119,26 @@ class KataGoProcessService extends ChangeNotifier {
     _setStatus(EngineStatus.starting);
     try {
       final configPath = await _ensureConfig(_enginesDir!);
-      _process = await Process.start(
-        _binaryPath!,
-        ['analysis', '-config', configPath, '-model', _modelPath!],
-        workingDirectory: _enginesDir,
-      );
+      _process = await Process.start(_binaryPath!, [
+        'analysis',
+        '-config',
+        configPath,
+        '-model',
+        _modelPath!,
+      ], workingDirectory: _enginesDir);
 
       // Pipe stdout through a line splitter so each JSON response is one call.
       _stdoutSub = _process!.stdout
           .transform(utf8.decoder)
           .transform(const LineSplitter())
-          .listen(_onStdoutLine, onError: _onProcessError, onDone: _onProcessDone);
+          .listen(
+            _onStdoutLine,
+            onError: _onProcessError,
+            onDone: _onProcessDone,
+          );
 
       // Drain stderr to prevent the pipe from blocking.
-      _stderrSub = _process!.stderr
-          .transform(utf8.decoder)
-          .listen((_) {});
+      _stderrSub = _process!.stderr.transform(utf8.decoder).listen((_) {});
 
       // Watch for early crash before setting ready.
       _process!.exitCode.then((code) {
@@ -318,15 +322,16 @@ class KataGoProcessService extends ChangeNotifier {
   static String? get _bundledBinaryAssetPath {
     try {
       if (Platform.isWindows) return 'assets/engines/windows/katago.exe';
-      if (Platform.isMacOS)   return 'assets/engines/macos/katago';
-      if (Platform.isLinux)   return 'assets/engines/linux/katago';
+      if (Platform.isMacOS) return 'assets/engines/macos/katago';
+      if (Platform.isLinux) return 'assets/engines/linux/katago';
       if (Platform.isAndroid) return 'assets/engines/android/katago';
     } catch (_) {}
     return null;
   }
 
   /// Whether the current platform supports spawning child processes.
-  bool get _isIoSupported {    try {
+  bool get _isIoSupported {
+    try {
       return Platform.isWindows ||
           Platform.isLinux ||
           Platform.isMacOS ||
@@ -357,18 +362,14 @@ class KataGoProcessService extends ChangeNotifier {
       final whichCmd = Platform.isWindows ? 'where' : 'which';
       final result = await Process.run(whichCmd, ['katago']);
       if (result.exitCode == 0) {
-        final path =
-            (result.stdout as String).trim().split('\n').first.trim();
+        final path = (result.stdout as String).trim().split('\n').first.trim();
         if (path.isNotEmpty) return path;
       }
     } catch (_) {}
 
     // 3. Common Homebrew paths (macOS).
     if (Platform.isMacOS) {
-      for (final p in [
-        '/usr/local/bin/katago',
-        '/opt/homebrew/bin/katago',
-      ]) {
+      for (final p in ['/usr/local/bin/katago', '/opt/homebrew/bin/katago']) {
         if (await File(p).exists()) return p;
       }
     }
@@ -395,8 +396,7 @@ class KataGoProcessService extends ChangeNotifier {
     return f.path;
   }
 
-  static String get _binaryName =>
-      _isPlatformWindows ? 'katago.exe' : 'katago';
+  static String get _binaryName => _isPlatformWindows ? 'katago.exe' : 'katago';
 
   static bool get _isPlatformWindows {
     try {

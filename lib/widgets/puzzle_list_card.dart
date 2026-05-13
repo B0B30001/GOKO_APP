@@ -15,10 +15,18 @@ class PuzzleListCard extends StatelessWidget {
   final bool solved;
   final ValueChanged<String>? onSolved;
 
+  /// Optional sequence + index. When set, the success modal in PuzzleScreen
+  /// will show a "Next puzzle" button that pushes the next entry without
+  /// returning to the list (chess.com-style continuous flow).
+  final List<Puzzle>? sequence;
+  final int? sequenceIndex;
+
   const PuzzleListCard({
     required this.puzzle,
     this.solved = false,
     this.onSolved,
+    this.sequence,
+    this.sequenceIndex,
     super.key,
   });
 
@@ -50,7 +58,13 @@ class PuzzleListCard extends StatelessWidget {
   Future<void> _open(BuildContext context) async {
     final result = await Navigator.push<Map<String, dynamic>>(
       context,
-      MaterialPageRoute(builder: (_) => PuzzleScreen(puzzle: puzzle)),
+      MaterialPageRoute(
+        builder: (_) => PuzzleScreen(
+          puzzle: puzzle,
+          sequence: sequence,
+          sequenceIndex: sequenceIndex,
+        ),
+      ),
     );
     if (result != null && result['solved'] == true) {
       onSolved?.call(puzzle.id);
