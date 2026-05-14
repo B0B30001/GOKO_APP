@@ -1,9 +1,9 @@
 import 'ai_engine_factory.dart';
 
 enum AIDifficulty {
-  easy(200, 'Easy'),
-  medium(800, 'Medium'),
-  hard(2500, 'Hard');
+  easy(400, 'Easy'),
+  medium(1500, 'Medium'),
+  hard(5000, 'Hard');
 
   const AIDifficulty(this.simulations, this.label);
   final int simulations;

@@ -10,6 +10,10 @@ class MctsNode {
   final List<MctsNode> children = [];
   int visits = 0;
   double wins = 0.0;
+  // RAVE / AMAF statistics — accumulated across all simulations that passed
+  // through this node and played this move anywhere in the rollout.
+  double raveWins = 0.0;
+  int raveVisits = 0;
   // Untried moves as flat indices (r*size+c); shuffled for random expansion order.
   final List<int> _untriedMoves;
 
@@ -26,9 +30,17 @@ class MctsNode {
   bool get isFullyExpanded => _untriedMoves.isEmpty;
   bool get isTerminal => children.isEmpty && _untriedMoves.isEmpty;
 
+  /// UCB1 blended with RAVE (Rapid Action Value Estimation).
+  ///
+  /// β weights RAVE more heavily when [raveVisits] is large relative to
+  /// [visits], then tapers off as the direct evidence grows.
   double ucbScore(int parentVisits) {
     if (visits == 0) return double.infinity;
-    return wins / visits + sqrt(2.0 * log(parentVisits) / visits);
+    final ucb1 = wins / visits + sqrt(2.0 * log(parentVisits) / visits);
+    if (raveVisits == 0) return ucb1;
+    final rave = raveWins / raveVisits;
+    final beta = raveVisits / (raveVisits + visits + 1e-5);
+    return (1.0 - beta) * ucb1 + beta * rave;
   }
 
   MctsNode selectBestChild() => children.reduce(
@@ -171,4 +183,19 @@ class MctsNode {
     if (c < size - 1) result.add([r, c + 1]);
     return result;
   }
+
+  /// Public wrapper — number of liberties of the group at (r, c).
+  /// Used by the heuristic rollout policy in mcts.dart.
+  static int groupLiberties(Uint8List board, int size, int r, int c) =>
+      _liberties(board, size, r, c);
+
+  /// Public wrapper — true if placing [player]'s stone at (r, c) would be
+  /// an illegal suicide move.  Used by the heuristic rollout policy.
+  static bool isSuicideMove(
+    Uint8List board,
+    int size,
+    int r,
+    int c,
+    int player,
+  ) => _isSuicide(board, size, r, c, player);
 }
