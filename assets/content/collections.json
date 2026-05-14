@@ -1,37 +1,135 @@
-[
+﻿[
   {
     "id": "first-captures",
     "title": "First Captures",
-    "description": "Your first taste of taking stones off the board. Five tactical captures.",
+    "description": "Your first taste of taking stones off the board.",
     "iconKey": "close",
-    "puzzleIds": ["capture_1", "capture_2", "capture_3", "capture_5", "capture_6"]
+    "puzzleIds": ["beg-corner-1", "beg-atari-1", "beg-edge-1", "capture_1", "json-cap-1"]
+  },
+  {
+    "id": "beginner-atari",
+    "title": "Atari Basics",
+    "description": "Learn to put stones in atari and escape atari вЂ” the most essential skill.",
+    "iconKey": "warning",
+    "puzzleIds": ["beg-atari-1", "beg-atari-2", "atari-save-1", "atari-save-2", "json-cap-2"]
+  },
+  {
+    "id": "liberty-counting",
+    "title": "Liberty Counting",
+    "description": "Count liberties accurately before every capture attempt.",
+    "iconKey": "calculate",
+    "puzzleIds": ["beg-lib-1", "lib-2-stones-1", "liberty-count-1", "liberty-count-2", "cap-wall-1"]
+  },
+  {
+    "id": "corner-edge-captures",
+    "title": "Corner & Edge Captures",
+    "description": "Use the board boundary вЂ” fewer liberties means easier captures.",
+    "iconKey": "crop_square",
+    "puzzleIds": ["beg-corner-1", "beg-edge-1", "json-cap-3", "cap-horiz-1", "ld-corner-1"]
+  },
+  {
+    "id": "multi-captures",
+    "title": "Capture Multiple Stones",
+    "description": "Spot positions where one move takes two or more groups at once.",
+    "iconKey": "layers",
+    "puzzleIds": ["multi-cap-2", "cap-chain-1", "cap-sq-1", "cap-diamond-1", "cap-bridge-1"]
   },
   {
     "id": "atari-mastery",
     "title": "Atari Mastery",
     "description": "Recognise atari, exploit it, and turn it into a kill.",
-    "iconKey": "warning",
-    "puzzleIds": ["capture_4", "capture_7", "capture_8", "tesuji_1", "tesuji_2"]
+    "iconKey": "bolt",
+    "puzzleIds": ["capture_4", "capture_7", "capture_8", "atari-chain-1", "adv-double-atari-1"]
+  },
+  {
+    "id": "double-atari",
+    "title": "Double Atari (Fork)",
+    "description": "One move that threatens two groups вЂ” the most powerful tactical weapon.",
+    "iconKey": "call_split",
+    "puzzleIds": ["double-atari-1", "double-atari-2", "adv-double-atari-1", "adv-double-atari-2", "tesuji_1"]
+  },
+  {
+    "id": "ladder-collection",
+    "title": "Ladders (Shicho)",
+    "description": "Chase stones in a zigzag until they hit the wall вЂ” or escape.",
+    "iconKey": "stairs",
+    "puzzleIds": ["ladder-intro-1", "ladder-block-1", "ladder-read-1", "ladder-1", "ladder-end-1", "ladder-seq-1"]
+  },
+  {
+    "id": "net-collection",
+    "title": "The Net (Geta)",
+    "description": "Surround a running stone so it cannot escape.",
+    "iconKey": "grid_on",
+    "puzzleIds": ["net-1", "net-2", "escape-1", "capture-chain-1"]
   },
   {
     "id": "ko-fundamentals",
     "title": "Ko Fundamentals",
-    "description": "The rule that prevents infinite loops — and the strategic fights it creates.",
+    "description": "The rule that prevents infinite loops вЂ” and the strategic fights it creates.",
     "iconKey": "loop",
-    "puzzleIds": ["ko_1", "ko_2", "ko_3", "ko_4"]
+    "puzzleIds": ["json-ko-1", "ko-capture-1", "ko-connect-1", "ko_1", "ko_2"]
+  },
+  {
+    "id": "ko-advanced",
+    "title": "Ko Fighting",
+    "description": "Use ko threats, create ko shapes, and win ko fights strategically.",
+    "iconKey": "swap_horiz",
+    "puzzleIds": ["ko-create-1", "ko-fight-1", "ko-win-1", "ko-threat-1", "ko-threat-2", "ko-endgame-1"]
   },
   {
     "id": "life-and-death-i",
-    "title": "Life & Death I",
-    "description": "Make two eyes, or stop your opponent from making them.",
-    "iconKey": "psychology",
-    "puzzleIds": ["life_death_1", "life_death_2", "life_death_3", "life_death_4"]
+    "title": "Life & Death I: Two Eyes",
+    "description": "The fundamental rule of life вЂ” a group with two eyes can never be captured.",
+    "iconKey": "visibility",
+    "puzzleIds": ["ld-two-eyes-1", "ld-two-eyes-2", "json-ld-1", "ld-eye-1", "ld-eye-2"]
   },
   {
-    "id": "endgame-tesuji",
-    "title": "Endgame & Tesuji",
-    "description": "Sharp moves that decide tight games. Intermediate to advanced.",
+    "id": "life-and-death-ii",
+    "title": "Life & Death II: Kill or Live",
+    "description": "Prevent your opponent from forming two eyes вЂ” or form them for yourself.",
+    "iconKey": "psychology",
+    "puzzleIds": ["ld-kill-corner-1", "json-ld-2", "json-ld-3", "ld-kill-1", "tsumego-1", "tsumego-2"]
+  },
+  {
+    "id": "life-and-death-iii",
+    "title": "Life & Death III: Advanced",
+    "description": "False eyes, nakade, seki вЂ” master the complex shapes.",
+    "iconKey": "biotech",
+    "puzzleIds": ["ld-false-eye-1", "ld-nakade-1", "ld-seki-1", "ld-false-eye", "seki-1", "ld-bulky-five-1", "tsumego-3"]
+  },
+  {
+    "id": "tesuji-basics",
+    "title": "Tesuji Basics",
+    "description": "Brilliant moves that solve tactical problems вЂ” the jewels of Go.",
     "iconKey": "auto_fix_high",
-    "puzzleIds": ["tesuji_3", "tesuji_4", "life_death_5", "liberty_6"]
+    "puzzleIds": ["tesuji-connect-1", "tesuji-bamboo-1", "tesuji-extend-1", "connection-1", "connection-2"]
+  },
+  {
+    "id": "tesuji-advanced",
+    "title": "Advanced Tesuji",
+    "description": "Snapbacks, throw-ins, push-and-cut вЂ” sharp moves for sharp players.",
+    "iconKey": "precision_manufacturing",
+    "puzzleIds": ["json-cap-4", "tesuji-throw-1", "tesuji-push-1", "throw-in-1", "tesuji_4", "adv-sacrifice-1"]
+  },
+  {
+    "id": "reading-practice",
+    "title": "Reading Ahead",
+    "description": "Train your ability to calculate sequences several moves deep.",
+    "iconKey": "remove_red_eye",
+    "puzzleIds": ["reading-1", "reading-2", "reading-3", "reading-4", "adv-squeeze-1"]
+  },
+  {
+    "id": "endgame-collection",
+    "title": "Endgame (Yose)",
+    "description": "The final phase вЂ” every point counts. Find the biggest remaining moves.",
+    "iconKey": "flag",
+    "puzzleIds": ["endgame-1", "endgame-reduce-1", "endgame-sente-1", "endgame-boundary-1", "endgame-yose-1", "json-end-1"]
+  },
+  {
+    "id": "go-fundamentals",
+    "title": "Go Fundamentals",
+    "description": "Core concepts every Go player needs: connection, territory, influence.",
+    "iconKey": "school",
+    "puzzleIds": ["fundamentals-connect-1", "fundamentals-corner-1", "fundamentals-hoshi-1", "fundamentals-influence-1", "approach-1", "approach-2"]
   }
 ]

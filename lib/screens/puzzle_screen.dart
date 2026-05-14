@@ -214,18 +214,35 @@ class _PuzzleScreenState extends State<PuzzleScreen>
       });
     });
 
-    // Brief snackbar feedback (drill mode or normal).
+    // Show a rich feedback banner with targeted explanation when available.
+    final targeted = widget.puzzle.failureReasons['$i,$j'];
+    final feedbackMsg = illegal
+        ? 'Illegal move (Ko / suicide) — try another point.'
+        : targeted ?? 'Not the right move — try again!';
+
     ScaffoldMessenger.of(context)
       ..clearSnackBars()
       ..showSnackBar(
         SnackBar(
-          content: Text(
-            illegal
-                ? 'Illegal move (Ko / suicide).'
-                : 'Wrong move — try again!',
+          content: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(Icons.close, color: Colors.white, size: 18),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  feedbackMsg,
+                  style: const TextStyle(color: Colors.white, height: 1.4),
+                ),
+              ),
+            ],
           ),
-          duration: const Duration(milliseconds: 1200),
+          backgroundColor: const Color(0xFFB71C1C),
+          duration: Duration(milliseconds: targeted != null ? 2800 : 1400),
           behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       );
 

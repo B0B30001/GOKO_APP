@@ -21,7 +21,10 @@
       "Bash(grep -v \"^$\")",
       "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\User\\\\StudioProjects\\\\Zaibal\" -Directory)",
       "Bash(Select-Object Name)",
-      "Bash(flutter gen-l10n *)"
+      "Bash(flutter gen-l10n *)",
+      "Bash(Find-ChildItem -Path \"c:\\\\Users\\\\User\\\\StudioProjects\\\\Zaibal\\\\lib\\\\models\\\\optimized_game.dart\" -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object -First 1)",
+      "Bash(Select-Object -First 20)"
     ],
     "additionalDirectories": [
       "c:\\Users\\User\\StudioProjects\\Zaibal"

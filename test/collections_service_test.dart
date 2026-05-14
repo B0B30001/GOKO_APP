@@ -21,7 +21,13 @@ void main() {
 
     test('every puzzleId resolves to a real puzzle in PuzzleData', () async {
       final collections = await ContentService.loadCollections();
-      final allIds = PuzzleData.allPuzzles.map((p) => p.id).toSet();
+      // Use the full runtime puzzle list (JSON + Dart-defined) instead of
+      // PuzzleData.allPuzzles alone — JSON puzzles are also valid targets.
+      final jsonPuzzles = await ContentService.loadPuzzles();
+      final allIds = {
+        ...PuzzleData.allPuzzles.map((p) => p.id),
+        ...jsonPuzzles.map((p) => p.id),
+      };
       for (final c in collections) {
         for (final pid in c.puzzleIds) {
           expect(
