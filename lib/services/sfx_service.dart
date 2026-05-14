@@ -43,12 +43,12 @@ class SfxService {
 
   /// Maps each sound to its asset filename inside `assets/sounds/`.
   static String _assetFor(SfxSound sound) => switch (sound) {
-    SfxSound.stonePlace => 'assets/sounds/stone_place.mp3',
-    SfxSound.capture => 'assets/sounds/capture.mp3',
-    SfxSound.correct => 'assets/sounds/correct.mp3',
-    SfxSound.wrong => 'assets/sounds/wrong.mp3',
-    SfxSound.complete => 'assets/sounds/complete.mp3',
-    SfxSound.lessonComplete => 'assets/sounds/lesson_complete.mp3',
+    SfxSound.stonePlace => 'assets/sounds/stone_place.wav',
+    SfxSound.capture => 'assets/sounds/capture.wav',
+    SfxSound.correct => 'assets/sounds/correct.wav',
+    SfxSound.wrong => 'assets/sounds/wrong.wav',
+    SfxSound.complete => 'assets/sounds/complete.wav',
+    SfxSound.lessonComplete => 'assets/sounds/lesson_complete.wav',
   };
 
   /// Plays [sound] unless [AppSettings.soundEnabled] is false.
