@@ -33,9 +33,22 @@ class ContentService {
   /// coexist while content migrates.
   static Future<List<Puzzle>> loadPuzzles() async {
     if (_jsonPuzzles != null) return _jsonPuzzles!;
-    final raw = await rootBundle.loadString('assets/content/puzzles.json');
-    final list = (json.decode(raw) as List).cast<Map<String, dynamic>>();
-    _jsonPuzzles = list.map(_puzzleFromJson).toList();
+    try {
+      final raw = await rootBundle.loadString('assets/content/puzzles.json');
+      final list = (json.decode(raw) as List).cast<Map<String, dynamic>>();
+      _jsonPuzzles = list
+          .map((e) {
+            try {
+              return _puzzleFromJson(e);
+            } catch (_) {
+              return null;
+            }
+          })
+          .whereType<Puzzle>()
+          .toList();
+    } catch (_) {
+      _jsonPuzzles = [];
+    }
     return _jsonPuzzles!;
   }
 

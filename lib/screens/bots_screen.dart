@@ -721,6 +721,33 @@ class _Avatar extends StatelessWidget {
 
   const _Avatar({required this.bot, required this.available});
 
+  /// Duolingo-style gradient fallback when the avatar asset is missing.
+  Widget _gradientFallback() {
+    final baseColor = available ? bot.color : Colors.grey;
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            baseColor.withValues(alpha: 0.85),
+            baseColor.withValues(alpha: 0.40),
+          ],
+        ),
+      ),
+      child: Center(
+        child: Text(
+          bot.name.isNotEmpty ? bot.name[0].toUpperCase() : '?',
+          style: TextStyle(
+            fontSize: 34,
+            fontWeight: FontWeight.w800,
+            color: Colors.white.withValues(alpha: available ? 1.0 : 0.55),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -741,14 +768,7 @@ class _Avatar extends StatelessWidget {
       child: Image.asset(
         bot.avatarAsset,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => Container(
-          color: bot.color.withValues(alpha: 0.15),
-          child: Icon(
-            bot.icon,
-            size: 42,
-            color: available ? bot.color : Colors.grey,
-          ),
-        ),
+        errorBuilder: (_, __, ___) => _gradientFallback(),
       ),
     );
   }

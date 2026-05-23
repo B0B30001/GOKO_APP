@@ -14,17 +14,65 @@ enum PaywallReason {
   premiumLessons,
 }
 
-/// Stub paywall. Real billing (Apple/Google IAP) will replace
-/// [SubscriptionService.unlockPremium] later.
-class PaywallScreen extends StatelessWidget {
+class PaywallScreen extends StatefulWidget {
   final PaywallReason reason;
 
   const PaywallScreen({super.key, this.reason = PaywallReason.generic});
 
   @override
+  State<PaywallScreen> createState() => _PaywallScreenState();
+}
+
+class _PaywallScreenState extends State<PaywallScreen> {
+  bool _purchasing = false;
+  bool _restoring = false;
+
+  Future<void> _purchase() async {
+    setState(() => _purchasing = true);
+    try {
+      await context.read<SubscriptionService>().purchasePremium();
+      if (mounted && context.read<SubscriptionService>().isPremium) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context).youArePremium)),
+        );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _purchasing = false);
+    }
+  }
+
+  Future<void> _restore() async {
+    setState(() => _restoring = true);
+    try {
+      final restored =
+          await context.read<SubscriptionService>().restorePurchases();
+      if (!mounted) return;
+      final l = AppLocalizations.of(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(restored ? l.youArePremium : l.restorePurchases),
+        ),
+      );
+      if (restored) Navigator.pop(context);
+    } catch (_) {
+    } finally {
+      if (mounted) setState(() => _restoring = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final subscription = context.watch<SubscriptionService>();
+    final cs = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(title: Text(l.premium)),
       body: SafeArea(
@@ -33,7 +81,8 @@ class PaywallScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (reason != PaywallReason.generic) _buildReasonBanner(context),
+              if (widget.reason != PaywallReason.generic)
+                _buildReasonBanner(context, l),
               const Icon(
                 Icons.workspace_premium,
                 size: 80,
@@ -81,28 +130,42 @@ class PaywallScreen extends StatelessWidget {
                 )
               else
                 FilledButton(
-                  onPressed: () async {
-                    await subscription.unlockPremium();
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(l.youArePremium)),
-                      );
-                      Navigator.pop(context);
-                    }
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    child: Text(l.unlockPremium),
+                  onPressed: _purchasing ? null : _purchase,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: cs.primary,
+                    foregroundColor: cs.onPrimary,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
                   ),
+                  child: _purchasing
+                      ? const SizedBox(
+                          height: 22,
+                          width: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Text(
+                          l.unlockPremium,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                 ),
               const SizedBox(height: 8),
               TextButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l.restorePurchases)),
-                  );
-                },
-                child: Text(l.restorePurchases),
+                onPressed: (_restoring || _purchasing) ? null : _restore,
+                child: _restoring
+                    ? const SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Text(l.restorePurchases),
               ),
             ],
           ),
@@ -111,9 +174,8 @@ class PaywallScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildReasonBanner(BuildContext context) {
-    final l = AppLocalizations.of(context);
-    final String text = switch (reason) {
+  Widget _buildReasonBanner(BuildContext context, AppLocalizations l) {
+    final String text = switch (widget.reason) {
       PaywallReason.puzzleDailyQuota => l.puzzleDailyQuotaReached,
       PaywallReason.gameReviewDailyQuota =>
         '${l.postGameAnalysis} — ${l.postGameAnalysisDesc}',

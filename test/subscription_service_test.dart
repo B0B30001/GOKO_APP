@@ -48,7 +48,7 @@ void main() {
     test('unlimited attempts after unlockPremium', () async {
       final svc = SubscriptionService(now: () => DateTime.utc(2026, 5, 10));
       await svc.load();
-      await svc.unlockPremium();
+      await svc.purchasePremium();
       expect(svc.isPremium, isTrue);
       for (var i = 0; i < 100; i++) {
         expect(svc.canSolveAnotherPuzzle(), isTrue);

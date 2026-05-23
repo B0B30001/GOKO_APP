@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:zaibal/models/user.dart';
+import 'iap_service.dart';
 
 /// Entitlements derived from the current subscription tier.
 class Entitlements {
@@ -129,8 +131,51 @@ class SubscriptionService extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Stub purchase flow. Flips the local flag.
-  Future<void> unlockPremium() async {
+  /// Launches the Google Play purchase sheet via RevenueCat.
+  ///
+  /// Falls back to a local stub flip when IapService is not yet configured
+  /// (API key still has the placeholder value) so the paywall remains
+  /// testable in development without a real Play Store listing.
+  ///
+  /// Throws [PurchasesErrorCode] on a real billing failure (not on cancel —
+  /// cancel is treated as a silent no-op). The UI layer must catch these.
+  Future<void> purchasePremium() async {
+    if (!IapService.instance.isConfigured) {
+      // Dev/test: RevenueCat not set up yet — use local stub.
+      await _stubUnlockPremium();
+      return;
+    }
+    try {
+      final success = await IapService.instance.purchase();
+      if (success) {
+        _tier = SubscriptionTier.premium;
+        await _persist();
+        notifyListeners();
+      }
+    } on PurchasesErrorCode catch (e) {
+      if (e == PurchasesErrorCode.purchaseCancelledError) return;
+      rethrow;
+    }
+  }
+
+  /// Restores a previous Google Play purchase. Returns true when premium
+  /// was successfully restored.
+  Future<bool> restorePurchases() async {
+    try {
+      final restored = await IapService.instance.restorePurchases();
+      if (restored) {
+        _tier = SubscriptionTier.premium;
+        await _persist();
+        notifyListeners();
+      }
+      return restored;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Dev/testing stub — flips premium locally without a real purchase.
+  Future<void> _stubUnlockPremium() async {
     _tier = SubscriptionTier.premium;
     await _persist();
     notifyListeners();

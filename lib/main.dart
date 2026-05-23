@@ -19,6 +19,7 @@ import 'package:zaibal/services/user_service.dart';
 import 'package:zaibal/services/subscription_service.dart';
 import 'package:zaibal/services/match_history_service.dart';
 import 'package:zaibal/services/progress_service.dart';
+import 'package:zaibal/services/iap_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +27,10 @@ Future<void> main() async {
   // Load persisted settings before runApp so the first frame uses the user's
   // saved theme, board variant, etc.
   await AppSettings.load();
+
+  // Initialize RevenueCat for Android IAP. No-op if API key is still the
+  // placeholder or when running on web.
+  await IapService.init();
 
   // Trim logs in release or when verboseLogs is false
   if (kReleaseMode || !AppSettings.verboseLogs) {

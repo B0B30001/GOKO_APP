@@ -25,11 +25,27 @@ import 'paywall_screen.dart';
 /// 3. Three level sections (Beginner, Intermediate, Advanced) with collapsible
 ///    lesson rows. Tap a lesson → animated step-through, then puzzle practice.
 /// 4. Quick Drills at the bottom (timed rushing — preserved).
-class LearnScreen extends StatelessWidget {
+class LearnScreen extends StatefulWidget {
   /// When false the screen is hosted inside [AppShell]; suppress per-screen nav.
   final bool showBottomNav;
 
   const LearnScreen({super.key, this.showBottomNav = true});
+
+  @override
+  State<LearnScreen> createState() => _LearnScreenState();
+}
+
+class _LearnScreenState extends State<LearnScreen> {
+  // Stored so FutureBuilder never re-fires when subscription state changes.
+  late Future<List<Tutorial>> _tutorialsFuture;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _tutorialsFuture = ContentService.loadTutorials(
+      languageCode: Localizations.localeOf(context).languageCode,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,12 +64,10 @@ class LearnScreen extends StatelessWidget {
         ),
       ),
       body: FutureBuilder<List<Tutorial>>(
-        future: ContentService.loadTutorials(
-          languageCode: Localizations.localeOf(context).languageCode,
-        ),
+        future: _tutorialsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
+            return const _LearnScreenSkeleton();
           }
           final tutorials = snapshot.data ?? const <Tutorial>[];
           return ListView(
@@ -92,8 +106,8 @@ class LearnScreen extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: showBottomNav ? const MenuFab() : null,
-      bottomNavigationBar: showBottomNav
+      floatingActionButton: widget.showBottomNav ? const MenuFab() : null,
+      bottomNavigationBar: widget.showBottomNav
           ? BottomNavBar(
               currentIndex: 1,
               onTap: (index) {
@@ -121,6 +135,81 @@ class LearnScreen extends StatelessWidget {
     DrillData.getDrillById('ko_master'),
     DrillData.getDrillById('tesuji_blitz'),
   ];
+}
+
+// ── Skeleton loading state ─────────────────────────────────────────────────
+
+/// Pulsing placeholder shown while tutorials are loading from disk.
+class _LearnScreenSkeleton extends StatefulWidget {
+  const _LearnScreenSkeleton();
+
+  @override
+  State<_LearnScreenSkeleton> createState() => _LearnScreenSkeletonState();
+}
+
+class _LearnScreenSkeletonState extends State<_LearnScreenSkeleton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _anim;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1100),
+    )..repeat(reverse: true);
+    _anim = CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut);
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _anim,
+      builder: (context, _) {
+        final opacity = 0.35 + 0.35 * _anim.value;
+        return ListView(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
+          children: [
+            _shimmerBox(height: 80, radius: 16, opacity: opacity),
+            const SizedBox(height: 16),
+            for (var i = 0; i < 3; i++) ...[
+              _shimmerBox(height: 24, width: 120, radius: 6, opacity: opacity),
+              const SizedBox(height: 8),
+              for (var j = 0; j < 3; j++) ...[
+                _shimmerBox(height: 64, radius: 12, opacity: opacity),
+                const SizedBox(height: 8),
+              ],
+              const SizedBox(height: 12),
+            ],
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _shimmerBox({
+    required double height,
+    double? width,
+    required double radius,
+    required double opacity,
+  }) {
+    final cs = Theme.of(context).colorScheme;
+    return Container(
+      height: height,
+      width: width,
+      decoration: BoxDecoration(
+        color: cs.onSurface.withValues(alpha: opacity * 0.15),
+        borderRadius: BorderRadius.circular(radius),
+      ),
+    );
+  }
 }
 
 // ── Progress header ────────────────────────────────────────────────────────

@@ -1351,6 +1351,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
   }
 
   void _checkLowTimeAlerts() {
+    if (!mounted) return;
     // Only alert for my turn during play phase
     if (_phase != 'play' || !_isMyTurn || _myColor == null) {
       return;
