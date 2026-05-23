@@ -45,6 +45,7 @@ class SettingsScreen extends StatefulWidget {
 // Maps the display name shown in the picker to a BCP-47 language code.
 const _kLanguageOptions = <String, String>{
   'English': 'en',
+  'Deutsch': 'de',
   'Русский': 'ru',
   '中文': 'zh',
   '日本語': 'ja',
@@ -61,6 +62,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late String _backgroundThemeId;
   late String _themePresetId;
   late bool _isDark;
+  late String _stoneColorId;
 
   String get _selectedLanguage => _kLanguageOptions.entries
       .firstWhere(
@@ -81,6 +83,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _languageCode = widget.languageCode;
     _soundEnabled = AppSettings.soundEnabled;
     _vibrationEnabled = AppSettings.hapticsEnabled;
+    _stoneColorId = AppSettings.stoneColorId;
   }
 
   @override
@@ -102,11 +105,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         children: [
           _buildSection(l.appearance, [
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
               child: Text(l.themeLabel),
             ),
             _buildThemePresetPicker(),
             SwitchListTile(
+              dense: true,
               title: Text(l.darkMode),
               subtitle: Text(l.darkModeSubtitle),
               value: _isDark,
@@ -116,16 +120,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
               child: Text(l.boardThemeLabel),
             ),
-            _MiniBoardPreview(theme: GoBoardTheme.byId(_boardThemeId)),
+            _MiniBoardPreview(
+              theme: GoBoardTheme.byId(_boardThemeId),
+              stones: StoneColorPreset.byId(_stoneColorId),
+            ),
             _buildBoardThemePicker(),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
               child: Text(l.backgroundThemeLabel),
             ),
             _buildBackgroundThemePicker(),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+              child: Text(_stoneColorsLabel(l)),
+            ),
+            _buildStoneColorPicker(),
           ]),
           _buildSection(l.general, [
             SwitchListTile(
@@ -189,16 +201,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          padding: const EdgeInsets.fromLTRB(16, 10, 16, 4),
           child: Text(
             title,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: Theme.of(context).primaryColor,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.4,
             ),
           ),
         ),
         ...children,
-        const Divider(),
+        const Divider(height: 1),
       ],
     );
   }
@@ -209,15 +223,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l.appLanguage),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildLanguageOption('English'),
-            _buildLanguageOption('Русский'),
-            _buildLanguageOption('中文'),
-            _buildLanguageOption('日本語'),
-            _buildLanguageOption('한국어'),
-          ],
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: _kLanguageOptions.keys
+                .map(_buildLanguageOption)
+                .toList(),
+          ),
         ),
       ),
     );
@@ -226,7 +238,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildThemePresetPicker() {
     final l = AppLocalizations.of(context);
     return SizedBox(
-      height: 96,
+      height: 84,
       child: ListView(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -261,7 +273,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildBoardThemePicker() {
     return SizedBox(
-      height: 96,
+      height: 84,
       child: ListView(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -283,9 +295,55 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  Widget _buildStoneColorPicker() {
+    return SizedBox(
+      height: 88,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        children: StoneColorPreset.all.map((preset) {
+          final selected = preset.id == _stoneColorId;
+          return _StoneColorSwatch(
+            label: _stoneColorLabel(preset.id),
+            selected: selected,
+            preset: preset,
+            boardColor: GoBoardTheme.byId(_boardThemeId).boardColor,
+            onTap: () {
+              setState(() => _stoneColorId = preset.id);
+              AppSettings.stoneColorId = preset.id;
+              AppSettings.save();
+            },
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  String _stoneColorsLabel(AppLocalizations l) {
+    // TODO(l10n): replace with l.stoneColors once ARB regenerated.
+    return switch (l.localeName) {
+      'ru' => 'Цвета камней',
+      'zh' => '棋子颜色',
+      'ja' => '石の色',
+      'ko' => '돌 색상',
+      'de' => 'Steinfarben',
+      _ => 'Stone Colors',
+    };
+  }
+
+  String _stoneColorLabel(String id) => switch (id) {
+    StoneColorId.classic => 'Classic',
+    StoneColorId.jade => 'Jade',
+    StoneColorId.amber => 'Amber',
+    StoneColorId.cobalt => 'Cobalt',
+    StoneColorId.crimson => 'Crimson',
+    StoneColorId.mono => 'Mono',
+    _ => id,
+  };
+
   Widget _buildBackgroundThemePicker() {
     return SizedBox(
-      height: 96,
+      height: 84,
       child: ListView(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -362,7 +420,7 @@ class _ThemeSwatch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       child: GestureDetector(
         onTap: onTap,
         child: Column(
@@ -370,7 +428,7 @@ class _ThemeSwatch extends StatelessWidget {
           children: [
             Container(
               width: 64,
-              height: 56,
+              height: 52,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [primary, secondary],
@@ -395,22 +453,108 @@ class _ThemeSwatch extends StatelessWidget {
   }
 }
 
-// ── Live board theme preview ───────────────────────────────────────────────
+// ── Stone color swatch ────────────────────────────────────────────────────
 
-class _MiniBoardPreview extends StatelessWidget {
-  final GoBoardTheme theme;
+class _StoneColorSwatch extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final StoneColorPreset preset;
+  final Color boardColor;
+  final VoidCallback onTap;
 
-  const _MiniBoardPreview({required this.theme});
+  const _StoneColorSwatch({
+    required this.label,
+    required this.selected,
+    required this.preset,
+    required this.boardColor,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      child: GestureDetector(
+        onTap: onTap,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 64,
+              height: 52,
+              decoration: BoxDecoration(
+                color: boardColor,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: selected
+                      ? Theme.of(context).colorScheme.primary
+                      : Colors.transparent,
+                  width: 3,
+                ),
+              ),
+              child: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 16,
+                      height: 16,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          colors: [preset.darkHighlight, preset.dark],
+                          center: const Alignment(-0.3, -0.3),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Container(
+                      width: 16,
+                      height: 16,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          colors: [preset.lightHighlight, preset.light],
+                          center: const Alignment(-0.3, -0.3),
+                        ),
+                        border: Border.all(
+                          color: Colors.black.withValues(alpha: 0.15),
+                          width: 0.5,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(label, style: const TextStyle(fontSize: 11)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Live board theme preview ───────────────────────────────────────────────
+
+class _MiniBoardPreview extends StatelessWidget {
+  final GoBoardTheme theme;
+  final StoneColorPreset stones;
+
+  const _MiniBoardPreview({required this.theme, required this.stones});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
         child: SizedBox(
-          height: 180,
-          child: CustomPaint(painter: _MiniBoardPainter(theme: theme)),
+          height: 160,
+          child: CustomPaint(
+            painter: _MiniBoardPainter(theme: theme, stones: stones),
+          ),
         ),
       ),
     );
@@ -419,8 +563,9 @@ class _MiniBoardPreview extends StatelessWidget {
 
 class _MiniBoardPainter extends CustomPainter {
   final GoBoardTheme theme;
+  final StoneColorPreset stones;
 
-  const _MiniBoardPainter({required this.theme});
+  const _MiniBoardPainter({required this.theme, required this.stones});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -461,9 +606,9 @@ class _MiniBoardPainter extends CustomPainter {
       );
     }
 
-    // Example stones
-    final blackPaint = Paint()..color = theme.blackStoneColor;
-    final whitePaint = Paint()..color = theme.whiteStoneColor;
+    // Example stones — preview reflects the currently selected stone preset.
+    final blackPaint = Paint()..color = stones.dark;
+    final whitePaint = Paint()..color = stones.light;
     final borderPaint = Paint()
       ..color = theme.lineColor.withValues(alpha: 0.5)
       ..style = PaintingStyle.stroke
@@ -485,5 +630,6 @@ class _MiniBoardPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_MiniBoardPainter old) => old.theme != theme;
+  bool shouldRepaint(_MiniBoardPainter old) =>
+      old.theme != theme || old.stones.id != stones.id;
 }

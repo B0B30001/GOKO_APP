@@ -79,9 +79,7 @@ class ProfileScreen extends StatelessWidget {
                 _buildSparklineCard(context, progress),
                 const SizedBox(height: 16),
                 if (!subscription.isPremium) _buildPremiumCta(context),
-                _buildRecentGamesHeader(context),
-                const SizedBox(height: 8),
-                ..._buildRecentGames(context, history),
+                _buildRecentGamesPanel(context, history),
               ]),
             ),
           ),
@@ -149,12 +147,47 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
             if (subscription.isPremium) ...[
-              const SizedBox(height: 4),
-              Chip(
-                label: Text(AppLocalizations.of(context).premium),
-                avatar: const Icon(Icons.workspace_premium, size: 16),
-                backgroundColor: Colors.amberAccent,
-                visualDensity: VisualDensity.compact,
+              const SizedBox(height: 6),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFFFD45A), Color(0xFFFF9F1C)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.amber.withValues(alpha: 0.4),
+                      blurRadius: 8,
+                      spreadRadius: 1,
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.workspace_premium,
+                      size: 16,
+                      color: Colors.white,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'GOKO ${AppLocalizations.of(context).premium}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 12,
+                        letterSpacing: 0.6,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ],
@@ -322,43 +355,82 @@ class ProfileScreen extends StatelessWidget {
 
   // ── recent games ─────────────────────────────────────────────────────────
 
-  Widget _buildRecentGamesHeader(BuildContext context) {
-    return Row(
-      children: [
-        Text(
-          'Recent Games',
-          style: Theme.of(
-            context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
-        ),
-        const Spacer(),
-        TextButton(
-          onPressed: () => Navigator.pushNamed(context, '/history'),
-          child: Text(AppLocalizations.of(context).seeAll),
-        ),
-      ],
-    );
-  }
-
-  List<Widget> _buildRecentGames(
+  /// Always-visible panel of the last 10 games — chess.com pattern.
+  /// Single Card with header strip + tile list inside, so the "this is your
+  /// games" hierarchy is obvious without any expand/tap.
+  Widget _buildRecentGamesPanel(
     BuildContext context,
     MatchHistoryService history,
   ) {
+    final l = AppLocalizations.of(context);
+    final cs = Theme.of(context).colorScheme;
     final records = history.records.take(10).toList();
-    if (records.isEmpty) {
-      return [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 4, 0, 16),
-          child: Text(AppLocalizations.of(context).noGamesYet),
-        ),
-      ];
-    }
-    return records
-        .map(
-          (r) =>
-              GameRecordTile(record: r, onTap: () => _openRecord(context, r)),
-        )
-        .toList();
+    final totalCount = history.records.length;
+
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
+            decoration: BoxDecoration(
+              color: cs.primaryContainer.withValues(alpha: 0.45),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.history, color: cs.primary, size: 20),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    totalCount > 0
+                        ? '${l.gameHistory} · $totalCount'
+                        : l.gameHistory,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                if (totalCount > 10)
+                  TextButton(
+                    onPressed: () => Navigator.pushNamed(context, '/history'),
+                    child: Text(l.seeAll),
+                  ),
+              ],
+            ),
+          ),
+          if (records.isEmpty)
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Center(
+                child: Text(
+                  l.noGamesYet,
+                  style: TextStyle(color: cs.onSurfaceVariant),
+                ),
+              ),
+            )
+          else
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              itemCount: records.length,
+              separatorBuilder: (_, __) => Divider(
+                height: 1,
+                indent: 16,
+                endIndent: 16,
+                color: cs.outlineVariant.withValues(alpha: 0.4),
+              ),
+              itemBuilder: (_, i) => GameRecordTile(
+                record: records[i],
+                compact: true,
+                onTap: () => _openRecord(context, records[i]),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 
   void _openRecord(BuildContext context, MatchRecord r) {

@@ -460,6 +460,88 @@ class GoBoardTheme {
   }
 }
 
+/// Chess.com-style stone color variants. Overrides the board theme's default
+/// black/white stones with a paired palette. Selected via `AppSettings.stoneColorId`.
+class StoneColorPreset {
+  final String id;
+  final Color dark;
+  final Color light;
+  final Color darkHighlight;
+  final Color lightHighlight;
+
+  const StoneColorPreset({
+    required this.id,
+    required this.dark,
+    required this.light,
+    required this.darkHighlight,
+    required this.lightHighlight,
+  });
+
+  static const classic = StoneColorPreset(
+    id: 'classic',
+    dark: Color(0xFF111111),
+    light: Color(0xFFF6F0DC),
+    darkHighlight: Color(0xFF3A3A3A),
+    lightHighlight: Color(0xFFFFFFFF),
+  );
+
+  static const jade = StoneColorPreset(
+    id: 'jade',
+    dark: Color(0xFF0E3B2A),
+    light: Color(0xFFE9F3DC),
+    darkHighlight: Color(0xFF1F6E4F),
+    lightHighlight: Color(0xFFFFFFFF),
+  );
+
+  static const amber = StoneColorPreset(
+    id: 'amber',
+    dark: Color(0xFF3D2110),
+    light: Color(0xFFFFC857),
+    darkHighlight: Color(0xFF6B3D1F),
+    lightHighlight: Color(0xFFFFE08A),
+  );
+
+  static const cobalt = StoneColorPreset(
+    id: 'cobalt',
+    dark: Color(0xFF0B1F45),
+    light: Color(0xFFBFE3FF),
+    darkHighlight: Color(0xFF1E3D7A),
+    lightHighlight: Color(0xFFE3F2FF),
+  );
+
+  static const crimson = StoneColorPreset(
+    id: 'crimson',
+    dark: Color(0xFF4A0E1E),
+    light: Color(0xFFFFD6E0),
+    darkHighlight: Color(0xFF7A1F3A),
+    lightHighlight: Color(0xFFFFEAF0),
+  );
+
+  static const mono = StoneColorPreset(
+    id: 'mono',
+    dark: Color(0xFF2E2E2E),
+    light: Color(0xFFFAFAFA),
+    darkHighlight: Color(0xFF505050),
+    lightHighlight: Color(0xFFFFFFFF),
+  );
+
+  static const all = <StoneColorPreset>[
+    classic,
+    jade,
+    amber,
+    cobalt,
+    crimson,
+    mono,
+  ];
+
+  static StoneColorPreset byId(String id) {
+    for (final p in all) {
+      if (p.id == id) return p;
+    }
+    return classic;
+  }
+}
+
 /// Background appearance variants for app surfaces (scaffold/canvas behind the
 /// board). Resolved by id from settings.
 class GoBackgroundTheme {

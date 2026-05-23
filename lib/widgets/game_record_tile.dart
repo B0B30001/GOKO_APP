@@ -13,10 +13,15 @@ class GameRecordTile extends StatelessWidget {
   /// Hide the chevron when the tile is non-interactive (e.g. on a recap list).
   final bool showChevron;
 
+  /// When true, the tile renders without its own Card wrapper — for use
+  /// inside an existing Card/grouped panel (e.g. profile recent-games list).
+  final bool compact;
+
   const GameRecordTile({
     required this.record,
     this.onTap,
     this.showChevron = true,
+    this.compact = false,
     super.key,
   });
 
@@ -24,82 +29,85 @@ class GameRecordTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = _resultColor(record.result);
     final textTheme = Theme.of(context).textTheme;
+    final inner = InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(compact ? 0 : 12),
+      child: Padding(
+        padding: EdgeInsets.all(compact ? 12 : 14),
+        child: _rowContent(color, textTheme, context),
+      ),
+    );
+    if (compact) return inner;
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: Row(
+      child: inner,
+    );
+  }
+
+  Widget _rowContent(Color color, TextTheme textTheme, BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 4,
+          height: 44,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 4,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'vs ${record.opponent}',
-                            style: textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.w700,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        _SourceBadge(source: record.source),
-                      ],
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'vs ${record.opponent}',
+                      style: textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      '${record.boardSize}×${record.boardSize}  ·  ${_relative(record.playedAt)}',
-                      style: textTheme.bodySmall,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  _resultLabel(record.result),
-                  style: TextStyle(
-                    color: color,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 12,
                   ),
-                ),
+                  _SourceBadge(source: record.source),
+                ],
               ),
-              if (showChevron) ...[
-                const SizedBox(width: 4),
-                Icon(
-                  Icons.chevron_right,
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.4),
-                ),
-              ],
+              const SizedBox(height: 2),
+              Text(
+                '${record.boardSize}×${record.boardSize}  ·  ${_relative(record.playedAt)}',
+                style: textTheme.bodySmall,
+              ),
             ],
           ),
         ),
-      ),
+        const SizedBox(width: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            _resultLabel(record.result),
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.w700,
+              fontSize: 12,
+            ),
+          ),
+        ),
+        if (showChevron) ...[
+          const SizedBox(width: 4),
+          Icon(
+            Icons.chevron_right,
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.4),
+          ),
+        ],
+      ],
     );
   }
 

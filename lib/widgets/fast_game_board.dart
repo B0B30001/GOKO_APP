@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'dart:ui' as ui;
 
+import 'package:zaibal/models/app_settings.dart';
+import 'package:zaibal/theme/go_theme.dart';
+
 /// Ultra-fast game board optimized for all board sizes (9x9, 13x13, 19x19)
 ///
 /// Performance optimizations:
@@ -259,6 +262,7 @@ class _FastGameBoardState extends State<FastGameBoard> {
               child: _StoneWidget(
                 isBlack: isBlack,
                 size: adjustedCellSize * 0.45,
+                preset: StoneColorPreset.byId(AppSettings.stoneColorId),
               ),
             ),
           );
@@ -614,8 +618,13 @@ class _HoverPainter extends CustomPainter {
 class _StoneWidget extends StatefulWidget {
   final bool isBlack;
   final double size;
+  final StoneColorPreset preset;
 
-  const _StoneWidget({required this.isBlack, required this.size});
+  const _StoneWidget({
+    required this.isBlack,
+    required this.size,
+    required this.preset,
+  });
 
   @override
   State<_StoneWidget> createState() => _StoneWidgetState();
@@ -651,7 +660,11 @@ class _StoneWidgetState extends State<_StoneWidget>
         ),
         child: CustomPaint(
           size: Size(widget.size * 2, widget.size * 2),
-          painter: _StonePainter(isBlack: widget.isBlack, radius: widget.size),
+          painter: _StonePainter(
+            isBlack: widget.isBlack,
+            radius: widget.size,
+            preset: widget.preset,
+          ),
           isComplex: true,
           willChange: false,
         ),
@@ -660,15 +673,24 @@ class _StoneWidgetState extends State<_StoneWidget>
   }
 }
 
-/// Stone painter - draws individual stones with cached paints
+/// Stone painter - draws individual stones with cached paints.
+/// Stone fill colors come from the active [StoneColorPreset], so changing
+/// the preset in settings re-skins all stones without touching board logic.
 class _StonePainter extends CustomPainter {
   final bool isBlack;
   final double radius;
+  final StoneColorPreset preset;
 
-  // Static paint cache shared across all stone painters
+  // Static paint cache shared across all stone painters. Keyed by preset.id
+  // so each variant gets its own cached Paint and Flutter can reuse them
+  // across frames without re-allocating.
   static final Map<String, Paint> _paintCache = {};
 
-  const _StonePainter({required this.isBlack, required this.radius});
+  const _StonePainter({
+    required this.isBlack,
+    required this.radius,
+    required this.preset,
+  });
 
   Paint _getCachedPaint(String key, Paint Function() creator) {
     return _paintCache.putIfAbsent(key, creator);
@@ -686,40 +708,45 @@ class _StonePainter extends CustomPainter {
     });
     canvas.drawCircle(center.translate(2, 2), radius, shadowPaint);
 
-    // Stone (cached)
-    final stonePaint = _getCachedPaint('stone_$isBlack', () {
+    // Stone (cached per preset + color variant)
+    final stoneKey = 'stone_${preset.id}_$isBlack';
+    final stonePaint = _getCachedPaint(stoneKey, () {
       return Paint()
         ..style = PaintingStyle.fill
-        ..color = isBlack ? Colors.black : Colors.white;
+        ..color = isBlack ? preset.dark : preset.light;
     });
     canvas.drawCircle(center, radius, stonePaint);
 
-    // Highlight for white stones (cached)
-    if (!isBlack) {
-      final highlightPaint = _getCachedPaint('highlight_${radius.toInt()}', () {
-        return Paint()
-          ..style = PaintingStyle.fill
-          ..shader =
-              RadialGradient(
-                colors: [
-                  Colors.white.withValues(alpha: 0.5),
-                  Colors.white.withValues(alpha: 0),
-                ],
-              ).createShader(
-                Rect.fromCircle(center: Offset.zero, radius: radius * 0.8),
-              );
-      });
+    // Highlight (cached per preset + color variant + radius)
+    final highlightKey = 'highlight_${preset.id}_${isBlack}_${radius.toInt()}';
+    final highlightColor = isBlack
+        ? preset.darkHighlight
+        : preset.lightHighlight;
+    final highlightPaint = _getCachedPaint(highlightKey, () {
+      return Paint()
+        ..style = PaintingStyle.fill
+        ..shader =
+            RadialGradient(
+              colors: [
+                highlightColor.withValues(alpha: isBlack ? 0.4 : 0.55),
+                highlightColor.withValues(alpha: 0),
+              ],
+            ).createShader(
+              Rect.fromCircle(center: Offset.zero, radius: radius * 0.8),
+            );
+    });
 
-      canvas.save();
-      canvas.translate(center.dx - radius * 0.3, center.dy - radius * 0.3);
-      canvas.drawCircle(Offset.zero, radius, highlightPaint);
-      canvas.restore();
-    }
+    canvas.save();
+    canvas.translate(center.dx - radius * 0.3, center.dy - radius * 0.3);
+    canvas.drawCircle(Offset.zero, radius, highlightPaint);
+    canvas.restore();
   }
 
   @override
   bool shouldRepaint(_StonePainter oldDelegate) {
-    return isBlack != oldDelegate.isBlack || radius != oldDelegate.radius;
+    return isBlack != oldDelegate.isBlack ||
+        radius != oldDelegate.radius ||
+        preset.id != oldDelegate.preset.id;
   }
 }
 

@@ -64,7 +64,9 @@ class _PuzzlesHubScreenState extends State<PuzzlesHubScreen> {
               solvedToday: progress.solvedCount,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
+          const _QuotaPill(),
+          const SizedBox(height: 12),
           ChangeNotifierProvider.value(
             value: _daily,
             child: const _DailySetCard(),
@@ -587,6 +589,96 @@ class _CategoryCard extends StatelessWidget {
             Container(height: 4, color: spec.tint),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Chess.com-style daily-puzzle quota pill. Shows "X / N free puzzles today"
+/// for free users, "Unlimited" for premium. Turns amber + clickable when
+/// the free quota is exhausted; tap opens the paywall.
+class _QuotaPill extends StatelessWidget {
+  const _QuotaPill();
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final sub = context.watch<SubscriptionService>();
+    final cs = Theme.of(context).colorScheme;
+
+    if (sub.isPremium) {
+      return _PillContainer(
+        bg: Colors.amber.withValues(alpha: 0.18),
+        fg: Colors.amber.shade800,
+        icon: Icons.workspace_premium,
+        text: '${l.today}: ∞ ${l.unlimitedPuzzles}',
+      );
+    }
+
+    final solved = sub.dailyPuzzlesSolved;
+    final cap = SubscriptionService.freeDailyPuzzleQuota;
+    final exhausted = solved >= cap;
+
+    final container = _PillContainer(
+      bg: exhausted
+          ? Colors.amber.withValues(alpha: 0.20)
+          : cs.primary.withValues(alpha: 0.10),
+      fg: exhausted ? Colors.amber.shade800 : cs.primary,
+      icon: exhausted ? Icons.lock_outline : Icons.bolt,
+      text: '${l.today}: $solved / $cap',
+    );
+
+    if (!exhausted) return container;
+    return InkWell(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) =>
+              const PaywallScreen(reason: PaywallReason.puzzleDailyQuota),
+        ),
+      ),
+      borderRadius: BorderRadius.circular(20),
+      child: container,
+    );
+  }
+}
+
+class _PillContainer extends StatelessWidget {
+  final Color bg;
+  final Color fg;
+  final IconData icon;
+  final String text;
+
+  const _PillContainer({
+    required this.bg,
+    required this.fg,
+    required this.icon,
+    required this.text,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: fg.withValues(alpha: 0.4), width: 1),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: fg, size: 16),
+          const SizedBox(width: 8),
+          Text(
+            text,
+            style: TextStyle(
+              color: fg,
+              fontWeight: FontWeight.w700,
+              fontSize: 13,
+            ),
+          ),
+        ],
       ),
     );
   }

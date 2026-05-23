@@ -100,6 +100,36 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.green.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.local_fire_department,
+                      size: 14,
+                      color: Colors.green.shade700,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      _trialLabel(l),
+                      style: TextStyle(
+                        color: Colors.green.shade700,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               const SizedBox(height: 24),
               _FeatureRow(
                 icon: Icons.all_inclusive,
@@ -172,6 +202,18 @@ class _PaywallScreenState extends State<PaywallScreen> {
         ),
       ),
     );
+  }
+
+  String _trialLabel(AppLocalizations l) {
+    // TODO(l10n): replace with `l.freeTrialBadge` once the key is in all ARBs.
+    return switch (l.localeName) {
+      'ru' => '7 дней бесплатно',
+      'zh' => '7 天免费试用',
+      'ja' => '7日間無料',
+      'ko' => '7일 무료',
+      'de' => '7 Tage kostenlos',
+      _ => '7-day free trial',
+    };
   }
 
   Widget _buildReasonBanner(BuildContext context, AppLocalizations l) {

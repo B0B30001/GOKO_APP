@@ -22,6 +22,19 @@ class BackgroundThemeId {
   static const all = <String>[standard, minimal, warm, cool];
 }
 
+/// Identifiers for stone-color variants (chess.com-style). Resolved via
+/// StoneColorPreset.byId(...) in `theme/go_theme.dart`.
+class StoneColorId {
+  static const classic = 'classic'; // black + ivory
+  static const jade = 'jade';
+  static const amber = 'amber';
+  static const cobalt = 'cobalt';
+  static const crimson = 'crimson';
+  static const mono = 'mono';
+
+  static const all = <String>[classic, jade, amber, cobalt, crimson, mono];
+}
+
 /// Global, app-wide settings.
 ///
 /// Static fields preserve compatibility with existing call sites
@@ -43,8 +56,11 @@ class AppSettings {
   /// Defaults to the new Chess.com-style dark blue preset.
   static String themePresetId = 'darkBlue';
 
-  /// BCP-47 language code used for the app locale.  Supported: 'en', 'zh', 'ru'.
+  /// BCP-47 language code used for the app locale.  Supported: 'en', 'zh', 'ru', 'ja', 'ko', 'de'.
   static String languageCode = 'en';
+
+  /// Stone color preset id (see [StoneColorId]). Defaults to classic black+ivory.
+  static String stoneColorId = StoneColorId.classic;
 
   /// Whether in-game sound effects are enabled (stone placement, captures,
   /// puzzle feedback, completion fanfares).
@@ -69,6 +85,7 @@ class AppSettings {
   static const _kLanguageCode = 'languageCode';
   static const _kSoundEnabled = 'soundEnabled';
   static const _kHapticsEnabled = 'hapticsEnabled';
+  static const _kStoneColorId = 'stoneColorId';
 
   /// Reads persisted values into the static fields. Must be called once at
   /// startup before runApp().
@@ -94,6 +111,7 @@ class AppSettings {
     languageCode = prefs.getString(_kLanguageCode) ?? languageCode;
     soundEnabled = prefs.getBool(_kSoundEnabled) ?? soundEnabled;
     hapticsEnabled = prefs.getBool(_kHapticsEnabled) ?? hapticsEnabled;
+    stoneColorId = prefs.getString(_kStoneColorId) ?? stoneColorId;
     revision.value++;
   }
 
@@ -109,6 +127,7 @@ class AppSettings {
     await prefs.setString(_kLanguageCode, languageCode);
     await prefs.setBool(_kSoundEnabled, soundEnabled);
     await prefs.setBool(_kHapticsEnabled, hapticsEnabled);
+    await prefs.setString(_kStoneColorId, stoneColorId);
     revision.value++;
   }
 
