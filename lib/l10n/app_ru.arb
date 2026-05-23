@@ -270,5 +270,45 @@
   "snapback": "Сикко",
   "ladder": "Лестница",
   "connect": "Соединение",
-  "lockedPremium": "Премиум"
+  "lockedPremium": "Премиум",
+
+  "stoneColors": "Цвета камней",
+  "stoneColorClassic": "Классические",
+  "stoneColorJade": "Нефрит",
+  "stoneColorAmber": "Янтарь",
+  "stoneColorCobalt": "Кобальт",
+  "stoneColorCrimson": "Багровый",
+  "stoneColorMono": "Моно",
+
+  "freeTrialBadge": "7 дней бесплатно",
+  "freeTrialSubtitle": "Отмена в любое время",
+
+  "ogsLogin": "Вход OGS",
+  "onlineGoServer": "Online Go Server",
+  "signInWithOgsAccount": "Войдите в свой аккаунт OGS",
+  "signIn": "Войти",
+  "username": "Имя пользователя",
+  "password": "Пароль",
+  "enterUsernamePassword": "Пожалуйста, введите имя пользователя и пароль",
+  "loginFailed": "Ошибка входа. Проверьте данные.",
+  "errorPrefix": "Ошибка: ",
+  "noAccountSignUp": "Нет аккаунта? Зарегистрируйтесь на OGS",
+
+  "onlinePlay": "Игра онлайн",
+  "onlineStatusConnected": "Онлайн",
+  "onlineStatusOffline": "Не в сети",
+  "ogsPlayer": "Игрок OGS",
+  "notLoggedIn": "Не выполнен вход",
+  "pleaseLogInToPlayOnline": "Войдите через OGS, чтобы играть онлайн",
+  "goBack": "Назад",
+
+  "appTagline": "Освойте древнюю игру Го",
+  "featurePlayBots": "Игра против KataGo и онлайн-ботов",
+  "featurePuzzlesLessons": "Задачи, уроки и ежедневные тренировки",
+  "featureLiveGames": "Живые партии на Online Go Server",
+  "signInWithOgs": "Войти через OGS",
+  "createOgsAccount": "Создать бесплатный аккаунт OGS",
+
+  "displayName": "Отображаемое имя",
+  "attributionAvatars": "Аватары ботов: OpenMoji (CC BY-SA 4.0)"
 }

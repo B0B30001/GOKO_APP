@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
+import 'package:zaibal/gen/l10n/app_localizations.dart';
 import '../../services/ogs_service.dart';
 import '../../services/online/active_games_repository.dart';
 import '../../utils/ogs_rank.dart';
@@ -30,12 +31,13 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final ogsService = Provider.of<OgsService>(context);
     final isConnected = ogsService.isAuthenticated;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Online Play'),
+        title: Text(l.onlinePlay),
         actions: [
           IconButton(
             icon: const Icon(Icons.bug_report),
@@ -64,7 +66,7 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      connected ? 'Online' : 'Offline',
+                      connected ? l.onlineStatusConnected : l.onlineStatusOffline,
                       style: TextStyle(
                         color: connected ? Colors.green : Colors.red,
                         fontSize: 14,
@@ -91,7 +93,8 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
   }
 
   Widget _buildOgsProfileHeader(OgsService ogs) {
-    final username = ogs.username ?? 'OGS Player';
+    final l = AppLocalizations.of(context);
+    final username = ogs.username ?? l.ogsPlayer;
     final rank = OgsRank.bestLabel(
       rankString: ogs.rankString,
       rating: ogs.rating,
@@ -137,7 +140,7 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
                 ),
                 if (rating != null)
                   Text(
-                    'Rating ${rating.toStringAsFixed(0)}',
+                    '${l.rating} ${rating.toStringAsFixed(0)}',
                     style: TextStyle(
                       fontSize: 12,
                       color: cs.onSurface.withValues(alpha: 0.7),
@@ -168,25 +171,26 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
   }
 
   Widget _buildNotLoggedIn() {
+    final l = AppLocalizations.of(context);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(Icons.cloud_off, size: 64, color: Colors.grey),
           const SizedBox(height: 16),
-          const Text(
-            'Not logged in',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          Text(
+            l.notLoggedIn,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          const Text('Please log in with OGS to play online'),
+          Text(l.pleaseLogInToPlayOnline),
           const SizedBox(height: 24),
           ElevatedButton.icon(
             onPressed: () {
               Navigator.pop(context);
             },
             icon: const Icon(Icons.arrow_back),
-            label: const Text('Go Back'),
+            label: Text(l.goBack),
           ),
         ],
       ),

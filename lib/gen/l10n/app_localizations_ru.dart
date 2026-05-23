@@ -723,4 +723,108 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get lockedPremium => 'Премиум';
+
+  @override
+  String get stoneColors => 'Цвета камней';
+
+  @override
+  String get stoneColorClassic => 'Классические';
+
+  @override
+  String get stoneColorJade => 'Нефрит';
+
+  @override
+  String get stoneColorAmber => 'Янтарь';
+
+  @override
+  String get stoneColorCobalt => 'Кобальт';
+
+  @override
+  String get stoneColorCrimson => 'Багровый';
+
+  @override
+  String get stoneColorMono => 'Моно';
+
+  @override
+  String get freeTrialBadge => '7 дней бесплатно';
+
+  @override
+  String get freeTrialSubtitle => 'Отмена в любое время';
+
+  @override
+  String get ogsLogin => 'Вход OGS';
+
+  @override
+  String get onlineGoServer => 'Online Go Server';
+
+  @override
+  String get signInWithOgsAccount => 'Войдите в свой аккаунт OGS';
+
+  @override
+  String get signIn => 'Войти';
+
+  @override
+  String get username => 'Имя пользователя';
+
+  @override
+  String get password => 'Пароль';
+
+  @override
+  String get enterUsernamePassword =>
+      'Пожалуйста, введите имя пользователя и пароль';
+
+  @override
+  String get loginFailed => 'Ошибка входа. Проверьте данные.';
+
+  @override
+  String get errorPrefix => 'Ошибка: ';
+
+  @override
+  String get noAccountSignUp => 'Нет аккаунта? Зарегистрируйтесь на OGS';
+
+  @override
+  String get onlinePlay => 'Игра онлайн';
+
+  @override
+  String get onlineStatusConnected => 'Онлайн';
+
+  @override
+  String get onlineStatusOffline => 'Не в сети';
+
+  @override
+  String get ogsPlayer => 'Игрок OGS';
+
+  @override
+  String get notLoggedIn => 'Не выполнен вход';
+
+  @override
+  String get pleaseLogInToPlayOnline =>
+      'Войдите через OGS, чтобы играть онлайн';
+
+  @override
+  String get goBack => 'Назад';
+
+  @override
+  String get appTagline => 'Освойте древнюю игру Го';
+
+  @override
+  String get featurePlayBots => 'Игра против KataGo и онлайн-ботов';
+
+  @override
+  String get featurePuzzlesLessons => 'Задачи, уроки и ежедневные тренировки';
+
+  @override
+  String get featureLiveGames => 'Живые партии на Online Go Server';
+
+  @override
+  String get signInWithOgs => 'Войти через OGS';
+
+  @override
+  String get createOgsAccount => 'Создать бесплатный аккаунт OGS';
+
+  @override
+  String get displayName => 'Отображаемое имя';
+
+  @override
+  String get attributionAvatars => 'Аватары ботов: OpenMoji (CC BY-SA 4.0)';
 }

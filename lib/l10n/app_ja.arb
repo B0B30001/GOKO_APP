@@ -270,5 +270,45 @@
   "snapback": "シチョウ崩し",
   "ladder": "シチョウ",
   "connect": "連絡",
-  "lockedPremium": "プレミアム"
+  "lockedPremium": "プレミアム",
+
+  "stoneColors": "石の色",
+  "stoneColorClassic": "クラシック",
+  "stoneColorJade": "翡翠",
+  "stoneColorAmber": "琥珀",
+  "stoneColorCobalt": "コバルト",
+  "stoneColorCrimson": "クリムゾン",
+  "stoneColorMono": "モノ",
+
+  "freeTrialBadge": "7日間無料",
+  "freeTrialSubtitle": "いつでも解約可能",
+
+  "ogsLogin": "OGS ログイン",
+  "onlineGoServer": "Online Go Server",
+  "signInWithOgsAccount": "OGS アカウントでサインイン",
+  "signIn": "サインイン",
+  "username": "ユーザー名",
+  "password": "パスワード",
+  "enterUsernamePassword": "ユーザー名とパスワードを入力してください",
+  "loginFailed": "ログインに失敗しました。資格情報を確認してください。",
+  "errorPrefix": "エラー：",
+  "noAccountSignUp": "アカウントがありませんか？ OGS でサインアップ",
+
+  "onlinePlay": "オンライン対局",
+  "onlineStatusConnected": "オンライン",
+  "onlineStatusOffline": "オフライン",
+  "ogsPlayer": "OGS プレイヤー",
+  "notLoggedIn": "ログインしていません",
+  "pleaseLogInToPlayOnline": "オンライン対局には OGS でログインしてください",
+  "goBack": "戻る",
+
+  "appTagline": "古代の囲碁をマスターしよう",
+  "featurePlayBots": "KataGo とオンラインボットとの対局",
+  "featurePuzzlesLessons": "詰碁・レッスン・デイリードリル",
+  "featureLiveGames": "Online Go Server でのライブ対局",
+  "signInWithOgs": "OGS でサインイン",
+  "createOgsAccount": "無料 OGS アカウント作成",
+
+  "displayName": "表示名",
+  "attributionAvatars": "ボットアバター: OpenMoji (CC BY-SA 4.0)"
 }

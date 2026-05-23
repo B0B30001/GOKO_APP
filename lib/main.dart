@@ -185,6 +185,7 @@ class _GokoAppState extends State<GokoApp> {
         ],
         supportedLocales: const [
           Locale('en'),
+          Locale('de'),
           Locale('zh'),
           Locale('ru'),
           Locale('ja'),

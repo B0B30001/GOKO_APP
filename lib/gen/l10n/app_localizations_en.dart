@@ -723,4 +723,106 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get lockedPremium => 'Premium';
+
+  @override
+  String get stoneColors => 'Stone Colors';
+
+  @override
+  String get stoneColorClassic => 'Classic';
+
+  @override
+  String get stoneColorJade => 'Jade';
+
+  @override
+  String get stoneColorAmber => 'Amber';
+
+  @override
+  String get stoneColorCobalt => 'Cobalt';
+
+  @override
+  String get stoneColorCrimson => 'Crimson';
+
+  @override
+  String get stoneColorMono => 'Mono';
+
+  @override
+  String get freeTrialBadge => '7-day free trial';
+
+  @override
+  String get freeTrialSubtitle => 'Cancel anytime';
+
+  @override
+  String get ogsLogin => 'OGS Login';
+
+  @override
+  String get onlineGoServer => 'Online Go Server';
+
+  @override
+  String get signInWithOgsAccount => 'Sign in with your OGS account';
+
+  @override
+  String get signIn => 'Sign In';
+
+  @override
+  String get username => 'Username';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get enterUsernamePassword => 'Please enter username and password';
+
+  @override
+  String get loginFailed => 'Login failed. Check your credentials.';
+
+  @override
+  String get errorPrefix => 'Error: ';
+
+  @override
+  String get noAccountSignUp => 'Don\'t have an account? Sign up on OGS';
+
+  @override
+  String get onlinePlay => 'Online Play';
+
+  @override
+  String get onlineStatusConnected => 'Online';
+
+  @override
+  String get onlineStatusOffline => 'Offline';
+
+  @override
+  String get ogsPlayer => 'OGS Player';
+
+  @override
+  String get notLoggedIn => 'Not logged in';
+
+  @override
+  String get pleaseLogInToPlayOnline => 'Please log in with OGS to play online';
+
+  @override
+  String get goBack => 'Go Back';
+
+  @override
+  String get appTagline => 'Master the ancient game of Go';
+
+  @override
+  String get featurePlayBots => 'Play vs KataGo & online bots';
+
+  @override
+  String get featurePuzzlesLessons => 'Puzzles, lessons & daily drills';
+
+  @override
+  String get featureLiveGames => 'Live games on Online Go Server';
+
+  @override
+  String get signInWithOgs => 'Sign in with OGS';
+
+  @override
+  String get createOgsAccount => 'Create free OGS account';
+
+  @override
+  String get displayName => 'Display name';
+
+  @override
+  String get attributionAvatars => 'Bot avatars: OpenMoji (CC BY-SA 4.0)';
 }

@@ -120,7 +120,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      _trialLabel(l),
+                      l.freeTrialBadge,
                       style: TextStyle(
                         color: Colors.green.shade700,
                         fontWeight: FontWeight.w700,
@@ -202,18 +202,6 @@ class _PaywallScreenState extends State<PaywallScreen> {
         ),
       ),
     );
-  }
-
-  String _trialLabel(AppLocalizations l) {
-    // TODO(l10n): replace with `l.freeTrialBadge` once the key is in all ARBs.
-    return switch (l.localeName) {
-      'ru' => '7 дней бесплатно',
-      'zh' => '7 天免费试用',
-      'ja' => '7日間無料',
-      'ko' => '7일 무료',
-      'de' => '7 Tage kostenlos',
-      _ => '7-day free trial',
-    };
   }
 
   Widget _buildReasonBanner(BuildContext context, AppLocalizations l) {

@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
 import 'app_localizations_ja.dart';
 import 'app_localizations_ko.dart';
@@ -97,6 +98,7 @@ abstract class AppLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
+    Locale('de'),
     Locale('en'),
     Locale('ja'),
     Locale('ko'),
@@ -1465,6 +1467,210 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Premium'**
   String get lockedPremium;
+
+  /// Settings section: stone color preset picker
+  ///
+  /// In en, this message translates to:
+  /// **'Stone Colors'**
+  String get stoneColors;
+
+  /// No description provided for @stoneColorClassic.
+  ///
+  /// In en, this message translates to:
+  /// **'Classic'**
+  String get stoneColorClassic;
+
+  /// No description provided for @stoneColorJade.
+  ///
+  /// In en, this message translates to:
+  /// **'Jade'**
+  String get stoneColorJade;
+
+  /// No description provided for @stoneColorAmber.
+  ///
+  /// In en, this message translates to:
+  /// **'Amber'**
+  String get stoneColorAmber;
+
+  /// No description provided for @stoneColorCobalt.
+  ///
+  /// In en, this message translates to:
+  /// **'Cobalt'**
+  String get stoneColorCobalt;
+
+  /// No description provided for @stoneColorCrimson.
+  ///
+  /// In en, this message translates to:
+  /// **'Crimson'**
+  String get stoneColorCrimson;
+
+  /// No description provided for @stoneColorMono.
+  ///
+  /// In en, this message translates to:
+  /// **'Mono'**
+  String get stoneColorMono;
+
+  /// Paywall: free trial badge under tagline
+  ///
+  /// In en, this message translates to:
+  /// **'7-day free trial'**
+  String get freeTrialBadge;
+
+  /// Paywall: trial fine print
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel anytime'**
+  String get freeTrialSubtitle;
+
+  /// No description provided for @ogsLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'OGS Login'**
+  String get ogsLogin;
+
+  /// No description provided for @onlineGoServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Online Go Server'**
+  String get onlineGoServer;
+
+  /// No description provided for @signInWithOgsAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with your OGS account'**
+  String get signInWithOgsAccount;
+
+  /// No description provided for @signIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In'**
+  String get signIn;
+
+  /// No description provided for @username.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get username;
+
+  /// No description provided for @password.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get password;
+
+  /// No description provided for @enterUsernamePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter username and password'**
+  String get enterUsernamePassword;
+
+  /// No description provided for @loginFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Login failed. Check your credentials.'**
+  String get loginFailed;
+
+  /// No description provided for @errorPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: '**
+  String get errorPrefix;
+
+  /// No description provided for @noAccountSignUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t have an account? Sign up on OGS'**
+  String get noAccountSignUp;
+
+  /// No description provided for @onlinePlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Online Play'**
+  String get onlinePlay;
+
+  /// No description provided for @onlineStatusConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Online'**
+  String get onlineStatusConnected;
+
+  /// No description provided for @onlineStatusOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline'**
+  String get onlineStatusOffline;
+
+  /// No description provided for @ogsPlayer.
+  ///
+  /// In en, this message translates to:
+  /// **'OGS Player'**
+  String get ogsPlayer;
+
+  /// No description provided for @notLoggedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Not logged in'**
+  String get notLoggedIn;
+
+  /// No description provided for @pleaseLogInToPlayOnline.
+  ///
+  /// In en, this message translates to:
+  /// **'Please log in with OGS to play online'**
+  String get pleaseLogInToPlayOnline;
+
+  /// No description provided for @goBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Go Back'**
+  String get goBack;
+
+  /// No description provided for @appTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'Master the ancient game of Go'**
+  String get appTagline;
+
+  /// No description provided for @featurePlayBots.
+  ///
+  /// In en, this message translates to:
+  /// **'Play vs KataGo & online bots'**
+  String get featurePlayBots;
+
+  /// No description provided for @featurePuzzlesLessons.
+  ///
+  /// In en, this message translates to:
+  /// **'Puzzles, lessons & daily drills'**
+  String get featurePuzzlesLessons;
+
+  /// No description provided for @featureLiveGames.
+  ///
+  /// In en, this message translates to:
+  /// **'Live games on Online Go Server'**
+  String get featureLiveGames;
+
+  /// No description provided for @signInWithOgs.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with OGS'**
+  String get signInWithOgs;
+
+  /// No description provided for @createOgsAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create free OGS account'**
+  String get createOgsAccount;
+
+  /// No description provided for @displayName.
+  ///
+  /// In en, this message translates to:
+  /// **'Display name'**
+  String get displayName;
+
+  /// No description provided for @attributionAvatars.
+  ///
+  /// In en, this message translates to:
+  /// **'Bot avatars: OpenMoji (CC BY-SA 4.0)'**
+  String get attributionAvatars;
 }
 
 class _AppLocalizationsDelegate
@@ -1477,8 +1683,14 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['en', 'ja', 'ko', 'ru', 'zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+    'de',
+    'en',
+    'ja',
+    'ko',
+    'ru',
+    'zh',
+  ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -1487,6 +1699,8 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'de':
+      return AppLocalizationsDe();
     case 'en':
       return AppLocalizationsEn();
     case 'ja':

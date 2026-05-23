@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:zaibal/gen/l10n/app_localizations.dart';
 import '../widgets/goko_logo.dart';
 import '../widgets/login_dialog.dart';
 
@@ -14,6 +15,7 @@ class AuthGateScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final size = MediaQuery.sizeOf(context);
+    final l = AppLocalizations.of(context);
 
     return Scaffold(
       body: Stack(
@@ -63,7 +65,7 @@ class AuthGateScreen extends StatelessWidget {
 
                   // App name
                   Text(
-                    'GOKO',
+                    l.appName,
                     style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                       color: cs.onSurface,
                       fontWeight: FontWeight.w900,
@@ -72,7 +74,7 @@ class AuthGateScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Master the ancient game of Go',
+                    l.appTagline,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: cs.onSurface.withValues(alpha: 0.7),
@@ -82,20 +84,14 @@ class AuthGateScreen extends StatelessWidget {
                   const Spacer(),
 
                   // Feature bullets
-                  _FeaturePill(
-                    Icons.smart_toy_outlined,
-                    'Play vs KataGo & online bots',
-                  ),
+                  _FeaturePill(Icons.smart_toy_outlined, l.featurePlayBots),
                   const SizedBox(height: 10),
                   _FeaturePill(
                     Icons.school_outlined,
-                    'Puzzles, lessons & daily drills',
+                    l.featurePuzzlesLessons,
                   ),
                   const SizedBox(height: 10),
-                  _FeaturePill(
-                    Icons.people_outline,
-                    'Live games on Online Go Server',
-                  ),
+                  _FeaturePill(Icons.people_outline, l.featureLiveGames),
 
                   const SizedBox(height: 40),
 
@@ -104,9 +100,9 @@ class AuthGateScreen extends StatelessWidget {
                     width: double.infinity,
                     child: FilledButton.icon(
                       icon: const Icon(Icons.login),
-                      label: const Text(
-                        'Sign in with OGS',
-                        style: TextStyle(
+                      label: Text(
+                        l.signInWithOgs,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -127,9 +123,9 @@ class AuthGateScreen extends StatelessWidget {
                     width: double.infinity,
                     child: OutlinedButton.icon(
                       icon: const Icon(Icons.person_add_outlined),
-                      label: const Text(
-                        'Create free OGS account',
-                        style: TextStyle(fontSize: 16),
+                      label: Text(
+                        l.createOgsAccount,
+                        style: const TextStyle(fontSize: 16),
                       ),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 18),
@@ -143,8 +139,7 @@ class AuthGateScreen extends StatelessWidget {
 
                   const SizedBox(height: 24),
                   Text(
-                    'Online Go Server (OGS) is free to join.\n'
-                    'Your account unlocks bots, puzzles and live play.',
+                    l.pleaseLogInToPlayOnline,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: cs.onSurface.withValues(alpha: 0.5),

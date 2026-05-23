@@ -715,4 +715,106 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get lockedPremium => '高级';
+
+  @override
+  String get stoneColors => '棋子颜色';
+
+  @override
+  String get stoneColorClassic => '经典';
+
+  @override
+  String get stoneColorJade => '翡翠';
+
+  @override
+  String get stoneColorAmber => '琥珀';
+
+  @override
+  String get stoneColorCobalt => '钴蓝';
+
+  @override
+  String get stoneColorCrimson => '绯红';
+
+  @override
+  String get stoneColorMono => '单色';
+
+  @override
+  String get freeTrialBadge => '7 天免费试用';
+
+  @override
+  String get freeTrialSubtitle => '随时取消';
+
+  @override
+  String get ogsLogin => 'OGS 登录';
+
+  @override
+  String get onlineGoServer => 'Online Go Server';
+
+  @override
+  String get signInWithOgsAccount => '使用您的 OGS 账号登录';
+
+  @override
+  String get signIn => '登录';
+
+  @override
+  String get username => '用户名';
+
+  @override
+  String get password => '密码';
+
+  @override
+  String get enterUsernamePassword => '请输入用户名和密码';
+
+  @override
+  String get loginFailed => '登录失败，请检查凭据。';
+
+  @override
+  String get errorPrefix => '错误：';
+
+  @override
+  String get noAccountSignUp => '还没有账号？在 OGS 上注册';
+
+  @override
+  String get onlinePlay => '在线对局';
+
+  @override
+  String get onlineStatusConnected => '在线';
+
+  @override
+  String get onlineStatusOffline => '离线';
+
+  @override
+  String get ogsPlayer => 'OGS 玩家';
+
+  @override
+  String get notLoggedIn => '未登录';
+
+  @override
+  String get pleaseLogInToPlayOnline => '请使用 OGS 登录以进行在线对局';
+
+  @override
+  String get goBack => '返回';
+
+  @override
+  String get appTagline => '掌握古老的围棋游戏';
+
+  @override
+  String get featurePlayBots => '与 KataGo 和在线机器人对弈';
+
+  @override
+  String get featurePuzzlesLessons => '题目、课程与每日练习';
+
+  @override
+  String get featureLiveGames => '在 Online Go Server 上直播对局';
+
+  @override
+  String get signInWithOgs => '使用 OGS 登录';
+
+  @override
+  String get createOgsAccount => '创建免费 OGS 账号';
+
+  @override
+  String get displayName => '显示名称';
+
+  @override
+  String get attributionAvatars => '机器人头像：OpenMoji (CC BY-SA 4.0)';
 }

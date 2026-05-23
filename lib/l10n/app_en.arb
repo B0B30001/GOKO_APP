@@ -719,5 +719,50 @@
   "@connect": { "description": "Puzzle category" },
 
   "lockedPremium": "Premium",
-  "@lockedPremium": { "description": "Lock badge label on premium-gated items" }
+  "@lockedPremium": { "description": "Lock badge label on premium-gated items" },
+
+  "stoneColors": "Stone Colors",
+  "@stoneColors": { "description": "Settings section: stone color preset picker" },
+
+  "stoneColorClassic": "Classic",
+  "stoneColorJade": "Jade",
+  "stoneColorAmber": "Amber",
+  "stoneColorCobalt": "Cobalt",
+  "stoneColorCrimson": "Crimson",
+  "stoneColorMono": "Mono",
+
+  "freeTrialBadge": "7-day free trial",
+  "@freeTrialBadge": { "description": "Paywall: free trial badge under tagline" },
+
+  "freeTrialSubtitle": "Cancel anytime",
+  "@freeTrialSubtitle": { "description": "Paywall: trial fine print" },
+
+  "ogsLogin": "OGS Login",
+  "onlineGoServer": "Online Go Server",
+  "signInWithOgsAccount": "Sign in with your OGS account",
+  "signIn": "Sign In",
+  "username": "Username",
+  "password": "Password",
+  "enterUsernamePassword": "Please enter username and password",
+  "loginFailed": "Login failed. Check your credentials.",
+  "errorPrefix": "Error: ",
+  "noAccountSignUp": "Don't have an account? Sign up on OGS",
+
+  "onlinePlay": "Online Play",
+  "onlineStatusConnected": "Online",
+  "onlineStatusOffline": "Offline",
+  "ogsPlayer": "OGS Player",
+  "notLoggedIn": "Not logged in",
+  "pleaseLogInToPlayOnline": "Please log in with OGS to play online",
+  "goBack": "Go Back",
+
+  "appTagline": "Master the ancient game of Go",
+  "featurePlayBots": "Play vs KataGo & online bots",
+  "featurePuzzlesLessons": "Puzzles, lessons & daily drills",
+  "featureLiveGames": "Live games on Online Go Server",
+  "signInWithOgs": "Sign in with OGS",
+  "createOgsAccount": "Create free OGS account",
+
+  "displayName": "Display name",
+  "attributionAvatars": "Bot avatars: OpenMoji (CC BY-SA 4.0)"
 }

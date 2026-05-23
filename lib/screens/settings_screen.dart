@@ -135,7 +135,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _buildBackgroundThemePicker(),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-              child: Text(_stoneColorsLabel(l)),
+              child: Text(l.stoneColors),
             ),
             _buildStoneColorPicker(),
           ]),
@@ -304,7 +304,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         children: StoneColorPreset.all.map((preset) {
           final selected = preset.id == _stoneColorId;
           return _StoneColorSwatch(
-            label: _stoneColorLabel(preset.id),
+            label: _stoneColorLabel(AppLocalizations.of(context), preset.id),
             selected: selected,
             preset: preset,
             boardColor: GoBoardTheme.byId(_boardThemeId).boardColor,
@@ -319,25 +319,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  String _stoneColorsLabel(AppLocalizations l) {
-    // TODO(l10n): replace with l.stoneColors once ARB regenerated.
-    return switch (l.localeName) {
-      'ru' => 'Цвета камней',
-      'zh' => '棋子颜色',
-      'ja' => '石の色',
-      'ko' => '돌 색상',
-      'de' => 'Steinfarben',
-      _ => 'Stone Colors',
-    };
-  }
-
-  String _stoneColorLabel(String id) => switch (id) {
-    StoneColorId.classic => 'Classic',
-    StoneColorId.jade => 'Jade',
-    StoneColorId.amber => 'Amber',
-    StoneColorId.cobalt => 'Cobalt',
-    StoneColorId.crimson => 'Crimson',
-    StoneColorId.mono => 'Mono',
+  String _stoneColorLabel(AppLocalizations l, String id) => switch (id) {
+    StoneColorId.classic => l.stoneColorClassic,
+    StoneColorId.jade => l.stoneColorJade,
+    StoneColorId.amber => l.stoneColorAmber,
+    StoneColorId.cobalt => l.stoneColorCobalt,
+    StoneColorId.crimson => l.stoneColorCrimson,
+    StoneColorId.mono => l.stoneColorMono,
     _ => id,
   };
 

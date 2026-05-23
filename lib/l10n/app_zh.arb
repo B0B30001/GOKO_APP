@@ -270,5 +270,45 @@
   "snapback": "倒扑",
   "ladder": "征子",
   "connect": "连接",
-  "lockedPremium": "高级"
+  "lockedPremium": "高级",
+
+  "stoneColors": "棋子颜色",
+  "stoneColorClassic": "经典",
+  "stoneColorJade": "翡翠",
+  "stoneColorAmber": "琥珀",
+  "stoneColorCobalt": "钴蓝",
+  "stoneColorCrimson": "绯红",
+  "stoneColorMono": "单色",
+
+  "freeTrialBadge": "7 天免费试用",
+  "freeTrialSubtitle": "随时取消",
+
+  "ogsLogin": "OGS 登录",
+  "onlineGoServer": "Online Go Server",
+  "signInWithOgsAccount": "使用您的 OGS 账号登录",
+  "signIn": "登录",
+  "username": "用户名",
+  "password": "密码",
+  "enterUsernamePassword": "请输入用户名和密码",
+  "loginFailed": "登录失败，请检查凭据。",
+  "errorPrefix": "错误：",
+  "noAccountSignUp": "还没有账号？在 OGS 上注册",
+
+  "onlinePlay": "在线对局",
+  "onlineStatusConnected": "在线",
+  "onlineStatusOffline": "离线",
+  "ogsPlayer": "OGS 玩家",
+  "notLoggedIn": "未登录",
+  "pleaseLogInToPlayOnline": "请使用 OGS 登录以进行在线对局",
+  "goBack": "返回",
+
+  "appTagline": "掌握古老的围棋游戏",
+  "featurePlayBots": "与 KataGo 和在线机器人对弈",
+  "featurePuzzlesLessons": "题目、课程与每日练习",
+  "featureLiveGames": "在 Online Go Server 上直播对局",
+  "signInWithOgs": "使用 OGS 登录",
+  "createOgsAccount": "创建免费 OGS 账号",
+
+  "displayName": "显示名称",
+  "attributionAvatars": "机器人头像：OpenMoji (CC BY-SA 4.0)"
 }

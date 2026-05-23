@@ -716,4 +716,106 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get lockedPremium => '프리미엄';
+
+  @override
+  String get stoneColors => '돌 색상';
+
+  @override
+  String get stoneColorClassic => '클래식';
+
+  @override
+  String get stoneColorJade => '비취';
+
+  @override
+  String get stoneColorAmber => '호박';
+
+  @override
+  String get stoneColorCobalt => '코발트';
+
+  @override
+  String get stoneColorCrimson => '크림슨';
+
+  @override
+  String get stoneColorMono => '모노';
+
+  @override
+  String get freeTrialBadge => '7일 무료';
+
+  @override
+  String get freeTrialSubtitle => '언제든 취소';
+
+  @override
+  String get ogsLogin => 'OGS 로그인';
+
+  @override
+  String get onlineGoServer => 'Online Go Server';
+
+  @override
+  String get signInWithOgsAccount => 'OGS 계정으로 로그인';
+
+  @override
+  String get signIn => '로그인';
+
+  @override
+  String get username => '사용자 이름';
+
+  @override
+  String get password => '비밀번호';
+
+  @override
+  String get enterUsernamePassword => '사용자 이름과 비밀번호를 입력하세요';
+
+  @override
+  String get loginFailed => '로그인 실패. 자격 증명을 확인하세요.';
+
+  @override
+  String get errorPrefix => '오류: ';
+
+  @override
+  String get noAccountSignUp => '계정이 없나요? OGS에서 가입';
+
+  @override
+  String get onlinePlay => '온라인 대국';
+
+  @override
+  String get onlineStatusConnected => '온라인';
+
+  @override
+  String get onlineStatusOffline => '오프라인';
+
+  @override
+  String get ogsPlayer => 'OGS 플레이어';
+
+  @override
+  String get notLoggedIn => '로그인되지 않음';
+
+  @override
+  String get pleaseLogInToPlayOnline => '온라인 대국을 위해 OGS로 로그인하세요';
+
+  @override
+  String get goBack => '뒤로';
+
+  @override
+  String get appTagline => '고대 바둑 게임을 마스터하세요';
+
+  @override
+  String get featurePlayBots => 'KataGo 및 온라인 봇과의 대국';
+
+  @override
+  String get featurePuzzlesLessons => '퍼즐, 레슨 및 일일 훈련';
+
+  @override
+  String get featureLiveGames => 'Online Go Server의 라이브 대국';
+
+  @override
+  String get signInWithOgs => 'OGS로 로그인';
+
+  @override
+  String get createOgsAccount => '무료 OGS 계정 만들기';
+
+  @override
+  String get displayName => '표시 이름';
+
+  @override
+  String get attributionAvatars => '봇 아바타: OpenMoji (CC BY-SA 4.0)';
 }

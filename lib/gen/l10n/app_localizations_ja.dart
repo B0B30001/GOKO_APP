@@ -716,4 +716,106 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get lockedPremium => 'プレミアム';
+
+  @override
+  String get stoneColors => '石の色';
+
+  @override
+  String get stoneColorClassic => 'クラシック';
+
+  @override
+  String get stoneColorJade => '翡翠';
+
+  @override
+  String get stoneColorAmber => '琥珀';
+
+  @override
+  String get stoneColorCobalt => 'コバルト';
+
+  @override
+  String get stoneColorCrimson => 'クリムゾン';
+
+  @override
+  String get stoneColorMono => 'モノ';
+
+  @override
+  String get freeTrialBadge => '7日間無料';
+
+  @override
+  String get freeTrialSubtitle => 'いつでも解約可能';
+
+  @override
+  String get ogsLogin => 'OGS ログイン';
+
+  @override
+  String get onlineGoServer => 'Online Go Server';
+
+  @override
+  String get signInWithOgsAccount => 'OGS アカウントでサインイン';
+
+  @override
+  String get signIn => 'サインイン';
+
+  @override
+  String get username => 'ユーザー名';
+
+  @override
+  String get password => 'パスワード';
+
+  @override
+  String get enterUsernamePassword => 'ユーザー名とパスワードを入力してください';
+
+  @override
+  String get loginFailed => 'ログインに失敗しました。資格情報を確認してください。';
+
+  @override
+  String get errorPrefix => 'エラー：';
+
+  @override
+  String get noAccountSignUp => 'アカウントがありませんか？ OGS でサインアップ';
+
+  @override
+  String get onlinePlay => 'オンライン対局';
+
+  @override
+  String get onlineStatusConnected => 'オンライン';
+
+  @override
+  String get onlineStatusOffline => 'オフライン';
+
+  @override
+  String get ogsPlayer => 'OGS プレイヤー';
+
+  @override
+  String get notLoggedIn => 'ログインしていません';
+
+  @override
+  String get pleaseLogInToPlayOnline => 'オンライン対局には OGS でログインしてください';
+
+  @override
+  String get goBack => '戻る';
+
+  @override
+  String get appTagline => '古代の囲碁をマスターしよう';
+
+  @override
+  String get featurePlayBots => 'KataGo とオンラインボットとの対局';
+
+  @override
+  String get featurePuzzlesLessons => '詰碁・レッスン・デイリードリル';
+
+  @override
+  String get featureLiveGames => 'Online Go Server でのライブ対局';
+
+  @override
+  String get signInWithOgs => 'OGS でサインイン';
+
+  @override
+  String get createOgsAccount => '無料 OGS アカウント作成';
+
+  @override
+  String get displayName => '表示名';
+
+  @override
+  String get attributionAvatars => 'ボットアバター: OpenMoji (CC BY-SA 4.0)';
 }
