@@ -27,11 +27,23 @@ class FastGameBoard extends StatefulWidget {
   final bool isDarkTheme;
   final bool showCoordinates;
 
+  /// Optional `[row, col]` to render a pulsing amber hint circle on top of the
+  /// stones layer. Used by [GameBoardScreen]'s hint button. Null = no hint.
+  final List<int>? hintCell;
+
+  /// Engine variation overlay used by the Game Review screen. Each entry is
+  /// `[row, col, color]` where color follows the board convention (1=black,
+  /// 2=white). Painted as translucent ghost stones with a rank label.
+  /// Null = no variations.
+  final List<List<int>>? variationCells;
+
   const FastGameBoard({
     required this.board,
     required this.onTap,
     this.isDarkTheme = false,
     this.showCoordinates = false,
+    this.hintCell,
+    this.variationCells,
     super.key,
   });
 
@@ -174,6 +186,35 @@ class _FastGameBoardState extends State<FastGameBoard> {
                         children: buildStoneWidgets(margin, adjustedCellSize),
                       ),
                     ),
+
+                    // Layer 4: Hint overlay (pulsing amber ring on the
+                    // recommended intersection — toggled by [hintCell]).
+                    if (widget.hintCell != null && widget.hintCell!.length >= 2)
+                      IgnorePointer(
+                        child: CustomPaint(
+                          size: size,
+                          painter: _HintPainter(
+                            row: widget.hintCell![0],
+                            col: widget.hintCell![1],
+                            margin: margin,
+                            cellSize: adjustedCellSize,
+                          ),
+                        ),
+                      ),
+
+                    // Layer 5: Variation ghost stones (Game Review screen).
+                    if (widget.variationCells != null &&
+                        widget.variationCells!.isNotEmpty)
+                      IgnorePointer(
+                        child: CustomPaint(
+                          size: size,
+                          painter: _VariationPainter(
+                            cells: widget.variationCells!,
+                            margin: margin,
+                            cellSize: adjustedCellSize,
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -680,4 +721,110 @@ class _StonePainter extends CustomPainter {
   bool shouldRepaint(_StonePainter oldDelegate) {
     return isBlack != oldDelegate.isBlack || radius != oldDelegate.radius;
   }
+}
+
+/// Paints an amber double-ring at [row,col] to highlight a hint suggestion.
+/// Geometry mirrors how stones are placed: cell origin = margin + cell*idx.
+class _HintPainter extends CustomPainter {
+  final int row;
+  final int col;
+  final double margin;
+  final double cellSize;
+
+  const _HintPainter({
+    required this.row,
+    required this.col,
+    required this.margin,
+    required this.cellSize,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final cx = margin + col * cellSize;
+    final cy = margin + row * cellSize;
+    final r = cellSize * 0.42;
+
+    final fill = Paint()
+      ..color = Colors.amber.withValues(alpha: 0.22)
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(Offset(cx, cy), r, fill);
+
+    final ring = Paint()
+      ..color = Colors.amber.shade700
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3.0;
+    canvas.drawCircle(Offset(cx, cy), r, ring);
+  }
+
+  @override
+  bool shouldRepaint(_HintPainter old) =>
+      old.row != row ||
+      old.col != col ||
+      old.cellSize != cellSize ||
+      old.margin != margin;
+}
+
+/// Paints up to N translucent "ghost" stones for engine variations on top
+/// of the live position. Each cell is `[row, col, color]` (1=black, 2=white).
+/// Used by the post-game review screen to show the engine's top moves at
+/// the currently-focused ply.
+class _VariationPainter extends CustomPainter {
+  final List<List<int>> cells;
+  final double margin;
+  final double cellSize;
+
+  const _VariationPainter({
+    required this.cells,
+    required this.margin,
+    required this.cellSize,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final r = cellSize * 0.42;
+    final textPainter = TextPainter(textDirection: TextDirection.ltr);
+    for (var i = 0; i < cells.length; i++) {
+      final cell = cells[i];
+      if (cell.length < 3) continue;
+      final row = cell[0];
+      final col = cell[1];
+      final color = cell[2];
+      final cx = margin + col * cellSize;
+      final cy = margin + row * cellSize;
+
+      final fill = Paint()
+        ..color = color == 1
+            ? Colors.black.withValues(alpha: 0.42)
+            : Colors.white.withValues(alpha: 0.55)
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(Offset(cx, cy), r, fill);
+
+      final ring = Paint()
+        ..color = (color == 1 ? Colors.black : Colors.grey.shade700).withValues(
+          alpha: 0.75,
+        )
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5;
+      canvas.drawCircle(Offset(cx, cy), r, ring);
+
+      // Rank label inside the ghost stone (1, 2, 3, …).
+      textPainter.text = TextSpan(
+        text: '${i + 1}',
+        style: TextStyle(
+          color: color == 1 ? Colors.white : Colors.black87,
+          fontSize: cellSize * 0.36,
+          fontWeight: FontWeight.w800,
+        ),
+      );
+      textPainter.layout();
+      textPainter.paint(
+        canvas,
+        Offset(cx - textPainter.width / 2, cy - textPainter.height / 2),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_VariationPainter old) =>
+      old.cells != cells || old.cellSize != cellSize || old.margin != margin;
 }

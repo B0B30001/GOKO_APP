@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../widgets/goko_logo.dart';
 import '../widgets/login_dialog.dart';
 
 /// Full-screen sign-in gate shown at launch when the user is not authenticated.
@@ -41,34 +42,24 @@ class AuthGateScreen extends StatelessWidget {
                 children: [
                   SizedBox(height: size.height * 0.10),
 
-                  // Logo stone
+                  // GOKO brand mark — replaces the prior "GO"-stone placeholder.
                   Container(
-                    width: 100,
-                    height: 100,
+                    width: 120,
+                    height: 120,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.black,
+                      color: cs.surface,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.4),
-                          blurRadius: 20,
-                          offset: const Offset(0, 8),
+                          color: Colors.black.withValues(alpha: 0.25),
+                          blurRadius: 18,
+                          offset: const Offset(0, 6),
                         ),
                       ],
                     ),
-                    child: const Center(
-                      child: Text(
-                        'GO',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 32,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 2,
-                        ),
-                      ),
-                    ),
+                    child: const GokoLogo(size: 120, inCircle: true),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20),
 
                   // App name
                   Text(

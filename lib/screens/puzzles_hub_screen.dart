@@ -2,18 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zaibal/gen/l10n/app_localizations.dart';
 import '../models/puzzle.dart';
-import '../models/puzzle_collection.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/menu_fab.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/fast_game_board.dart';
 import '../services/daily_puzzle_service.dart';
-import '../services/content_service.dart';
 import '../services/progress_service.dart';
+import '../services/subscription_service.dart';
 import 'puzzle_screen.dart';
 import 'puzzle_category_screen.dart';
-import 'puzzle_collection_screen.dart';
+import 'paywall_screen.dart';
 
 /// Chess.com-style puzzles hub: rating + streak header, daily-set strip
 /// (5 puzzles/day with swap), and a 2-column category grid.
@@ -71,10 +70,6 @@ class _PuzzlesHubScreenState extends State<PuzzlesHubScreen> {
             child: const _DailySetCard(),
           ),
           const SizedBox(height: 24),
-          _SectionHeader(label: l.collections, onTap: null),
-          const SizedBox(height: 12),
-          const _CollectionsGrid(),
-          const SizedBox(height: 24),
           _SectionHeader(label: l.categories, onTap: null),
           const SizedBox(height: 12),
           _CategoryGrid(categories: _categories()),
@@ -99,6 +94,9 @@ class _PuzzlesHubScreenState extends State<PuzzlesHubScreen> {
     _CategorySpec('Life & Death', Icons.psychology, Colors.purpleAccent),
     _CategorySpec('Ko Basics', Icons.loop, Colors.amber),
     _CategorySpec('Tesuji', Icons.auto_fix_high, Colors.tealAccent),
+    _CategorySpec('Ladder', Icons.linear_scale, Colors.cyanAccent),
+    _CategorySpec('Snapback', Icons.sync, Colors.deepOrangeAccent),
+    _CategorySpec('Connect', Icons.hub, Colors.greenAccent),
   ];
 }
 
@@ -126,21 +124,21 @@ class _HeaderCard extends StatelessWidget {
             _Stat(
               icon: Icons.trending_up,
               value: '$puzzleRating',
-              label: 'Rating',
+              label: AppLocalizations.of(context).rating,
               color: cs.primary,
             ),
             _Divider(color: cs.onSurface.withValues(alpha: 0.12)),
             _Stat(
               icon: Icons.local_fire_department,
               value: '$streak',
-              label: 'Day Streak',
+              label: AppLocalizations.of(context).dayStreakLabel,
               color: Colors.orange,
             ),
             _Divider(color: cs.onSurface.withValues(alpha: 0.12)),
             _Stat(
               icon: Icons.check_circle,
               value: '$solvedToday',
-              label: 'Today',
+              label: AppLocalizations.of(context).today,
               color: Colors.green,
             ),
           ],
@@ -329,6 +327,8 @@ class _DailyTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final isPremium = context.watch<SubscriptionService>().isPremium;
+    final locked = index >= 3 && !isPremium;
     return SizedBox(
       width: 76,
       child: Stack(
@@ -336,7 +336,7 @@ class _DailyTile extends StatelessWidget {
         children: [
           InkWell(
             borderRadius: BorderRadius.circular(8),
-            onTap: () => _open(context),
+            onTap: () => _open(context, isPremium),
             child: Column(
               children: [
                 AnimatedSwitcher(
@@ -345,16 +345,39 @@ class _DailyTile extends StatelessWidget {
                     key: ValueKey(puzzle.id),
                     width: 64,
                     height: 64,
-                    child: IgnorePointer(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(6),
-                        child: FastGameBoard(
-                          board: puzzle.initialBoard,
-                          onTap: (_, __) {},
-                          isDarkTheme:
-                              Theme.of(context).brightness == Brightness.dark,
+                    child: Stack(
+                      children: [
+                        IgnorePointer(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(6),
+                            child: Opacity(
+                              opacity: locked ? 0.35 : 1.0,
+                              child: FastGameBoard(
+                                board: puzzle.initialBoard,
+                                onTap: (_, __) {},
+                                isDarkTheme:
+                                    Theme.of(context).brightness ==
+                                    Brightness.dark,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                        if (locked)
+                          Center(
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: Colors.black54,
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: const Icon(
+                                Icons.lock,
+                                size: 20,
+                                color: Colors.amber,
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 ),
@@ -366,14 +389,14 @@ class _DailyTile extends StatelessWidget {
                     (i) => Icon(
                       i < puzzle.difficulty ? Icons.star : Icons.star_border,
                       size: 10,
-                      color: Colors.amber,
+                      color: locked ? Colors.grey : Colors.amber,
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          if (solved)
+          if (solved && !locked)
             Positioned(
               top: -4,
               right: -4,
@@ -386,7 +409,7 @@ class _DailyTile extends StatelessWidget {
                 child: const Icon(Icons.check, size: 14, color: Colors.white),
               ),
             )
-          else if (canSwap)
+          else if (canSwap && !locked)
             Positioned(
               top: -6,
               right: -6,
@@ -398,7 +421,7 @@ class _DailyTile extends StatelessWidget {
                   iconSize: 14,
                   padding: const EdgeInsets.all(4),
                   constraints: const BoxConstraints(),
-                  tooltip: 'Swap puzzle',
+                  tooltip: AppLocalizations.of(context).swapPuzzle,
                   icon: const Icon(Icons.swap_horiz),
                   onPressed: () => service.swap(index),
                 ),
@@ -409,7 +432,17 @@ class _DailyTile extends StatelessWidget {
     );
   }
 
-  Future<void> _open(BuildContext context) async {
+  Future<void> _open(BuildContext context, bool isPremium) async {
+    if (index >= 3 && !isPremium) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) =>
+              const PaywallScreen(reason: PaywallReason.puzzleDailyQuota),
+        ),
+      );
+      return;
+    }
     final result = await Navigator.push<Map<String, dynamic>>(
       context,
       MaterialPageRoute(builder: (_) => PuzzleScreen(puzzle: puzzle)),
@@ -442,7 +475,10 @@ class _SectionHeader extends StatelessWidget {
         ),
         const Spacer(),
         if (onTap != null)
-          TextButton(onPressed: onTap, child: const Text('See all')),
+          TextButton(
+            onPressed: onTap,
+            child: Text(AppLocalizations.of(context).seeAll),
+          ),
       ],
     );
   }
@@ -463,107 +499,10 @@ class _CategorySpec {
     'Life & Death' => l.lifeDeath,
     'Ko Basics' => l.koBasics,
     'Tesuji' => l.tesuji,
+    'Ladder' => l.ladder,
+    'Snapback' => l.snapback,
+    'Connect' => l.connect,
     _ => name,
-  };
-}
-
-/// 2-column grid of curated puzzle collections loaded from
-/// `assets/content/collections.json` via [ContentService].
-class _CollectionsGrid extends StatelessWidget {
-  const _CollectionsGrid();
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<List<PuzzleCollection>>(
-      future: ContentService.loadCollections(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
-          return const SizedBox(
-            height: 120,
-            child: Center(child: CircularProgressIndicator()),
-          );
-        }
-        final cols = snapshot.data ?? const <PuzzleCollection>[];
-        if (cols.isEmpty) return const SizedBox.shrink();
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            childAspectRatio: 1.35,
-          ),
-          itemCount: cols.length,
-          itemBuilder: (context, i) => _CollectionCard(collection: cols[i]),
-        );
-      },
-    );
-  }
-}
-
-class _CollectionCard extends StatelessWidget {
-  final PuzzleCollection collection;
-
-  const _CollectionCard({required this.collection});
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 2,
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => PuzzleCollectionScreen(collection: collection),
-            ),
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: cs.primary.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(_iconFor(collection.iconKey), color: cs.primary),
-              ),
-              const Spacer(),
-              Text(
-                collection.title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(
-                  context,
-                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                '${collection.puzzleIds.length} puzzles',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  IconData _iconFor(String key) => switch (key) {
-    'close' => Icons.close,
-    'warning' => Icons.warning_amber,
-    'loop' => Icons.loop,
-    'psychology' => Icons.psychology,
-    'auto_fix_high' => Icons.auto_fix_high,
-    _ => Icons.extension,
   };
 }
 

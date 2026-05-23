@@ -6,7 +6,6 @@ import 'package:zaibal/l10n/puzzle_translations.dart';
 import '../models/puzzle.dart';
 import '../models/optimized_game.dart';
 import '../widgets/fast_game_board.dart';
-import '../widgets/result_modal.dart';
 import '../models/app_settings.dart';
 import '../services/subscription_service.dart';
 import '../services/progress_service.dart';
@@ -90,7 +89,10 @@ class _PuzzleScreenState extends State<PuzzleScreen>
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const PaywallScreen()),
+        MaterialPageRoute(
+          builder: (_) =>
+              const PaywallScreen(reason: PaywallReason.puzzleDailyQuota),
+        ),
       );
       return;
     }
@@ -131,13 +133,19 @@ class _PuzzleScreenState extends State<PuzzleScreen>
     }
 
     // Correct coordinate — try to place through the engine.
+    final capsBefore =
+        _game.board.capturedByBlack + _game.board.capturedByWhite;
     final placed = _game.board.placeStone(i, j, widget.puzzle.playerColor);
     if (!placed) {
       _handleWrongMove(i, j, illegal: true);
       return;
     }
 
-    SfxService.instance.play(SfxSound.correct);
+    SfxService.instance.play(SfxSound.stonePlace);
+    final capsAfter = _game.board.capturedByBlack + _game.board.capturedByWhite;
+    if (capsAfter > capsBefore) {
+      SfxService.instance.play(SfxSound.capture);
+    }
     setState(() => _moveCount++);
     _checkWinAndContinue();
   }
@@ -181,7 +189,15 @@ class _PuzzleScreenState extends State<PuzzleScreen>
     Future.delayed(const Duration(milliseconds: 650), () {
       if (!mounted) return;
       final move = widget.puzzle.solution[_moveCount];
+      final capsBefore =
+          _game.board.capturedByBlack + _game.board.capturedByWhite;
       _game.board.placeStone(move.row, move.col, move.color);
+      SfxService.instance.play(SfxSound.stonePlace);
+      final capsAfter =
+          _game.board.capturedByBlack + _game.board.capturedByWhite;
+      if (capsAfter > capsBefore) {
+        SfxService.instance.play(SfxSound.capture);
+      }
       setState(() {
         _moveCount++;
         _awaitingOpponent = false;
@@ -247,111 +263,6 @@ class _PuzzleScreenState extends State<PuzzleScreen>
       );
 
     if (widget.isDrillMode) _resetPuzzle();
-  }
-
-  void _showSuccessDialog() {
-    final l = AppLocalizations.of(context);
-    final hasNext =
-        widget.sequence != null &&
-        widget.sequenceIndex != null &&
-        widget.sequenceIndex! + 1 < widget.sequence!.length;
-    ResultModal.show<void>(
-      context,
-      kind: ResultModalKind.success,
-      title: l.puzzleSolved,
-      body:
-          '"${widget.puzzle.localizedTitle(context)}"\n'
-          '${l.difficulty}: ${'⭐' * widget.puzzle.difficulty}',
-      actions: [
-        if (hasNext)
-          ResultModalAction(
-            label: l.nextPuzzle,
-            icon: Icons.skip_next,
-            isPrimary: true,
-            onPressed: () {
-              Navigator.pop(context); // close modal
-              final nextIndex = widget.sequenceIndex! + 1;
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => PuzzleScreen(
-                    puzzle: widget.sequence![nextIndex],
-                    sequence: widget.sequence,
-                    sequenceIndex: nextIndex,
-                  ),
-                ),
-              );
-            },
-          ),
-        ResultModalAction(
-          label: l.continue_,
-          icon: Icons.arrow_forward,
-          isPrimary: !hasNext,
-          onPressed: () {
-            Navigator.pop(context);
-            Navigator.pop(context, {
-              'solved': true,
-              'puzzleId': widget.puzzle.id,
-              'mistakes': _mistakeCount,
-            });
-          },
-        ),
-        ResultModalAction(
-          label: l.tryAgain,
-          icon: Icons.refresh,
-          onPressed: () {
-            Navigator.pop(context);
-            _resetPuzzle();
-          },
-        ),
-      ],
-    );
-  }
-
-  // ignore: unused_element
-  void _showFailDialog() {
-    final l = AppLocalizations.of(context);
-    final targeted = _lastWrongMoveKey != null
-        ? widget.puzzle.failureReasons[_lastWrongMoveKey!]
-        : null;
-    final localizedHint = widget.puzzle.localizedHint(context);
-    final reason = targeted ?? localizedHint;
-    final body = targeted != null
-        ? '$reason\n\n${l.hint}: $localizedHint'
-        : reason;
-    ResultModal.show<void>(
-      context,
-      kind: ResultModalKind.failure,
-      title: l.notQuite,
-      body: body,
-      actions: [
-        ResultModalAction(
-          label: l.stepBack,
-          icon: Icons.undo,
-          onPressed: () {
-            Navigator.pop(context);
-            _stepBack();
-          },
-        ),
-        ResultModalAction(
-          label: l.giveUp,
-          icon: Icons.close,
-          onPressed: () {
-            Navigator.pop(context);
-            Navigator.pop(context);
-          },
-        ),
-        ResultModalAction(
-          label: l.tryAgain,
-          icon: Icons.refresh,
-          isPrimary: true,
-          onPressed: () {
-            Navigator.pop(context);
-            _resetPuzzle();
-          },
-        ),
-      ],
-    );
   }
 
   /// Reverts the most recent wrong move only, leaving previous correct moves
@@ -479,60 +390,36 @@ class _PuzzleScreenState extends State<PuzzleScreen>
             ),
           ),
         ),
-        Expanded(flex: 1, child: _buildPuzzleInfo()),
+        Expanded(
+          flex: 1,
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildInstruction(),
+                const SizedBox(height: 20),
+                _buildStatusPanel(),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }
 
   Widget _buildMobileLayout(BoxConstraints constraints, bool isDarkTheme) {
     final double boardSize = constraints.maxWidth * 0.95;
-    return Center(
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 16),
-            // Progress bar
-            if (widget.puzzle.solution.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Move $_moveCount of ${widget.puzzle.solution.length}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                        if (_awaitingOpponent)
-                          const SizedBox(
-                            width: 14,
-                            height: 14,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: LinearProgressIndicator(
-                        value: widget.puzzle.solution.isEmpty
-                            ? 0
-                            : _moveCount / widget.puzzle.solution.length,
-                        minHeight: 6,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                  ],
-                ),
-              ),
-            // Board with shake animation
-            AnimatedBuilder(
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildInstruction(),
+          const SizedBox(height: 8),
+          // Board with shake animation
+          Center(
+            child: AnimatedBuilder(
               animation: _shakeAnimation,
               builder: (context, child) => Transform.translate(
                 offset: Offset(_shakeAnimation.value, 0),
@@ -549,241 +436,189 @@ class _PuzzleScreenState extends State<PuzzleScreen>
                 ),
               ),
             ),
-            const SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: _buildPuzzleInfo(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPuzzleInfo() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                _solved ? Icons.check_circle : Icons.psychology,
-                color: _solved ? Colors.green : Colors.blue,
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  _solved
-                      ? AppLocalizations.of(context).puzzleSolved
-                      : AppLocalizations.of(context).puzzles,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-              ),
-            ],
           ),
           const SizedBox(height: 16),
-          _buildInfoCard(
-            AppLocalizations.of(context).objective,
-            widget.puzzle.localizedDescription(context),
-            Icons.flag,
-          ),
-          const SizedBox(height: 12),
-          _buildInfoCard(
-            AppLocalizations.of(context).difficulty,
-            '⭐' * widget.puzzle.difficulty,
-            Icons.bar_chart,
-          ),
-          const SizedBox(height: 12),
-          _buildInfoCard(
-            AppLocalizations.of(context).yourTurn,
-            widget.puzzle.playerColor == 1
-                ? AppLocalizations.of(context).blackToPlay
-                : AppLocalizations.of(context).whiteToPlay,
-            Icons.circle,
-            iconColor: widget.puzzle.playerColor == 1
-                ? Colors.black
-                : Colors.white,
-          ),
-          const SizedBox(height: 12),
-          if (widget.puzzle.solution.isNotEmpty)
-            _buildInfoCard(
-              AppLocalizations.of(context).moves,
-              '$_moveCount / ${widget.puzzle.solution.length}',
-              Icons.timeline,
-            ),
-          if (widget.puzzle.explanation.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            _buildTheorySection(),
-          ],
-          const SizedBox(height: 16),
-          if (widget.puzzle.solution.isEmpty && !_solved)
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  setState(() => _solved = true);
-                  _showSuccessDialog();
-                },
-                icon: const Icon(Icons.check_circle_outline),
-                label: Text(AppLocalizations.of(context).markAsLearned),
-              ),
-            )
-          else
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: _showHint,
-                icon: const Icon(Icons.lightbulb_outline),
-                label: Text(AppLocalizations.of(context).hint),
-              ),
-            ),
+          _buildStatusPanel(),
+          const SizedBox(height: 32),
         ],
       ),
     );
   }
 
-  Widget _buildInfoCard(
-    String label,
-    String value,
-    IconData icon, {
-    Color? iconColor,
-  }) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
+  /// Single instruction line above the board: "Black to play ●" / "White to play ○".
+  Widget _buildInstruction() {
+    final l = AppLocalizations.of(context);
+    final isBlack = widget.puzzle.playerColor == 1;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      child: Row(
+        children: [
+          Container(
+            width: 14,
+            height: 14,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isBlack ? Colors.black : Colors.white,
+              border: Border.all(color: Colors.grey.shade500, width: 1.5),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            isBlack ? l.blackToPlay : l.whiteToPlay,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Chess.com-style status panel below the board.
+  ///
+  /// • Not solved: description text + Hint / Reset buttons.
+  /// • Solved: green banner + explanation + Next Puzzle / Done button.
+  Widget _buildStatusPanel() {
+    final l = AppLocalizations.of(context);
+
+    if (_solved) {
+      final hasNext =
+          widget.sequence != null &&
+          widget.sequenceIndex != null &&
+          widget.sequenceIndex! + 1 < widget.sequence!.length;
+
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Icon(icon, size: 20, color: iconColor),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            // ✓ Correct! banner
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
+                color: Colors.green.shade500,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
                 children: [
+                  const Icon(Icons.check_circle, color: Colors.white, size: 22),
+                  const SizedBox(width: 10),
                   Text(
-                    label,
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    value,
+                    l.puzzleSolved,
                     style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
                     ),
+                  ),
+                  const Spacer(),
+                  Text(
+                    '⭐' * widget.puzzle.difficulty,
+                    style: const TextStyle(fontSize: 14),
                   ),
                 ],
               ),
             ),
+            if (widget.puzzle.explanation.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Text(
+                widget.puzzle.explanation,
+                style: TextStyle(
+                  fontSize: 13,
+                  height: 1.5,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+            const SizedBox(height: 16),
+            if (hasNext)
+              ElevatedButton.icon(
+                onPressed: () {
+                  final nextIndex = widget.sequenceIndex! + 1;
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => PuzzleScreen(
+                        puzzle: widget.sequence![nextIndex],
+                        sequence: widget.sequence,
+                        sequenceIndex: nextIndex,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.skip_next),
+                label: Text(l.nextPuzzle),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+              )
+            else
+              OutlinedButton(
+                onPressed: () => Navigator.pop(context, {
+                  'solved': true,
+                  'puzzleId': widget.puzzle.id,
+                  'mistakes': _mistakeCount,
+                }),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+                child: Text(l.continue_),
+              ),
           ],
         ),
-      ),
-    );
-  }
+      );
+    }
 
-  Widget _buildTheorySection() {
-    final l = AppLocalizations.of(context);
-    return ExpansionTile(
-      leading: const Icon(Icons.school, color: Colors.blue),
-      title: Text(
-        l.theoryExplanation,
-        style: const TextStyle(fontWeight: FontWeight.bold),
-      ),
-      subtitle: Text(
-        _solved ? l.learnWhyThisWorks : l.solveToUnlock,
-        style: TextStyle(
-          fontSize: 12,
-          color: _solved ? Colors.green : Colors.grey,
-        ),
-      ),
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (_solved) ...[
-                Text(
-                  widget.puzzle.explanation,
-                  style: const TextStyle(fontSize: 14, height: 1.5),
-                ),
-                const SizedBox(height: 12),
-                _buildConceptCard(),
-              ] else ...[
-                const Icon(Icons.lock, size: 48, color: Colors.grey),
-                const SizedBox(height: 8),
-                const Text(
-                  'Complete the puzzle to unlock the explanation!',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ],
-            ],
+    // Not yet solved
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.puzzle.localizedDescription(context),
+            style: TextStyle(
+              fontSize: 14,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildConceptCard() {
-    final l = AppLocalizations.of(context);
-    final concept = _getConcept(widget.puzzle.category, l);
-    if (concept == null) return const SizedBox.shrink();
-
-    return Card(
-      color: Colors.blue.withValues(alpha: 0.1),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+          const SizedBox(height: 12),
+          if (widget.puzzle.solution.isEmpty)
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  setState(() => _solved = true);
+                  context.read<ProgressService>().markPuzzleSolved(
+                    widget.puzzle.id,
+                  );
+                },
+                icon: const Icon(Icons.check_circle_outline),
+                label: Text(l.markAsLearned),
+              ),
+            )
+          else
             Row(
               children: [
-                const Icon(Icons.lightbulb, color: Colors.amber, size: 20),
+                TextButton.icon(
+                  onPressed: _showHint,
+                  icon: const Icon(Icons.lightbulb_outline, size: 18),
+                  label: Text(l.hint),
+                ),
                 const SizedBox(width: 8),
-                Text(
-                  '${l.keyConceptPrefix}${concept['title']}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
+                TextButton.icon(
+                  onPressed: _resetPuzzle,
+                  icon: const Icon(Icons.refresh, size: 18),
+                  label: Text(l.reset),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              concept['description']!,
-              style: const TextStyle(fontSize: 13, height: 1.4),
-            ),
-          ],
-        ),
+        ],
       ),
     );
-  }
-
-  Map<String, String>? _getConcept(String category, AppLocalizations l) {
-    switch (category) {
-      case 'capture':
-        return {
-          'title': l.conceptLibertiesCaptures,
-          'description': l.conceptLibertiesCapturesDesc,
-        };
-      case 'liberties':
-        return {
-          'title': l.conceptLibertyCounting,
-          'description': l.conceptLibertyCountingDesc,
-        };
-      case 'life_death':
-        return {
-          'title': l.conceptLifeDeathTwoEyes,
-          'description': l.conceptLifeDeathDesc,
-        };
-      case 'ko':
-        return {'title': l.conceptKoRule, 'description': l.conceptKoRuleDesc};
-      default:
-        return null;
-    }
   }
 }

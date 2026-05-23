@@ -474,4 +474,245 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get moveQualityBlunder => '大错';
+
+  @override
+  String get moveQualityExcellent => '优秀';
+
+  @override
+  String get cancel => '取消';
+
+  @override
+  String get aiThinking => 'AI思考中…';
+
+  @override
+  String get noLegalMoves => '没有合法落子点，请选择让一手。';
+
+  @override
+  String get useHintTitle => '使用提示？';
+
+  @override
+  String useHintContent(int remaining) {
+    return '显示最佳落子。消耗1颗★（剩余$remaining颗）。';
+  }
+
+  @override
+  String get showHint => '显示提示';
+
+  @override
+  String get noHintAvailable => '没有可用提示，请尝试让一手。';
+
+  @override
+  String get resignTitle => '认输本局？';
+
+  @override
+  String get resignConfirmBot => '对手将以认输方式获胜。';
+
+  @override
+  String resignConfirmLocal(String side) {
+    return '$side认输，对手获胜。';
+  }
+
+  @override
+  String get resign => '认输';
+
+  @override
+  String get gameReview => '复盘';
+
+  @override
+  String get rematch => '重来';
+
+  @override
+  String get close => '关闭';
+
+  @override
+  String get noHintsRemaining => '提示已用完';
+
+  @override
+  String get showBestMove => '显示最佳落子（-1★）';
+
+  @override
+  String get noHintsUsed => '未使用提示';
+
+  @override
+  String hintsUsed(int count) {
+    return '已使用$count个提示';
+  }
+
+  @override
+  String get resumeLesson => '继续课程？';
+
+  @override
+  String resumeLessonContent(int step) {
+    return '从第$step步继续？';
+  }
+
+  @override
+  String get startOver => '重新开始';
+
+  @override
+  String get resume => '继续';
+
+  @override
+  String get notQuiteTapHint => '不太对，请尝试其他位置。';
+
+  @override
+  String get hintShownTapHint => '提示：按标记落子。';
+
+  @override
+  String get lessonComplete => '课程完成！';
+
+  @override
+  String dayStreak(int count) {
+    return '连续$count天';
+  }
+
+  @override
+  String get master => '大师';
+
+  @override
+  String get quickDrills => '快速练习';
+
+  @override
+  String get score => '比分';
+
+  @override
+  String get black => '黑棋';
+
+  @override
+  String get white => '白棋';
+
+  @override
+  String get you => '你';
+
+  @override
+  String get computer => '电脑';
+
+  @override
+  String get whiteWinsByResignation => '白棋认输胜';
+
+  @override
+  String get blackWinsByResignation => '黑棋认输胜';
+
+  @override
+  String blackWinsByPoints(int points) {
+    return '黑棋领先$points目胜！';
+  }
+
+  @override
+  String whiteWinsByPoints(int points) {
+    return '白棋领先$points目胜！';
+  }
+
+  @override
+  String get gameTied => '平局！';
+
+  @override
+  String get gameReviewComingSoon => '复盘功能即将上线';
+
+  @override
+  String get rating => '等级分';
+
+  @override
+  String get today => '今日';
+
+  @override
+  String get streak => '连续';
+
+  @override
+  String get xp => '经验值';
+
+  @override
+  String get seeAll => '查看全部';
+
+  @override
+  String get save => '保存';
+
+  @override
+  String get swapPuzzle => '换题';
+
+  @override
+  String get replay => '重播';
+
+  @override
+  String get continueLearning => '继续学习';
+
+  @override
+  String get noLessonsYet => '暂无课程';
+
+  @override
+  String get finishPreviousLesson => '完成上一课程以解锁此课程。';
+
+  @override
+  String get noGamesYet => '暂无对局 — 完成一局后即可在此查看。';
+
+  @override
+  String get premium => '高级';
+
+  @override
+  String get unlockPremium => '解锁高级版';
+
+  @override
+  String get youArePremium => '您已是高级用户';
+
+  @override
+  String get unlockGokoPremium => '解锁 GOKO 高级版';
+
+  @override
+  String get paywallTagline => '深度训练。更强对局。解锁一切。';
+
+  @override
+  String get unlimitedPuzzles => '无限题目';
+
+  @override
+  String get freePuzzleLimit => '免费用户每天3题';
+
+  @override
+  String get allBotsAndLessons => '全部机器人和课程';
+
+  @override
+  String get allBotsAndLessonsDesc => '初级机器人和前4节课程免费';
+
+  @override
+  String get postGameAnalysis => '赛后分析';
+
+  @override
+  String get postGameAnalysisDesc => '深度回顾任何已完成对局（即将推出）';
+
+  @override
+  String get profileFlair => '个人资料装扮';
+
+  @override
+  String get profileFlairDesc => '高级徽章和头像边框';
+
+  @override
+  String get restorePurchases => '恢复购买';
+
+  @override
+  String get puzzleDailyQuotaReached => '您今天的3道免费题已用完。升级获取无限题目。';
+
+  @override
+  String get advancedBotsLocked => '中级、高级和大师机器人需要高级版。';
+
+  @override
+  String get premiumLessonsLocked => '第5节及之后的课程需要高级版。';
+
+  @override
+  String seeAllLessons(int count) {
+    return '查看全部$count节课';
+  }
+
+  @override
+  String get dayStreakLabel => '连续天数';
+
+  @override
+  String get snapback => '倒扑';
+
+  @override
+  String get ladder => '征子';
+
+  @override
+  String get connect => '连接';
+
+  @override
+  String get lockedPremium => '高级';
 }

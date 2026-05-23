@@ -170,5 +170,105 @@
   "moveQualityGood": "Хороший",
   "moveQualityInaccuracy": "Неточность",
   "moveQualityMistake": "Ошибка",
-  "moveQualityBlunder": "Зевок"
+  "moveQualityBlunder": "Зевок",
+  "moveQualityExcellent": "Отлично",
+  "cancel": "Отмена",
+  "aiThinking": "ИИ думает…",
+  "noLegalMoves": "Нет доступных ходов. Нажмите «Пас».",
+  "useHintTitle": "Использовать подсказку?",
+  "useHintContent": "Показать лучший ход. Стоит 1 ★ (осталось {remaining}).",
+  "@useHintContent": {
+    "placeholders": { "remaining": { "type": "int" } }
+  },
+  "showHint": "Показать подсказку",
+  "noHintAvailable": "Подсказка недоступна — попробуйте пас.",
+  "resignTitle": "Сдать эту партию?",
+  "resignConfirmBot": "Ваш соперник победит по причине сдачи.",
+  "resignConfirmLocal": "{side} сдаётся. Побеждает соперник.",
+  "@resignConfirmLocal": {
+    "placeholders": { "side": { "type": "String" } }
+  },
+  "resign": "Сдаться",
+  "gameReview": "Разбор партии",
+  "rematch": "Реванш",
+  "close": "Закрыть",
+  "noHintsRemaining": "Подсказки закончились",
+  "showBestMove": "Лучший ход (-1 ★)",
+  "noHintsUsed": "Подсказки не использовались",
+  "hintsUsed": "Использовано подсказок: {count}",
+  "@hintsUsed": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "resumeLesson": "Продолжить урок?",
+  "resumeLessonContent": "Продолжить с шага {step}?",
+  "@resumeLessonContent": {
+    "placeholders": { "step": { "type": "int" } }
+  },
+  "startOver": "Начать заново",
+  "resume": "Продолжить",
+  "notQuiteTapHint": "Не совсем — попробуйте другую точку.",
+  "hintShownTapHint": "Подсказка: следуйте маркеру.",
+  "lessonComplete": "Урок завершён!",
+  "dayStreak": "Серия: {count} дн.",
+  "@dayStreak": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "master": "Мастер",
+  "quickDrills": "Быстрые упражнения",
+  "score": "Счёт",
+  "black": "Чёрные",
+  "white": "Белые",
+  "you": "Вы",
+  "computer": "Компьютер",
+  "whiteWinsByResignation": "Белые побеждают по причине сдачи",
+  "blackWinsByResignation": "Чёрные побеждают по причине сдачи",
+  "blackWinsByPoints": "Чёрные победили на {points} очков!",
+  "@blackWinsByPoints": {
+    "placeholders": { "points": { "type": "int" } }
+  },
+  "whiteWinsByPoints": "Белые победили на {points} очков!",
+  "@whiteWinsByPoints": {
+    "placeholders": { "points": { "type": "int" } }
+  },
+  "gameTied": "Ничья!",
+  "gameReviewComingSoon": "Разбор партии — скоро",
+
+  "rating": "Рейтинг",
+  "today": "Сегодня",
+  "streak": "Серия",
+  "xp": "Опыт",
+  "seeAll": "Все",
+  "save": "Сохранить",
+  "swapPuzzle": "Заменить задачу",
+  "replay": "Заново",
+  "continueLearning": "Продолжить обучение",
+  "noLessonsYet": "Уроков пока нет",
+  "finishPreviousLesson": "Завершите предыдущий урок, чтобы разблокировать этот.",
+  "noGamesYet": "Игр пока нет — завершите одну, чтобы увидеть её здесь.",
+  "premium": "Премиум",
+  "unlockPremium": "Получить Премиум",
+  "youArePremium": "Вы — Премиум",
+  "unlockGokoPremium": "Откройте GOKO Премиум",
+  "paywallTagline": "Тренируйся глубже. Играй сильнее. Открой всё.",
+  "unlimitedPuzzles": "Неограниченные задачи",
+  "freePuzzleLimit": "Бесплатно: 3 задачи в день",
+  "allBotsAndLessons": "Все боты и уроки",
+  "allBotsAndLessonsDesc": "Боты-новички и первые 4 урока бесплатны",
+  "postGameAnalysis": "Разбор партии",
+  "postGameAnalysisDesc": "Детальный разбор любой завершённой партии (скоро)",
+  "profileFlair": "Оформление профиля",
+  "profileFlairDesc": "Премиум-значки и рамки аватара",
+  "restorePurchases": "Восстановить покупки",
+  "puzzleDailyQuotaReached": "Вы решили 3 бесплатные задачи сегодня. Обновитесь для безлимита.",
+  "advancedBotsLocked": "Средние, продвинутые и мастер-боты требуют Премиума.",
+  "premiumLessonsLocked": "Уроки с 5-го требуют Премиума.",
+  "seeAllLessons": "Все {count} урока",
+  "@seeAllLessons": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "dayStreakLabel": "Серия дней",
+  "snapback": "Сикко",
+  "ladder": "Лестница",
+  "connect": "Соединение",
+  "lockedPremium": "Премиум"
 }

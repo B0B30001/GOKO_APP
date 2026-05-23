@@ -16,6 +16,10 @@ class PlayerPanel extends StatelessWidget {
   final bool isActive;
   final bool isDarkBackground;
 
+  /// When true, render a pulsing amber dot + "thinking…" label next to the
+  /// rank chip. Used to show that the bot is computing its next move.
+  final bool isThinking;
+
   const PlayerPanel({
     super.key,
     required this.color,
@@ -26,6 +30,7 @@ class PlayerPanel extends StatelessWidget {
     this.captures = 0,
     this.isActive = false,
     this.isDarkBackground = true,
+    this.isThinking = false,
   });
 
   @override
@@ -68,6 +73,10 @@ class PlayerPanel extends StatelessWidget {
                     if (rank != null) ...[
                       const SizedBox(width: 6),
                       _RankChip(rank: rank!),
+                    ],
+                    if (isThinking) ...[
+                      const SizedBox(width: 6),
+                      const _ThinkingPip(),
                     ],
                   ],
                 ),
@@ -210,6 +219,65 @@ class _ClockChip extends StatelessWidget {
           fontWeight: FontWeight.w600,
           fontSize: 13,
         ),
+      ),
+    );
+  }
+}
+
+/// Pulsing amber dot + "thinking…" label shown next to the bot's rank chip
+/// while the AI is computing its next move.
+class _ThinkingPip extends StatefulWidget {
+  const _ThinkingPip();
+
+  @override
+  State<_ThinkingPip> createState() => _ThinkingPipState();
+}
+
+class _ThinkingPipState extends State<_ThinkingPip>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: Tween<double>(begin: 0.35, end: 1.0).animate(_ctrl),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 7,
+            height: 7,
+            decoration: const BoxDecoration(
+              color: Colors.amber,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 4),
+          const Text(
+            'thinking…',
+            style: TextStyle(
+              fontSize: 11,
+              fontStyle: FontStyle.italic,
+              color: Colors.amber,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
     );
   }

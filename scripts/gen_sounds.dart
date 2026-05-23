@@ -29,7 +29,9 @@ ByteData buildWav(List<double> samples) {
   int o = 0;
 
   void writeStr(String s) {
-    for (final c in s.codeUnits) buf.setUint8(o++, c);
+    for (final c in s.codeUnits) {
+      buf.setUint8(o++, c);
+    }
   }
 
   void writeU16(int v) {

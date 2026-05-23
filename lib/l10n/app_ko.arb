@@ -170,5 +170,105 @@
   "moveQualityGood": "좋음",
   "moveQualityInaccuracy": "부정확",
   "moveQualityMistake": "실수",
-  "moveQualityBlunder": "대실수"
+  "moveQualityBlunder": "대실수",
+  "moveQualityExcellent": "우수",
+  "cancel": "취소",
+  "aiThinking": "AI 생각 중…",
+  "noLegalMoves": "합법적인 수가 없습니다. 패스를 누르세요.",
+  "useHintTitle": "힌트를 사용하시겠습니까?",
+  "useHintContent": "최선의 수를 공개합니다. 1★ 소모 (남은 {remaining}개).",
+  "@useHintContent": {
+    "placeholders": { "remaining": { "type": "int" } }
+  },
+  "showHint": "힌트 표시",
+  "noHintAvailable": "힌트가 없습니다. 패스를 시도하세요.",
+  "resignTitle": "이 대국을 기권하시겠습니까?",
+  "resignConfirmBot": "상대방이 기권승을 거두게 됩니다.",
+  "resignConfirmLocal": "{side}이(가) 기권합니다. 상대방이 이깁니다.",
+  "@resignConfirmLocal": {
+    "placeholders": { "side": { "type": "String" } }
+  },
+  "resign": "기권",
+  "gameReview": "기보 분석",
+  "rematch": "재대결",
+  "close": "닫기",
+  "noHintsRemaining": "힌트가 남아있지 않습니다",
+  "showBestMove": "최선의 수 표시（-1★）",
+  "noHintsUsed": "힌트 미사용",
+  "hintsUsed": "힌트 {count}회 사용",
+  "@hintsUsed": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "resumeLesson": "레슨을 계속하시겠습니까?",
+  "resumeLessonContent": "{step}단계부터 계속하시겠습니까?",
+  "@resumeLessonContent": {
+    "placeholders": { "step": { "type": "int" } }
+  },
+  "startOver": "처음부터",
+  "resume": "계속",
+  "notQuiteTapHint": "아닙니다. 다른 곳을 시도하세요.",
+  "hintShownTapHint": "힌트: 표시를 따라가세요.",
+  "lessonComplete": "레슨 완료!",
+  "dayStreak": "{count}일 연속",
+  "@dayStreak": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "master": "마스터",
+  "quickDrills": "빠른 연습",
+  "score": "점수",
+  "black": "흑",
+  "white": "백",
+  "you": "당신",
+  "computer": "컴퓨터",
+  "whiteWinsByResignation": "백이 기권승",
+  "blackWinsByResignation": "흑이 기권승",
+  "blackWinsByPoints": "흑이 {points}점 차 승리!",
+  "@blackWinsByPoints": {
+    "placeholders": { "points": { "type": "int" } }
+  },
+  "whiteWinsByPoints": "백이 {points}점 차 승리!",
+  "@whiteWinsByPoints": {
+    "placeholders": { "points": { "type": "int" } }
+  },
+  "gameTied": "무승부!",
+  "gameReviewComingSoon": "기보 분석 곧 제공",
+
+  "rating": "레이팅",
+  "today": "오늘",
+  "streak": "연속",
+  "xp": "경험치",
+  "seeAll": "모두 보기",
+  "save": "저장",
+  "swapPuzzle": "문제 교체",
+  "replay": "다시 보기",
+  "continueLearning": "계속 학습하기",
+  "noLessonsYet": "아직 수업이 없습니다",
+  "finishPreviousLesson": "이 수업을 열려면 이전 수업을 완료하세요.",
+  "noGamesYet": "아직 대국이 없습니다 — 완료 후 여기에 표시됩니다.",
+  "premium": "프리미엄",
+  "unlockPremium": "프리미엄 잠금 해제",
+  "youArePremium": "프리미엄 회원입니다",
+  "unlockGokoPremium": "GOKO 프리미엄 잠금 해제",
+  "paywallTagline": "더 깊이 훈련하세요. 더 강하게 대국하세요. 모든 것을 해제하세요.",
+  "unlimitedPuzzles": "무제한 문제",
+  "freePuzzleLimit": "무료: 하루 3문제",
+  "allBotsAndLessons": "모든 봇과 수업",
+  "allBotsAndLessonsDesc": "초급 봇과 처음 4개 수업은 무료",
+  "postGameAnalysis": "대국 분석",
+  "postGameAnalysisDesc": "완료된 대국의 심층 리뷰 (출시 예정)",
+  "profileFlair": "프로필 꾸미기",
+  "profileFlairDesc": "프리미엄 뱃지와 아바타 테두리",
+  "restorePurchases": "구매 복원",
+  "puzzleDailyQuotaReached": "오늘의 무료 문제 3개를 모두 사용했습니다. 무제한을 위해 업그레이드하세요.",
+  "advancedBotsLocked": "중급, 고급, 마스터 봇은 프리미엄이 필요합니다.",
+  "premiumLessonsLocked": "5번째 수업 이후는 프리미엄이 필요합니다.",
+  "seeAllLessons": "전체 {count}개 수업 보기",
+  "@seeAllLessons": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "dayStreakLabel": "연속 일수",
+  "snapback": "환격",
+  "ladder": "축",
+  "connect": "연결",
+  "lockedPremium": "프리미엄"
 }

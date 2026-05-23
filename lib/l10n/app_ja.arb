@@ -170,5 +170,105 @@
   "moveQualityGood": "良手",
   "moveQualityInaccuracy": "緩手",
   "moveQualityMistake": "悪手",
-  "moveQualityBlunder": "大悪手"
+  "moveQualityBlunder": "大悪手",
+  "moveQualityExcellent": "好手",
+  "cancel": "キャンセル",
+  "aiThinking": "AIが考えています…",
+  "noLegalMoves": "合法な手がありません。パスを押してください。",
+  "useHintTitle": "ヒントを使いますか？",
+  "useHintContent": "最善手を表示します。1★消費（残り{remaining}個）。",
+  "@useHintContent": {
+    "placeholders": { "remaining": { "type": "int" } }
+  },
+  "showHint": "ヒントを表示",
+  "noHintAvailable": "ヒントがありません。パスを試してください。",
+  "resignTitle": "この対局を投了しますか？",
+  "resignConfirmBot": "対戦相手が不戦勝となります。",
+  "resignConfirmLocal": "{side}が投了します。相手の勝ちです。",
+  "@resignConfirmLocal": {
+    "placeholders": { "side": { "type": "String" } }
+  },
+  "resign": "投了",
+  "gameReview": "棋譜解析",
+  "rematch": "再戦",
+  "close": "閉じる",
+  "noHintsRemaining": "ヒントがありません",
+  "showBestMove": "最善手を表示（-1★）",
+  "noHintsUsed": "ヒント未使用",
+  "hintsUsed": "ヒント{count}回使用",
+  "@hintsUsed": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "resumeLesson": "レッスンを再開しますか？",
+  "resumeLessonContent": "ステップ{step}から再開しますか？",
+  "@resumeLessonContent": {
+    "placeholders": { "step": { "type": "int" } }
+  },
+  "startOver": "最初から",
+  "resume": "再開",
+  "notQuiteTapHint": "違います。別の交点を試してください。",
+  "hintShownTapHint": "ヒント：マーカーに従ってください。",
+  "lessonComplete": "レッスン完了！",
+  "dayStreak": "{count}日連続",
+  "@dayStreak": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "master": "マスター",
+  "quickDrills": "クイックドリル",
+  "score": "スコア",
+  "black": "黒",
+  "white": "白",
+  "you": "あなた",
+  "computer": "コンピューター",
+  "whiteWinsByResignation": "白の不戦勝",
+  "blackWinsByResignation": "黒の不戦勝",
+  "blackWinsByPoints": "黒が{points}目勝ち！",
+  "@blackWinsByPoints": {
+    "placeholders": { "points": { "type": "int" } }
+  },
+  "whiteWinsByPoints": "白が{points}目勝ち！",
+  "@whiteWinsByPoints": {
+    "placeholders": { "points": { "type": "int" } }
+  },
+  "gameTied": "引き分け！",
+  "gameReviewComingSoon": "棋譜解析は近日公開",
+
+  "rating": "レート",
+  "today": "今日",
+  "streak": "連続",
+  "xp": "経験値",
+  "seeAll": "すべて表示",
+  "save": "保存",
+  "swapPuzzle": "問題を交換",
+  "replay": "もう一度",
+  "continueLearning": "学習を続ける",
+  "noLessonsYet": "レッスンはまだありません",
+  "finishPreviousLesson": "前のレッスンを完了してください。",
+  "noGamesYet": "まだ対局がありません — 終了すると表示されます。",
+  "premium": "プレミアム",
+  "unlockPremium": "プレミアム解放",
+  "youArePremium": "プレミアム会員です",
+  "unlockGokoPremium": "GOKO プレミアムを解放",
+  "paywallTagline": "深く練習。強く対局。すべてを解放。",
+  "unlimitedPuzzles": "無制限の問題",
+  "freePuzzleLimit": "無料：1日3問まで",
+  "allBotsAndLessons": "全ボットとレッスン",
+  "allBotsAndLessonsDesc": "初心者ボットと最初の4レッスンは無料",
+  "postGameAnalysis": "対局解析",
+  "postGameAnalysisDesc": "終了した対局の詳細レビュー（近日公開）",
+  "profileFlair": "プロフィール装飾",
+  "profileFlairDesc": "プレミアムバッジとアバターボーダー",
+  "restorePurchases": "購入を復元",
+  "puzzleDailyQuotaReached": "本日の無料問題3問を使い切りました。無制限にするにはアップグレードしてください。",
+  "advancedBotsLocked": "中級・上級・マスターボットはプレミアムが必要です。",
+  "premiumLessonsLocked": "レッスン5以降はプレミアムが必要です。",
+  "seeAllLessons": "全{count}レッスンを表示",
+  "@seeAllLessons": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "dayStreakLabel": "連続日数",
+  "snapback": "シチョウ崩し",
+  "ladder": "シチョウ",
+  "connect": "連絡",
+  "lockedPremium": "プレミアム"
 }

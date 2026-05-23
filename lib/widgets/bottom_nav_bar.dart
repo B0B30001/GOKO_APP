@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zaibal/gen/l10n/app_localizations.dart';
 
 /// Four-tab Material 3 NavigationBar: Play (0) | Learn (1) | Puzzles (2) | Profile (3).
 ///
@@ -17,29 +18,30 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return NavigationBar(
       selectedIndex: currentIndex,
       onDestinationSelected: onTap,
-      destinations: const [
+      destinations: [
         NavigationDestination(
-          icon: Icon(Icons.play_circle_outline),
-          selectedIcon: Icon(Icons.play_circle_filled),
-          label: 'Play',
+          icon: const Icon(Icons.play_circle_outline),
+          selectedIcon: const Icon(Icons.play_circle_filled),
+          label: l.play,
         ),
         NavigationDestination(
-          icon: Icon(Icons.book_outlined),
-          selectedIcon: Icon(Icons.book),
-          label: 'Learn',
+          icon: const Icon(Icons.book_outlined),
+          selectedIcon: const Icon(Icons.book),
+          label: l.learn,
         ),
         NavigationDestination(
-          icon: Icon(Icons.extension_outlined),
-          selectedIcon: Icon(Icons.extension),
-          label: 'Puzzles',
+          icon: const Icon(Icons.extension_outlined),
+          selectedIcon: const Icon(Icons.extension),
+          label: l.puzzles,
         ),
         NavigationDestination(
-          icon: Icon(Icons.person_outline),
-          selectedIcon: Icon(Icons.person),
-          label: 'Profile',
+          icon: const Icon(Icons.person_outline),
+          selectedIcon: const Icon(Icons.person),
+          label: l.profile,
         ),
       ],
     );

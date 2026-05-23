@@ -6,6 +6,7 @@
     "category": "fundamentals",
     "boardSize": 7,
     "source": "Sensei's Library — Liberties (paraphrased)",
+    "practicePuzzleIds": ["liberty_1", "liberty_2", "liberty_3"],
     "steps": [
       {
         "title": "A single stone has 4 liberties",
@@ -64,6 +65,24 @@
           [0, 0, 0, 0, 0, 0, 0]
         ],
         "body": "Two black stones connected vertically form one group with 6 liberties total. The point between them is shared, not counted twice. Larger groups can have more liberties — but they can also be captured all at once."
+      },
+      {
+        "title": "Quick check",
+        "kind": "quiz",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "Test what you've learned about liberties.",
+        "quizQuestion": "How many liberties does a single stone in the corner have?",
+        "quizChoices": ["1", "2", "3", "4"],
+        "quizCorrectIndex": 1,
+        "quizExplanation": "Two of the four orthogonal directions are blocked by the board edge, leaving just 2 liberties. That's why corner stones are easier to attack."
       }
     ]
   },
@@ -74,6 +93,7 @@
     "category": "fundamentals",
     "boardSize": 7,
     "source": "Sensei's Library — Atari / Capture (paraphrased)",
+    "practicePuzzleIds": ["capture_1", "capture_2", "capture_3"],
     "steps": [
       {
         "title": "White is in atari",
@@ -104,11 +124,35 @@
         "markedRow": 3,
         "markedCol": 2,
         "body": "Black plays the last liberty. The white stone has zero liberties and is removed from the board immediately. Black's capture count goes up by 1."
+      },
+      {
+        "title": "Quick check",
+        "kind": "quiz",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "Let's make sure 'atari' is locked in.",
+        "quizQuestion": "What does it mean when a group is in atari?",
+        "quizChoices": [
+          "It has been captured",
+          "It has exactly one liberty left",
+          "It is connected to another group",
+          "It can never be captured"
+        ],
+        "quizCorrectIndex": 1,
+        "quizExplanation": "Atari is the warning state — the group has one liberty left, so the opponent can capture next turn unless you defend or extend."
       }
     ]
   },
   {
     "id": "ko-rule",
+    "practicePuzzleIds": ["ko_1", "ko_2"],
     "title": "The Ko Rule",
     "summary": "Ko prevents an infinite loop of capture-and-recapture. After capturing in a ko, you must play elsewhere before you can recapture.",
     "category": "rules",
@@ -163,11 +207,35 @@
           {"row": 2, "col": 2, "color": 2, "caption": "Now the position has changed — White retakes the ko, capturing the black stone.", "delayMs": 1000},
           {"row": 2, "col": 3, "color": 0, "caption": "The captured black stone is removed from the board. The ko swings back to White.", "delayMs": 700}
         ]
+      },
+      {
+        "title": "Quick check",
+        "kind": "quiz",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "How well do you remember the Ko rule?",
+        "quizQuestion": "Right after capturing a stone in a ko, when can you take that same point again?",
+        "quizChoices": [
+          "Immediately on your next turn",
+          "After playing at least one move elsewhere",
+          "You can never retake a ko",
+          "Only if your opponent passes"
+        ],
+        "quizCorrectIndex": 1,
+        "quizExplanation": "The Ko rule forbids immediately recreating the previous board position. You must play another move first — usually a ko threat — before retaking."
       }
     ]
   },
   {
     "id": "eyes-and-life",
+    "practicePuzzleIds": ["life_death_1", "life_death_2", "life_death_3"],
     "title": "Eyes and Life",
     "summary": "A group with two separate eyes (empty interior points completely surrounded by your stones) cannot be captured. This is the most important survival concept in Go.",
     "category": "life-death",
@@ -199,6 +267,24 @@
           [0, 0, 0, 0, 0, 0, 0]
         ],
         "body": "Now the group has TWO separate eyes — at (2,2) and (2,4). White cannot fill either: any white stone played in an eye has zero liberties (suicide). Two eyes = unconditional life. The proverb: 'Two eyes live, one eye dies.'"
+      },
+      {
+        "title": "Quick check",
+        "kind": "quiz",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "The single most important concept in life-and-death.",
+        "quizQuestion": "How many real eyes does a group need to be unconditionally alive?",
+        "quizChoices": ["1", "2", "3", "4"],
+        "quizCorrectIndex": 1,
+        "quizExplanation": "Two separate real eyes make a group unkillable: the opponent can't fill both at once without playing a suicidal stone."
       }
     ]
   },

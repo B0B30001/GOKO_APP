@@ -474,4 +474,246 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get moveQualityBlunder => '大悪手';
+
+  @override
+  String get moveQualityExcellent => '好手';
+
+  @override
+  String get cancel => 'キャンセル';
+
+  @override
+  String get aiThinking => 'AIが考えています…';
+
+  @override
+  String get noLegalMoves => '合法な手がありません。パスを押してください。';
+
+  @override
+  String get useHintTitle => 'ヒントを使いますか？';
+
+  @override
+  String useHintContent(int remaining) {
+    return '最善手を表示します。1★消費（残り$remaining個）。';
+  }
+
+  @override
+  String get showHint => 'ヒントを表示';
+
+  @override
+  String get noHintAvailable => 'ヒントがありません。パスを試してください。';
+
+  @override
+  String get resignTitle => 'この対局を投了しますか？';
+
+  @override
+  String get resignConfirmBot => '対戦相手が不戦勝となります。';
+
+  @override
+  String resignConfirmLocal(String side) {
+    return '$sideが投了します。相手の勝ちです。';
+  }
+
+  @override
+  String get resign => '投了';
+
+  @override
+  String get gameReview => '棋譜解析';
+
+  @override
+  String get rematch => '再戦';
+
+  @override
+  String get close => '閉じる';
+
+  @override
+  String get noHintsRemaining => 'ヒントがありません';
+
+  @override
+  String get showBestMove => '最善手を表示（-1★）';
+
+  @override
+  String get noHintsUsed => 'ヒント未使用';
+
+  @override
+  String hintsUsed(int count) {
+    return 'ヒント$count回使用';
+  }
+
+  @override
+  String get resumeLesson => 'レッスンを再開しますか？';
+
+  @override
+  String resumeLessonContent(int step) {
+    return 'ステップ$stepから再開しますか？';
+  }
+
+  @override
+  String get startOver => '最初から';
+
+  @override
+  String get resume => '再開';
+
+  @override
+  String get notQuiteTapHint => '違います。別の交点を試してください。';
+
+  @override
+  String get hintShownTapHint => 'ヒント：マーカーに従ってください。';
+
+  @override
+  String get lessonComplete => 'レッスン完了！';
+
+  @override
+  String dayStreak(int count) {
+    return '$count日連続';
+  }
+
+  @override
+  String get master => 'マスター';
+
+  @override
+  String get quickDrills => 'クイックドリル';
+
+  @override
+  String get score => 'スコア';
+
+  @override
+  String get black => '黒';
+
+  @override
+  String get white => '白';
+
+  @override
+  String get you => 'あなた';
+
+  @override
+  String get computer => 'コンピューター';
+
+  @override
+  String get whiteWinsByResignation => '白の不戦勝';
+
+  @override
+  String get blackWinsByResignation => '黒の不戦勝';
+
+  @override
+  String blackWinsByPoints(int points) {
+    return '黒が$points目勝ち！';
+  }
+
+  @override
+  String whiteWinsByPoints(int points) {
+    return '白が$points目勝ち！';
+  }
+
+  @override
+  String get gameTied => '引き分け！';
+
+  @override
+  String get gameReviewComingSoon => '棋譜解析は近日公開';
+
+  @override
+  String get rating => 'レート';
+
+  @override
+  String get today => '今日';
+
+  @override
+  String get streak => '連続';
+
+  @override
+  String get xp => '経験値';
+
+  @override
+  String get seeAll => 'すべて表示';
+
+  @override
+  String get save => '保存';
+
+  @override
+  String get swapPuzzle => '問題を交換';
+
+  @override
+  String get replay => 'もう一度';
+
+  @override
+  String get continueLearning => '学習を続ける';
+
+  @override
+  String get noLessonsYet => 'レッスンはまだありません';
+
+  @override
+  String get finishPreviousLesson => '前のレッスンを完了してください。';
+
+  @override
+  String get noGamesYet => 'まだ対局がありません — 終了すると表示されます。';
+
+  @override
+  String get premium => 'プレミアム';
+
+  @override
+  String get unlockPremium => 'プレミアム解放';
+
+  @override
+  String get youArePremium => 'プレミアム会員です';
+
+  @override
+  String get unlockGokoPremium => 'GOKO プレミアムを解放';
+
+  @override
+  String get paywallTagline => '深く練習。強く対局。すべてを解放。';
+
+  @override
+  String get unlimitedPuzzles => '無制限の問題';
+
+  @override
+  String get freePuzzleLimit => '無料：1日3問まで';
+
+  @override
+  String get allBotsAndLessons => '全ボットとレッスン';
+
+  @override
+  String get allBotsAndLessonsDesc => '初心者ボットと最初の4レッスンは無料';
+
+  @override
+  String get postGameAnalysis => '対局解析';
+
+  @override
+  String get postGameAnalysisDesc => '終了した対局の詳細レビュー（近日公開）';
+
+  @override
+  String get profileFlair => 'プロフィール装飾';
+
+  @override
+  String get profileFlairDesc => 'プレミアムバッジとアバターボーダー';
+
+  @override
+  String get restorePurchases => '購入を復元';
+
+  @override
+  String get puzzleDailyQuotaReached =>
+      '本日の無料問題3問を使い切りました。無制限にするにはアップグレードしてください。';
+
+  @override
+  String get advancedBotsLocked => '中級・上級・マスターボットはプレミアムが必要です。';
+
+  @override
+  String get premiumLessonsLocked => 'レッスン5以降はプレミアムが必要です。';
+
+  @override
+  String seeAllLessons(int count) {
+    return '全$countレッスンを表示';
+  }
+
+  @override
+  String get dayStreakLabel => '連続日数';
+
+  @override
+  String get snapback => 'シチョウ崩し';
+
+  @override
+  String get ladder => 'シチョウ';
+
+  @override
+  String get connect => '連絡';
+
+  @override
+  String get lockedPremium => 'プレミアム';
 }

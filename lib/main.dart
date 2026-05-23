@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'dart:async' show unawaited;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:zaibal/gen/l10n/app_localizations.dart';
@@ -11,7 +10,6 @@ import 'package:zaibal/screens/puzzles_hub_screen.dart';
 import 'package:zaibal/screens/settings_screen.dart';
 import 'package:zaibal/screens/history_screen.dart';
 import 'package:zaibal/screens/bots_screen.dart';
-import 'package:zaibal/screens/ai_engine_screen.dart';
 import 'package:zaibal/screens/auth_gate_screen.dart';
 import 'package:zaibal/widgets/app_shell.dart';
 import 'package:zaibal/theme/go_theme.dart';
@@ -20,7 +18,6 @@ import 'package:zaibal/services/ogs_service.dart';
 import 'package:zaibal/services/user_service.dart';
 import 'package:zaibal/services/subscription_service.dart';
 import 'package:zaibal/services/match_history_service.dart';
-import 'package:zaibal/services/ai/katago_process_service.dart';
 import 'package:zaibal/services/progress_service.dart';
 
 Future<void> main() async {
@@ -52,15 +49,6 @@ Future<void> main() async {
     ogsService.tryAutoLogin(),
     progressService.load(),
   ]);
-
-  // Discover local KataGo binary in the background. If found, auto-start.
-  unawaited(
-    KataGoProcessService.instance.discover().then((_) {
-      if (KataGoProcessService.instance.isAvailable) {
-        KataGoProcessService.instance.start();
-      }
-    }),
-  );
 
   runApp(
     GokoApp(
@@ -165,16 +153,6 @@ class _GokoAppState extends State<GokoApp> {
     AppSettings.save();
   }
 
-  void _onKataGoServerUrlChanged(String url) {
-    AppSettings.kataGoServerUrl = url;
-    AppSettings.save();
-  }
-
-  void _onLeelaServerUrlChanged(String url) {
-    AppSettings.leelaServerUrl = url;
-    AppSettings.save();
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDark = AppSettings.themeMode == ThemeMode.dark;
@@ -187,7 +165,6 @@ class _GokoAppState extends State<GokoApp> {
         ChangeNotifierProvider.value(value: widget.subscriptionService),
         ChangeNotifierProvider.value(value: widget.matchHistoryService),
         ChangeNotifierProvider.value(value: widget.progressService),
-        ChangeNotifierProvider.value(value: KataGoProcessService.instance),
       ],
       child: MaterialApp(
         title: 'GOKO',
@@ -233,14 +210,9 @@ class _GokoAppState extends State<GokoApp> {
             onThemePresetChanged: _onThemePresetChanged,
             languageCode: AppSettings.languageCode,
             onLanguageChanged: _setLanguage,
-            kataGoServerUrl: AppSettings.kataGoServerUrl,
-            onKataGoServerUrlChanged: _onKataGoServerUrlChanged,
-            leelaServerUrl: AppSettings.leelaServerUrl,
-            onLeelaServerUrlChanged: _onLeelaServerUrlChanged,
           ),
           '/puzzles': (context) => const PuzzlesHubScreen(),
           '/bots': (context) => const BotsScreen(),
-          '/ai-engine': (context) => const AiEngineScreen(),
         },
       ),
     );

@@ -477,4 +477,250 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get moveQualityBlunder => 'Зевок';
+
+  @override
+  String get moveQualityExcellent => 'Отлично';
+
+  @override
+  String get cancel => 'Отмена';
+
+  @override
+  String get aiThinking => 'ИИ думает…';
+
+  @override
+  String get noLegalMoves => 'Нет доступных ходов. Нажмите «Пас».';
+
+  @override
+  String get useHintTitle => 'Использовать подсказку?';
+
+  @override
+  String useHintContent(int remaining) {
+    return 'Показать лучший ход. Стоит 1 ★ (осталось $remaining).';
+  }
+
+  @override
+  String get showHint => 'Показать подсказку';
+
+  @override
+  String get noHintAvailable => 'Подсказка недоступна — попробуйте пас.';
+
+  @override
+  String get resignTitle => 'Сдать эту партию?';
+
+  @override
+  String get resignConfirmBot => 'Ваш соперник победит по причине сдачи.';
+
+  @override
+  String resignConfirmLocal(String side) {
+    return '$side сдаётся. Побеждает соперник.';
+  }
+
+  @override
+  String get resign => 'Сдаться';
+
+  @override
+  String get gameReview => 'Разбор партии';
+
+  @override
+  String get rematch => 'Реванш';
+
+  @override
+  String get close => 'Закрыть';
+
+  @override
+  String get noHintsRemaining => 'Подсказки закончились';
+
+  @override
+  String get showBestMove => 'Лучший ход (-1 ★)';
+
+  @override
+  String get noHintsUsed => 'Подсказки не использовались';
+
+  @override
+  String hintsUsed(int count) {
+    return 'Использовано подсказок: $count';
+  }
+
+  @override
+  String get resumeLesson => 'Продолжить урок?';
+
+  @override
+  String resumeLessonContent(int step) {
+    return 'Продолжить с шага $step?';
+  }
+
+  @override
+  String get startOver => 'Начать заново';
+
+  @override
+  String get resume => 'Продолжить';
+
+  @override
+  String get notQuiteTapHint => 'Не совсем — попробуйте другую точку.';
+
+  @override
+  String get hintShownTapHint => 'Подсказка: следуйте маркеру.';
+
+  @override
+  String get lessonComplete => 'Урок завершён!';
+
+  @override
+  String dayStreak(int count) {
+    return 'Серия: $count дн.';
+  }
+
+  @override
+  String get master => 'Мастер';
+
+  @override
+  String get quickDrills => 'Быстрые упражнения';
+
+  @override
+  String get score => 'Счёт';
+
+  @override
+  String get black => 'Чёрные';
+
+  @override
+  String get white => 'Белые';
+
+  @override
+  String get you => 'Вы';
+
+  @override
+  String get computer => 'Компьютер';
+
+  @override
+  String get whiteWinsByResignation => 'Белые побеждают по причине сдачи';
+
+  @override
+  String get blackWinsByResignation => 'Чёрные побеждают по причине сдачи';
+
+  @override
+  String blackWinsByPoints(int points) {
+    return 'Чёрные победили на $points очков!';
+  }
+
+  @override
+  String whiteWinsByPoints(int points) {
+    return 'Белые победили на $points очков!';
+  }
+
+  @override
+  String get gameTied => 'Ничья!';
+
+  @override
+  String get gameReviewComingSoon => 'Разбор партии — скоро';
+
+  @override
+  String get rating => 'Рейтинг';
+
+  @override
+  String get today => 'Сегодня';
+
+  @override
+  String get streak => 'Серия';
+
+  @override
+  String get xp => 'Опыт';
+
+  @override
+  String get seeAll => 'Все';
+
+  @override
+  String get save => 'Сохранить';
+
+  @override
+  String get swapPuzzle => 'Заменить задачу';
+
+  @override
+  String get replay => 'Заново';
+
+  @override
+  String get continueLearning => 'Продолжить обучение';
+
+  @override
+  String get noLessonsYet => 'Уроков пока нет';
+
+  @override
+  String get finishPreviousLesson =>
+      'Завершите предыдущий урок, чтобы разблокировать этот.';
+
+  @override
+  String get noGamesYet =>
+      'Игр пока нет — завершите одну, чтобы увидеть её здесь.';
+
+  @override
+  String get premium => 'Премиум';
+
+  @override
+  String get unlockPremium => 'Получить Премиум';
+
+  @override
+  String get youArePremium => 'Вы — Премиум';
+
+  @override
+  String get unlockGokoPremium => 'Откройте GOKO Премиум';
+
+  @override
+  String get paywallTagline => 'Тренируйся глубже. Играй сильнее. Открой всё.';
+
+  @override
+  String get unlimitedPuzzles => 'Неограниченные задачи';
+
+  @override
+  String get freePuzzleLimit => 'Бесплатно: 3 задачи в день';
+
+  @override
+  String get allBotsAndLessons => 'Все боты и уроки';
+
+  @override
+  String get allBotsAndLessonsDesc => 'Боты-новички и первые 4 урока бесплатны';
+
+  @override
+  String get postGameAnalysis => 'Разбор партии';
+
+  @override
+  String get postGameAnalysisDesc =>
+      'Детальный разбор любой завершённой партии (скоро)';
+
+  @override
+  String get profileFlair => 'Оформление профиля';
+
+  @override
+  String get profileFlairDesc => 'Премиум-значки и рамки аватара';
+
+  @override
+  String get restorePurchases => 'Восстановить покупки';
+
+  @override
+  String get puzzleDailyQuotaReached =>
+      'Вы решили 3 бесплатные задачи сегодня. Обновитесь для безлимита.';
+
+  @override
+  String get advancedBotsLocked =>
+      'Средние, продвинутые и мастер-боты требуют Премиума.';
+
+  @override
+  String get premiumLessonsLocked => 'Уроки с 5-го требуют Премиума.';
+
+  @override
+  String seeAllLessons(int count) {
+    return 'Все $count урока';
+  }
+
+  @override
+  String get dayStreakLabel => 'Серия дней';
+
+  @override
+  String get snapback => 'Сикко';
+
+  @override
+  String get ladder => 'Лестница';
+
+  @override
+  String get connect => 'Соединение';
+
+  @override
+  String get lockedPremium => 'Премиум';
 }

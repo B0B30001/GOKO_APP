@@ -470,5 +470,254 @@
   "@moveQualityMistake": { "description": "Move quality label" },
 
   "moveQualityBlunder": "Blunder",
-  "@moveQualityBlunder": { "description": "Move quality label" }
+  "@moveQualityBlunder": { "description": "Move quality label" },
+
+  "moveQualityExcellent": "Excellent",
+  "@moveQualityExcellent": { "description": "Move quality label" },
+
+  "cancel": "Cancel",
+  "@cancel": { "description": "Cancel button" },
+
+  "aiThinking": "AI thinking…",
+  "@aiThinking": { "description": "Chip shown while AI is computing a move" },
+
+  "noLegalMoves": "No legal moves available. Press Pass to continue.",
+  "@noLegalMoves": { "description": "Snackbar when human player has no moves" },
+
+  "useHintTitle": "Use a hint?",
+  "@useHintTitle": { "description": "Hint dialog title" },
+
+  "useHintContent": "Reveal the best move. Costs 1 ★ ({remaining} left).",
+  "@useHintContent": {
+    "description": "Hint dialog body",
+    "placeholders": { "remaining": { "type": "int" } }
+  },
+
+  "showHint": "Show hint",
+  "@showHint": { "description": "Hint dialog confirm button" },
+
+  "noHintAvailable": "No hint available — try passing.",
+  "@noHintAvailable": { "description": "Snackbar when hint returns no move" },
+
+  "resignTitle": "Resign this game?",
+  "@resignTitle": { "description": "Resign dialog title" },
+
+  "resignConfirmBot": "Your opponent will win by resignation.",
+  "@resignConfirmBot": { "description": "Resign dialog body in vs-AI mode" },
+
+  "resignConfirmLocal": "{side} resigns. The other side wins.",
+  "@resignConfirmLocal": {
+    "description": "Resign dialog body in local 2-player mode",
+    "placeholders": { "side": { "type": "String" } }
+  },
+
+  "resign": "Resign",
+  "@resign": { "description": "Resign confirm button" },
+
+  "gameReview": "Game Review",
+  "@gameReview": { "description": "Game-over overlay: primary CTA label" },
+
+  "rematch": "Rematch",
+  "@rematch": { "description": "Game-over overlay: play again button" },
+
+  "close": "Close",
+  "@close": { "description": "Game-over overlay: close button" },
+
+  "noHintsRemaining": "No hints remaining",
+  "@noHintsRemaining": { "description": "Hint button tooltip when exhausted" },
+
+  "showBestMove": "Show best move (-1 ★)",
+  "@showBestMove": { "description": "Hint button tooltip" },
+
+  "noHintsUsed": "No hints used",
+  "@noHintsUsed": { "description": "Game-over: hints counter when zero" },
+
+  "hintsUsed": "{count} hint(s) used",
+  "@hintsUsed": {
+    "description": "Game-over: hints counter",
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "resumeLesson": "Resume lesson?",
+  "@resumeLesson": { "description": "Tutorial resume dialog title" },
+
+  "resumeLessonContent": "Continue from step {step}?",
+  "@resumeLessonContent": {
+    "description": "Tutorial resume dialog body",
+    "placeholders": { "step": { "type": "int" } }
+  },
+
+  "startOver": "Start over",
+  "@startOver": { "description": "Tutorial resume dialog: discard bookmark" },
+
+  "resume": "Resume",
+  "@resume": { "description": "Tutorial resume dialog: keep bookmark" },
+
+  "notQuiteTapHint": "Not quite — try a different point.",
+  "@notQuiteTapHint": { "description": "Tap-target step wrong-tap feedback" },
+
+  "hintShownTapHint": "Hint: follow the marker.",
+  "@hintShownTapHint": { "description": "Tap-target step hint shown feedback" },
+
+  "lessonComplete": "Lesson complete!",
+  "@lessonComplete": { "description": "Tutorial celebration overlay title" },
+
+  "dayStreak": "{count} day streak",
+  "@dayStreak": {
+    "description": "Streak badge in tutorial celebration",
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "master": "Master",
+  "@master": { "description": "Bots screen: Master tier label" },
+
+  "quickDrills": "Quick Drills",
+  "@quickDrills": { "description": "Learn screen section header" },
+
+  "score": "Score",
+  "@score": { "description": "Game board score panel title" },
+
+  "black": "Black",
+  "@black": { "description": "Black player label" },
+
+  "white": "White",
+  "@white": { "description": "White player label" },
+
+  "you": "You",
+  "@you": { "description": "Local human player name fallback" },
+
+  "computer": "Computer",
+  "@computer": { "description": "AI opponent name fallback" },
+
+  "whiteWinsByResignation": "White wins by resignation",
+  "@whiteWinsByResignation": { "description": "Result text when black resigns" },
+
+  "blackWinsByResignation": "Black wins by resignation",
+  "@blackWinsByResignation": { "description": "Result text when white resigns" },
+
+  "blackWinsByPoints": "Black wins by {points} points!",
+  "@blackWinsByPoints": {
+    "description": "Result text when black wins on score",
+    "placeholders": { "points": { "type": "int" } }
+  },
+
+  "whiteWinsByPoints": "White wins by {points} points!",
+  "@whiteWinsByPoints": {
+    "description": "Result text when white wins on score",
+    "placeholders": { "points": { "type": "int" } }
+  },
+
+  "gameTied": "Game is tied!",
+  "@gameTied": { "description": "Result text when scores are equal" },
+
+  "gameReviewComingSoon": "Game Review coming soon",
+  "@gameReviewComingSoon": { "description": "Placeholder when analysis is not yet available" },
+
+  "rating": "Rating",
+  "@rating": { "description": "Stat column label" },
+
+  "today": "Today",
+  "@today": { "description": "Puzzle hub: today's solved count label" },
+
+  "streak": "Streak",
+  "@streak": { "description": "Stat column label" },
+
+  "xp": "XP",
+  "@xp": { "description": "Experience points label" },
+
+  "seeAll": "See all",
+  "@seeAll": { "description": "Generic see-all link text" },
+
+  "save": "Save",
+  "@save": { "description": "Save button label" },
+
+  "swapPuzzle": "Swap puzzle",
+  "@swapPuzzle": { "description": "Daily tile swap tooltip" },
+
+  "replay": "Replay",
+  "@replay": { "description": "Completed lesson replay button" },
+
+  "continueLearning": "Continue Learning",
+  "@continueLearning": { "description": "In-progress lesson continue button" },
+
+  "noLessonsYet": "No lessons yet",
+  "@noLessonsYet": { "description": "Learn screen empty state" },
+
+  "finishPreviousLesson": "Finish the previous lesson to unlock this.",
+  "@finishPreviousLesson": { "description": "Lesson locked tooltip" },
+
+  "noGamesYet": "No games yet — finish one to see it here.",
+  "@noGamesYet": { "description": "History/profile empty state" },
+
+  "premium": "Premium",
+  "@premium": { "description": "Premium tier label" },
+
+  "unlockPremium": "Unlock Premium",
+  "@unlockPremium": { "description": "Paywall CTA button" },
+
+  "youArePremium": "You are Premium",
+  "@youArePremium": { "description": "Paywall: already premium state" },
+
+  "unlockGokoPremium": "Unlock GOKO Premium",
+  "@unlockGokoPremium": { "description": "Paywall screen title" },
+
+  "paywallTagline": "Train deeper. Play stronger. Unlock everything.",
+  "@paywallTagline": { "description": "Paywall subtitle" },
+
+  "unlimitedPuzzles": "Unlimited puzzles",
+  "@unlimitedPuzzles": { "description": "Paywall feature row title" },
+
+  "freePuzzleLimit": "Free users get 3 puzzles per day",
+  "@freePuzzleLimit": { "description": "Paywall feature row subtitle" },
+
+  "allBotsAndLessons": "All bots & lessons",
+  "@allBotsAndLessons": { "description": "Paywall feature row title" },
+
+  "allBotsAndLessonsDesc": "Beginner bots and first 4 lessons are free",
+  "@allBotsAndLessonsDesc": { "description": "Paywall feature row subtitle" },
+
+  "postGameAnalysis": "Post-game analysis",
+  "@postGameAnalysis": { "description": "Paywall feature row title" },
+
+  "postGameAnalysisDesc": "Deep review of any finished game (coming soon)",
+  "@postGameAnalysisDesc": { "description": "Paywall feature row subtitle" },
+
+  "profileFlair": "Profile flair",
+  "@profileFlair": { "description": "Paywall feature row title" },
+
+  "profileFlairDesc": "Premium badges and avatar borders",
+  "@profileFlairDesc": { "description": "Paywall feature row subtitle" },
+
+  "restorePurchases": "Restore purchases",
+  "@restorePurchases": { "description": "Paywall restore button" },
+
+  "puzzleDailyQuotaReached": "You've used today's 3 free puzzles. Upgrade for unlimited.",
+  "@puzzleDailyQuotaReached": { "description": "Paywall banner: puzzle quota hit" },
+
+  "advancedBotsLocked": "Intermediate, Advanced, and Master bots require Premium.",
+  "@advancedBotsLocked": { "description": "Paywall banner: bot tier locked" },
+
+  "premiumLessonsLocked": "Lessons 5 and beyond require Premium.",
+  "@premiumLessonsLocked": { "description": "Paywall banner: lessons locked" },
+
+  "seeAllLessons": "See all {count} lessons",
+  "@seeAllLessons": {
+    "description": "Learn screen: see-all lessons button",
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "dayStreakLabel": "Day Streak",
+  "@dayStreakLabel": { "description": "Puzzle hub: streak column label" },
+
+  "snapback": "Snapback",
+  "@snapback": { "description": "Puzzle category" },
+
+  "ladder": "Ladder",
+  "@ladder": { "description": "Puzzle category" },
+
+  "connect": "Connect",
+  "@connect": { "description": "Puzzle category" },
+
+  "lockedPremium": "Premium",
+  "@lockedPremium": { "description": "Lock badge label on premium-gated items" }
 }

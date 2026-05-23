@@ -1,25 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:zaibal/gen/l10n/app_localizations.dart';
 import 'package:zaibal/services/subscription_service.dart';
 
-/// Stub paywall. Real billing (Apple/Google IAP, Stripe) will replace
-/// [SubscriptionService.unlockPremium] later. The UX here is what users will
-/// see end-to-end once billing is wired up.
+/// Why the user landed on the paywall. Drives a contextual banner at the top
+/// so the upsell speaks to what they just tried to do.
+enum PaywallReason {
+  generic,
+  gameReviewDailyQuota,
+  puzzleDailyQuota,
+  advancedBots,
+  premiumLessons,
+}
+
+/// Stub paywall. Real billing (Apple/Google IAP) will replace
+/// [SubscriptionService.unlockPremium] later.
 class PaywallScreen extends StatelessWidget {
-  const PaywallScreen({super.key});
+  final PaywallReason reason;
+
+  const PaywallScreen({super.key, this.reason = PaywallReason.generic});
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final subscription = context.watch<SubscriptionService>();
     return Scaffold(
-      appBar: AppBar(title: const Text('Premium')),
+      appBar: AppBar(title: Text(l.premium)),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              if (reason != PaywallReason.generic) _buildReasonBanner(context),
               const Icon(
                 Icons.workspace_premium,
                 size: 80,
@@ -27,38 +41,43 @@ class PaywallScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Unlock GOKO Premium',
+                l.unlockGokoPremium,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(height: 8),
               Text(
-                'Train deeper. Review every game. Stand out.',
+                l.paywallTagline,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 24),
-              const _FeatureRow(
+              _FeatureRow(
                 icon: Icons.all_inclusive,
-                title: 'Unlimited puzzles',
-                subtitle: 'Free tier limits 3 puzzles per day',
+                title: l.unlimitedPuzzles,
+                subtitle: l.freePuzzleLimit,
               ),
-              const _FeatureRow(
+              _FeatureRow(
+                icon: Icons.school,
+                title: l.allBotsAndLessons,
+                subtitle: l.allBotsAndLessonsDesc,
+              ),
+              _FeatureRow(
                 icon: Icons.auto_graph,
-                title: 'Post-game analysis',
-                subtitle: 'Step through every move of any finished match',
+                title: l.postGameAnalysis,
+                subtitle: l.postGameAnalysisDesc,
               ),
-              const _FeatureRow(
+              _FeatureRow(
                 icon: Icons.workspace_premium,
-                title: 'Profile flair',
-                subtitle: 'Premium badges and avatar borders',
+                title: l.profileFlair,
+                subtitle: l.profileFlairDesc,
               ),
               const Spacer(),
               if (subscription.isPremium)
                 FilledButton.icon(
                   onPressed: null,
                   icon: const Icon(Icons.check_circle),
-                  label: const Text('You are Premium'),
+                  label: Text(l.youArePremium),
                 )
               else
                 FilledButton(
@@ -66,40 +85,62 @@ class PaywallScreen extends StatelessWidget {
                     await subscription.unlockPremium();
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Premium unlocked!')),
+                        SnackBar(content: Text(l.youArePremium)),
                       );
                       Navigator.pop(context);
                     }
                   },
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 14),
-                    child: Text('Unlock Premium'),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    child: Text(l.unlockPremium),
                   ),
                 ),
               const SizedBox(height: 8),
               TextButton(
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        'Restore Purchases will be enabled with billing.',
-                      ),
-                    ),
+                    SnackBar(content: Text(l.restorePurchases)),
                   );
                 },
-                child: const Text('Restore purchases'),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Stub build — billing not yet connected.',
-                textAlign: TextAlign.center,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+                child: Text(l.restorePurchases),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildReasonBanner(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final String text = switch (reason) {
+      PaywallReason.puzzleDailyQuota => l.puzzleDailyQuotaReached,
+      PaywallReason.gameReviewDailyQuota =>
+        '${l.postGameAnalysis} — ${l.postGameAnalysisDesc}',
+      PaywallReason.advancedBots => l.advancedBotsLocked,
+      PaywallReason.premiumLessons => l.premiumLessonsLocked,
+      PaywallReason.generic => '',
+    };
+    if (text.isEmpty) return const SizedBox.shrink();
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.amber.withValues(alpha: 0.18),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.amber, width: 1),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.info_outline, color: Colors.amber, size: 22),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
       ),
     );
   }

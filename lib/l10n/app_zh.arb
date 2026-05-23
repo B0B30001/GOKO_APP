@@ -170,5 +170,105 @@
   "moveQualityGood": "良好",
   "moveQualityInaccuracy": "不准确",
   "moveQualityMistake": "失误",
-  "moveQualityBlunder": "大错"
+  "moveQualityBlunder": "大错",
+  "moveQualityExcellent": "优秀",
+  "cancel": "取消",
+  "aiThinking": "AI思考中…",
+  "noLegalMoves": "没有合法落子点，请选择让一手。",
+  "useHintTitle": "使用提示？",
+  "useHintContent": "显示最佳落子。消耗1颗★（剩余{remaining}颗）。",
+  "@useHintContent": {
+    "placeholders": { "remaining": { "type": "int" } }
+  },
+  "showHint": "显示提示",
+  "noHintAvailable": "没有可用提示，请尝试让一手。",
+  "resignTitle": "认输本局？",
+  "resignConfirmBot": "对手将以认输方式获胜。",
+  "resignConfirmLocal": "{side}认输，对手获胜。",
+  "@resignConfirmLocal": {
+    "placeholders": { "side": { "type": "String" } }
+  },
+  "resign": "认输",
+  "gameReview": "复盘",
+  "rematch": "重来",
+  "close": "关闭",
+  "noHintsRemaining": "提示已用完",
+  "showBestMove": "显示最佳落子（-1★）",
+  "noHintsUsed": "未使用提示",
+  "hintsUsed": "已使用{count}个提示",
+  "@hintsUsed": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "resumeLesson": "继续课程？",
+  "resumeLessonContent": "从第{step}步继续？",
+  "@resumeLessonContent": {
+    "placeholders": { "step": { "type": "int" } }
+  },
+  "startOver": "重新开始",
+  "resume": "继续",
+  "notQuiteTapHint": "不太对，请尝试其他位置。",
+  "hintShownTapHint": "提示：按标记落子。",
+  "lessonComplete": "课程完成！",
+  "dayStreak": "连续{count}天",
+  "@dayStreak": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "master": "大师",
+  "quickDrills": "快速练习",
+  "score": "比分",
+  "black": "黑棋",
+  "white": "白棋",
+  "you": "你",
+  "computer": "电脑",
+  "whiteWinsByResignation": "白棋认输胜",
+  "blackWinsByResignation": "黑棋认输胜",
+  "blackWinsByPoints": "黑棋领先{points}目胜！",
+  "@blackWinsByPoints": {
+    "placeholders": { "points": { "type": "int" } }
+  },
+  "whiteWinsByPoints": "白棋领先{points}目胜！",
+  "@whiteWinsByPoints": {
+    "placeholders": { "points": { "type": "int" } }
+  },
+  "gameTied": "平局！",
+  "gameReviewComingSoon": "复盘功能即将上线",
+
+  "rating": "等级分",
+  "today": "今日",
+  "streak": "连续",
+  "xp": "经验值",
+  "seeAll": "查看全部",
+  "save": "保存",
+  "swapPuzzle": "换题",
+  "replay": "重播",
+  "continueLearning": "继续学习",
+  "noLessonsYet": "暂无课程",
+  "finishPreviousLesson": "完成上一课程以解锁此课程。",
+  "noGamesYet": "暂无对局 — 完成一局后即可在此查看。",
+  "premium": "高级",
+  "unlockPremium": "解锁高级版",
+  "youArePremium": "您已是高级用户",
+  "unlockGokoPremium": "解锁 GOKO 高级版",
+  "paywallTagline": "深度训练。更强对局。解锁一切。",
+  "unlimitedPuzzles": "无限题目",
+  "freePuzzleLimit": "免费用户每天3题",
+  "allBotsAndLessons": "全部机器人和课程",
+  "allBotsAndLessonsDesc": "初级机器人和前4节课程免费",
+  "postGameAnalysis": "赛后分析",
+  "postGameAnalysisDesc": "深度回顾任何已完成对局（即将推出）",
+  "profileFlair": "个人资料装扮",
+  "profileFlairDesc": "高级徽章和头像边框",
+  "restorePurchases": "恢复购买",
+  "puzzleDailyQuotaReached": "您今天的3道免费题已用完。升级获取无限题目。",
+  "advancedBotsLocked": "中级、高级和大师机器人需要高级版。",
+  "premiumLessonsLocked": "第5节及之后的课程需要高级版。",
+  "seeAllLessons": "查看全部{count}节课",
+  "@seeAllLessons": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "dayStreakLabel": "连续天数",
+  "snapback": "倒扑",
+  "ladder": "征子",
+  "connect": "连接",
+  "lockedPremium": "高级"
 }

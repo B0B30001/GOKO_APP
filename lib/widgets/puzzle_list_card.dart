@@ -6,7 +6,7 @@ import 'fast_game_board.dart';
 
 /// Single-row puzzle card with a 60×60 board thumbnail, title, difficulty
 /// stars, description, and a solved-or-chevron trailing badge. Shared by
-/// `PuzzleCategoryScreen` and `PuzzleCollectionScreen`.
+/// `PuzzleCategoryScreen` and other puzzle list screens.
 ///
 /// Tapping pushes [PuzzleScreen]; if the puzzle is solved, the pop value
 /// `{'solved': true, 'puzzleId': id}` flows to the parent via [onSolved].

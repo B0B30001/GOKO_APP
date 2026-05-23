@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zaibal/gen/l10n/app_localizations.dart';
 import '../screens/home_screen.dart';
 import '../screens/learn_screen.dart';
 import '../screens/puzzles_hub_screen.dart';
@@ -49,6 +50,7 @@ class _AppShellState extends State<AppShell> {
   @override
   Widget build(BuildContext context) {
     final index = appShellTabIndex.value;
+    final l = AppLocalizations.of(context);
     return Scaffold(
       body: IndexedStack(
         index: index,
@@ -62,26 +64,26 @@ class _AppShellState extends State<AppShell> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: index,
         onDestinationSelected: (i) => appShellTabIndex.value = i,
-        destinations: const [
+        destinations: [
           NavigationDestination(
-            icon: Icon(Icons.play_circle_outline),
-            selectedIcon: Icon(Icons.play_circle_filled),
-            label: 'Play',
+            icon: const Icon(Icons.play_circle_outline),
+            selectedIcon: const Icon(Icons.play_circle_filled),
+            label: l.play,
           ),
           NavigationDestination(
-            icon: Icon(Icons.book_outlined),
-            selectedIcon: Icon(Icons.book),
-            label: 'Learn',
+            icon: const Icon(Icons.book_outlined),
+            selectedIcon: const Icon(Icons.book),
+            label: l.learn,
           ),
           NavigationDestination(
-            icon: Icon(Icons.extension_outlined),
-            selectedIcon: Icon(Icons.extension),
-            label: 'Puzzles',
+            icon: const Icon(Icons.extension_outlined),
+            selectedIcon: const Icon(Icons.extension),
+            label: l.puzzles,
           ),
           NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: 'Profile',
+            icon: const Icon(Icons.person_outline),
+            selectedIcon: const Icon(Icons.person),
+            label: l.profile,
           ),
         ],
       ),

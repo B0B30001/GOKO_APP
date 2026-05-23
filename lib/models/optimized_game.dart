@@ -5,6 +5,11 @@ class Game {
   late Board board;
   bool _isBlackTurn = true;
   int _consecutivePasses = 0;
+
+  /// 0 = nobody resigned, 1 = black resigned (white wins), 2 = white resigned.
+  /// Treated as terminal: when set, [isGameOver] becomes true regardless of
+  /// pass count.
+  int _resignedColor = 0;
   Map<String, dynamic>? _cachedScore;
   bool _scoreIsDirty = true;
 
@@ -17,7 +22,23 @@ class Game {
   }
 
   bool get isBlackTurn => _isBlackTurn;
-  bool get isGameOver => _consecutivePasses >= 2;
+  bool get isGameOver => _consecutivePasses >= 2 || _resignedColor != 0;
+
+  /// Color that resigned (0 if nobody did). When non-zero the other side wins
+  /// by resignation regardless of the on-board score.
+  int get resignedColor => _resignedColor;
+
+  /// Mark [color] as having resigned. Idempotent if the same color is passed
+  /// again; ignored if any side has already resigned.
+  void resignAs(int color) {
+    if (_resignedColor != 0) return;
+    if (color != 1 && color != 2) return;
+    _resignedColor = color;
+    _scoreIsDirty = true;
+    _cachedScore = null;
+    _saveState();
+  }
+
   bool get canUndo => _currentHistoryIndex > 0;
   bool get canRedo => _currentHistoryIndex < _history.length - 1;
 
@@ -42,6 +63,7 @@ class Game {
     );
     _isBlackTurn = state.isBlackTurn;
     _consecutivePasses = state.consecutivePasses;
+    _resignedColor = state.resignedColor;
     _scoreIsDirty = true;
     _cachedScore = null;
   }
@@ -227,6 +249,7 @@ class _GameState {
   final List<List<int>> board;
   final bool isBlackTurn;
   final int consecutivePasses;
+  final int resignedColor;
   final int capturedByBlack;
   final int capturedByWhite;
 
@@ -234,6 +257,7 @@ class _GameState {
     required this.board,
     required this.isBlackTurn,
     required this.consecutivePasses,
+    required this.resignedColor,
     required this.capturedByBlack,
     required this.capturedByWhite,
   });
@@ -251,6 +275,7 @@ class _GameState {
       ),
       isBlackTurn: game._isBlackTurn,
       consecutivePasses: game._consecutivePasses,
+      resignedColor: game._resignedColor,
       capturedByBlack: game.board.capturedByBlack,
       capturedByWhite: game.board.capturedByWhite,
     );

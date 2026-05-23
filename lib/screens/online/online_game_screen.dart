@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:provider/provider.dart';
 import '../../services/ogs_service.dart';
 import '../../services/online/game_connection.dart';
+import '../../services/match_history_service.dart';
 import '../../widgets/fast_game_board.dart';
 import '../../models/app_settings.dart';
 import '../../utils/error_messages.dart';
 import '../../services/board/board_engine.dart';
+import '../../services/sfx_service.dart';
 import '../../models/optimized_board.dart';
 import '../../utils/turn.dart';
 
@@ -67,6 +69,9 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
   bool _lowTimeAlertShown10s = false;
   bool _lowTimeAlertShown5s = false;
   int? _lastAlertedTime; // Track last time we alerted to avoid spam
+  // Guard: persist this OGS game to local history exactly once when the
+  // server reports the phase transition to 'finished'.
+  bool _historyRecorded = false;
 
   @override
   void initState() {
@@ -185,6 +190,12 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
         }
         _startOrStopCountdown();
       });
+      // Persist completed OGS games into local history so they survive
+      // offline and surface in profile / home feed alongside AI games.
+      if (_phase == 'finished' && !_historyRecorded) {
+        _historyRecorded = true;
+        unawaited(_recordHistory());
+      }
     });
 
     // Listen to moves
@@ -242,6 +253,12 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
               debugPrint(
                 '🧿 Placed stone at (${move.row}, ${move.col}) color=${move.color}',
               );
+
+              // Audio feedback for both local and remote moves.
+              SfxService.instance.play(SfxSound.stonePlace);
+              if (capturedIndices.isNotEmpty) {
+                SfxService.instance.play(SfxSound.capture);
+              }
 
               // Remove captured stones immediately for instant visual feedback
               if (capturedIndices.isNotEmpty) {
@@ -446,6 +463,39 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
         );
       }
     });
+  }
+
+  /// Build a [MatchRecord] from the current end-of-game state and upsert it
+  /// into [MatchHistoryService]. Idempotent at the service layer thanks to
+  /// the `'ogs:<gameId>'` id, but [_historyRecorded] still guards the call
+  /// to avoid redundant writes on repeated gamedata pushes.
+  Future<void> _recordHistory() async {
+    if (!mounted) return;
+    final history = Provider.of<MatchHistoryService>(context, listen: false);
+    final size = _board?.length ?? 19;
+    // Determine outcome from this user's perspective.
+    final MatchResult result;
+    if (_winnerColor == null) {
+      result = MatchResult.unfinished;
+    } else if (_myColor == null) {
+      result = MatchResult.unfinished;
+    } else if (_winnerColor == _myColor) {
+      result = MatchResult.win;
+    } else {
+      result = MatchResult.loss;
+    }
+    final opponentName = _myColor == 1 ? _whitePlayer : _blackPlayer;
+    await history.add(
+      MatchRecord(
+        id: 'ogs:${widget.gameId}',
+        playedAt: DateTime.now(),
+        opponent: opponentName,
+        boardSize: size,
+        result: result,
+        moves: const [],
+        source: MatchSource.ogs,
+      ),
+    );
   }
 
   @override

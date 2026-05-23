@@ -474,4 +474,246 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get moveQualityBlunder => '대실수';
+
+  @override
+  String get moveQualityExcellent => '우수';
+
+  @override
+  String get cancel => '취소';
+
+  @override
+  String get aiThinking => 'AI 생각 중…';
+
+  @override
+  String get noLegalMoves => '합법적인 수가 없습니다. 패스를 누르세요.';
+
+  @override
+  String get useHintTitle => '힌트를 사용하시겠습니까?';
+
+  @override
+  String useHintContent(int remaining) {
+    return '최선의 수를 공개합니다. 1★ 소모 (남은 $remaining개).';
+  }
+
+  @override
+  String get showHint => '힌트 표시';
+
+  @override
+  String get noHintAvailable => '힌트가 없습니다. 패스를 시도하세요.';
+
+  @override
+  String get resignTitle => '이 대국을 기권하시겠습니까?';
+
+  @override
+  String get resignConfirmBot => '상대방이 기권승을 거두게 됩니다.';
+
+  @override
+  String resignConfirmLocal(String side) {
+    return '$side이(가) 기권합니다. 상대방이 이깁니다.';
+  }
+
+  @override
+  String get resign => '기권';
+
+  @override
+  String get gameReview => '기보 분석';
+
+  @override
+  String get rematch => '재대결';
+
+  @override
+  String get close => '닫기';
+
+  @override
+  String get noHintsRemaining => '힌트가 남아있지 않습니다';
+
+  @override
+  String get showBestMove => '최선의 수 표시（-1★）';
+
+  @override
+  String get noHintsUsed => '힌트 미사용';
+
+  @override
+  String hintsUsed(int count) {
+    return '힌트 $count회 사용';
+  }
+
+  @override
+  String get resumeLesson => '레슨을 계속하시겠습니까?';
+
+  @override
+  String resumeLessonContent(int step) {
+    return '$step단계부터 계속하시겠습니까?';
+  }
+
+  @override
+  String get startOver => '처음부터';
+
+  @override
+  String get resume => '계속';
+
+  @override
+  String get notQuiteTapHint => '아닙니다. 다른 곳을 시도하세요.';
+
+  @override
+  String get hintShownTapHint => '힌트: 표시를 따라가세요.';
+
+  @override
+  String get lessonComplete => '레슨 완료!';
+
+  @override
+  String dayStreak(int count) {
+    return '$count일 연속';
+  }
+
+  @override
+  String get master => '마스터';
+
+  @override
+  String get quickDrills => '빠른 연습';
+
+  @override
+  String get score => '점수';
+
+  @override
+  String get black => '흑';
+
+  @override
+  String get white => '백';
+
+  @override
+  String get you => '당신';
+
+  @override
+  String get computer => '컴퓨터';
+
+  @override
+  String get whiteWinsByResignation => '백이 기권승';
+
+  @override
+  String get blackWinsByResignation => '흑이 기권승';
+
+  @override
+  String blackWinsByPoints(int points) {
+    return '흑이 $points점 차 승리!';
+  }
+
+  @override
+  String whiteWinsByPoints(int points) {
+    return '백이 $points점 차 승리!';
+  }
+
+  @override
+  String get gameTied => '무승부!';
+
+  @override
+  String get gameReviewComingSoon => '기보 분석 곧 제공';
+
+  @override
+  String get rating => '레이팅';
+
+  @override
+  String get today => '오늘';
+
+  @override
+  String get streak => '연속';
+
+  @override
+  String get xp => '경험치';
+
+  @override
+  String get seeAll => '모두 보기';
+
+  @override
+  String get save => '저장';
+
+  @override
+  String get swapPuzzle => '문제 교체';
+
+  @override
+  String get replay => '다시 보기';
+
+  @override
+  String get continueLearning => '계속 학습하기';
+
+  @override
+  String get noLessonsYet => '아직 수업이 없습니다';
+
+  @override
+  String get finishPreviousLesson => '이 수업을 열려면 이전 수업을 완료하세요.';
+
+  @override
+  String get noGamesYet => '아직 대국이 없습니다 — 완료 후 여기에 표시됩니다.';
+
+  @override
+  String get premium => '프리미엄';
+
+  @override
+  String get unlockPremium => '프리미엄 잠금 해제';
+
+  @override
+  String get youArePremium => '프리미엄 회원입니다';
+
+  @override
+  String get unlockGokoPremium => 'GOKO 프리미엄 잠금 해제';
+
+  @override
+  String get paywallTagline => '더 깊이 훈련하세요. 더 강하게 대국하세요. 모든 것을 해제하세요.';
+
+  @override
+  String get unlimitedPuzzles => '무제한 문제';
+
+  @override
+  String get freePuzzleLimit => '무료: 하루 3문제';
+
+  @override
+  String get allBotsAndLessons => '모든 봇과 수업';
+
+  @override
+  String get allBotsAndLessonsDesc => '초급 봇과 처음 4개 수업은 무료';
+
+  @override
+  String get postGameAnalysis => '대국 분석';
+
+  @override
+  String get postGameAnalysisDesc => '완료된 대국의 심층 리뷰 (출시 예정)';
+
+  @override
+  String get profileFlair => '프로필 꾸미기';
+
+  @override
+  String get profileFlairDesc => '프리미엄 뱃지와 아바타 테두리';
+
+  @override
+  String get restorePurchases => '구매 복원';
+
+  @override
+  String get puzzleDailyQuotaReached =>
+      '오늘의 무료 문제 3개를 모두 사용했습니다. 무제한을 위해 업그레이드하세요.';
+
+  @override
+  String get advancedBotsLocked => '중급, 고급, 마스터 봇은 프리미엄이 필요합니다.';
+
+  @override
+  String get premiumLessonsLocked => '5번째 수업 이후는 프리미엄이 필요합니다.';
+
+  @override
+  String seeAllLessons(int count) {
+    return '전체 $count개 수업 보기';
+  }
+
+  @override
+  String get dayStreakLabel => '연속 일수';
+
+  @override
+  String get snapback => '환격';
+
+  @override
+  String get ladder => '축';
+
+  @override
+  String get connect => '연결';
+
+  @override
+  String get lockedPremium => '프리미엄';
 }

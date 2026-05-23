@@ -36,9 +36,14 @@ class Entitlements {
 class SubscriptionService extends ChangeNotifier {
   static const int freeDailyPuzzleQuota = 3;
 
+  /// Free users can open the post-game Game Review screen this many times
+  /// per UTC day. Premium is unlimited.
+  static const int freeDailyGameReviewQuota = 1;
+
   static const _kTier = 'subscriptionTier';
   static const _kSolved = 'dailyPuzzlesSolved';
   static const _kResetAt = 'dailyResetAtMillis';
+  static const _kGameReviewsToday = 'dailyGameReviewsStarted';
 
   /// Injectable clock so tests can advance time across the UTC-midnight
   /// boundary without sleeping. Returns the current UTC time when null.
@@ -52,6 +57,7 @@ class SubscriptionService extends ChangeNotifier {
 
   SubscriptionTier _tier = SubscriptionTier.free;
   int _dailyPuzzlesSolved = 0;
+  int _dailyGameReviewsStarted = 0;
   DateTime _dailyResetAt;
 
   SubscriptionTier get tier => _tier;
@@ -62,6 +68,16 @@ class SubscriptionService extends ChangeNotifier {
   Entitlements get entitlements =>
       isPremium ? Entitlements.premium : Entitlements.free;
 
+  /// Free users get [freeDailyGameReviewQuota] post-game Game Reviews per
+  /// UTC day; Premium is unlimited. Counter resets at the same UTC midnight
+  /// as the daily-puzzle quota.
+  int get dailyGameReviewsStarted => _dailyGameReviewsStarted;
+  int get dailyGameReviewsRemaining =>
+      (freeDailyGameReviewQuota - _dailyGameReviewsStarted).clamp(
+        0,
+        freeDailyGameReviewQuota,
+      );
+
   Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();
     final tierName = prefs.getString(_kTier);
@@ -70,6 +86,7 @@ class SubscriptionService extends ChangeNotifier {
       orElse: () => SubscriptionTier.free,
     );
     _dailyPuzzlesSolved = prefs.getInt(_kSolved) ?? 0;
+    _dailyGameReviewsStarted = prefs.getInt(_kGameReviewsToday) ?? 0;
     final resetMillis = prefs.getInt(_kResetAt);
     _dailyResetAt = resetMillis != null
         ? DateTime.fromMillisecondsSinceEpoch(resetMillis, isUtc: true)
@@ -94,6 +111,24 @@ class SubscriptionService extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// True if the user is allowed to open the post-game Game Review screen
+  /// right now. Premium is always allowed; free users get
+  /// [freeDailyGameReviewQuota] per UTC day.
+  bool canStartGameReviewToday() {
+    _maybeResetDaily();
+    if (isPremium) return true;
+    return _dailyGameReviewsStarted < freeDailyGameReviewQuota;
+  }
+
+  /// Record that the user just opened Game Review. No-op for premium.
+  Future<void> recordGameReviewStart() async {
+    _maybeResetDaily();
+    if (isPremium) return;
+    _dailyGameReviewsStarted++;
+    await _persist();
+    notifyListeners();
+  }
+
   /// Stub purchase flow. Flips the local flag.
   Future<void> unlockPremium() async {
     _tier = SubscriptionTier.premium;
@@ -112,6 +147,7 @@ class SubscriptionService extends ChangeNotifier {
     final nowUtc = _now();
     if (!nowUtc.isBefore(_dailyResetAt)) {
       _dailyPuzzlesSolved = 0;
+      _dailyGameReviewsStarted = 0;
       _dailyResetAt = _nextUtcMidnight(nowUtc);
     }
   }
@@ -120,6 +156,7 @@ class SubscriptionService extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_kTier, _tier.name);
     await prefs.setInt(_kSolved, _dailyPuzzlesSolved);
+    await prefs.setInt(_kGameReviewsToday, _dailyGameReviewsStarted);
     await prefs.setInt(_kResetAt, _dailyResetAt.millisecondsSinceEpoch);
   }
 

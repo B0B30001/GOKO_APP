@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 import '../models/puzzle.dart';
-import '../models/puzzle_collection.dart';
 import '../models/tutorial.dart';
 
 /// Loads tutorials and puzzles from `assets/content/*.json`. Cached after
@@ -9,16 +8,6 @@ import '../models/tutorial.dart';
 class ContentService {
   static final Map<String, List<Tutorial>> _tutorialsByLocale = {};
   static List<Puzzle>? _jsonPuzzles;
-  static List<PuzzleCollection>? _collections;
-
-  /// Lazy-load and cache the curated puzzle collections.
-  static Future<List<PuzzleCollection>> loadCollections() async {
-    if (_collections != null) return _collections!;
-    final raw = await rootBundle.loadString('assets/content/collections.json');
-    final list = (json.decode(raw) as List).cast<Map<String, dynamic>>();
-    _collections = list.map(PuzzleCollection.fromJson).toList();
-    return _collections!;
-  }
 
   /// Lazy-load and cache the tutorial JSON for the given locale.
   /// Falls back to `tutorials.json` (English) when the localized variant is

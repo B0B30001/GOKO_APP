@@ -31,8 +31,14 @@ class DemoMove {
   );
 }
 
-/// One discrete step within a [Tutorial]: a board snapshot with prose
-/// explaining what's happening.
+/// Kinds of tutorial steps. `demo` is a passive read-and-watch step,
+/// `tapTarget` asks the player to tap a specific intersection, and `quiz`
+/// presents a multiple-choice question. New JSON content can specify the
+/// kind explicitly; legacy content (no `kind` field) is inferred from the
+/// presence of `correctMove` / `quizChoices`.
+enum TutorialStepKind { demo, tapTarget, quiz }
+
+/// One discrete step within a [Tutorial].
 class TutorialStep {
   final String title;
 
@@ -46,27 +52,41 @@ class TutorialStep {
   /// Prose explaining this step.
   final String body;
 
-  /// When true, the user must tap [correctMove] to advance. Used for
-  /// "tap to capture" / "tap to atari" style interactive lessons.
-  final bool interactive;
+  /// What sort of interaction this step expects.
+  final TutorialStepKind kind;
 
-  /// `[row, col]` of the correct tap target. Required when [interactive] is
-  /// true; null otherwise.
+  /// `[row, col]` of the correct tap target. Required when [kind] is
+  /// [TutorialStepKind.tapTarget]; null otherwise.
   final List<int>? correctMove;
 
   /// Optional move sequence to animate on top of [board]. When non-null, the
   /// tutorial screen shows a Play button that plays these moves in order.
   final List<DemoMove>? demoMoves;
 
+  // Quiz fields — populated only when [kind] is [TutorialStepKind.quiz].
+  final String? quizQuestion;
+  final List<String>? quizChoices;
+  final int? quizCorrectIndex;
+  final String? quizExplanation;
+
+  /// Backwards-compat shim — old callers ask "is this interactive?" without
+  /// caring whether it's a tap target or a quiz.
+  bool get interactive =>
+      kind == TutorialStepKind.tapTarget || kind == TutorialStepKind.quiz;
+
   const TutorialStep({
     required this.title,
     required this.board,
     required this.body,
+    this.kind = TutorialStepKind.demo,
     this.markedRow,
     this.markedCol,
-    this.interactive = false,
     this.correctMove,
     this.demoMoves,
+    this.quizQuestion,
+    this.quizChoices,
+    this.quizCorrectIndex,
+    this.quizExplanation,
   });
 
   factory TutorialStep.fromJson(Map<String, dynamic> json) {
@@ -83,20 +103,58 @@ class TutorialStep {
     final demo = demoRaw is List
         ? demoRaw.cast<Map<String, dynamic>>().map(DemoMove.fromJson).toList()
         : null;
+
+    final quizRaw = json['quizChoices'];
+    final quizChoices = quizRaw is List
+        ? quizRaw.map((e) => e.toString()).toList()
+        : null;
+    final quizCorrect = json['quizCorrectIndex'] is num
+        ? (json['quizCorrectIndex'] as num).toInt()
+        : null;
+
+    final kind = _decodeKind(
+      json['kind']?.toString(),
+      interactive: json['interactive'] == true,
+      hasQuiz: quizChoices != null,
+    );
+
     return TutorialStep(
       title: json['title']?.toString() ?? '',
       board: board,
       body: json['body']?.toString() ?? '',
+      kind: kind,
       markedRow: json['markedRow'] is num
           ? (json['markedRow'] as num).toInt()
           : null,
       markedCol: json['markedCol'] is num
           ? (json['markedCol'] as num).toInt()
           : null,
-      interactive: json['interactive'] == true,
       correctMove: correct,
       demoMoves: demo,
+      quizQuestion: json['quizQuestion']?.toString(),
+      quizChoices: quizChoices,
+      quizCorrectIndex: quizCorrect,
+      quizExplanation: json['quizExplanation']?.toString(),
     );
+  }
+
+  static TutorialStepKind _decodeKind(
+    String? raw, {
+    required bool interactive,
+    required bool hasQuiz,
+  }) {
+    switch (raw) {
+      case 'quiz':
+        return TutorialStepKind.quiz;
+      case 'tapTarget':
+      case 'interactive':
+        return TutorialStepKind.tapTarget;
+      case 'demo':
+        return TutorialStepKind.demo;
+    }
+    if (hasQuiz) return TutorialStepKind.quiz;
+    if (interactive) return TutorialStepKind.tapTarget;
+    return TutorialStepKind.demo;
   }
 }
 
@@ -112,6 +170,18 @@ class Tutorial {
 
   /// Source attribution — e.g. "Sensei's Library" or "Janice Kim, Vol 1 p.42".
   final String source;
+
+  /// Optional ordered list of puzzle ids to run as practice after the lesson
+  /// ends. Resolved against `PuzzleData.allPuzzles` at runtime by the
+  /// practice-sequence screen. Empty = no follow-up practice.
+  final List<String> practicePuzzleIds;
+
+  /// Maximum XP awarded for a flawless run (no hints, no retries on quizzes).
+  /// Defaults to 20 (matching the prior fixed reward).
+  final int xpReward;
+
+  /// Optional estimate shown on the lesson card ("~5 min").
+  final int? estimatedMinutes;
 
   /// 1 = beginner, 2 = intermediate, 3 = advanced. Optional in JSON; when
   /// absent, [difficulty] derives a default from [category] so existing
@@ -139,11 +209,18 @@ class Tutorial {
     required this.boardSize,
     required this.steps,
     required this.source,
+    this.practicePuzzleIds = const [],
+    this.xpReward = 20,
+    this.estimatedMinutes,
     int? difficulty,
   }) : _explicitDifficulty = difficulty;
 
   factory Tutorial.fromJson(Map<String, dynamic> json) {
     final stepsJson = (json['steps'] as List).cast<Map<String, dynamic>>();
+    final practiceRaw = json['practicePuzzleIds'];
+    final practiceIds = practiceRaw is List
+        ? practiceRaw.map((e) => e.toString()).toList()
+        : const <String>[];
     return Tutorial(
       id: json['id']?.toString() ?? '',
       title: json['title']?.toString() ?? '',
@@ -152,6 +229,13 @@ class Tutorial {
       boardSize: (json['boardSize'] as num).toInt(),
       steps: stepsJson.map(TutorialStep.fromJson).toList(),
       source: json['source']?.toString() ?? '',
+      practicePuzzleIds: practiceIds,
+      xpReward: json['xpReward'] is num
+          ? (json['xpReward'] as num).toInt()
+          : 20,
+      estimatedMinutes: json['estimatedMinutes'] is num
+          ? (json['estimatedMinutes'] as num).toInt()
+          : null,
       difficulty: json['difficulty'] is num
           ? (json['difficulty'] as num).toInt()
           : null,

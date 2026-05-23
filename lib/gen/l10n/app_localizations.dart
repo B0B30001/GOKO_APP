@@ -1015,6 +1015,456 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Blunder'**
   String get moveQualityBlunder;
+
+  /// Move quality label
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent'**
+  String get moveQualityExcellent;
+
+  /// Cancel button
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// Chip shown while AI is computing a move
+  ///
+  /// In en, this message translates to:
+  /// **'AI thinking…'**
+  String get aiThinking;
+
+  /// Snackbar when human player has no moves
+  ///
+  /// In en, this message translates to:
+  /// **'No legal moves available. Press Pass to continue.'**
+  String get noLegalMoves;
+
+  /// Hint dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Use a hint?'**
+  String get useHintTitle;
+
+  /// Hint dialog body
+  ///
+  /// In en, this message translates to:
+  /// **'Reveal the best move. Costs 1 ★ ({remaining} left).'**
+  String useHintContent(int remaining);
+
+  /// Hint dialog confirm button
+  ///
+  /// In en, this message translates to:
+  /// **'Show hint'**
+  String get showHint;
+
+  /// Snackbar when hint returns no move
+  ///
+  /// In en, this message translates to:
+  /// **'No hint available — try passing.'**
+  String get noHintAvailable;
+
+  /// Resign dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Resign this game?'**
+  String get resignTitle;
+
+  /// Resign dialog body in vs-AI mode
+  ///
+  /// In en, this message translates to:
+  /// **'Your opponent will win by resignation.'**
+  String get resignConfirmBot;
+
+  /// Resign dialog body in local 2-player mode
+  ///
+  /// In en, this message translates to:
+  /// **'{side} resigns. The other side wins.'**
+  String resignConfirmLocal(String side);
+
+  /// Resign confirm button
+  ///
+  /// In en, this message translates to:
+  /// **'Resign'**
+  String get resign;
+
+  /// Game-over overlay: primary CTA label
+  ///
+  /// In en, this message translates to:
+  /// **'Game Review'**
+  String get gameReview;
+
+  /// Game-over overlay: play again button
+  ///
+  /// In en, this message translates to:
+  /// **'Rematch'**
+  String get rematch;
+
+  /// Game-over overlay: close button
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// Hint button tooltip when exhausted
+  ///
+  /// In en, this message translates to:
+  /// **'No hints remaining'**
+  String get noHintsRemaining;
+
+  /// Hint button tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Show best move (-1 ★)'**
+  String get showBestMove;
+
+  /// Game-over: hints counter when zero
+  ///
+  /// In en, this message translates to:
+  /// **'No hints used'**
+  String get noHintsUsed;
+
+  /// Game-over: hints counter
+  ///
+  /// In en, this message translates to:
+  /// **'{count} hint(s) used'**
+  String hintsUsed(int count);
+
+  /// Tutorial resume dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Resume lesson?'**
+  String get resumeLesson;
+
+  /// Tutorial resume dialog body
+  ///
+  /// In en, this message translates to:
+  /// **'Continue from step {step}?'**
+  String resumeLessonContent(int step);
+
+  /// Tutorial resume dialog: discard bookmark
+  ///
+  /// In en, this message translates to:
+  /// **'Start over'**
+  String get startOver;
+
+  /// Tutorial resume dialog: keep bookmark
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get resume;
+
+  /// Tap-target step wrong-tap feedback
+  ///
+  /// In en, this message translates to:
+  /// **'Not quite — try a different point.'**
+  String get notQuiteTapHint;
+
+  /// Tap-target step hint shown feedback
+  ///
+  /// In en, this message translates to:
+  /// **'Hint: follow the marker.'**
+  String get hintShownTapHint;
+
+  /// Tutorial celebration overlay title
+  ///
+  /// In en, this message translates to:
+  /// **'Lesson complete!'**
+  String get lessonComplete;
+
+  /// Streak badge in tutorial celebration
+  ///
+  /// In en, this message translates to:
+  /// **'{count} day streak'**
+  String dayStreak(int count);
+
+  /// Bots screen: Master tier label
+  ///
+  /// In en, this message translates to:
+  /// **'Master'**
+  String get master;
+
+  /// Learn screen section header
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Drills'**
+  String get quickDrills;
+
+  /// Game board score panel title
+  ///
+  /// In en, this message translates to:
+  /// **'Score'**
+  String get score;
+
+  /// Black player label
+  ///
+  /// In en, this message translates to:
+  /// **'Black'**
+  String get black;
+
+  /// White player label
+  ///
+  /// In en, this message translates to:
+  /// **'White'**
+  String get white;
+
+  /// Local human player name fallback
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get you;
+
+  /// AI opponent name fallback
+  ///
+  /// In en, this message translates to:
+  /// **'Computer'**
+  String get computer;
+
+  /// Result text when black resigns
+  ///
+  /// In en, this message translates to:
+  /// **'White wins by resignation'**
+  String get whiteWinsByResignation;
+
+  /// Result text when white resigns
+  ///
+  /// In en, this message translates to:
+  /// **'Black wins by resignation'**
+  String get blackWinsByResignation;
+
+  /// Result text when black wins on score
+  ///
+  /// In en, this message translates to:
+  /// **'Black wins by {points} points!'**
+  String blackWinsByPoints(int points);
+
+  /// Result text when white wins on score
+  ///
+  /// In en, this message translates to:
+  /// **'White wins by {points} points!'**
+  String whiteWinsByPoints(int points);
+
+  /// Result text when scores are equal
+  ///
+  /// In en, this message translates to:
+  /// **'Game is tied!'**
+  String get gameTied;
+
+  /// Placeholder when analysis is not yet available
+  ///
+  /// In en, this message translates to:
+  /// **'Game Review coming soon'**
+  String get gameReviewComingSoon;
+
+  /// Stat column label
+  ///
+  /// In en, this message translates to:
+  /// **'Rating'**
+  String get rating;
+
+  /// Puzzle hub: today's solved count label
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// Stat column label
+  ///
+  /// In en, this message translates to:
+  /// **'Streak'**
+  String get streak;
+
+  /// Experience points label
+  ///
+  /// In en, this message translates to:
+  /// **'XP'**
+  String get xp;
+
+  /// Generic see-all link text
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get seeAll;
+
+  /// Save button label
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// Daily tile swap tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Swap puzzle'**
+  String get swapPuzzle;
+
+  /// Completed lesson replay button
+  ///
+  /// In en, this message translates to:
+  /// **'Replay'**
+  String get replay;
+
+  /// In-progress lesson continue button
+  ///
+  /// In en, this message translates to:
+  /// **'Continue Learning'**
+  String get continueLearning;
+
+  /// Learn screen empty state
+  ///
+  /// In en, this message translates to:
+  /// **'No lessons yet'**
+  String get noLessonsYet;
+
+  /// Lesson locked tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Finish the previous lesson to unlock this.'**
+  String get finishPreviousLesson;
+
+  /// History/profile empty state
+  ///
+  /// In en, this message translates to:
+  /// **'No games yet — finish one to see it here.'**
+  String get noGamesYet;
+
+  /// Premium tier label
+  ///
+  /// In en, this message translates to:
+  /// **'Premium'**
+  String get premium;
+
+  /// Paywall CTA button
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock Premium'**
+  String get unlockPremium;
+
+  /// Paywall: already premium state
+  ///
+  /// In en, this message translates to:
+  /// **'You are Premium'**
+  String get youArePremium;
+
+  /// Paywall screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock GOKO Premium'**
+  String get unlockGokoPremium;
+
+  /// Paywall subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Train deeper. Play stronger. Unlock everything.'**
+  String get paywallTagline;
+
+  /// Paywall feature row title
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited puzzles'**
+  String get unlimitedPuzzles;
+
+  /// Paywall feature row subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Free users get 3 puzzles per day'**
+  String get freePuzzleLimit;
+
+  /// Paywall feature row title
+  ///
+  /// In en, this message translates to:
+  /// **'All bots & lessons'**
+  String get allBotsAndLessons;
+
+  /// Paywall feature row subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Beginner bots and first 4 lessons are free'**
+  String get allBotsAndLessonsDesc;
+
+  /// Paywall feature row title
+  ///
+  /// In en, this message translates to:
+  /// **'Post-game analysis'**
+  String get postGameAnalysis;
+
+  /// Paywall feature row subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Deep review of any finished game (coming soon)'**
+  String get postGameAnalysisDesc;
+
+  /// Paywall feature row title
+  ///
+  /// In en, this message translates to:
+  /// **'Profile flair'**
+  String get profileFlair;
+
+  /// Paywall feature row subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Premium badges and avatar borders'**
+  String get profileFlairDesc;
+
+  /// Paywall restore button
+  ///
+  /// In en, this message translates to:
+  /// **'Restore purchases'**
+  String get restorePurchases;
+
+  /// Paywall banner: puzzle quota hit
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve used today\'s 3 free puzzles. Upgrade for unlimited.'**
+  String get puzzleDailyQuotaReached;
+
+  /// Paywall banner: bot tier locked
+  ///
+  /// In en, this message translates to:
+  /// **'Intermediate, Advanced, and Master bots require Premium.'**
+  String get advancedBotsLocked;
+
+  /// Paywall banner: lessons locked
+  ///
+  /// In en, this message translates to:
+  /// **'Lessons 5 and beyond require Premium.'**
+  String get premiumLessonsLocked;
+
+  /// Learn screen: see-all lessons button
+  ///
+  /// In en, this message translates to:
+  /// **'See all {count} lessons'**
+  String seeAllLessons(int count);
+
+  /// Puzzle hub: streak column label
+  ///
+  /// In en, this message translates to:
+  /// **'Day Streak'**
+  String get dayStreakLabel;
+
+  /// Puzzle category
+  ///
+  /// In en, this message translates to:
+  /// **'Snapback'**
+  String get snapback;
+
+  /// Puzzle category
+  ///
+  /// In en, this message translates to:
+  /// **'Ladder'**
+  String get ladder;
+
+  /// Puzzle category
+  ///
+  /// In en, this message translates to:
+  /// **'Connect'**
+  String get connect;
+
+  /// Lock badge label on premium-gated items
+  ///
+  /// In en, this message translates to:
+  /// **'Premium'**
+  String get lockedPremium;
 }
 
 class _AppLocalizationsDelegate

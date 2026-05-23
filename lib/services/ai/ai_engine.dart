@@ -4,8 +4,9 @@ import 'go_ai_service.dart' show AIDifficulty;
 /// KataGo (or any other engine) without touching call sites.
 ///
 /// Implementations live alongside this file: [`MctsEngine`](mcts_engine.dart),
-/// [`KataGoEngine`](katago_engine.dart). [`AIEngineFactory`](ai_engine_factory.dart)
-/// picks the active one based on a compile-time flag.
+/// [`KataGoLocalEngine`](katago_local_engine.dart), and
+/// [`KataGoFfiEngine`](katago_ffi_engine.dart). [`AIEngineFactory`] picks
+/// the active one based on local engine availability.
 abstract class AIEngine {
   /// Identifier shown in debug overlays / logs — e.g. `'mcts'`, `'katago'`.
   String get name;

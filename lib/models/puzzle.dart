@@ -1171,6 +1171,427 @@ Ladders are one of the first tactics patterns every Go player must master.''',
     ),
   ];
 
+  // ─── Ladder puzzles ────────────────────────────────────────────────────────
+
+  static final List<Puzzle> _ladderPuzzles = [
+    Puzzle(
+      id: 'ladder_1',
+      title: 'Start the Ladder',
+      description: 'White has one liberty — capture to begin the ladder chase.',
+      category: 'ladder',
+      difficulty: 2,
+      boardSize: 9,
+      initialBoard: _createBoard9x9([
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 2, 1, 0, 0, 0],
+        [0, 0, 0, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      ]),
+      playerColor: 1,
+      // W(3,4): up=(2,4)=empty, down=(4,4)=B, left=(3,3)=B, right=(3,5)=B → 1 liberty
+      solution: [PuzzleMove(2, 4, 1)],
+      hint: 'White is in atari — close the last liberty to capture.',
+      explanation:
+          '''White at (3,4) has only one liberty at (2,4). Capturing it illustrates the start of a ladder — each time white tries to escape, black creates atari again until white runs off the board.
+
+Key Learning Points:
+• A ladder (shicho) chains atari after atari in a diagonal sequence
+• The runner zigzags until hitting the board edge and is captured
+• Ladders fail if a friendly stone lies in the escape path — a "ladder breaker"
+• Before chasing, always verify the ladder reaches the edge
+
+Reading ladders is one of the first fundamental skills in Go.''',
+    ),
+    Puzzle(
+      id: 'ladder_2',
+      title: 'Edge Ladder',
+      description: 'White is near the edge — one move captures it.',
+      category: 'ladder',
+      difficulty: 2,
+      boardSize: 9,
+      initialBoard: _createBoard9x9([
+        [0, 0, 0, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 1, 2, 1, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      ]),
+      playerColor: 1,
+      // W(1,4): up=(0,4)=B, down=(2,4)=empty, left=(1,3)=B, right=(1,5)=B → 1 liberty
+      solution: [PuzzleMove(2, 4, 1)],
+      hint: 'The board edge and your stones leave white only one way out.',
+      explanation:
+          '''White near the top edge has only one liberty at (2,4). The board edge acts like two opponent stones, drastically limiting white's options.
+
+Key Learning Points:
+• Edge stones have fewer liberties than center stones
+• In a ladder near the edge, the runner quickly runs out of room
+• When white is one row from the corner, escape is impossible
+• Use the edges to your advantage when initiating ladders
+
+The board boundary is your ally — always count how close the runner is to the edge.''',
+    ),
+    Puzzle(
+      id: 'ladder_3',
+      title: 'Capture Two in a Ladder',
+      description: 'Two white stones are linked — a single move captures both.',
+      category: 'ladder',
+      difficulty: 2,
+      boardSize: 9,
+      initialBoard: _createBoard9x9([
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 1, 0, 0, 0],
+        [0, 0, 0, 1, 2, 2, 0, 0, 0],
+        [0, 0, 0, 0, 1, 1, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      ]),
+      playerColor: 1,
+      // W(3,4): all blocked; W(3,5): right=(3,6)=empty → group liberty at (3,6)
+      solution: [PuzzleMove(3, 6, 1)],
+      hint: 'Both white stones share only one liberty — find it and capture both.',
+      explanation:
+          '''The two white stones form one group. All their liberties are blocked except (3,6). Capturing there takes both stones at once.
+
+Key Learning Points:
+• Connected stones share liberties — count the group's liberties, not each stone's
+• A group of any size falls when ALL its liberties are filled
+• In ladder sequences, the running group can still be caught even as it grows
+• A two-stone capture here mirrors how longer ladder sequences end
+
+Thinking in groups rather than individual stones is the first step to reading ahead.''',
+    ),
+    Puzzle(
+      id: 'ladder_4',
+      title: 'Ladder Breaker Check',
+      description:
+          'Is the white stone above a ladder breaker? Capture to find out.',
+      category: 'ladder',
+      difficulty: 3,
+      boardSize: 9,
+      initialBoard: _createBoard9x9([
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 2, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 2, 1, 0, 0, 0],
+        [0, 0, 0, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      ]),
+      playerColor: 1,
+      // W(3,4): up=(2,4)=empty, others=B → 1 liberty; W(1,4) is separate
+      solution: [PuzzleMove(2, 4, 1)],
+      hint:
+          'White has a stone in the escape path — does it actually break the ladder?',
+      explanation:
+          '''White (3,4) has only one liberty at (2,4). Playing there captures regardless of the stone at (1,4) — the stone at (3,4) is already surrounded. A ladder breaker only helps if the chased stone would reach it during escape.
+
+Key Learning Points:
+• A ladder breaker only works if it lies in the exact diagonal escape path
+• If the stone is already in atari with no escape, no breaker helps
+• Always visualise the exact path a ladder would take before relying on a breaker
+• Players sometimes place "false breakers" not in the true escape path
+
+Checking whether a ladder actually works is essential before starting the chase.''',
+    ),
+  ];
+
+  // ─── Snapback puzzles ──────────────────────────────────────────────────────
+
+  static final List<Puzzle> _snapbackPuzzles = [
+    Puzzle(
+      id: 'snapback_1',
+      title: 'Snapback — Capture Two',
+      description: 'Two white stones share one liberty. Capture them both.',
+      category: 'snapback',
+      difficulty: 2,
+      boardSize: 9,
+      initialBoard: _createBoard9x9([
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 1, 0, 0, 0, 0],
+        [0, 0, 1, 2, 2, 0, 0, 0, 0],
+        [0, 0, 0, 1, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      ]),
+      playerColor: 1,
+      // W(4,3): (3,3)=B,(5,3)=B,(4,2)=B,(4,4)=group; W(4,4): (3,4)=B,(5,4)=B,(4,5)=empty → 1 liberty
+      solution: [PuzzleMove(4, 5, 1)],
+      hint: 'Both white stones share only one liberty — find it.',
+      explanation:
+          '''White's two connected stones have only one shared liberty at (4,5). Filling it captures both simultaneously.
+
+Key Learning Points:
+• Snapback is when capturing one stone leads to losing more stones in return
+• The classic snapback: black plays in, white recaptures — then black retakes a larger group
+• Recognising groups with a single liberty is the foundation of all tactical play
+• Capturing both at once here avoids any counter-snap sequence
+
+When a group has one liberty, that point is its lifeline — take it.''',
+    ),
+    Puzzle(
+      id: 'snapback_2',
+      title: 'Snapback — Three Stones',
+      description: 'White has three connected stones with one shared liberty.',
+      category: 'snapback',
+      difficulty: 2,
+      boardSize: 9,
+      initialBoard: _createBoard9x9([
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 1, 0, 0, 0, 0],
+        [0, 0, 1, 2, 2, 1, 0, 0, 0],
+        [0, 0, 1, 2, 0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      ]),
+      playerColor: 1,
+      // W group {(3,3),(3,4),(4,3)}: all external pts blocked except (4,4)=empty → 1 liberty
+      solution: [PuzzleMove(4, 4, 1)],
+      hint: 'Three white stones share a single liberty — play there to capture all three.',
+      failureReasons: {
+        '2,3': 'That is already a black stone.',
+        '3,5': 'That is already a black stone.',
+      },
+      explanation:
+          '''Three connected white stones form one group. Their only shared liberty is (4,4). Playing there captures all three simultaneously.
+
+Key Learning Points:
+• An L-shaped group has the same vulnerability as a straight group — only liberties matter
+• The snapback concept involves a sequence where recapturing creates a larger group to be taken
+• Capturing three stones at once is a decisive tactical gain
+• Always trace ALL liberties of a group before deciding to capture
+
+The snapback is a beginner trap: always check if your capture leads to a counter-capture.''',
+    ),
+    Puzzle(
+      id: 'snapback_3',
+      title: 'Snapback — Four in an L',
+      description: 'Four white stones form an L with only one escape.',
+      category: 'snapback',
+      difficulty: 3,
+      boardSize: 9,
+      initialBoard: _createBoard9x9([
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 1, 0, 0, 0, 0],
+        [0, 0, 1, 2, 2, 1, 0, 0, 0],
+        [0, 0, 0, 1, 2, 1, 0, 0, 0],
+        [0, 0, 0, 1, 2, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      ]),
+      playerColor: 1,
+      // W group {(2,3),(2,4),(3,4),(4,4)}: only (4,5) remains empty → 1 liberty
+      solution: [PuzzleMove(4, 5, 1)],
+      hint: 'Trace all four white stones — they share exactly one liberty.',
+      explanation:
+          '''Four white stones form an L-shape. Despite their size, all liberties except (4,5) are blocked. Capturing there eliminates all four at once.
+
+Key Learning Points:
+• Group size doesn't protect against capture — only the number of liberties does
+• An L-shape or irregular group can still be trapped if its liberties are sealed
+• In snapback patterns, it appears white has options but careful analysis reveals otherwise
+• Counting liberties accurately is more important than counting stones
+
+When attacking, don't be intimidated by the number of enemy stones — count their liberties.''',
+    ),
+    Puzzle(
+      id: 'snapback_4',
+      title: 'Three in a Row',
+      description: 'A horizontal chain of three white stones — find the capture.',
+      category: 'snapback',
+      difficulty: 2,
+      boardSize: 9,
+      initialBoard: _createBoard9x9([
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 1, 1, 0, 0, 0],
+        [0, 0, 1, 2, 2, 2, 0, 0, 0],
+        [0, 0, 0, 1, 1, 1, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      ]),
+      playerColor: 1,
+      // W group {(3,3),(3,4),(3,5)}: (3,6)=empty is the only liberty
+      solution: [PuzzleMove(3, 6, 1)],
+      hint: 'Three in a row with all sides blocked — find the single open liberty.',
+      explanation:
+          '''Three white stones in a horizontal row are surrounded above and below. Only one empty point remains at (3,6). Playing there captures all three.
+
+Key Learning Points:
+• A horizontal chain has liberties only at its two open ends (plus above/below if unblocked)
+• When the sides and most ends are blocked, only a single liberty remains
+• This is the classic "three in a row" snapback setup
+• Recognising this shape quickly is a tactical efficiency skill
+
+Snapback shapes are common in middlegame — learn to spot them instantly.''',
+    ),
+  ];
+
+  // ─── Connect puzzles ───────────────────────────────────────────────────────
+
+  static final List<Puzzle> _connectPuzzles = [
+    Puzzle(
+      id: 'connect_1',
+      title: 'Bridge the Gap',
+      description: 'Two black groups are separated by one point — connect them.',
+      category: 'connect',
+      difficulty: 1,
+      boardSize: 9,
+      initialBoard: _createBoard9x9([
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 1, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      ]),
+      playerColor: 1,
+      // B(3,2) and B(3,4) with gap at (3,3)
+      solution: [PuzzleMove(3, 3, 1)],
+      hint: 'The empty point between your stones is all you need.',
+      explanation:
+          '''Playing (3,3) connects the two isolated black stones into a single group, doubling their effective liberties and making them far harder to attack.
+
+Key Learning Points:
+• Connected stones share liberties — a larger group is generally stronger
+• Isolated stones are vulnerable: each can be attacked separately
+• Connecting forces your opponent to deal with one bigger group instead of two small ones
+• The connecting move is often the most urgent play in the position
+
+"Connect your stones" is the first principle of strong defensive play.''',
+    ),
+    Puzzle(
+      id: 'connect_2',
+      title: 'Connect Vertically',
+      description: 'Your two stones are aligned vertically — play to connect.',
+      category: 'connect',
+      difficulty: 1,
+      boardSize: 9,
+      initialBoard: _createBoard9x9([
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      ]),
+      playerColor: 1,
+      // B(2,2) and B(4,2) with gap at (3,2)
+      solution: [PuzzleMove(3, 2, 1)],
+      hint: 'Two stones in a column — fill the middle to join them.',
+      explanation:
+          '''Playing (3,2) connects the vertically separated black stones. The resulting three-stone group has significantly more liberties and board presence.
+
+Key Learning Points:
+• Vertical connections are as important as horizontal ones
+• A three-stone column is stronger than two individual stones
+• The connecting move also prevents white from playing there and cutting through
+• Connection and cutting are mirror-image concepts: connect to prevent being cut
+
+After connecting, count your new group's liberties — you will see the immediate improvement.''',
+    ),
+    Puzzle(
+      id: 'connect_3',
+      title: 'Connect Before the Cut',
+      description: 'White threatens to split your groups — connect first.',
+      category: 'connect',
+      difficulty: 2,
+      boardSize: 9,
+      initialBoard: _createBoard9x9([
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 1, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 2, 0, 0, 0, 0, 0],
+        [0, 0, 1, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      ]),
+      playerColor: 1,
+      // B groups: {(2,2),(2,3)} and {(4,2),(4,3)}; W(3,3) threatens; play (3,2) to connect
+      solution: [PuzzleMove(3, 2, 1)],
+      hint: 'White is poised to cut — play the connecting point before it is too late.',
+      failureReasons: {
+        '3,3': 'That is already a white stone.',
+        '2,3': 'That is already a black stone.',
+      },
+      explanation:
+          '''White at (3,3) threatens to isolate your stones. Playing (3,2) connects both groups and prevents the cut, creating a strong four-stone block.
+
+Key Learning Points:
+• When your stones can be cut, connect immediately
+• A cut opponent can attack each group separately — a huge disadvantage
+• Connecting neutralises the cut: white's (3,3) is now surrounded and less threatening
+• The urgency of connection depends on the threat level of the cut
+
+Recognising cut threats before they happen is an intermediate-level skill.''',
+    ),
+    Puzzle(
+      id: 'connect_4',
+      title: 'Racing to Connect',
+      description: 'Two black clusters need one key stone to unite.',
+      category: 'connect',
+      difficulty: 2,
+      boardSize: 9,
+      initialBoard: _createBoard9x9([
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 1, 1, 0, 1, 1, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 2, 2, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      ]),
+      playerColor: 1,
+      // B group1: (3,2),(3,3); B group2: (3,5),(3,6); gap at (3,4)
+      solution: [PuzzleMove(3, 4, 1)],
+      hint: 'One stone in the middle connects both your groups into a strong chain.',
+      explanation:
+          '''Playing (3,4) unites both black clusters into a single powerful group spanning the board. The white stones below are now facing a much stronger opponent.
+
+Key Learning Points:
+• A long connected chain controls significant board territory
+• Connecting before white can cut creates lasting strategic advantages
+• The key point between two groups is always urgent
+• White's two stones below are weaker than your now-connected five-stone group
+
+Strategy in Go is about building groups that work together — connected stones cooperate.''',
+    ),
+  ];
+
   /// Returns all puzzles that require interactive stone placement (solution non-empty).
   /// Theory/counting puzzles (liberty observers with solution:[]) are excluded here;
   /// they remain accessible from tutorials via [getPuzzlesForTopic].
@@ -1188,6 +1609,9 @@ Ladders are one of the first tactics patterns every Go player must master.''',
     ..._koPuzzles,
     ..._koPuzzlesExtra,
     ..._tesujipuzzles,
+    ..._ladderPuzzles,
+    ..._snapbackPuzzles,
+    ..._connectPuzzles,
   ];
 
   static List<Puzzle> getPuzzlesForTopic(String topic) {
@@ -1202,6 +1626,12 @@ Ladders are one of the first tactics patterns every Go player must master.''',
         return [..._koPuzzles, ..._koPuzzlesExtra];
       case 'Tesuji':
         return _tesujipuzzles;
+      case 'Ladder':
+        return _ladderPuzzles;
+      case 'Snapback':
+        return _snapbackPuzzles;
+      case 'Connect':
+        return _connectPuzzles;
       default:
         return [];
     }

@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'ogs_service.dart' show GameSummary;
+
 /// Origin of a saved match.
 enum MatchSource { local, ai, ogs }
 
@@ -79,6 +81,30 @@ class MatchRecord {
     ),
     sgf: j['sgf'] as String?,
   );
+
+  /// Convert an OGS [GameSummary] (returned by `OgsService.fetchRecentGames`)
+  /// into a persistable [MatchRecord]. The OGS game id is prefixed with
+  /// `'ogs:'` to avoid colliding with locally-generated UUIDs when both
+  /// kinds of games live in the same store.
+  factory MatchRecord.fromOgsSummary(GameSummary s) {
+    final MatchResult result;
+    if (s.score == 'Draw') {
+      result = MatchResult.draw;
+    } else if (s.didWin) {
+      result = MatchResult.win;
+    } else {
+      result = MatchResult.loss;
+    }
+    return MatchRecord(
+      id: 'ogs:${s.id}',
+      playedAt: s.ended ?? DateTime.now(),
+      opponent: s.opponent,
+      boardSize: s.size,
+      result: result,
+      moves: const [],
+      source: MatchSource.ogs,
+    );
+  }
 }
 
 /// Aggregated stats for the profile screen.

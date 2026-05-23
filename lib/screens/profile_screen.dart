@@ -6,14 +6,19 @@ import 'package:zaibal/models/user.dart';
 import 'package:zaibal/services/ogs_service.dart';
 import 'package:zaibal/services/user_service.dart';
 import 'package:zaibal/services/match_history_service.dart';
+import 'package:zaibal/services/progress_service.dart';
 import 'package:zaibal/services/subscription_service.dart';
 import 'package:zaibal/screens/paywall_screen.dart';
 import 'package:zaibal/screens/analysis_screen.dart';
 import 'package:zaibal/utils/ogs_rank.dart';
-import 'package:zaibal/widgets/login_dialog.dart';
+import 'package:zaibal/widgets/game_record_tile.dart';
+import 'package:zaibal/widgets/rating_sparkline.dart';
+import 'package:zaibal/widgets/win_loss_donut.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/app_shell.dart';
 
+/// Chess.com-style profile: header, 2×2 stats grid, win/loss donut, rating
+/// sparkline, recent games list. Premium badges + paywall route remain.
 class ProfileScreen extends StatelessWidget {
   /// When false the screen is hosted inside [AppShell]; suppress per-screen nav.
   final bool showBottomNav;
@@ -24,6 +29,7 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = context.watch<UserService>().currentUser;
     final history = context.watch<MatchHistoryService>();
+    final progress = context.watch<ProgressService>();
     final subscription = context.watch<SubscriptionService>();
     final ogs = context.watch<OgsService>();
     final agg = history.aggregate();
@@ -45,16 +51,16 @@ class ProfileScreen extends StatelessWidget {
             pinned: true,
             actions: [
               IconButton(
+                icon: const Icon(Icons.settings),
+                tooltip: 'Settings',
+                onPressed: () => Navigator.pushNamed(context, '/settings'),
+              ),
+              IconButton(
                 icon: const Icon(Icons.edit),
                 onPressed: user == null
                     ? null
                     : () => _showEditDialog(context, user),
-                tooltip: 'Edit profile',
-              ),
-              IconButton(
-                icon: const Icon(Icons.more_vert),
-                onPressed: () => _showMoreMenu(context),
-                tooltip: 'More',
+                tooltip: AppLocalizations.of(context).editProfile,
               ),
             ],
             flexibleSpace: FlexibleSpaceBar(
@@ -62,14 +68,21 @@ class ProfileScreen extends StatelessWidget {
               background: _buildHeader(context, user, subscription, ogs, rank),
             ),
           ),
-          SliverToBoxAdapter(
-            child: Column(
-              children: [
-                if (!ogs.isAuthenticated) _buildOgsCta(context),
-                _buildStatsCard(context, agg, user),
-                _buildPremiumSection(context, subscription),
-                _buildRecentGames(context, history),
-              ],
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                _buildStatsGrid(context, progress, agg),
+                const SizedBox(height: 16),
+                _buildDonutCard(context, agg),
+                const SizedBox(height: 16),
+                _buildSparklineCard(context, progress),
+                const SizedBox(height: 16),
+                if (!subscription.isPremium) _buildPremiumCta(context),
+                _buildRecentGamesHeader(context),
+                const SizedBox(height: 8),
+                ..._buildRecentGames(context, history),
+              ]),
             ),
           ),
         ],
@@ -135,29 +148,11 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
               ),
-            if (ogs.isAuthenticated) ...[
-              const SizedBox(height: 4),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.cloud_done, size: 12, color: Colors.white70),
-                  const SizedBox(width: 4),
-                  Text(
-                    'OGS',
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.8),
-                      fontSize: 11,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                ],
-              ),
-            ],
             if (subscription.isPremium) ...[
               const SizedBox(height: 4),
-              const Chip(
-                label: Text('Premium'),
-                avatar: Icon(Icons.workspace_premium, size: 16),
+              Chip(
+                label: Text(AppLocalizations.of(context).premium),
+                avatar: const Icon(Icons.workspace_premium, size: 16),
                 backgroundColor: Colors.amberAccent,
                 visualDensity: VisualDensity.compact,
               ),
@@ -168,57 +163,96 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildOgsCta(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    return Card(
-      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      child: ListTile(
-        leading: Icon(Icons.cloud_outlined, color: cs.primary),
-        title: const Text('Sign in to OGS'),
-        subtitle: const Text(
-          'See your rank, online games, and play live opponents.',
-        ),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: () => showLoginDialog(context),
+  // ── 2x2 stats grid ───────────────────────────────────────────────────────
+
+  Widget _buildStatsGrid(
+    BuildContext context,
+    ProgressService progress,
+    MatchAggregate agg,
+  ) {
+    final winRate = agg.total == 0
+        ? '—'
+        : '${(agg.winRate * 100).toStringAsFixed(0)}%';
+    final l = AppLocalizations.of(context);
+    final stats = [
+      _StatData(l.games, '${agg.total}', Icons.sports_esports),
+      _StatData(l.winRate, winRate, Icons.emoji_events),
+      _StatData(l.streak, '${progress.streak}', Icons.local_fire_department),
+      _StatData(l.puzzleRating, '${progress.puzzleRating}', Icons.insights),
+    ];
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
+        childAspectRatio: 1.8,
       ),
+      itemCount: stats.length,
+      itemBuilder: (context, i) => _StatTile(data: stats[i]),
     );
   }
 
-  Widget _buildStatsCard(BuildContext context, MatchAggregate agg, User? user) {
-    final winRatePct = agg.total == 0
-        ? '—'
-        : '${(agg.winRate * 100).toStringAsFixed(0)}%';
+  // ── donut card ───────────────────────────────────────────────────────────
+
+  Widget _buildDonutCard(BuildContext context, MatchAggregate agg) {
+    final cs = Theme.of(context).colorScheme;
     return Card(
-      margin: const EdgeInsets.all(16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              AppLocalizations.of(context).statistics,
-              style: Theme.of(context).textTheme.titleLarge,
+              'Win / Loss',
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildStatItem(
-                  context,
-                  'Puzzle rating',
-                  user?.puzzleRating.toString() ?? '—',
+                WinLossDonut(
+                  wins: agg.wins,
+                  losses: agg.losses,
+                  draws: agg.draws,
                 ),
-                _buildStatItem(context, 'Games', agg.total.toString()),
-                _buildStatItem(context, 'Win rate', winRatePct),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildStatItem(context, 'Wins', agg.wins.toString()),
-                _buildStatItem(context, 'Losses', agg.losses.toString()),
-                _buildStatItem(context, 'Draws', agg.draws.toString()),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _LegendRow(
+                        color: Colors.green,
+                        label: 'Wins',
+                        value: agg.wins,
+                      ),
+                      const SizedBox(height: 6),
+                      _LegendRow(
+                        color: Colors.red,
+                        label: 'Losses',
+                        value: agg.losses,
+                      ),
+                      const SizedBox(height: 6),
+                      _LegendRow(
+                        color: Colors.grey,
+                        label: 'Draws',
+                        value: agg.draws,
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        agg.total == 0
+                            ? 'Play games to see your split here.'
+                            : '${(agg.winRate * 100).toStringAsFixed(0)}% win rate',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: cs.onSurface.withValues(alpha: 0.65),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ],
@@ -227,153 +261,119 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatItem(BuildContext context, String label, String value) {
-    return Column(
+  // ── sparkline card ───────────────────────────────────────────────────────
+
+  Widget _buildSparklineCard(BuildContext context, ProgressService progress) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  AppLocalizations.of(context).puzzleRating,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  '${progress.puzzleRating}',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            RatingSparkline(ratings: progress.ratingHistory),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ── premium CTA (free users only) ────────────────────────────────────────
+
+  Widget _buildPremiumCta(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        child: ListTile(
+          leading: const Icon(Icons.workspace_premium, color: Colors.amber),
+          title: Text(AppLocalizations.of(context).unlockPremium),
+          subtitle: Text(
+            '${AppLocalizations.of(context).unlimitedPuzzles}, ${AppLocalizations.of(context).postGameAnalysis}, ${AppLocalizations.of(context).profileFlair}',
+          ),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const PaywallScreen()),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ── recent games ─────────────────────────────────────────────────────────
+
+  Widget _buildRecentGamesHeader(BuildContext context) {
+    return Row(
       children: [
-        Text(value, style: Theme.of(context).textTheme.headlineSmall),
-        Text(label, style: Theme.of(context).textTheme.bodySmall),
+        Text(
+          'Recent Games',
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+        ),
+        const Spacer(),
+        TextButton(
+          onPressed: () => Navigator.pushNamed(context, '/history'),
+          child: Text(AppLocalizations.of(context).seeAll),
+        ),
       ],
     );
   }
 
-  Widget _buildPremiumSection(
+  List<Widget> _buildRecentGames(
     BuildContext context,
-    SubscriptionService subscription,
+    MatchHistoryService history,
   ) {
-    if (subscription.entitlements.profileFlair) {
-      return Card(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
-        child: ListTile(
-          leading: const Icon(Icons.workspace_premium, color: Colors.amber),
-          title: const Text('Profile flair unlocked'),
-          subtitle: const Text('Customize badges and avatar borders'),
-          onTap: () {
-            // TODO: open flair customizer (premium-only)
-          },
+    final records = history.records.take(10).toList();
+    if (records.isEmpty) {
+      return [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 4, 0, 16),
+          child: Text(AppLocalizations.of(context).noGamesYet),
         ),
+      ];
+    }
+    return records
+        .map(
+          (r) =>
+              GameRecordTile(record: r, onTap: () => _openRecord(context, r)),
+        )
+        .toList();
+  }
+
+  void _openRecord(BuildContext context, MatchRecord r) {
+    final entitlements = context.read<SubscriptionService>().entitlements;
+    if (!entitlements.postGameAnalysis) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const PaywallScreen()),
       );
+      return;
     }
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      child: ListTile(
-        leading: const Icon(Icons.lock_outline),
-        title: const Text('Unlock Premium'),
-        subtitle: const Text(
-          'Unlimited puzzles, post-game analysis, profile flair',
-        ),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const PaywallScreen()),
-        ),
-      ),
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => AnalysisScreen(matchId: r.id)),
     );
-  }
-
-  Widget _buildRecentGames(BuildContext context, MatchHistoryService history) {
-    final records = history.records;
-    return Card(
-      margin: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text(
-              'Match history',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-          ),
-          if (records.isEmpty)
-            const Padding(
-              padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
-              child: Text('No games yet — finish one to see it here.'),
-            )
-          else
-            for (final r in records.take(10))
-              ListTile(
-                leading: _resultAvatar(r.result),
-                title: Text('vs ${r.opponent}'),
-                subtitle: Text(
-                  '${r.boardSize}×${r.boardSize} • ${_relative(r.playedAt)}',
-                ),
-                trailing: Text(
-                  _resultLabel(r.result),
-                  style: TextStyle(
-                    color: _resultColor(r.result),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                onTap: () {
-                  final entitlements = context
-                      .read<SubscriptionService>()
-                      .entitlements;
-                  if (!entitlements.postGameAnalysis) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const PaywallScreen()),
-                    );
-                    return;
-                  }
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => AnalysisScreen(matchId: r.id),
-                    ),
-                  );
-                },
-              ),
-        ],
-      ),
-    );
-  }
-
-  CircleAvatar _resultAvatar(MatchResult r) {
-    switch (r) {
-      case MatchResult.win:
-        return const CircleAvatar(
-          backgroundColor: Colors.green,
-          child: Icon(Icons.arrow_upward, color: Colors.white),
-        );
-      case MatchResult.loss:
-        return const CircleAvatar(
-          backgroundColor: Colors.red,
-          child: Icon(Icons.arrow_downward, color: Colors.white),
-        );
-      case MatchResult.draw:
-        return const CircleAvatar(
-          backgroundColor: Colors.grey,
-          child: Icon(Icons.drag_handle, color: Colors.white),
-        );
-      case MatchResult.unfinished:
-        return const CircleAvatar(
-          backgroundColor: Colors.blueGrey,
-          child: Icon(Icons.pause, color: Colors.white),
-        );
-    }
-  }
-
-  Color _resultColor(MatchResult r) => switch (r) {
-    MatchResult.win => Colors.green,
-    MatchResult.loss => Colors.red,
-    MatchResult.draw => Colors.grey,
-    MatchResult.unfinished => Colors.blueGrey,
-  };
-
-  String _resultLabel(MatchResult r) => switch (r) {
-    MatchResult.win => 'Win',
-    MatchResult.loss => 'Loss',
-    MatchResult.draw => 'Draw',
-    MatchResult.unfinished => '—',
-  };
-
-  String _relative(DateTime then) {
-    final diff = DateTime.now().difference(then);
-    if (diff.inMinutes < 1) return 'just now';
-    if (diff.inHours < 1) return '${diff.inMinutes}m ago';
-    if (diff.inDays < 1) return '${diff.inHours}h ago';
-    if (diff.inDays < 30) return '${diff.inDays}d ago';
-    return '${(diff.inDays / 30).floor()}mo ago';
   }
 
   Future<void> _showEditDialog(BuildContext context, User user) async {
@@ -381,7 +381,7 @@ class ProfileScreen extends StatelessWidget {
     final newName = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Edit profile'),
+        title: Text(AppLocalizations.of(context).editProfile),
         content: TextField(
           controller: controller,
           decoration: const InputDecoration(labelText: 'Display name'),
@@ -390,11 +390,11 @@ class ProfileScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context).cancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-            child: const Text('Save'),
+            child: Text(AppLocalizations.of(context).save),
           ),
         ],
       ),
@@ -403,42 +403,103 @@ class ProfileScreen extends StatelessWidget {
       await context.read<UserService>().updateProfile(displayName: newName);
     }
   }
+}
 
-  void _showMoreMenu(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+// ── small helpers ──────────────────────────────────────────────────────────
+
+class _StatData {
+  final String label;
+  final String value;
+  final IconData icon;
+
+  const _StatData(this.label, this.value, this.icon);
+}
+
+class _StatTile extends StatelessWidget {
+  final _StatData data;
+
+  const _StatTile({required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 1,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        child: Row(
           children: [
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/settings');
-              },
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: cs.primary.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(data.icon, color: cs.primary, size: 20),
             ),
-            ListTile(
-              leading: const Icon(Icons.help_outline),
-              title: const Text('Help & Support'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.info_outline),
-              title: const Text('About'),
-              onTap: () {
-                Navigator.pop(context);
-              },
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    data.value,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  Text(
+                    data.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _LegendRow extends StatelessWidget {
+  final Color color;
+  final String label;
+  final int value;
+
+  const _LegendRow({
+    required this.color,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(label, style: Theme.of(context).textTheme.bodyMedium),
+        ),
+        Text(
+          '$value',
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
+        ),
+      ],
     );
   }
 }

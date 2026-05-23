@@ -475,4 +475,252 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moveQualityBlunder => 'Blunder';
+
+  @override
+  String get moveQualityExcellent => 'Excellent';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get aiThinking => 'AI thinking…';
+
+  @override
+  String get noLegalMoves =>
+      'No legal moves available. Press Pass to continue.';
+
+  @override
+  String get useHintTitle => 'Use a hint?';
+
+  @override
+  String useHintContent(int remaining) {
+    return 'Reveal the best move. Costs 1 ★ ($remaining left).';
+  }
+
+  @override
+  String get showHint => 'Show hint';
+
+  @override
+  String get noHintAvailable => 'No hint available — try passing.';
+
+  @override
+  String get resignTitle => 'Resign this game?';
+
+  @override
+  String get resignConfirmBot => 'Your opponent will win by resignation.';
+
+  @override
+  String resignConfirmLocal(String side) {
+    return '$side resigns. The other side wins.';
+  }
+
+  @override
+  String get resign => 'Resign';
+
+  @override
+  String get gameReview => 'Game Review';
+
+  @override
+  String get rematch => 'Rematch';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get noHintsRemaining => 'No hints remaining';
+
+  @override
+  String get showBestMove => 'Show best move (-1 ★)';
+
+  @override
+  String get noHintsUsed => 'No hints used';
+
+  @override
+  String hintsUsed(int count) {
+    return '$count hint(s) used';
+  }
+
+  @override
+  String get resumeLesson => 'Resume lesson?';
+
+  @override
+  String resumeLessonContent(int step) {
+    return 'Continue from step $step?';
+  }
+
+  @override
+  String get startOver => 'Start over';
+
+  @override
+  String get resume => 'Resume';
+
+  @override
+  String get notQuiteTapHint => 'Not quite — try a different point.';
+
+  @override
+  String get hintShownTapHint => 'Hint: follow the marker.';
+
+  @override
+  String get lessonComplete => 'Lesson complete!';
+
+  @override
+  String dayStreak(int count) {
+    return '$count day streak';
+  }
+
+  @override
+  String get master => 'Master';
+
+  @override
+  String get quickDrills => 'Quick Drills';
+
+  @override
+  String get score => 'Score';
+
+  @override
+  String get black => 'Black';
+
+  @override
+  String get white => 'White';
+
+  @override
+  String get you => 'You';
+
+  @override
+  String get computer => 'Computer';
+
+  @override
+  String get whiteWinsByResignation => 'White wins by resignation';
+
+  @override
+  String get blackWinsByResignation => 'Black wins by resignation';
+
+  @override
+  String blackWinsByPoints(int points) {
+    return 'Black wins by $points points!';
+  }
+
+  @override
+  String whiteWinsByPoints(int points) {
+    return 'White wins by $points points!';
+  }
+
+  @override
+  String get gameTied => 'Game is tied!';
+
+  @override
+  String get gameReviewComingSoon => 'Game Review coming soon';
+
+  @override
+  String get rating => 'Rating';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get streak => 'Streak';
+
+  @override
+  String get xp => 'XP';
+
+  @override
+  String get seeAll => 'See all';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get swapPuzzle => 'Swap puzzle';
+
+  @override
+  String get replay => 'Replay';
+
+  @override
+  String get continueLearning => 'Continue Learning';
+
+  @override
+  String get noLessonsYet => 'No lessons yet';
+
+  @override
+  String get finishPreviousLesson =>
+      'Finish the previous lesson to unlock this.';
+
+  @override
+  String get noGamesYet => 'No games yet — finish one to see it here.';
+
+  @override
+  String get premium => 'Premium';
+
+  @override
+  String get unlockPremium => 'Unlock Premium';
+
+  @override
+  String get youArePremium => 'You are Premium';
+
+  @override
+  String get unlockGokoPremium => 'Unlock GOKO Premium';
+
+  @override
+  String get paywallTagline =>
+      'Train deeper. Play stronger. Unlock everything.';
+
+  @override
+  String get unlimitedPuzzles => 'Unlimited puzzles';
+
+  @override
+  String get freePuzzleLimit => 'Free users get 3 puzzles per day';
+
+  @override
+  String get allBotsAndLessons => 'All bots & lessons';
+
+  @override
+  String get allBotsAndLessonsDesc =>
+      'Beginner bots and first 4 lessons are free';
+
+  @override
+  String get postGameAnalysis => 'Post-game analysis';
+
+  @override
+  String get postGameAnalysisDesc =>
+      'Deep review of any finished game (coming soon)';
+
+  @override
+  String get profileFlair => 'Profile flair';
+
+  @override
+  String get profileFlairDesc => 'Premium badges and avatar borders';
+
+  @override
+  String get restorePurchases => 'Restore purchases';
+
+  @override
+  String get puzzleDailyQuotaReached =>
+      'You\'ve used today\'s 3 free puzzles. Upgrade for unlimited.';
+
+  @override
+  String get advancedBotsLocked =>
+      'Intermediate, Advanced, and Master bots require Premium.';
+
+  @override
+  String get premiumLessonsLocked => 'Lessons 5 and beyond require Premium.';
+
+  @override
+  String seeAllLessons(int count) {
+    return 'See all $count lessons';
+  }
+
+  @override
+  String get dayStreakLabel => 'Day Streak';
+
+  @override
+  String get snapback => 'Snapback';
+
+  @override
+  String get ladder => 'Ladder';
+
+  @override
+  String get connect => 'Connect';
+
+  @override
+  String get lockedPremium => 'Premium';
 }

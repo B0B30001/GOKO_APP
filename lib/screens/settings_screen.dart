@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:zaibal/gen/l10n/app_localizations.dart';
 import 'package:zaibal/models/app_settings.dart';
-import 'package:zaibal/services/ai/katago_process_service.dart';
 import 'package:zaibal/theme/go_theme.dart';
+import 'package:zaibal/widgets/goko_logo.dart';
 
 class SettingsScreen extends StatefulWidget {
   final bool isDark;
@@ -20,10 +19,6 @@ class SettingsScreen extends StatefulWidget {
   final ValueChanged<String> onThemePresetChanged;
   final String languageCode;
   final ValueChanged<String> onLanguageChanged;
-  final String kataGoServerUrl;
-  final ValueChanged<String> onKataGoServerUrlChanged;
-  final String leelaServerUrl;
-  final ValueChanged<String> onLeelaServerUrlChanged;
 
   const SettingsScreen({
     required this.isDark,
@@ -40,10 +35,6 @@ class SettingsScreen extends StatefulWidget {
     required this.onThemePresetChanged,
     required this.languageCode,
     required this.onLanguageChanged,
-    required this.kataGoServerUrl,
-    required this.onKataGoServerUrlChanged,
-    required this.leelaServerUrl,
-    required this.onLeelaServerUrlChanged,
     super.key,
   });
 
@@ -63,7 +54,6 @@ const _kLanguageOptions = <String, String>{
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _soundEnabled = true;
   bool _vibrationEnabled = true;
-  bool _notificationsEnabled = true;
   late String _languageCode;
   bool _showCoordinates = false;
   bool _forceLightGame = true;
@@ -71,8 +61,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late String _backgroundThemeId;
   late String _themePresetId;
   late bool _isDark;
-  late TextEditingController _kataGoUrlController;
-  late TextEditingController _leelaUrlController;
 
   String get _selectedLanguage => _kLanguageOptions.entries
       .firstWhere(
@@ -92,22 +80,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _isDark = widget.isDark;
     _languageCode = widget.languageCode;
     _soundEnabled = AppSettings.soundEnabled;
-    _kataGoUrlController = TextEditingController(text: widget.kataGoServerUrl);
-    _leelaUrlController = TextEditingController(text: widget.leelaServerUrl);
-  }
-
-  @override
-  void dispose() {
-    _kataGoUrlController.dispose();
-    _leelaUrlController.dispose();
-    super.dispose();
+    _vibrationEnabled = AppSettings.hapticsEnabled;
   }
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(l.settings), centerTitle: true),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const GokoLogo(size: 22),
+            const SizedBox(width: 8),
+            Text(l.settings),
+          ],
+        ),
+      ),
       body: ListView(
         children: [
           _buildSection(l.appearance, [
@@ -171,16 +161,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               title: Text(l.vibration),
               subtitle: Text(l.vibrationSubtitle),
               value: _vibrationEnabled,
-              onChanged: (value) => setState(() => _vibrationEnabled = value),
-            ),
-          ]),
-          _buildSection(l.notifications, [
-            SwitchListTile(
-              title: Text(l.pushNotifications),
-              subtitle: Text(l.pushNotificationsSubtitle),
-              value: _notificationsEnabled,
-              onChanged: (value) =>
-                  setState(() => _notificationsEnabled = value),
+              onChanged: (value) {
+                setState(() => _vibrationEnabled = value);
+                AppSettings.hapticsEnabled = value;
+                AppSettings.save();
+              },
             ),
           ]),
           _buildSection(l.language, [
@@ -191,88 +176,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onTap: _showLanguageDialog,
             ),
           ]),
-          _buildSection(l.kataGoSection, [
-            // Local engine tile — zero-config KataGo process management.
-            _LocalEngineTile(l: l),
-            const Divider(indent: 16, endIndent: 16),
-            // Power-user: remote WebSocket overrides.
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-              child: Text(
-                l.kataGoServerUrl,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-              child: TextField(
-                controller: _kataGoUrlController,
-                decoration: InputDecoration(
-                  hintText: 'ws://192.168.1.10:8080',
-                  helperText: l.kataGoHint,
-                  border: const OutlineInputBorder(),
-                  isDense: true,
-                ),
-                keyboardType: TextInputType.url,
-                onChanged: (v) {
-                  widget.onKataGoServerUrlChanged(v.trim());
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
-              child: Text(
-                l.leelaServerUrl,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-              child: TextField(
-                controller: _leelaUrlController,
-                decoration: InputDecoration(
-                  hintText: 'ws://192.168.1.10:8081',
-                  helperText: l.leelaHint,
-                  border: const OutlineInputBorder(),
-                  isDense: true,
-                ),
-                keyboardType: TextInputType.url,
-                onChanged: (v) {
-                  widget.onLeelaServerUrlChanged(v.trim());
-                },
-              ),
-            ),
-          ]),
-          _buildSection(l.account, [
-            ListTile(
-              title: Text(l.editProfile),
-              leading: const Icon(Icons.person_outline),
-              onTap: () {
-                // TODO: Navigate to profile edit
-              },
-            ),
-            ListTile(
-              title: Text(l.changePassword),
-              leading: const Icon(Icons.lock_outline),
-              onTap: () {
-                // TODO: Navigate to password change
-              },
-            ),
-          ]),
           _buildSection(l.about, [
             ListTile(title: Text(l.version), subtitle: const Text('1.0.0')),
-            ListTile(
-              title: Text(l.termsOfService),
-              onTap: () {
-                // TODO: Show terms
-              },
-            ),
-            ListTile(
-              title: Text(l.privacyPolicy),
-              onTap: () {
-                // TODO: Show privacy policy
-              },
-            ),
           ]),
         ],
       ),
@@ -486,50 +391,6 @@ class _ThemeSwatch extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-/// Settings tile that shows the local KataGo engine status and navigates to
-/// the [AiEngineScreen] for setup / detail.
-class _LocalEngineTile extends StatelessWidget {
-  const _LocalEngineTile({required this.l});
-
-  final AppLocalizations l;
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<KataGoProcessService>(
-      builder: (context, service, _) {
-        final (color, icon) = switch (service.status) {
-          EngineStatus.ready => (Colors.green, Icons.check_circle),
-          EngineStatus.starting => (
-            Theme.of(context).colorScheme.primary,
-            Icons.sync,
-          ),
-          EngineStatus.error => (
-            Theme.of(context).colorScheme.error,
-            Icons.error_outline,
-          ),
-          EngineStatus.notFound => (
-            Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
-            Icons.radio_button_unchecked,
-          ),
-        };
-        return ListTile(
-          leading: Icon(icon, color: color),
-          title: Text(l.localEngineTitle),
-          subtitle: Text(
-            service.status == EngineStatus.ready
-                ? l.engineStatusReady
-                : service.isAvailable
-                ? l.engineStatusStarting
-                : l.localEngineSubtitle,
-          ),
-          trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-          onTap: () => Navigator.pushNamed(context, '/ai-engine'),
-        );
-      },
     );
   }
 }

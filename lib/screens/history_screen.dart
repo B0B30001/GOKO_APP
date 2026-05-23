@@ -3,67 +3,94 @@ import 'package:provider/provider.dart';
 import 'package:zaibal/gen/l10n/app_localizations.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/app_shell.dart';
+import '../widgets/game_record_tile.dart';
 import '../services/ogs_service.dart';
+import '../services/match_history_service.dart';
+import '../services/subscription_service.dart';
+import 'analysis_screen.dart';
+import 'paywall_screen.dart';
 
-class HistoryScreen extends StatelessWidget {
+/// Unified game history. Reads local records (AI / local 2P / synced OGS)
+/// from [MatchHistoryService] and triggers an OGS refresh in the background
+/// when the user is signed in. Survives offline mode and OGS API failures.
+class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
 
   @override
+  State<HistoryScreen> createState() => _HistoryScreenState();
+}
+
+class _HistoryScreenState extends State<HistoryScreen> {
+  bool _refreshing = false;
+  bool _didInitialRefresh = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Run once after first frame so we have access to providers.
+    if (!_didInitialRefresh) {
+      _didInitialRefresh = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) => _refreshFromOgs());
+    }
+  }
+
+  /// Pulls the user's latest games from OGS and upserts them into
+  /// [MatchHistoryService]. No-op when not authenticated. Silently swallows
+  /// network failures so the local view never breaks.
+  Future<void> _refreshFromOgs() async {
+    final ogs = context.read<OgsService>();
+    if (!ogs.isAuthenticated || _refreshing) return;
+    setState(() => _refreshing = true);
+    try {
+      final summaries = await ogs.fetchRecentGames(limit: 25);
+      if (!mounted) return;
+      final history = context.read<MatchHistoryService>();
+      await history.addAll(summaries.map(MatchRecord.fromOgsSummary));
+    } catch (_) {
+      // Keep showing whatever we have locally.
+    } finally {
+      if (mounted) setState(() => _refreshing = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final ogs = Provider.of<OgsService>(context, listen: false);
+    // Watch both services so the screen rebuilds on sign-in/out and when new
+    // games are saved.
+    context.watch<OgsService>();
+    final history = context.watch<MatchHistoryService>();
+    final records = history.records;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context).gameHistory),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.filter_list),
-            onPressed: () {
-              // TODO: Show filter options
-            },
+            icon: _refreshing
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.refresh),
+            tooltip: 'Refresh',
+            onPressed: _refreshing ? null : _refreshFromOgs,
           ),
         ],
       ),
-      body: FutureBuilder<List<GameSummary>>(
-        future: ogs.fetchRecentGames(limit: 25),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text('Failed to load: ${snapshot.error}'));
-          }
-          final items = snapshot.data ?? [];
-          if (items.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.history, size: 64, color: Colors.grey[400]),
-                  const SizedBox(height: 16),
-                  Text(
-                    AppLocalizations.of(context).noRecentGames,
-                    style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-                  ),
-                ],
+      body: RefreshIndicator(
+        onRefresh: _refreshFromOgs,
+        child: records.isEmpty
+            ? _buildEmpty(context)
+            : ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                itemCount: records.length,
+                itemBuilder: (context, i) => GameRecordTile(
+                  record: records[i],
+                  onTap: () => _openRecord(records[i]),
+                ),
               ),
-            );
-          }
-          return ListView.builder(
-            itemCount: items.length,
-            itemBuilder: (context, index) {
-              final g = items[index];
-              return _GameHistoryCard(
-                opponent: g.opponent,
-                date: g.ended ?? DateTime.now(),
-                result: g.didWin ? 'Win' : 'Loss',
-                score: g.score.isNotEmpty ? g.score : g.result,
-                boardSize: g.size,
-                color: g.didWin ? Colors.green : Colors.red,
-              );
-            },
-          );
-        },
       ),
       bottomNavigationBar: BottomNavBar(
         // History is a secondary screen; highlight Profile (closest tab).
@@ -75,92 +102,37 @@ class HistoryScreen extends StatelessWidget {
       ),
     );
   }
-}
 
-class _GameHistoryCard extends StatelessWidget {
-  final String opponent;
-  final DateTime date;
-  final String result;
-  final String score;
-  final int boardSize;
-  final Color color;
-
-  const _GameHistoryCard({
-    required this.opponent,
-    required this.date,
-    required this.result,
-    required this.score,
-    required this.boardSize,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: InkWell(
-        onTap: () {
-          // TODO: Open game details
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Container(
-                width: 4,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          opponent,
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        Text(
-                          '$boardSize×$boardSize',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          _formatDate(date),
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        Text(
-                          '$result ($score)',
-                          style: TextStyle(
-                            color: color,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(Icons.chevron_right),
-            ],
+  Widget _buildEmpty(BuildContext context) {
+    // ListView so RefreshIndicator still works on empty state.
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      children: [
+        const SizedBox(height: 120),
+        Icon(Icons.history, size: 64, color: Colors.grey[400]),
+        const SizedBox(height: 16),
+        Center(
+          child: Text(
+            AppLocalizations.of(context).noRecentGames,
+            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
           ),
         ),
-      ),
+      ],
     );
   }
 
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
+  void _openRecord(MatchRecord r) {
+    final entitlements = context.read<SubscriptionService>().entitlements;
+    if (!entitlements.postGameAnalysis) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const PaywallScreen()),
+      );
+      return;
+    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => AnalysisScreen(matchId: r.id)),
+    );
   }
 }

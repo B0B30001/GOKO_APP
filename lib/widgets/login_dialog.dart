@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/ogs_service.dart';
-import '../screens/online/online_lobby_screen.dart';
 
 /// Login dialog for OGS authentication
 /// Shows a popup dialog with username/password fields
@@ -51,14 +50,10 @@ class _LoginDialogState extends State<LoginDialog> {
       if (!mounted) return;
 
       if (success) {
-        // Close dialog
+        // Close dialog. The auth gate in main.dart rebuilds when
+        // OgsService.isAuthenticated flips, swapping AuthGateScreen for
+        // AppShell (home tab). No explicit navigation needed.
         Navigator.pop(context);
-
-        // Navigate to lobby
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const OnlineLobbyScreen()),
-        );
       } else {
         setState(() {
           _errorMessage = 'Login failed. Check your credentials.';
