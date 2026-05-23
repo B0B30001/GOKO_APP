@@ -669,5 +669,91 @@
         "body": "Centre stones have influence in all directions but no edge to lean on — they need more stones to build enclosed territory. Play centre only after securing corners and sides, or as a response to opponent's framework. 'A game begins at the corners' is a fundamental Go proverb."
       }
     ]
+  },
+  {
+    "id": "joseki_primer",
+    "title": "Joseki Primer",
+    "summary": "Joseki are corner sequences considered locally even by both sides. Learning a few standard joseki gives you a stable opening foundation.",
+    "category": "strategy",
+    "boardSize": 9,
+    "source": "Sensei's Library — Joseki (paraphrased)",
+    "practicePuzzleIds": ["joseki-33-invasion-1", "joseki-knight-approach-1", "joseki-attach-extend-1"],
+    "steps": [
+      {
+        "title": "What is a joseki?",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 1, 0, 0, 0, 2, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 2, 0, 0, 0, 1, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "A joseki is a sequence of moves in the corner that gives an equal local result. Both sides come out with comparable territory or influence. There are thousands, but only ~20 carry 80% of practical games."
+      },
+      {
+        "title": "The 3-3 invasion",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 2, 0, 1, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "Black has a 4-4 star point at (2,4). White invades at the 3-3 point (2,2). Black must block — but on which side? The rule: block toward your own thickness. Here, block at (3,2) so the wall faces left, where black's stone is."
+      },
+      {
+        "title": "Knight approach",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 2, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 1, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "When white has a corner star point, black can approach with a knight's move (two-down, one-over). Knight approach is the most-played opening move — balanced between pressure and safety."
+      },
+      {
+        "title": "Attach-extend",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 1, 2, 0, 0, 0, 0],
+          [0, 0, 0, 1, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "If white attaches to your stone, the textbook reply is to extend — not cut. Extending makes you thick and strong; cutting starts a fight you might not win. The proverb: 'answer attachment with extension'."
+      },
+      {
+        "title": "Don't memorize — understand",
+        "board": [
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 2, 0, 1, 0, 1, 0, 0],
+          [0, 0, 2, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        ],
+        "body": "Joseki is a starting framework, not a script. The same sequence can be wrong in a different whole-board context. Goal: understand WHY each move responds to the previous one (cut, defend, build, pressure). Then deviation becomes intuition, not error."
+      }
+    ]
   }
 ]

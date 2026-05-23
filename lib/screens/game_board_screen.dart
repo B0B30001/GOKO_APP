@@ -499,12 +499,14 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
             child: Center(
               child: AspectRatio(
                 aspectRatio: 1,
-                child: FastGameBoard(
-                  board: _game.board.board,
-                  onTap: _onTapBoard,
-                  isDarkTheme: isDarkTheme,
-                  showCoordinates: AppSettings.showCoordinates,
-                  hintCell: _hintCell,
+                child: RepaintBoundary(
+                  child: FastGameBoard(
+                    board: _game.board.board,
+                    onTap: _onTapBoard,
+                    isDarkTheme: isDarkTheme,
+                    showCoordinates: AppSettings.showCoordinates,
+                    hintCell: _hintCell,
+                  ),
                 ),
               ),
             ),
@@ -528,12 +530,14 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
             child: Center(
               child: AspectRatio(
                 aspectRatio: 1,
-                child: FastGameBoard(
-                  board: _game.board.board,
-                  onTap: _onTapBoard,
-                  isDarkTheme: isDarkTheme,
-                  showCoordinates: AppSettings.showCoordinates,
-                  hintCell: _hintCell,
+                child: RepaintBoundary(
+                  child: FastGameBoard(
+                    board: _game.board.board,
+                    onTap: _onTapBoard,
+                    isDarkTheme: isDarkTheme,
+                    showCoordinates: AppSettings.showCoordinates,
+                    hintCell: _hintCell,
+                  ),
                 ),
               ),
             ),
@@ -568,46 +572,50 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
       padding: const EdgeInsets.all(8),
       child: Column(
         children: [
-          _buildOpponentPanel(),
+          RepaintBoundary(child: _buildOpponentPanel()),
           const SizedBox(height: 8),
           Expanded(
             child: Center(
               child: AspectRatio(
                 aspectRatio: 1,
-                child: FastGameBoard(
-                  board: _game.board.board,
-                  onTap: _onTapBoard,
-                  isDarkTheme: isDarkTheme,
-                  showCoordinates: AppSettings.showCoordinates,
-                  hintCell: _hintCell,
+                child: RepaintBoundary(
+                  child: FastGameBoard(
+                    board: _game.board.board,
+                    onTap: _onTapBoard,
+                    isDarkTheme: isDarkTheme,
+                    showCoordinates: AppSettings.showCoordinates,
+                    hintCell: _hintCell,
+                  ),
                 ),
               ),
             ),
           ),
           const SizedBox(height: 8),
-          _buildAdvantageBar(),
+          RepaintBoundary(child: _buildAdvantageBar()),
           const SizedBox(height: 8),
-          _buildPlayerPanel(),
+          RepaintBoundary(child: _buildPlayerPanel()),
           const SizedBox(height: 4),
-          _buildToolbar(),
+          RepaintBoundary(child: _buildToolbar()),
         ],
       ),
     );
   }
 
   Widget _buildSidePanel() {
+    // Each block in its own RepaintBoundary so a setState that touches
+    // (say) only score doesn't redraw player panels or toolbar.
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _buildOpponentPanel(),
+        RepaintBoundary(child: _buildOpponentPanel()),
         const SizedBox(height: 12),
-        _buildAdvantageBar(),
+        RepaintBoundary(child: _buildAdvantageBar()),
         const Spacer(),
-        _buildScoreSummary(),
+        RepaintBoundary(child: _buildScoreSummary()),
         const SizedBox(height: 12),
-        _buildPlayerPanel(),
+        RepaintBoundary(child: _buildPlayerPanel()),
         const SizedBox(height: 8),
-        _buildToolbar(),
+        RepaintBoundary(child: _buildToolbar()),
       ],
     );
   }
