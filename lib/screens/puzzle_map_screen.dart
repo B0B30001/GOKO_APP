@@ -6,8 +6,6 @@ import '../models/puzzle.dart';
 import '../models/puzzle_path.dart';
 import '../services/content_service.dart';
 import '../services/progress_service.dart';
-import '../services/subscription_service.dart';
-import 'paywall_screen.dart';
 import 'puzzle_screen.dart';
 
 /// Candy-crush-style puzzle progression map.
@@ -86,7 +84,6 @@ class _PuzzleMapScreenState extends State<PuzzleMapScreen> {
       return const Center(child: CircularProgressIndicator());
     }
     final progress = context.watch<ProgressService>();
-    final isPremium = context.watch<SubscriptionService>().isPremium;
     final firstUnsolvedIdx = path.nodes.indexWhere(
       (n) => !progress.isPuzzleSolved(n.puzzleId),
     );
@@ -100,15 +97,16 @@ class _PuzzleMapScreenState extends State<PuzzleMapScreen> {
         children.add(_WorldBanner(world: node.world, index: i));
         lastWorld = node.world;
       }
+      final locked = _isLocked(node, progress);
       children.add(
         _MapTile(
           node: node,
           rowIndex: i,
-          isNext: i == firstUnsolvedIdx,
+          isNext: i == firstUnsolvedIdx && !locked,
           isSolved: progress.isPuzzleSolved(node.puzzleId),
           stars: progress.starsFor(node.puzzleId),
-          locked: _isLocked(i, firstUnsolvedIdx, isPremium),
-          onTap: () => _onTileTap(node, i, firstUnsolvedIdx, isPremium),
+          locked: locked,
+          onTap: () => _onTileTap(node, locked),
         ),
       );
     }
@@ -121,37 +119,40 @@ class _PuzzleMapScreenState extends State<PuzzleMapScreen> {
           colors: [Color(0xFF1B2438), Color(0xFF14172A)],
         ),
       ),
+      // reverse=true renders item 0 (easiest) at bottom — player climbs up.
       child: ListView(
         controller: _scroll,
+        reverse: true,
         padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
         children: children,
       ),
     );
   }
 
-  bool _isLocked(int idx, int firstUnsolvedIdx, bool isPremium) {
-    if (firstUnsolvedIdx < 0) return false; // everything solved
-    if (idx <= firstUnsolvedIdx) return false;
-    // Lock anything more than 1 step ahead of the player's frontier to give
-    // the candy-crush "earn your way forward" feel. Premium users can jump
-    // ahead by 5 to preview content.
-    final allowedAhead = isPremium ? 5 : 1;
-    return idx > firstUnsolvedIdx + allowedAhead;
+  /// Returns true when [node]'s world is not yet unlocked by the player's XP.
+  /// Beginner is always open. Intermediate unlocks at 50 XP (~5 puzzles).
+  /// Advanced unlocks at 150 XP (~15 puzzles).
+  bool _isLocked(PuzzleNode node, ProgressService progress) {
+    switch (node.world) {
+      case PuzzleWorld.beginner:
+        return false;
+      case PuzzleWorld.intermediate:
+        return progress.xp < 50;
+      case PuzzleWorld.advanced:
+        return progress.xp < 150;
+    }
   }
 
-  Future<void> _onTileTap(
-    PuzzleNode node,
-    int idx,
-    int firstUnsolvedIdx,
-    bool isPremium,
-  ) async {
-    if (_isLocked(idx, firstUnsolvedIdx, isPremium)) {
-      // Locked — premium-gate visible preview.
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) =>
-              const PaywallScreen(reason: PaywallReason.puzzleDailyQuota),
+  Future<void> _onTileTap(PuzzleNode node, bool locked) async {
+    if (locked) {
+      final needed = node.world == PuzzleWorld.intermediate ? 50 : 150;
+      final progress = context.read<ProgressService>();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Solve more puzzles to unlock — ${progress.xp}/$needed XP',
+          ),
+          duration: const Duration(seconds: 2),
         ),
       );
       return;
