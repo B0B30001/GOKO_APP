@@ -333,5 +333,23 @@
   "leagueSilver": "Silber",
   "leagueGold": "Gold",
   "leaguePlatinum": "Platin",
-  "leagueDiamond": "Diamant"
+  "leagueDiamond": "Diamant",
+
+  "puzzleMap": "Karte",
+  "puzzleList": "Liste",
+  "world1Beginner": "Anfängergarten",
+  "world2Intermediate": "Mittelstufensee",
+  "world3Advanced": "Fortgeschrittenen-Vulkan",
+  "coachStreakIntro1": "Bereit für eine Serie?",
+  "coachStreakIntro2": "Wie weit kommst du heute?",
+  "coachStreakIntro3": "Übertriff deinen Rekord!",
+  "coachStreakIntro4": "Ein Fehler beendet die Serie. Kein Druck!",
+  "coachStreakIntro5": "Tägliche Übung hält den Geist scharf.",
+  "coachSolve1": "Klasse!",
+  "coachSolve2": "Brillant!",
+  "coachSolve3": "Serie läuft!",
+  "coachSolve4": "Das war knifflig!",
+  "coachSolve5": "Perfekt gesehen.",
+  "coachSolve6": "Weiter so!",
+  "openLesson": "Öffnen"
 }

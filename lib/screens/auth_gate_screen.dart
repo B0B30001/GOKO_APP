@@ -86,10 +86,7 @@ class AuthGateScreen extends StatelessWidget {
                   // Feature bullets
                   _FeaturePill(Icons.smart_toy_outlined, l.featurePlayBots),
                   const SizedBox(height: 10),
-                  _FeaturePill(
-                    Icons.school_outlined,
-                    l.featurePuzzlesLessons,
-                  ),
+                  _FeaturePill(Icons.school_outlined, l.featurePuzzlesLessons),
                   const SizedBox(height: 10),
                   _FeaturePill(Icons.people_outline, l.featureLiveGames),
 

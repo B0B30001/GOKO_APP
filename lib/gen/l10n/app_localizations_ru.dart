@@ -903,4 +903,55 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get leagueDiamond => 'Бриллиант';
+
+  @override
+  String get puzzleMap => 'Карта';
+
+  @override
+  String get puzzleList => 'Список';
+
+  @override
+  String get world1Beginner => 'Сад новичка';
+
+  @override
+  String get world2Intermediate => 'Озеро среднего уровня';
+
+  @override
+  String get world3Advanced => 'Вулкан мастера';
+
+  @override
+  String get coachStreakIntro1 => 'Готовы начать цепочку?';
+
+  @override
+  String get coachStreakIntro2 => 'Сколько решите подряд сегодня?';
+
+  @override
+  String get coachStreakIntro3 => 'Побейте свой рекорд!';
+
+  @override
+  String get coachStreakIntro4 => 'Одна ошибка — и конец. Без давления!';
+
+  @override
+  String get coachStreakIntro5 => 'Ежедневная практика — острый ум.';
+
+  @override
+  String get coachSolve1 => 'Отлично!';
+
+  @override
+  String get coachSolve2 => 'Блестяще!';
+
+  @override
+  String get coachSolve3 => 'Цепочка растёт!';
+
+  @override
+  String get coachSolve4 => 'Это было сложно!';
+
+  @override
+  String get coachSolve5 => 'Точный расчёт.';
+
+  @override
+  String get coachSolve6 => 'Так держать!';
+
+  @override
+  String get openLesson => 'Открыть';
 }

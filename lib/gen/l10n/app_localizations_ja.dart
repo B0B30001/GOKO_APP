@@ -893,4 +893,55 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get leagueDiamond => 'ダイヤモンド';
+
+  @override
+  String get puzzleMap => 'マップ';
+
+  @override
+  String get puzzleList => 'リスト';
+
+  @override
+  String get world1Beginner => '初心者の庭';
+
+  @override
+  String get world2Intermediate => '中級の湖';
+
+  @override
+  String get world3Advanced => '上級の火山';
+
+  @override
+  String get coachStreakIntro1 => '連続記録に挑戦しますか？';
+
+  @override
+  String get coachStreakIntro2 => '今日は何問続けられる？';
+
+  @override
+  String get coachStreakIntro3 => '自己ベストを更新しよう！';
+
+  @override
+  String get coachStreakIntro4 => '一度のミスで終了。気楽に！';
+
+  @override
+  String get coachStreakIntro5 => '毎日の練習で頭脳を鋭く保ちましょう。';
+
+  @override
+  String get coachSolve1 => 'いいね！';
+
+  @override
+  String get coachSolve2 => '見事！';
+
+  @override
+  String get coachSolve3 => '連続記録更新中！';
+
+  @override
+  String get coachSolve4 => '難しかった！';
+
+  @override
+  String get coachSolve5 => '完璧な読み。';
+
+  @override
+  String get coachSolve6 => 'その調子！';
+
+  @override
+  String get openLesson => '開く';
 }

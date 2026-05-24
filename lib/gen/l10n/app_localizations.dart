@@ -1821,6 +1821,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Diamond'**
   String get leagueDiamond;
+
+  /// No description provided for @puzzleMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Map'**
+  String get puzzleMap;
+
+  /// No description provided for @puzzleList.
+  ///
+  /// In en, this message translates to:
+  /// **'List'**
+  String get puzzleList;
+
+  /// No description provided for @world1Beginner.
+  ///
+  /// In en, this message translates to:
+  /// **'Beginner Garden'**
+  String get world1Beginner;
+
+  /// No description provided for @world2Intermediate.
+  ///
+  /// In en, this message translates to:
+  /// **'Intermediate Lake'**
+  String get world2Intermediate;
+
+  /// No description provided for @world3Advanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced Volcano'**
+  String get world3Advanced;
+
+  /// No description provided for @coachStreakIntro1.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to start a streak?'**
+  String get coachStreakIntro1;
+
+  /// No description provided for @coachStreakIntro2.
+  ///
+  /// In en, this message translates to:
+  /// **'How long can you go today?'**
+  String get coachStreakIntro2;
+
+  /// No description provided for @coachStreakIntro3.
+  ///
+  /// In en, this message translates to:
+  /// **'Beat your best — give it a shot.'**
+  String get coachStreakIntro3;
+
+  /// No description provided for @coachStreakIntro4.
+  ///
+  /// In en, this message translates to:
+  /// **'One miss ends the run. No pressure!'**
+  String get coachStreakIntro4;
+
+  /// No description provided for @coachStreakIntro5.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily practice keeps the mind sharp.'**
+  String get coachStreakIntro5;
+
+  /// No description provided for @coachSolve1.
+  ///
+  /// In en, this message translates to:
+  /// **'Nice!'**
+  String get coachSolve1;
+
+  /// No description provided for @coachSolve2.
+  ///
+  /// In en, this message translates to:
+  /// **'Brilliant!'**
+  String get coachSolve2;
+
+  /// No description provided for @coachSolve3.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak going!'**
+  String get coachSolve3;
+
+  /// No description provided for @coachSolve4.
+  ///
+  /// In en, this message translates to:
+  /// **'That was tough!'**
+  String get coachSolve4;
+
+  /// No description provided for @coachSolve5.
+  ///
+  /// In en, this message translates to:
+  /// **'Perfect read.'**
+  String get coachSolve5;
+
+  /// No description provided for @coachSolve6.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it up!'**
+  String get coachSolve6;
+
+  /// No description provided for @openLesson.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get openLesson;
 }
 
 class _AppLocalizationsDelegate

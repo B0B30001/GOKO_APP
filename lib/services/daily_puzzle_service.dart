@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/puzzle.dart';
+import 'content_service.dart';
 
 /// Chess.com-style 5-puzzles-per-UTC-day track.
 ///
@@ -42,7 +43,27 @@ class DailyPuzzleService extends ChangeNotifier {
   int _swapsUsed = 0;
   int _cursor = dailyCount;
 
+  /// Merged puzzle pool (PuzzleData + JSON + OGS), cached after first load.
+  /// Used by [_shuffledForDay] and [_lookupPuzzle] so both daily seeding and
+  /// per-slot resolution see the same set.
+  List<Puzzle>? _pool;
+  Map<String, Puzzle>? _poolById;
+
+  Future<void> _ensurePoolLoaded() async {
+    if (_pool != null) return;
+    final extra = await ContentService.loadAllPuzzles();
+    // Hardcoded puzzles still ship — concatenate without duplicating ids.
+    final seen = <String>{};
+    final combined = <Puzzle>[];
+    for (final p in [...PuzzleData.playablePuzzles, ...extra]) {
+      if (seen.add(p.id)) combined.add(p);
+    }
+    _pool = combined;
+    _poolById = {for (final p in combined) p.id: p};
+  }
+
   Future<void> _ensureLoaded() async {
+    await _ensurePoolLoaded();
     final today = _dateKey(_now());
     if (_loadedDateKey == today) return;
 
@@ -147,18 +168,20 @@ class DailyPuzzleService extends ChangeNotifier {
   }
 
   /// Deterministic shuffle of all puzzle ids seeded by the UTC date string.
-  /// Same input → same output across every device.
+  /// Same input → same output across every device. Pulls from the merged
+  /// pool (PuzzleData + JSON + OGS) populated by [_ensurePoolLoaded].
   List<String> _shuffledForDay(String dateKey) {
-    final all = PuzzleData.playablePuzzles.map((p) => p.id).toList();
-    // Seed = hash of date key (year-month-day) so a calendar day yields one
-    // permutation. The `hashCode` of the string is platform-stable for this
-    // use (only used to seed Random; we don't compare across platforms).
+    final pool = _pool ?? PuzzleData.playablePuzzles;
+    final all = pool.map((p) => p.id).toList();
     final rng = Random(dateKey.hashCode);
     all.shuffle(rng);
     return all;
   }
 
   Puzzle? _lookupPuzzle(String id) {
+    final byId = _poolById;
+    if (byId != null) return byId[id];
+    // Fallback for the rare case _ensurePoolLoaded hasn't run yet.
     for (final p in PuzzleData.playablePuzzles) {
       if (p.id == id) return p;
     }

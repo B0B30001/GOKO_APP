@@ -11,6 +11,7 @@ import '../models/puzzle.dart';
 import '../services/content_service.dart';
 import '../services/progress_service.dart';
 import '../services/sfx_service.dart';
+import '../widgets/coach_speech.dart';
 import '../widgets/fast_game_board.dart';
 
 enum _Phase { loading, playing, correct, gameOver }
@@ -65,21 +66,43 @@ class _PuzzleStreakScreenState extends State<PuzzleStreakScreen>
     super.dispose();
   }
 
+  /// Picks one localized praise string per solve. Includes a streak-aware
+  /// variant when the player is on a roll so the messaging escalates.
+  String _coachPraiseFor(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final pool = [
+      l.coachSolve1,
+      l.coachSolve2,
+      if (_streak >= 5) l.coachSolve3, // "Streak going!" once it's worth it
+      l.coachSolve4,
+      l.coachSolve5,
+      l.coachSolve6,
+    ];
+    return pool[_rng.nextInt(pool.length)];
+  }
+
   Future<void> _loadPool() async {
     final progress = context.read<ProgressService>();
     setState(() {
       _bestStreak = progress.bestPuzzleStreak;
     });
-    final jsonPuzzles = await ContentService.loadPuzzles();
+    // Merged pool: hand-curated JSON + OGS-imported + legacy code-based.
+    final merged = await ContentService.loadAllPuzzles();
     final codePuzzles = <Puzzle>[];
     for (final topic in [
-      'Captures', 'Liberties', 'Life & Death',
-      'Ko Basics', 'Tesuji', 'Ladder', 'Snapback', 'Connect',
+      'Captures',
+      'Liberties',
+      'Life & Death',
+      'Ko Basics',
+      'Tesuji',
+      'Ladder',
+      'Snapback',
+      'Connect',
     ]) {
       codePuzzles.addAll(PuzzleData.getPuzzlesForTopic(topic));
     }
     final all = [
-      ...jsonPuzzles,
+      ...merged,
       ...codePuzzles,
     ].where((p) => p.solution.isNotEmpty).toList();
     all.shuffle(_rng);
@@ -178,7 +201,12 @@ class _PuzzleStreakScreenState extends State<PuzzleStreakScreen>
     }
   }
 
-  void _handleWrong(int r, int c, {required Puzzle puzzle, required Game game}) {
+  void _handleWrong(
+    int r,
+    int c, {
+    required Puzzle puzzle,
+    required Game game,
+  }) {
     game.board.setStone(r, c, puzzle.playerColor);
     SfxService.instance.play(SfxSound.wrong);
     if (AppSettings.hapticsEnabled) HapticFeedback.heavyImpact();
@@ -263,7 +291,8 @@ class _PuzzleStreakScreenState extends State<PuzzleStreakScreen>
               ),
               // ── board ─────────────────────────────────────────────────
               Expanded(
-                child: _phase == _Phase.loading || puzzle == null || game == null
+                child:
+                    _phase == _Phase.loading || puzzle == null || game == null
                     ? const Center(child: CircularProgressIndicator())
                     : Column(
                         children: [
@@ -354,26 +383,37 @@ class _PuzzleStreakScreenState extends State<PuzzleStreakScreen>
             IgnorePointer(
               child: Container(
                 color: Colors.green.withValues(alpha: 0.15),
-                child: Center(
-                  child: Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.green,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.green.withValues(alpha: 0.4),
-                          blurRadius: 30,
-                          spreadRadius: 10,
-                        ),
-                      ],
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.green.withValues(alpha: 0.4),
+                            blurRadius: 30,
+                            spreadRadius: 10,
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.check,
+                        color: Colors.white,
+                        size: 44,
+                      ),
                     ),
-                    child: const Icon(
-                      Icons.check,
-                      color: Colors.white,
-                      size: 44,
+                    const SizedBox(height: 18),
+                    // Panda coach reacts with random praise — gives the moment
+                    // personality and reinforces the dopamine loop.
+                    CoachSpeech(
+                      message: _coachPraiseFor(context),
+                      autoHide: const Duration(milliseconds: 580),
+                      compact: true,
                     ),
-                  ),
+                  ],
                 ),
               ),
             ),

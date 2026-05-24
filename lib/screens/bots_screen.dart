@@ -341,7 +341,8 @@ const _bots = <_Tier, List<BotProfile>>{
       name: 'KataGo',
       displayRank: '9d+',
       elo: 3500,
-      description: 'Plans dozens of moves ahead with neural-network lookahead. Superhuman strategic vision.',
+      description:
+          'Plans dozens of moves ahead with neural-network lookahead. Superhuman strategic vision.',
       style: PlayStyle.balanced,
       stars: 3,
       icon: Icons.smart_toy,
@@ -881,23 +882,21 @@ class _BotDetailSheetState extends State<_BotDetailSheet> {
               ),
             ),
             child: SwitchListTile(
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 0),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 0,
+              ),
               title: Row(
                 children: [
                   Icon(
                     Icons.school,
                     size: 15,
-                    color:
-                        _practiceMode ? Colors.green.shade700 : cs.onSurface,
+                    color: _practiceMode ? Colors.green.shade700 : cs.onSurface,
                   ),
                   const SizedBox(width: 7),
                   const Text(
                     'Practice Mode',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
                   ),
                 ],
               ),
@@ -913,10 +912,9 @@ class _BotDetailSheetState extends State<_BotDetailSheet> {
           const SizedBox(height: 16),
           Text(
             'Choose board size',
-            style: Theme.of(context)
-                .textTheme
-                .titleSmall
-                ?.copyWith(fontWeight: FontWeight.w700),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 10),
           Row(

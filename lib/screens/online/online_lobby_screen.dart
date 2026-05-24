@@ -66,7 +66,9 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      connected ? l.onlineStatusConnected : l.onlineStatusOffline,
+                      connected
+                          ? l.onlineStatusConnected
+                          : l.onlineStatusOffline,
                       style: TextStyle(
                         color: connected ? Colors.green : Colors.red,
                         fontSize: 14,

@@ -226,9 +226,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: _kLanguageOptions.keys
-                .map(_buildLanguageOption)
-                .toList(),
+            children: _kLanguageOptions.keys.map(_buildLanguageOption).toList(),
           ),
         ),
       ),

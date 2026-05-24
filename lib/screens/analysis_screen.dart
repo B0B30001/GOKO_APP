@@ -44,8 +44,7 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
   }
 
   void _load() {
-    final record =
-        context.read<MatchHistoryService>().findById(widget.matchId);
+    final record = context.read<MatchHistoryService>().findById(widget.matchId);
     if (record == null) return;
     _record = record;
     _buildSnapshots(record);
@@ -100,8 +99,14 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
     final record = _record;
     final cs = Theme.of(context).colorScheme;
 
+    // Use surface (not the default scaffold black) so the screen blends with
+    // the themed gradient used on Home/Settings rather than reading as a
+    // separate stark-dark sheet.
     return Scaffold(
+      backgroundColor: cs.surface,
       appBar: AppBar(
+        backgroundColor: cs.surface,
+        elevation: 0,
         title: Text(l.gameReview),
         centerTitle: true,
         bottom: record == null
@@ -113,20 +118,22 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
                   child: Text(
                     '${record.opponent} · ${record.boardSize}×${record.boardSize}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: cs.onSurface.withValues(alpha: 0.6),
-                        ),
+                      color: cs.onSurface.withValues(alpha: 0.6),
+                    ),
                   ),
                 ),
               ),
       ),
-      body: record == null || _snapshots.isEmpty
-          ? Center(
-              child: Text(
-                'Game not found',
-                style: TextStyle(color: cs.onSurface.withValues(alpha: 0.5)),
-              ),
-            )
-          : _buildBody(context, record),
+      body: SafeArea(
+        child: record == null || _snapshots.isEmpty
+            ? Center(
+                child: Text(
+                  l.gameReview,
+                  style: TextStyle(color: cs.onSurface.withValues(alpha: 0.5)),
+                ),
+              )
+            : _buildBody(context, record),
+      ),
     );
   }
 
@@ -176,8 +183,8 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
           Text(
             label,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: cs.onSurface.withValues(alpha: 0.6),
-                ),
+              color: cs.onSurface.withValues(alpha: 0.6),
+            ),
           ),
           const Spacer(),
           _PlayerChip(stoneColor: Colors.white, name: record.opponent),
@@ -200,7 +207,9 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
           IconButton(
             icon: const Icon(Icons.chevron_left),
             tooltip: 'Previous',
-            onPressed: _currentIndex > 0 ? () => _goTo(_currentIndex - 1) : null,
+            onPressed: _currentIndex > 0
+                ? () => _goTo(_currentIndex - 1)
+                : null,
           ),
           Expanded(
             child: Slider(
@@ -214,14 +223,14 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
           IconButton(
             icon: const Icon(Icons.chevron_right),
             tooltip: 'Next',
-            onPressed:
-                _currentIndex < total ? () => _goTo(_currentIndex + 1) : null,
+            onPressed: _currentIndex < total
+                ? () => _goTo(_currentIndex + 1)
+                : null,
           ),
           IconButton(
             icon: const Icon(Icons.last_page),
             tooltip: 'End',
-            onPressed:
-                _currentIndex < total ? () => _goTo(total) : null,
+            onPressed: _currentIndex < total ? () => _goTo(total) : null,
           ),
         ],
       ),
@@ -235,10 +244,9 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
         child: Text(
           'No moves recorded',
           style: TextStyle(
-            color: Theme.of(context)
-                .colorScheme
-                .onSurface
-                .withValues(alpha: 0.5),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.5),
           ),
         ),
       );
@@ -338,10 +346,9 @@ class _MoveRow extends StatelessWidget {
                 '$number.',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withValues(alpha: 0.45),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.45),
                 ),
               ),
             ),

@@ -18,6 +18,7 @@ class ProgressService extends ChangeNotifier {
   static const _kRatingHistory = 'progress.ratingHistory.v1';
   static const _kLessonBookmarks = 'progress.lessonBookmarks.v1';
   static const _kBestPuzzleStreak = 'progress.bestPuzzleStreak.v1';
+  static const _kPuzzleStars = 'progress.puzzleStars.v1';
 
   /// Hard cap on stored rating snapshots — keeps SharedPreferences small.
   static const int _maxRatingHistory = 50;
@@ -28,6 +29,11 @@ class ProgressService extends ChangeNotifier {
   int _streak = 0;
   int _bestPuzzleStreak = 0;
   List<int> _ratingHistory = [];
+
+  /// Per-puzzle star count (0..3). 3 = solved without hints on first try,
+  /// 2 = solved with one hint or one retry, 1 = solved after multiple
+  /// attempts, 0 = not solved. Drives the candy-crush map node display.
+  Map<String, int> _puzzleStars = {};
 
   /// Per-lesson last-viewed step index (0-based). Lesson screen reads on
   /// entry to offer "Resume" and writes on every step navigation.
@@ -47,6 +53,10 @@ class ProgressService extends ChangeNotifier {
 
   bool isPuzzleSolved(String id) => _solvedPuzzles.contains(id);
   bool isLessonCompleted(String id) => _completedLessons.contains(id);
+
+  /// Stars earned on [puzzleId] (0..3). 0 means unsolved or solved before
+  /// star tracking existed.
+  int starsFor(String puzzleId) => _puzzleStars[puzzleId] ?? 0;
 
   /// Returns the saved step index for [lessonId], or null if the player has
   /// never entered the lesson (or has completed and cleared it).
@@ -76,6 +86,19 @@ class ProgressService extends ChangeNotifier {
         }
       } catch (_) {
         _lessonBookmarks = {};
+      }
+    }
+    final starsRaw = prefs.getString(_kPuzzleStars);
+    if (starsRaw != null && starsRaw.isNotEmpty) {
+      try {
+        final decoded = jsonDecode(starsRaw);
+        if (decoded is Map) {
+          _puzzleStars = decoded.map(
+            (k, v) => MapEntry(k.toString(), (v as num).toInt()),
+          );
+        }
+      } catch (_) {
+        _puzzleStars = {};
       }
     }
   }
@@ -143,6 +166,18 @@ class ProgressService extends ChangeNotifier {
     _bestPuzzleStreak = streak;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_kBestPuzzleStreak, _bestPuzzleStreak);
+    notifyListeners();
+  }
+
+  /// Record the highest stars (0..3) earned on [puzzleId]. Persists only
+  /// when [stars] exceeds the previously stored value.
+  Future<void> recordPuzzleStars(String puzzleId, int stars) async {
+    final clamped = stars.clamp(0, 3);
+    final existing = _puzzleStars[puzzleId] ?? 0;
+    if (clamped <= existing) return;
+    _puzzleStars[puzzleId] = clamped;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_kPuzzleStars, jsonEncode(_puzzleStars));
     notifyListeners();
   }
 

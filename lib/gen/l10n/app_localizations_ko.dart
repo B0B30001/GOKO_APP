@@ -893,4 +893,55 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get leagueDiamond => '다이아몬드';
+
+  @override
+  String get puzzleMap => '지도';
+
+  @override
+  String get puzzleList => '목록';
+
+  @override
+  String get world1Beginner => '초보자의 정원';
+
+  @override
+  String get world2Intermediate => '중급자의 호수';
+
+  @override
+  String get world3Advanced => '고수의 화산';
+
+  @override
+  String get coachStreakIntro1 => '연속 도전을 시작할 준비됐나요?';
+
+  @override
+  String get coachStreakIntro2 => '오늘은 얼마나 이어갈 수 있나요?';
+
+  @override
+  String get coachStreakIntro3 => '최고 기록을 깨보세요!';
+
+  @override
+  String get coachStreakIntro4 => '한 번 실수하면 끝. 부담 갖지 마세요!';
+
+  @override
+  String get coachStreakIntro5 => '매일 연습이 두뇌를 예리하게 합니다.';
+
+  @override
+  String get coachSolve1 => '좋아요!';
+
+  @override
+  String get coachSolve2 => '훌륭해요!';
+
+  @override
+  String get coachSolve3 => '연속 기록 진행 중!';
+
+  @override
+  String get coachSolve4 => '꽤 어려웠어요!';
+
+  @override
+  String get coachSolve5 => '완벽한 수읽기.';
+
+  @override
+  String get coachSolve6 => '계속 가세요!';
+
+  @override
+  String get openLesson => '열기';
 }

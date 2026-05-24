@@ -892,4 +892,55 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get leagueDiamond => '钻石';
+
+  @override
+  String get puzzleMap => '地图';
+
+  @override
+  String get puzzleList => '列表';
+
+  @override
+  String get world1Beginner => '新手花园';
+
+  @override
+  String get world2Intermediate => '中级湖泊';
+
+  @override
+  String get world3Advanced => '高手火山';
+
+  @override
+  String get coachStreakIntro1 => '准备开始连胜了吗？';
+
+  @override
+  String get coachStreakIntro2 => '今天能连答多少题？';
+
+  @override
+  String get coachStreakIntro3 => '打破你的纪录吧！';
+
+  @override
+  String get coachStreakIntro4 => '一次失误就结束。轻松点！';
+
+  @override
+  String get coachStreakIntro5 => '每天练习让头脑保持敏锐。';
+
+  @override
+  String get coachSolve1 => '漂亮！';
+
+  @override
+  String get coachSolve2 => '精彩！';
+
+  @override
+  String get coachSolve3 => '连胜继续！';
+
+  @override
+  String get coachSolve4 => '这题真难！';
+
+  @override
+  String get coachSolve5 => '看得真准。';
+
+  @override
+  String get coachSolve6 => '继续加油！';
+
+  @override
+  String get openLesson => '打开';
 }

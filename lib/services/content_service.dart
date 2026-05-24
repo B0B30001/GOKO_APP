@@ -8,6 +8,8 @@ import '../models/tutorial.dart';
 class ContentService {
   static final Map<String, List<Tutorial>> _tutorialsByLocale = {};
   static List<Puzzle>? _jsonPuzzles;
+  static List<Puzzle>? _ogsPuzzles;
+  static List<Puzzle>? _allPuzzles;
 
   /// Lazy-load and cache the tutorial JSON for the given locale.
   /// Falls back to `tutorials.json` (English) when the localized variant is
@@ -50,6 +52,41 @@ class ContentService {
       _jsonPuzzles = [];
     }
     return _jsonPuzzles!;
+  }
+
+  /// Lazy-load the OGS-imported puzzle set bundled at build time by
+  /// `tool/import_ogs_puzzles.dart`. Schema mirrors `puzzles.json`.
+  static Future<List<Puzzle>> loadOgsPuzzles() async {
+    if (_ogsPuzzles != null) return _ogsPuzzles!;
+    try {
+      final raw = await rootBundle.loadString(
+        'assets/content/ogs_puzzles.json',
+      );
+      final list = (json.decode(raw) as List).cast<Map<String, dynamic>>();
+      _ogsPuzzles = list
+          .map((e) {
+            try {
+              return _puzzleFromJson(e);
+            } catch (_) {
+              return null;
+            }
+          })
+          .whereType<Puzzle>()
+          .toList();
+    } catch (_) {
+      _ogsPuzzles = [];
+    }
+    return _ogsPuzzles!;
+  }
+
+  /// Merged puzzle pool used by Daily-set, Streak mode and the candy-crush
+  /// map. Loads both local-curated and OGS-imported sets in parallel and
+  /// caches the concatenation. Order: local first (hand-picked), then OGS.
+  static Future<List<Puzzle>> loadAllPuzzles() async {
+    if (_allPuzzles != null) return _allPuzzles!;
+    final results = await Future.wait([loadPuzzles(), loadOgsPuzzles()]);
+    _allPuzzles = [...results[0], ...results[1]];
+    return _allPuzzles!;
   }
 
   static Puzzle _puzzleFromJson(Map<String, dynamic> json) {

@@ -337,5 +337,23 @@
   "leagueSilver": "白银",
   "leagueGold": "黄金",
   "leaguePlatinum": "白金",
-  "leagueDiamond": "钻石"
+  "leagueDiamond": "钻石",
+
+  "puzzleMap": "地图",
+  "puzzleList": "列表",
+  "world1Beginner": "新手花园",
+  "world2Intermediate": "中级湖泊",
+  "world3Advanced": "高手火山",
+  "coachStreakIntro1": "准备开始连胜了吗？",
+  "coachStreakIntro2": "今天能连答多少题？",
+  "coachStreakIntro3": "打破你的纪录吧！",
+  "coachStreakIntro4": "一次失误就结束。轻松点！",
+  "coachStreakIntro5": "每天练习让头脑保持敏锐。",
+  "coachSolve1": "漂亮！",
+  "coachSolve2": "精彩！",
+  "coachSolve3": "连胜继续！",
+  "coachSolve4": "这题真难！",
+  "coachSolve5": "看得真准。",
+  "coachSolve6": "继续加油！",
+  "openLesson": "打开"
 }

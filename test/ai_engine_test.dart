@@ -24,10 +24,13 @@ class _FakeEngine implements AIEngine {
 
 void main() {
   group('AIEngine seam', () {
-    test('default factory returns MctsEngine when no local engine is set up', () {
-      AIEngineFactory.setTestOverride(null);
-      expect(AIEngineFactory.current(), isA<MctsEngine>());
-    });
+    test(
+      'default factory returns MctsEngine when no local engine is set up',
+      () {
+        AIEngineFactory.setTestOverride(null);
+        expect(AIEngineFactory.current(), isA<MctsEngine>());
+      },
+    );
 
     test('test override redirects GoAIService.getBestMove', () async {
       final fake = _FakeEngine();

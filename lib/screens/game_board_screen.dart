@@ -1,5 +1,7 @@
 // lib/screens/game_board_screen.dart
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -60,6 +62,11 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
   bool _isAiThinking = false;
   bool _resultRecorded = false;
 
+  /// Per-frame re-entry guard for [_onTapBoard]. Prevents two taps inside the
+  /// same frame (which can happen with fast-finger inputs or scroll-translated
+  /// gestures) from placing two stones before the rebuild.
+  bool _placingMove = false;
+
   /// Id of the [MatchRecord] saved on game-end; used to launch analysis.
   String? _savedMatchId;
   final List<HistoryMove> _moves = [];
@@ -88,9 +95,16 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
   }
 
   void _onTapBoard(int i, int j) {
-    if (_game.isGameOver || _isAiThinking) return;
+    if (_game.isGameOver || _isAiThinking || _placingMove) return;
 
     if (widget.isComputerMode && !_game.isBlackTurn) return;
+
+    // Block re-entry until the next frame commits. Cleared by a post-frame
+    // callback so the next tap is always evaluated against rebuilt state.
+    _placingMove = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _placingMove = false;
+    });
 
     final color = _game.isBlackTurn ? 1 : 2;
     final capturesBefore =
@@ -140,10 +154,15 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
       AIDifficulty.medium => 1000,
       AIDifficulty.hard => 1500,
     };
-    final remainingMs = desiredMs - stopwatch.elapsedMilliseconds;
-    if (remainingMs > 0) {
-      await Future.delayed(Duration(milliseconds: remainingMs));
-    }
+    // Enforce a 500ms absolute floor so even snap-fast searches still feel
+    // intentional and the user can register the AI is thinking. Without this
+    // floor a sub-100ms search returns instantly and the next tap fires before
+    // the AI's stone visually paints, allowing double-placements.
+    final remainingMs = math.max(
+      500,
+      desiredMs - stopwatch.elapsedMilliseconds,
+    );
+    await Future.delayed(Duration(milliseconds: remainingMs));
 
     if (!mounted) return;
 
@@ -164,7 +183,13 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
       _moves.add(HistoryMove(-1, -1, _aiPlayer));
     }
 
-    setState(() => _isAiThinking = false);
+    // Render the AI's stone first, then clear the thinking flag in the *next*
+    // frame. Otherwise a tap event in flight can fire against pre-rebuild
+    // state and place a second stone before the AI move paints.
+    setState(() {});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) setState(() => _isAiThinking = false);
+    });
 
     // In practice mode auto-hint the best human response after the AI moves.
     if (widget.practiceMode && !_game.isGameOver) _autoShowHint();
@@ -400,7 +425,10 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
               padding: const EdgeInsets.only(right: 4),
               child: Center(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.green.shade600,
                     borderRadius: BorderRadius.circular(10),
@@ -678,7 +706,10 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(AppLocalizations.of(context).score, style: Theme.of(context).textTheme.titleSmall),
+          Text(
+            AppLocalizations.of(context).score,
+            style: Theme.of(context).textTheme.titleSmall,
+          ),
           const SizedBox(height: 6),
           _buildScoreRow(AppLocalizations.of(context).black, score['black']),
           const SizedBox(height: 4),
@@ -957,8 +988,8 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
                           color: humanWon == true
                               ? Colors.green.shade600
                               : humanWon == false
-                                  ? Colors.red.shade600
-                                  : Colors.orange.shade700,
+                              ? Colors.red.shade600
+                              : Colors.orange.shade700,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -1014,15 +1045,15 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
                         Text(
                           _hintsUsed == 0
                               ? AppLocalizations.of(context).noHintsUsed
-                              : AppLocalizations.of(context).hintsUsed(
-                                  _hintsUsed,
-                                ),
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withValues(alpha: 0.7),
-                          ),
+                              : AppLocalizations.of(
+                                  context,
+                                ).hintsUsed(_hintsUsed),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.7),
+                              ),
                         ),
                       const SizedBox(height: 16),
                       // Score breakdown.
@@ -1036,9 +1067,15 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
                         ),
                         child: Column(
                           children: [
-                            _buildScoreRow(AppLocalizations.of(context).black, score['black']),
+                            _buildScoreRow(
+                              AppLocalizations.of(context).black,
+                              score['black'],
+                            ),
                             const Divider(height: 14),
-                            _buildScoreRow(AppLocalizations.of(context).white, score['white']),
+                            _buildScoreRow(
+                              AppLocalizations.of(context).white,
+                              score['white'],
+                            ),
                           ],
                         ),
                       ),

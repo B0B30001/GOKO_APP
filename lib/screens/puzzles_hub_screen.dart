@@ -10,8 +10,9 @@ import '../widgets/fast_game_board.dart';
 import '../services/daily_puzzle_service.dart';
 import '../services/progress_service.dart';
 import '../services/subscription_service.dart';
+import '../widgets/coach_speech.dart';
+import 'puzzle_map_screen.dart';
 import 'puzzle_screen.dart';
-import 'puzzle_category_screen.dart';
 import 'puzzle_streak_screen.dart';
 import 'paywall_screen.dart';
 
@@ -27,8 +28,14 @@ class PuzzlesHubScreen extends StatefulWidget {
   State<PuzzlesHubScreen> createState() => _PuzzlesHubScreenState();
 }
 
+enum _HubView { map, list }
+
 class _PuzzlesHubScreenState extends State<PuzzlesHubScreen> {
   late final DailyPuzzleService _daily;
+
+  /// Map = chess.com-style candy-crush progression (default for engagement);
+  /// List = classic header + daily-set + streak layout.
+  _HubView _view = _HubView.map;
 
   @override
   void initState() {
@@ -55,31 +62,32 @@ class _PuzzlesHubScreenState extends State<PuzzlesHubScreen> {
       drawer: const AppDrawer(active: AppDrawerSection.puzzles),
       appBar: AppBar(title: Text(l.puzzles), centerTitle: true),
       floatingActionButton: widget.showBottomNav ? const MenuFab() : null,
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
+      body: Column(
         children: [
-          Consumer<ProgressService>(
-            builder: (context, progress, _) => _HeaderCard(
-              puzzleRating: progress.puzzleRating,
-              streak: progress.streak,
-              solvedToday: progress.solvedCount,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),
+            child: SegmentedButton<_HubView>(
+              segments: [
+                ButtonSegment(
+                  value: _HubView.map,
+                  label: Text(l.puzzleMap),
+                  icon: const Icon(Icons.map),
+                ),
+                ButtonSegment(
+                  value: _HubView.list,
+                  label: Text(l.puzzleList),
+                  icon: const Icon(Icons.view_list),
+                ),
+              ],
+              selected: {_view},
+              onSelectionChanged: (s) => setState(() => _view = s.first),
             ),
           ),
-          const SizedBox(height: 12),
-          const _QuotaPill(),
-          const SizedBox(height: 16),
-          _SectionHeader(label: l.puzzleModes, onTap: null),
-          const SizedBox(height: 10),
-          const _ModesSection(),
-          const SizedBox(height: 20),
-          ChangeNotifierProvider.value(
-            value: _daily,
-            child: const _DailySetCard(),
+          Expanded(
+            child: _view == _HubView.map
+                ? const PuzzleMapScreen()
+                : _buildListView(l),
           ),
-          const SizedBox(height: 24),
-          _SectionHeader(label: l.categories, onTap: null),
-          const SizedBox(height: 12),
-          _CategoryGrid(categories: _categories()),
         ],
       ),
       bottomNavigationBar: widget.showBottomNav
@@ -95,16 +103,31 @@ class _PuzzlesHubScreenState extends State<PuzzlesHubScreen> {
     );
   }
 
-  static List<_CategorySpec> _categories() => const [
-    _CategorySpec('Captures', Icons.close, Colors.redAccent),
-    _CategorySpec('Liberties', Icons.blur_circular, Colors.lightBlueAccent),
-    _CategorySpec('Life & Death', Icons.psychology, Colors.purpleAccent),
-    _CategorySpec('Ko Basics', Icons.loop, Colors.amber),
-    _CategorySpec('Tesuji', Icons.auto_fix_high, Colors.tealAccent),
-    _CategorySpec('Ladder', Icons.linear_scale, Colors.cyanAccent),
-    _CategorySpec('Snapback', Icons.sync, Colors.deepOrangeAccent),
-    _CategorySpec('Connect', Icons.hub, Colors.greenAccent),
-  ];
+  Widget _buildListView(AppLocalizations l) {
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
+      children: [
+        Consumer<ProgressService>(
+          builder: (context, progress, _) => _HeaderCard(
+            puzzleRating: progress.puzzleRating,
+            streak: progress.streak,
+            solvedToday: progress.solvedCount,
+          ),
+        ),
+        const SizedBox(height: 12),
+        const _QuotaPill(),
+        const SizedBox(height: 16),
+        _SectionHeader(label: l.puzzleModes, onTap: null),
+        const SizedBox(height: 10),
+        const _ModesSection(),
+        const SizedBox(height: 20),
+        ChangeNotifierProvider.value(
+          value: _daily,
+          child: const _DailySetCard(),
+        ),
+      ],
+    );
+  }
 }
 
 class _HeaderCard extends StatelessWidget {
@@ -366,8 +389,9 @@ class _DailyTile extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final isPremium = context.watch<SubscriptionService>().isPremium;
     final locked = index >= 3 && !isPremium;
+    final tint = _categoryTint(puzzle.category);
     return SizedBox(
-      width: 76,
+      width: 88,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
@@ -380,8 +404,8 @@ class _DailyTile extends StatelessWidget {
                   duration: const Duration(milliseconds: 280),
                   child: SizedBox(
                     key: ValueKey(puzzle.id),
-                    width: 64,
-                    height: 64,
+                    width: 76,
+                    height: 76,
                     child: Stack(
                       children: [
                         IgnorePointer(
@@ -418,7 +442,18 @@ class _DailyTile extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 4),
+                // Category color strip — visually distinguishes tile contents
+                // even when the mini-board pixels look similar.
+                Container(
+                  margin: const EdgeInsets.only(top: 3),
+                  width: 56,
+                  height: 3,
+                  decoration: BoxDecoration(
+                    color: locked ? Colors.grey.shade600 : tint,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 3),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(
@@ -521,114 +556,6 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
-class _CategorySpec {
-  /// Internal topic key matching [PuzzleData.getPuzzlesForTopic]. Not displayed.
-  final String name;
-  final IconData icon;
-  final Color tint;
-
-  const _CategorySpec(this.name, this.icon, this.tint);
-
-  /// Localized display label.
-  String label(AppLocalizations l) => switch (name) {
-    'Captures' => l.captures,
-    'Liberties' => l.liberties,
-    'Life & Death' => l.lifeDeath,
-    'Ko Basics' => l.koBasics,
-    'Tesuji' => l.tesuji,
-    'Ladder' => l.ladder,
-    'Snapback' => l.snapback,
-    'Connect' => l.connect,
-    _ => name,
-  };
-}
-
-class _CategoryGrid extends StatelessWidget {
-  final List<_CategorySpec> categories;
-
-  const _CategoryGrid({required this.categories});
-
-  @override
-  Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 1.4,
-      ),
-      itemCount: categories.length,
-      itemBuilder: (context, i) => _CategoryCard(spec: categories[i]),
-    );
-  }
-}
-
-class _CategoryCard extends StatelessWidget {
-  final _CategorySpec spec;
-
-  const _CategoryCard({required this.spec});
-
-  @override
-  Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context);
-    final puzzles = PuzzleData.getPuzzlesForTopic(spec.name);
-    final count = puzzles.where((p) => p.solution.isNotEmpty).length;
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 2,
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => PuzzleCategoryScreen(category: spec.name),
-            ),
-          );
-        },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: spec.tint.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(spec.icon, color: spec.tint),
-                    ),
-                    const Spacer(),
-                    Text(
-                      spec.label(l),
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      '$count',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Container(height: 4, color: spec.tint),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 /// Chess.com-style daily-puzzle quota pill. Shows "X / N free puzzles today"
 /// for free users, "Unlimited" for premium. Turns amber + clickable when
 /// the free quota is exhausted; tap opens the paywall.
@@ -719,6 +646,23 @@ class _PillContainer extends StatelessWidget {
   }
 }
 
+/// Maps a puzzle category string to a tint color used for the daily-tile
+/// bottom strip. Falls back to grey for unrecognized categories.
+Color _categoryTint(String category) {
+  final key = category.toLowerCase().replaceAll('-', '_');
+  return switch (key) {
+    'capture' || 'captures' => Colors.redAccent,
+    'liberties' || 'liberty' => Colors.lightBlueAccent,
+    'life_death' || 'lifedeath' || 'life and death' => Colors.purpleAccent,
+    'ko' || 'ko_basics' => Colors.amber,
+    'tesuji' => Colors.tealAccent,
+    'ladder' => Colors.cyanAccent,
+    'snapback' => Colors.deepOrangeAccent,
+    'connect' => Colors.greenAccent,
+    _ => Colors.blueGrey.shade300,
+  };
+}
+
 // ── Puzzle League ────────────────────────────────────────────────────────────
 
 class _PuzzleLeague {
@@ -778,21 +722,49 @@ class _PuzzleLeague {
 
 // ── Puzzle Modes section ─────────────────────────────────────────────────────
 
-class _ModesSection extends StatelessWidget {
+class _ModesSection extends StatefulWidget {
   const _ModesSection();
+
+  @override
+  State<_ModesSection> createState() => _ModesSectionState();
+}
+
+class _ModesSectionState extends State<_ModesSection> {
+  bool _coachDismissed = false;
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    return _ModeCard(
-      icon: Icons.local_fire_department,
-      iconColor: Colors.orange,
-      title: l.puzzleStreak,
-      subtitle: l.puzzleStreakSubtitle,
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const PuzzleStreakScreen()),
-      ),
+    final tips = <String>[
+      l.coachStreakIntro1,
+      l.coachStreakIntro2,
+      l.coachStreakIntro3,
+      l.coachStreakIntro4,
+      l.coachStreakIntro5,
+    ];
+    final coachTip = tips[DateTime.now().day % tips.length];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (!_coachDismissed)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: CoachSpeech(
+              message: coachTip,
+              onDismiss: () => setState(() => _coachDismissed = true),
+            ),
+          ),
+        _ModeCard(
+          icon: Icons.local_fire_department,
+          iconColor: Colors.orange,
+          title: l.puzzleStreak,
+          subtitle: l.puzzleStreakSubtitle,
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const PuzzleStreakScreen()),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -337,5 +337,23 @@
   "leagueSilver": "Серебро",
   "leagueGold": "Золото",
   "leaguePlatinum": "Платина",
-  "leagueDiamond": "Бриллиант"
+  "leagueDiamond": "Бриллиант",
+
+  "puzzleMap": "Карта",
+  "puzzleList": "Список",
+  "world1Beginner": "Сад новичка",
+  "world2Intermediate": "Озеро среднего уровня",
+  "world3Advanced": "Вулкан мастера",
+  "coachStreakIntro1": "Готовы начать цепочку?",
+  "coachStreakIntro2": "Сколько решите подряд сегодня?",
+  "coachStreakIntro3": "Побейте свой рекорд!",
+  "coachStreakIntro4": "Одна ошибка — и конец. Без давления!",
+  "coachStreakIntro5": "Ежедневная практика — острый ум.",
+  "coachSolve1": "Отлично!",
+  "coachSolve2": "Блестяще!",
+  "coachSolve3": "Цепочка растёт!",
+  "coachSolve4": "Это было сложно!",
+  "coachSolve5": "Точный расчёт.",
+  "coachSolve6": "Так держать!",
+  "openLesson": "Открыть"
 }

@@ -337,5 +337,23 @@
   "leagueSilver": "シルバー",
   "leagueGold": "ゴールド",
   "leaguePlatinum": "プラチナ",
-  "leagueDiamond": "ダイヤモンド"
+  "leagueDiamond": "ダイヤモンド",
+
+  "puzzleMap": "マップ",
+  "puzzleList": "リスト",
+  "world1Beginner": "初心者の庭",
+  "world2Intermediate": "中級の湖",
+  "world3Advanced": "上級の火山",
+  "coachStreakIntro1": "連続記録に挑戦しますか？",
+  "coachStreakIntro2": "今日は何問続けられる？",
+  "coachStreakIntro3": "自己ベストを更新しよう！",
+  "coachStreakIntro4": "一度のミスで終了。気楽に！",
+  "coachStreakIntro5": "毎日の練習で頭脳を鋭く保ちましょう。",
+  "coachSolve1": "いいね！",
+  "coachSolve2": "見事！",
+  "coachSolve3": "連続記録更新中！",
+  "coachSolve4": "難しかった！",
+  "coachSolve5": "完璧な読み。",
+  "coachSolve6": "その調子！",
+  "openLesson": "開く"
 }

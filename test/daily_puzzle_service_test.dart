@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zaibal/services/daily_puzzle_service.dart';
-import 'package:zaibal/models/puzzle.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -15,9 +14,11 @@ void main() {
       final svc = DailyPuzzleService(now: () => DateTime.utc(2026, 5, 10));
       final today = await svc.todaysPuzzles();
       expect(today.length, equals(DailyPuzzleService.dailyCount));
-      final allIds = PuzzleData.allPuzzles.map((p) => p.id).toSet();
+      // Pool now merges hardcoded PuzzleData + JSON + OGS puzzles, so we only
+      // assert the slots resolved to non-null Puzzle instances with non-empty
+      // ids. The deterministic-shuffle test below covers identity stability.
       for (final p in today) {
-        expect(allIds.contains(p.id), isTrue);
+        expect(p.id.isNotEmpty, isTrue);
       }
     });
 

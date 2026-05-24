@@ -39,9 +39,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
       }
     } finally {
       if (mounted) setState(() => _purchasing = false);
@@ -51,8 +51,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
   Future<void> _restore() async {
     setState(() => _restoring = true);
     try {
-      final restored =
-          await context.read<SubscriptionService>().restorePurchases();
+      final restored = await context
+          .read<SubscriptionService>()
+          .restorePurchases();
       if (!mounted) return;
       final l = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(

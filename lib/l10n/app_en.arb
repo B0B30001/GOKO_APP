@@ -791,5 +791,23 @@
   "leagueSilver": "Silver",
   "leagueGold": "Gold",
   "leaguePlatinum": "Platinum",
-  "leagueDiamond": "Diamond"
+  "leagueDiamond": "Diamond",
+
+  "puzzleMap": "Map",
+  "puzzleList": "List",
+  "world1Beginner": "Beginner Garden",
+  "world2Intermediate": "Intermediate Lake",
+  "world3Advanced": "Advanced Volcano",
+  "coachStreakIntro1": "Ready to start a streak?",
+  "coachStreakIntro2": "How long can you go today?",
+  "coachStreakIntro3": "Beat your best — give it a shot.",
+  "coachStreakIntro4": "One miss ends the run. No pressure!",
+  "coachStreakIntro5": "Daily practice keeps the mind sharp.",
+  "coachSolve1": "Nice!",
+  "coachSolve2": "Brilliant!",
+  "coachSolve3": "Streak going!",
+  "coachSolve4": "That was tough!",
+  "coachSolve5": "Perfect read.",
+  "coachSolve6": "Keep it up!",
+  "openLesson": "Open"
 }

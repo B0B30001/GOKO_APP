@@ -435,9 +435,7 @@ class _LevelSection extends StatelessWidget {
             title,
             style: TextStyle(
               fontWeight: FontWeight.w700,
-              color: premiumGated
-                  ? cs.onSurface.withValues(alpha: 0.55)
-                  : null,
+              color: premiumGated ? cs.onSurface.withValues(alpha: 0.55) : null,
             ),
           ),
           subtitle: premiumGated
@@ -489,16 +487,16 @@ class _LevelSection extends StatelessWidget {
                 );
               }
             },
-            child: const Text('Open'),
+            child: Text(AppLocalizations.of(context).openLesson),
           ),
           children: [
             for (var i = 0; i < tutorials.take(5).length; i++)
               _LessonRow(
                 tutorial: tutorials[i],
                 completed: progress.isLessonCompleted(tutorials[i].id),
-                locked: premiumGated ||
-                    (i > 0 &&
-                        !progress.isLessonCompleted(tutorials[i - 1].id)),
+                locked:
+                    premiumGated ||
+                    (i > 0 && !progress.isLessonCompleted(tutorials[i - 1].id)),
                 premiumGated: premiumGated,
                 bookmarkStep: progress.getLessonBookmark(tutorials[i].id),
               ),
@@ -576,9 +574,8 @@ class _LessonRow extends StatelessWidget {
             ? () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => const PaywallScreen(
-                    reason: PaywallReason.premiumLessons,
-                  ),
+                  builder: (_) =>
+                      const PaywallScreen(reason: PaywallReason.premiumLessons),
                 ),
               )
             : locked

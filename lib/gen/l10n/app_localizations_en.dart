@@ -901,4 +901,55 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get leagueDiamond => 'Diamond';
+
+  @override
+  String get puzzleMap => 'Map';
+
+  @override
+  String get puzzleList => 'List';
+
+  @override
+  String get world1Beginner => 'Beginner Garden';
+
+  @override
+  String get world2Intermediate => 'Intermediate Lake';
+
+  @override
+  String get world3Advanced => 'Advanced Volcano';
+
+  @override
+  String get coachStreakIntro1 => 'Ready to start a streak?';
+
+  @override
+  String get coachStreakIntro2 => 'How long can you go today?';
+
+  @override
+  String get coachStreakIntro3 => 'Beat your best — give it a shot.';
+
+  @override
+  String get coachStreakIntro4 => 'One miss ends the run. No pressure!';
+
+  @override
+  String get coachStreakIntro5 => 'Daily practice keeps the mind sharp.';
+
+  @override
+  String get coachSolve1 => 'Nice!';
+
+  @override
+  String get coachSolve2 => 'Brilliant!';
+
+  @override
+  String get coachSolve3 => 'Streak going!';
+
+  @override
+  String get coachSolve4 => 'That was tough!';
+
+  @override
+  String get coachSolve5 => 'Perfect read.';
+
+  @override
+  String get coachSolve6 => 'Keep it up!';
+
+  @override
+  String get openLesson => 'Open';
 }

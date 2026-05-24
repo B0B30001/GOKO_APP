@@ -337,5 +337,23 @@
   "leagueSilver": "실버",
   "leagueGold": "골드",
   "leaguePlatinum": "플래티넘",
-  "leagueDiamond": "다이아몬드"
+  "leagueDiamond": "다이아몬드",
+
+  "puzzleMap": "지도",
+  "puzzleList": "목록",
+  "world1Beginner": "초보자의 정원",
+  "world2Intermediate": "중급자의 호수",
+  "world3Advanced": "고수의 화산",
+  "coachStreakIntro1": "연속 도전을 시작할 준비됐나요?",
+  "coachStreakIntro2": "오늘은 얼마나 이어갈 수 있나요?",
+  "coachStreakIntro3": "최고 기록을 깨보세요!",
+  "coachStreakIntro4": "한 번 실수하면 끝. 부담 갖지 마세요!",
+  "coachStreakIntro5": "매일 연습이 두뇌를 예리하게 합니다.",
+  "coachSolve1": "좋아요!",
+  "coachSolve2": "훌륭해요!",
+  "coachSolve3": "연속 기록 진행 중!",
+  "coachSolve4": "꽤 어려웠어요!",
+  "coachSolve5": "완벽한 수읽기.",
+  "coachSolve6": "계속 가세요!",
+  "openLesson": "열기"
 }

@@ -1261,7 +1261,8 @@ The board boundary is your ally — always count how close the runner is to the 
       playerColor: 1,
       // W(3,4): all blocked; W(3,5): right=(3,6)=empty → group liberty at (3,6)
       solution: [PuzzleMove(3, 6, 1)],
-      hint: 'Both white stones share only one liberty — find it and capture both.',
+      hint:
+          'Both white stones share only one liberty — find it and capture both.',
       explanation:
           '''The two white stones form one group. All their liberties are blocked except (3,6). Capturing there takes both stones at once.
 
@@ -1367,7 +1368,8 @@ When a group has one liberty, that point is its lifeline — take it.''',
       playerColor: 1,
       // W group {(3,3),(3,4),(4,3)}: all external pts blocked except (4,4)=empty → 1 liberty
       solution: [PuzzleMove(4, 4, 1)],
-      hint: 'Three white stones share a single liberty — play there to capture all three.',
+      hint:
+          'Three white stones share a single liberty — play there to capture all three.',
       failureReasons: {
         '2,3': 'That is already a black stone.',
         '3,5': 'That is already a black stone.',
@@ -1419,7 +1421,8 @@ When attacking, don't be intimidated by the number of enemy stones — count the
     Puzzle(
       id: 'snapback_4',
       title: 'Three in a Row',
-      description: 'A horizontal chain of three white stones — find the capture.',
+      description:
+          'A horizontal chain of three white stones — find the capture.',
       category: 'snapback',
       difficulty: 2,
       boardSize: 9,
@@ -1437,7 +1440,8 @@ When attacking, don't be intimidated by the number of enemy stones — count the
       playerColor: 1,
       // W group {(3,3),(3,4),(3,5)}: (3,6)=empty is the only liberty
       solution: [PuzzleMove(3, 6, 1)],
-      hint: 'Three in a row with all sides blocked — find the single open liberty.',
+      hint:
+          'Three in a row with all sides blocked — find the single open liberty.',
       explanation:
           '''Three white stones in a horizontal row are surrounded above and below. Only one empty point remains at (3,6). Playing there captures all three.
 
@@ -1457,7 +1461,8 @@ Snapback shapes are common in middlegame — learn to spot them instantly.''',
     Puzzle(
       id: 'connect_1',
       title: 'Bridge the Gap',
-      description: 'Two black groups are separated by one point — connect them.',
+      description:
+          'Two black groups are separated by one point — connect them.',
       category: 'connect',
       difficulty: 1,
       boardSize: 9,
@@ -1541,7 +1546,8 @@ After connecting, count your new group's liberties — you will see the immediat
       playerColor: 1,
       // B groups: {(2,2),(2,3)} and {(4,2),(4,3)}; W(3,3) threatens; play (3,2) to connect
       solution: [PuzzleMove(3, 2, 1)],
-      hint: 'White is poised to cut — play the connecting point before it is too late.',
+      hint:
+          'White is poised to cut — play the connecting point before it is too late.',
       failureReasons: {
         '3,3': 'That is already a white stone.',
         '2,3': 'That is already a black stone.',
@@ -1578,7 +1584,8 @@ Recognising cut threats before they happen is an intermediate-level skill.''',
       playerColor: 1,
       // B group1: (3,2),(3,3); B group2: (3,5),(3,6); gap at (3,4)
       solution: [PuzzleMove(3, 4, 1)],
-      hint: 'One stone in the middle connects both your groups into a strong chain.',
+      hint:
+          'One stone in the middle connects both your groups into a strong chain.',
       explanation:
           '''Playing (3,4) unites both black clusters into a single powerful group spanning the board. The white stones below are now facing a much stronger opponent.
 
