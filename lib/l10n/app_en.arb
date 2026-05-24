@@ -764,5 +764,17 @@
   "createOgsAccount": "Create free OGS account",
 
   "displayName": "Display name",
-  "attributionAvatars": "Bot avatars: OpenMoji (CC BY-SA 4.0)"
+  "attributionAvatars": "Bot avatars: OpenMoji (CC BY-SA 4.0)",
+
+  "goodMorning": "Good morning",
+  "goodAfternoon": "Good afternoon",
+  "goodEvening": "Good evening",
+  "unranked": "Unranked",
+  "friendComputerOnline": "Friend, Computer, or Online",
+  "dailyPuzzle": "Daily Puzzle",
+  "playBot": "Play Bot",
+  "vsComputerSubtitle": "Pick a bot — offline AI",
+  "vsFriendSubtitle": "Same device, pass-and-play",
+  "vsOnlineSubtitle": "Live games via OGS",
+  "playFirstGameHint": "Play your first game — it will show up here."
 }

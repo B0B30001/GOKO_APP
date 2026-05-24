@@ -827,4 +827,38 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get attributionAvatars => 'Аватары ботов: OpenMoji (CC BY-SA 4.0)';
+
+  @override
+  String get goodMorning => 'Доброе утро';
+
+  @override
+  String get goodAfternoon => 'Добрый день';
+
+  @override
+  String get goodEvening => 'Добрый вечер';
+
+  @override
+  String get unranked => 'Без ранга';
+
+  @override
+  String get friendComputerOnline => 'Друг, компьютер или онлайн';
+
+  @override
+  String get dailyPuzzle => 'Задача дня';
+
+  @override
+  String get playBot => 'Игра с ботом';
+
+  @override
+  String get vsComputerSubtitle => 'Выберите бота — без сети';
+
+  @override
+  String get vsFriendSubtitle => 'На одном устройстве';
+
+  @override
+  String get vsOnlineSubtitle => 'Живые партии на OGS';
+
+  @override
+  String get playFirstGameHint =>
+      'Сыграйте первую партию — она появится здесь.';
 }

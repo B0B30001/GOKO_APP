@@ -834,4 +834,38 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get attributionAvatars => 'Bot-Avatare: OpenMoji (CC BY-SA 4.0)';
+
+  @override
+  String get goodMorning => 'Guten Morgen';
+
+  @override
+  String get goodAfternoon => 'Guten Tag';
+
+  @override
+  String get goodEvening => 'Guten Abend';
+
+  @override
+  String get unranked => 'Unbewertet';
+
+  @override
+  String get friendComputerOnline => 'Freund, Computer oder Online';
+
+  @override
+  String get dailyPuzzle => 'Tagesaufgabe';
+
+  @override
+  String get playBot => 'Bot spielen';
+
+  @override
+  String get vsComputerSubtitle => 'Bot wählen — offline KI';
+
+  @override
+  String get vsFriendSubtitle => 'Gleiches Gerät, abwechselnd spielen';
+
+  @override
+  String get vsOnlineSubtitle => 'Live-Spiele über OGS';
+
+  @override
+  String get playFirstGameHint =>
+      'Spiel deine erste Partie — sie erscheint hier.';
 }

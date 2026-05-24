@@ -19,6 +19,7 @@ import './online/online_lobby_screen.dart';
 import './analysis_screen.dart';
 import './paywall_screen.dart';
 import '../services/ai/go_ai_service.dart';
+import '../utils/ogs_rank.dart';
 
 /// Chess.com-inspired home: big Play CTA, quick-start strip, stats row, and a
 /// recent-games feed pulling from local history (AI + local 2P + OGS-synced).
@@ -126,7 +127,7 @@ class HomeScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _greeting(ogs),
+                    _greeting(context, ogs),
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -135,7 +136,11 @@ class HomeScreen extends StatelessWidget {
                   ),
                   if (ogs.username != null)
                     Text(
-                      ogs.rankString ?? 'Unranked',
+                      OgsRank.bestLabel(
+                            rankString: ogs.rankString,
+                            rating: ogs.rating,
+                          ) ??
+                          AppLocalizations.of(context).unranked,
                       style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.8),
                         fontSize: 12,
@@ -151,15 +156,16 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  String _greeting(OgsService ogs) {
+  String _greeting(BuildContext context, OgsService ogs) {
+    final l = AppLocalizations.of(context);
     final hour = DateTime.now().hour;
     final name = ogs.username;
     final greeting = hour < 12
-        ? 'Good morning'
+        ? l.goodMorning
         : hour < 18
-        ? 'Good afternoon'
-        : 'Good evening';
-    return name != null ? '$greeting, $name!' : '$greeting!';
+        ? l.goodAfternoon
+        : l.goodEvening;
+    return name != null ? '$greeting, $name!' : greeting;
   }
 
   // ── play CTA ─────────────────────────────────────────────────────────────
@@ -205,7 +211,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Friend, Computer, or Online',
+                      AppLocalizations.of(context).friendComputerOnline,
                       style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.85),
                         fontSize: 13,
@@ -232,7 +238,7 @@ class HomeScreen extends StatelessWidget {
       children: [
         Expanded(
           child: _QuickStartCard(
-            label: 'Daily Puzzle',
+            label: AppLocalizations.of(context).dailyPuzzle,
             icon: Icons.stars,
             tint: Colors.amber,
             onTap: () => Navigator.pushNamed(context, '/puzzles'),
@@ -241,7 +247,7 @@ class HomeScreen extends StatelessWidget {
         const SizedBox(width: 10),
         Expanded(
           child: _QuickStartCard(
-            label: 'Play Bot',
+            label: AppLocalizations.of(context).playBot,
             icon: Icons.smart_toy_rounded,
             tint: Colors.orange,
             onTap: () => Navigator.pushNamed(context, '/bots'),
@@ -250,7 +256,7 @@ class HomeScreen extends StatelessWidget {
         const SizedBox(width: 10),
         Expanded(
           child: _QuickStartCard(
-            label: 'Lessons',
+            label: AppLocalizations.of(context).lessons,
             icon: Icons.school_rounded,
             tint: Colors.blue,
             onTap: () {
@@ -277,7 +283,7 @@ class HomeScreen extends StatelessWidget {
       children: [
         Expanded(
           child: _StatTile(
-            label: 'Puzzle Rating',
+            label: AppLocalizations.of(context).puzzleRating,
             value: '${progress.puzzleRating}',
             icon: Icons.insights,
           ),
@@ -285,7 +291,7 @@ class HomeScreen extends StatelessWidget {
         const SizedBox(width: 10),
         Expanded(
           child: _StatTile(
-            label: 'Games',
+            label: AppLocalizations.of(context).games,
             value: '${agg.total}',
             icon: Icons.sports_esports,
           ),
@@ -293,7 +299,7 @@ class HomeScreen extends StatelessWidget {
         const SizedBox(width: 10),
         Expanded(
           child: _StatTile(
-            label: 'Win Rate',
+            label: AppLocalizations.of(context).winRate,
             value: winRate,
             icon: Icons.emoji_events,
           ),
@@ -351,14 +357,14 @@ class HomeScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Select Game Mode',
+                AppLocalizations.of(context).selectGameMode,
                 style: Theme.of(context).textTheme.titleLarge,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
               _ModeButton(
-                title: 'vs Computer',
-                subtitle: 'Pick a bot — offline AI',
+                title: AppLocalizations.of(context).vsComputer,
+                subtitle: AppLocalizations.of(context).vsComputerSubtitle,
                 icon: Icons.smart_toy_rounded,
                 onTap: () {
                   Navigator.pop(sheetCtx);
@@ -367,8 +373,8 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               _ModeButton(
-                title: 'vs Friend',
-                subtitle: 'Same device, pass-and-play',
+                title: AppLocalizations.of(context).vsFriend,
+                subtitle: AppLocalizations.of(context).vsFriendSubtitle,
                 icon: Icons.people_alt_rounded,
                 onTap: () {
                   Navigator.pop(sheetCtx);
@@ -377,8 +383,8 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               _ModeButton(
-                title: 'vs Online',
-                subtitle: 'Live games via OGS',
+                title: AppLocalizations.of(context).vsOnline,
+                subtitle: AppLocalizations.of(context).vsOnlineSubtitle,
                 icon: Icons.wifi_rounded,
                 onTap: () async {
                   Navigator.pop(sheetCtx);
@@ -418,7 +424,7 @@ class HomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Select Board Size',
+              AppLocalizations.of(context).selectBoardSize,
               style: Theme.of(context).textTheme.titleLarge,
               textAlign: TextAlign.center,
             ),
@@ -677,7 +683,7 @@ class _RecentGamesEmptyState extends StatelessWidget {
             const SizedBox(width: 14),
             Expanded(
               child: Text(
-                'Play your first game — it will show up here.',
+                AppLocalizations.of(context).playFirstGameHint,
                 style: TextStyle(
                   color: cs.onSurface.withValues(alpha: 0.6),
                   fontSize: 13,

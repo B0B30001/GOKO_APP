@@ -818,4 +818,37 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get attributionAvatars => 'ボットアバター: OpenMoji (CC BY-SA 4.0)';
+
+  @override
+  String get goodMorning => 'おはようございます';
+
+  @override
+  String get goodAfternoon => 'こんにちは';
+
+  @override
+  String get goodEvening => 'こんばんは';
+
+  @override
+  String get unranked => 'ランクなし';
+
+  @override
+  String get friendComputerOnline => '友達、コンピュータ、またはオンライン';
+
+  @override
+  String get dailyPuzzle => '今日の問題';
+
+  @override
+  String get playBot => 'ボットと対局';
+
+  @override
+  String get vsComputerSubtitle => 'ボットを選ぶ — オフラインAI';
+
+  @override
+  String get vsFriendSubtitle => '同じ端末でパスして対局';
+
+  @override
+  String get vsOnlineSubtitle => 'OGSでのライブ対局';
+
+  @override
+  String get playFirstGameHint => '最初の対局を始めましょう — ここに表示されます。';
 }

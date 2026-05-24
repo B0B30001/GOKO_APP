@@ -818,4 +818,37 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get attributionAvatars => '봇 아바타: OpenMoji (CC BY-SA 4.0)';
+
+  @override
+  String get goodMorning => '좋은 아침이에요';
+
+  @override
+  String get goodAfternoon => '좋은 오후예요';
+
+  @override
+  String get goodEvening => '좋은 저녁이에요';
+
+  @override
+  String get unranked => '급수 없음';
+
+  @override
+  String get friendComputerOnline => '친구, 컴퓨터 또는 온라인';
+
+  @override
+  String get dailyPuzzle => '오늘의 문제';
+
+  @override
+  String get playBot => '봇과 대국';
+
+  @override
+  String get vsComputerSubtitle => '봇 선택 — 오프라인 AI';
+
+  @override
+  String get vsFriendSubtitle => '같은 기기에서 번갈아 두기';
+
+  @override
+  String get vsOnlineSubtitle => 'OGS 라이브 대국';
+
+  @override
+  String get playFirstGameHint => '첫 대국을 시작하세요 — 여기에 표시됩니다.';
 }

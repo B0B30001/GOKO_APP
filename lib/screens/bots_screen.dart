@@ -341,7 +341,7 @@ const _bots = <_Tier, List<BotProfile>>{
       name: 'KataGo',
       displayRank: '9d+',
       elo: 3500,
-      description: 'Neural network at superhuman strength.',
+      description: 'Plans dozens of moves ahead with neural-network lookahead. Superhuman strategic vision.',
       style: PlayStyle.balanced,
       stars: 3,
       icon: Icons.smart_toy,

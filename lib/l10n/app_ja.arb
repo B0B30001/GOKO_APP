@@ -310,5 +310,17 @@
   "createOgsAccount": "無料 OGS アカウント作成",
 
   "displayName": "表示名",
-  "attributionAvatars": "ボットアバター: OpenMoji (CC BY-SA 4.0)"
+  "attributionAvatars": "ボットアバター: OpenMoji (CC BY-SA 4.0)",
+
+  "goodMorning": "おはようございます",
+  "goodAfternoon": "こんにちは",
+  "goodEvening": "こんばんは",
+  "unranked": "ランクなし",
+  "friendComputerOnline": "友達、コンピュータ、またはオンライン",
+  "dailyPuzzle": "今日の問題",
+  "playBot": "ボットと対局",
+  "vsComputerSubtitle": "ボットを選ぶ — オフラインAI",
+  "vsFriendSubtitle": "同じ端末でパスして対局",
+  "vsOnlineSubtitle": "OGSでのライブ対局",
+  "playFirstGameHint": "最初の対局を始めましょう — ここに表示されます。"
 }

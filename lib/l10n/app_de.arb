@@ -306,5 +306,17 @@
   "createOgsAccount": "Kostenloses OGS-Konto erstellen",
 
   "displayName": "Anzeigename",
-  "attributionAvatars": "Bot-Avatare: OpenMoji (CC BY-SA 4.0)"
+  "attributionAvatars": "Bot-Avatare: OpenMoji (CC BY-SA 4.0)",
+
+  "goodMorning": "Guten Morgen",
+  "goodAfternoon": "Guten Tag",
+  "goodEvening": "Guten Abend",
+  "unranked": "Unbewertet",
+  "friendComputerOnline": "Freund, Computer oder Online",
+  "dailyPuzzle": "Tagesaufgabe",
+  "playBot": "Bot spielen",
+  "vsComputerSubtitle": "Bot wählen — offline KI",
+  "vsFriendSubtitle": "Gleiches Gerät, abwechselnd spielen",
+  "vsOnlineSubtitle": "Live-Spiele über OGS",
+  "playFirstGameHint": "Spiel deine erste Partie — sie erscheint hier."
 }

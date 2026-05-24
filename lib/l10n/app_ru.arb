@@ -310,5 +310,17 @@
   "createOgsAccount": "Создать бесплатный аккаунт OGS",
 
   "displayName": "Отображаемое имя",
-  "attributionAvatars": "Аватары ботов: OpenMoji (CC BY-SA 4.0)"
+  "attributionAvatars": "Аватары ботов: OpenMoji (CC BY-SA 4.0)",
+
+  "goodMorning": "Доброе утро",
+  "goodAfternoon": "Добрый день",
+  "goodEvening": "Добрый вечер",
+  "unranked": "Без ранга",
+  "friendComputerOnline": "Друг, компьютер или онлайн",
+  "dailyPuzzle": "Задача дня",
+  "playBot": "Игра с ботом",
+  "vsComputerSubtitle": "Выберите бота — без сети",
+  "vsFriendSubtitle": "На одном устройстве",
+  "vsOnlineSubtitle": "Живые партии на OGS",
+  "playFirstGameHint": "Сыграйте первую партию — она появится здесь."
 }

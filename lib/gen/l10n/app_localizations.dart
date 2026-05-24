@@ -1671,6 +1671,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Bot avatars: OpenMoji (CC BY-SA 4.0)'**
   String get attributionAvatars;
+
+  /// No description provided for @goodMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Good morning'**
+  String get goodMorning;
+
+  /// No description provided for @goodAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Good afternoon'**
+  String get goodAfternoon;
+
+  /// No description provided for @goodEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Good evening'**
+  String get goodEvening;
+
+  /// No description provided for @unranked.
+  ///
+  /// In en, this message translates to:
+  /// **'Unranked'**
+  String get unranked;
+
+  /// No description provided for @friendComputerOnline.
+  ///
+  /// In en, this message translates to:
+  /// **'Friend, Computer, or Online'**
+  String get friendComputerOnline;
+
+  /// No description provided for @dailyPuzzle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Puzzle'**
+  String get dailyPuzzle;
+
+  /// No description provided for @playBot.
+  ///
+  /// In en, this message translates to:
+  /// **'Play Bot'**
+  String get playBot;
+
+  /// No description provided for @vsComputerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a bot — offline AI'**
+  String get vsComputerSubtitle;
+
+  /// No description provided for @vsFriendSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Same device, pass-and-play'**
+  String get vsFriendSubtitle;
+
+  /// No description provided for @vsOnlineSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Live games via OGS'**
+  String get vsOnlineSubtitle;
+
+  /// No description provided for @playFirstGameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Play your first game — it will show up here.'**
+  String get playFirstGameHint;
 }
 
 class _AppLocalizationsDelegate

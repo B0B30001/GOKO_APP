@@ -817,4 +817,37 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get attributionAvatars => '机器人头像：OpenMoji (CC BY-SA 4.0)';
+
+  @override
+  String get goodMorning => '早上好';
+
+  @override
+  String get goodAfternoon => '下午好';
+
+  @override
+  String get goodEvening => '晚上好';
+
+  @override
+  String get unranked => '未排级';
+
+  @override
+  String get friendComputerOnline => '朋友、电脑或在线';
+
+  @override
+  String get dailyPuzzle => '每日题目';
+
+  @override
+  String get playBot => '对战机器人';
+
+  @override
+  String get vsComputerSubtitle => '选择机器人 — 离线AI';
+
+  @override
+  String get vsFriendSubtitle => '同一设备传递对弈';
+
+  @override
+  String get vsOnlineSubtitle => 'OGS在线对弈';
+
+  @override
+  String get playFirstGameHint => '开始您的第一局对弈 — 将在此显示。';
 }

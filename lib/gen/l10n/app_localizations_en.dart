@@ -825,4 +825,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get attributionAvatars => 'Bot avatars: OpenMoji (CC BY-SA 4.0)';
+
+  @override
+  String get goodMorning => 'Good morning';
+
+  @override
+  String get goodAfternoon => 'Good afternoon';
+
+  @override
+  String get goodEvening => 'Good evening';
+
+  @override
+  String get unranked => 'Unranked';
+
+  @override
+  String get friendComputerOnline => 'Friend, Computer, or Online';
+
+  @override
+  String get dailyPuzzle => 'Daily Puzzle';
+
+  @override
+  String get playBot => 'Play Bot';
+
+  @override
+  String get vsComputerSubtitle => 'Pick a bot — offline AI';
+
+  @override
+  String get vsFriendSubtitle => 'Same device, pass-and-play';
+
+  @override
+  String get vsOnlineSubtitle => 'Live games via OGS';
+
+  @override
+  String get playFirstGameHint =>
+      'Play your first game — it will show up here.';
 }
