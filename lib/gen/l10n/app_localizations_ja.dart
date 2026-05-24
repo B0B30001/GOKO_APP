@@ -851,4 +851,46 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get playFirstGameHint => '最初の対局を始めましょう — ここに表示されます。';
+
+  @override
+  String get puzzleStreak => '連続問題';
+
+  @override
+  String get puzzleStreakSubtitle => '間違えるまで解き続ける';
+
+  @override
+  String get currentStreak => '連続';
+
+  @override
+  String get bestLabel => '最高';
+
+  @override
+  String get streakEndedTitle => '連続終了';
+
+  @override
+  String get newRecord => '新記録！';
+
+  @override
+  String get puzzleModes => '問題モード';
+
+  @override
+  String get leagueLabel => 'リーグ';
+
+  @override
+  String get leagueRookie => 'ルーキー';
+
+  @override
+  String get leagueBronze => 'ブロンズ';
+
+  @override
+  String get leagueSilver => 'シルバー';
+
+  @override
+  String get leagueGold => 'ゴールド';
+
+  @override
+  String get leaguePlatinum => 'プラチナ';
+
+  @override
+  String get leagueDiamond => 'ダイヤモンド';
 }

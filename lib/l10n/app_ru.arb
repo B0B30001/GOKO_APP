@@ -322,5 +322,20 @@
   "vsComputerSubtitle": "Выберите бота — без сети",
   "vsFriendSubtitle": "На одном устройстве",
   "vsOnlineSubtitle": "Живые партии на OGS",
-  "playFirstGameHint": "Сыграйте первую партию — она появится здесь."
+  "playFirstGameHint": "Сыграйте первую партию — она появится здесь.",
+
+  "puzzleStreak": "Цепочка задач",
+  "puzzleStreakSubtitle": "Решайте до первой ошибки",
+  "currentStreak": "Цепочка",
+  "bestLabel": "Рекорд",
+  "streakEndedTitle": "Цепочка прервана",
+  "newRecord": "Новый рекорд!",
+  "puzzleModes": "Режимы задач",
+  "leagueLabel": "Лига",
+  "leagueRookie": "Новичок",
+  "leagueBronze": "Бронза",
+  "leagueSilver": "Серебро",
+  "leagueGold": "Золото",
+  "leaguePlatinum": "Платина",
+  "leagueDiamond": "Бриллиант"
 }

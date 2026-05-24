@@ -859,4 +859,46 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get playFirstGameHint =>
       'Play your first game — it will show up here.';
+
+  @override
+  String get puzzleStreak => 'Puzzle Streak';
+
+  @override
+  String get puzzleStreakSubtitle => 'Solve until you miss';
+
+  @override
+  String get currentStreak => 'Streak';
+
+  @override
+  String get bestLabel => 'Best';
+
+  @override
+  String get streakEndedTitle => 'Streak Ended';
+
+  @override
+  String get newRecord => 'New Record!';
+
+  @override
+  String get puzzleModes => 'Puzzle Modes';
+
+  @override
+  String get leagueLabel => 'League';
+
+  @override
+  String get leagueRookie => 'Rookie';
+
+  @override
+  String get leagueBronze => 'Bronze';
+
+  @override
+  String get leagueSilver => 'Silver';
+
+  @override
+  String get leagueGold => 'Gold';
+
+  @override
+  String get leaguePlatinum => 'Platinum';
+
+  @override
+  String get leagueDiamond => 'Diamond';
 }

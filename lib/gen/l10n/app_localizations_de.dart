@@ -868,4 +868,46 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get playFirstGameHint =>
       'Spiel deine erste Partie — sie erscheint hier.';
+
+  @override
+  String get puzzleStreak => 'Rätsel-Serie';
+
+  @override
+  String get puzzleStreakSubtitle => 'Löse bis zum ersten Fehler';
+
+  @override
+  String get currentStreak => 'Serie';
+
+  @override
+  String get bestLabel => 'Beste';
+
+  @override
+  String get streakEndedTitle => 'Serie beendet';
+
+  @override
+  String get newRecord => 'Neuer Rekord!';
+
+  @override
+  String get puzzleModes => 'Rätsel-Modi';
+
+  @override
+  String get leagueLabel => 'Liga';
+
+  @override
+  String get leagueRookie => 'Neuling';
+
+  @override
+  String get leagueBronze => 'Bronze';
+
+  @override
+  String get leagueSilver => 'Silber';
+
+  @override
+  String get leagueGold => 'Gold';
+
+  @override
+  String get leaguePlatinum => 'Platin';
+
+  @override
+  String get leagueDiamond => 'Diamant';
 }

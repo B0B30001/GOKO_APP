@@ -17,6 +17,7 @@ class ProgressService extends ChangeNotifier {
   static const _kLastStreakDate = 'progress.lastStreakDate.v1';
   static const _kRatingHistory = 'progress.ratingHistory.v1';
   static const _kLessonBookmarks = 'progress.lessonBookmarks.v1';
+  static const _kBestPuzzleStreak = 'progress.bestPuzzleStreak.v1';
 
   /// Hard cap on stored rating snapshots — keeps SharedPreferences small.
   static const int _maxRatingHistory = 50;
@@ -25,6 +26,7 @@ class ProgressService extends ChangeNotifier {
   Set<String> _completedLessons = {};
   int _xp = 0;
   int _streak = 0;
+  int _bestPuzzleStreak = 0;
   List<int> _ratingHistory = [];
 
   /// Per-lesson last-viewed step index (0-based). Lesson screen reads on
@@ -37,6 +39,7 @@ class ProgressService extends ChangeNotifier {
   Set<String> get completedLessons => Set.unmodifiable(_completedLessons);
   int get xp => _xp;
   int get streak => _streak;
+  int get bestPuzzleStreak => _bestPuzzleStreak;
   int get puzzleRating => 1000 + (_xp ~/ 3).clamp(0, 2400);
   List<int> get ratingHistory => List.unmodifiable(_ratingHistory);
   int get solvedCount => _solvedPuzzles.length;
@@ -57,6 +60,7 @@ class ProgressService extends ChangeNotifier {
     _completedLessons = (prefs.getStringList(_kCompletedLessons) ?? []).toSet();
     _xp = prefs.getInt(_kXp) ?? 0;
     _streak = prefs.getInt(_kStreak) ?? 0;
+    _bestPuzzleStreak = prefs.getInt(_kBestPuzzleStreak) ?? 0;
     _ratingHistory = (prefs.getStringList(_kRatingHistory) ?? [])
         .map(int.tryParse)
         .whereType<int>()
@@ -131,6 +135,15 @@ class ProgressService extends ChangeNotifier {
     if (_lessonBookmarks.remove(lessonId) != null) {
       await _save();
     }
+  }
+
+  /// Record the best puzzle streak achieved in a single Puzzle Streak run.
+  Future<void> updateBestPuzzleStreak(int streak) async {
+    if (streak <= _bestPuzzleStreak) return;
+    _bestPuzzleStreak = streak;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_kBestPuzzleStreak, _bestPuzzleStreak);
+    notifyListeners();
   }
 
   void _pushRatingSnapshot() {

@@ -322,5 +322,20 @@
   "vsComputerSubtitle": "选择机器人 — 离线AI",
   "vsFriendSubtitle": "同一设备传递对弈",
   "vsOnlineSubtitle": "OGS在线对弈",
-  "playFirstGameHint": "开始您的第一局对弈 — 将在此显示。"
+  "playFirstGameHint": "开始您的第一局对弈 — 将在此显示。",
+
+  "puzzleStreak": "连续题目",
+  "puzzleStreakSubtitle": "连续答对直到出错",
+  "currentStreak": "连续",
+  "bestLabel": "最佳",
+  "streakEndedTitle": "连续中断",
+  "newRecord": "新纪录！",
+  "puzzleModes": "题目模式",
+  "leagueLabel": "联赛",
+  "leagueRookie": "新手",
+  "leagueBronze": "青铜",
+  "leagueSilver": "白银",
+  "leagueGold": "黄金",
+  "leaguePlatinum": "白金",
+  "leagueDiamond": "钻石"
 }

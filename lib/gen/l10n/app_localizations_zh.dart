@@ -850,4 +850,46 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get playFirstGameHint => '开始您的第一局对弈 — 将在此显示。';
+
+  @override
+  String get puzzleStreak => '连续题目';
+
+  @override
+  String get puzzleStreakSubtitle => '连续答对直到出错';
+
+  @override
+  String get currentStreak => '连续';
+
+  @override
+  String get bestLabel => '最佳';
+
+  @override
+  String get streakEndedTitle => '连续中断';
+
+  @override
+  String get newRecord => '新纪录！';
+
+  @override
+  String get puzzleModes => '题目模式';
+
+  @override
+  String get leagueLabel => '联赛';
+
+  @override
+  String get leagueRookie => '新手';
+
+  @override
+  String get leagueBronze => '青铜';
+
+  @override
+  String get leagueSilver => '白银';
+
+  @override
+  String get leagueGold => '黄金';
+
+  @override
+  String get leaguePlatinum => '白金';
+
+  @override
+  String get leagueDiamond => '钻石';
 }

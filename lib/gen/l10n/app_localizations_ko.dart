@@ -851,4 +851,46 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get playFirstGameHint => '첫 대국을 시작하세요 — 여기에 표시됩니다.';
+
+  @override
+  String get puzzleStreak => '연속 문제';
+
+  @override
+  String get puzzleStreakSubtitle => '틀릴 때까지 계속 풀기';
+
+  @override
+  String get currentStreak => '연속';
+
+  @override
+  String get bestLabel => '최고';
+
+  @override
+  String get streakEndedTitle => '연속 종료';
+
+  @override
+  String get newRecord => '새 기록!';
+
+  @override
+  String get puzzleModes => '문제 모드';
+
+  @override
+  String get leagueLabel => '리그';
+
+  @override
+  String get leagueRookie => '루키';
+
+  @override
+  String get leagueBronze => '브론즈';
+
+  @override
+  String get leagueSilver => '실버';
+
+  @override
+  String get leagueGold => '골드';
+
+  @override
+  String get leaguePlatinum => '플래티넘';
+
+  @override
+  String get leagueDiamond => '다이아몬드';
 }

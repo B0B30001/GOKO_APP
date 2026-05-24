@@ -318,5 +318,20 @@
   "vsComputerSubtitle": "Bot wählen — offline KI",
   "vsFriendSubtitle": "Gleiches Gerät, abwechselnd spielen",
   "vsOnlineSubtitle": "Live-Spiele über OGS",
-  "playFirstGameHint": "Spiel deine erste Partie — sie erscheint hier."
+  "playFirstGameHint": "Spiel deine erste Partie — sie erscheint hier.",
+
+  "puzzleStreak": "Rätsel-Serie",
+  "puzzleStreakSubtitle": "Löse bis zum ersten Fehler",
+  "currentStreak": "Serie",
+  "bestLabel": "Beste",
+  "streakEndedTitle": "Serie beendet",
+  "newRecord": "Neuer Rekord!",
+  "puzzleModes": "Rätsel-Modi",
+  "leagueLabel": "Liga",
+  "leagueRookie": "Neuling",
+  "leagueBronze": "Bronze",
+  "leagueSilver": "Silber",
+  "leagueGold": "Gold",
+  "leaguePlatinum": "Platin",
+  "leagueDiamond": "Diamant"
 }

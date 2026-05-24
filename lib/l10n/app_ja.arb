@@ -322,5 +322,20 @@
   "vsComputerSubtitle": "ボットを選ぶ — オフラインAI",
   "vsFriendSubtitle": "同じ端末でパスして対局",
   "vsOnlineSubtitle": "OGSでのライブ対局",
-  "playFirstGameHint": "最初の対局を始めましょう — ここに表示されます。"
+  "playFirstGameHint": "最初の対局を始めましょう — ここに表示されます。",
+
+  "puzzleStreak": "連続問題",
+  "puzzleStreakSubtitle": "間違えるまで解き続ける",
+  "currentStreak": "連続",
+  "bestLabel": "最高",
+  "streakEndedTitle": "連続終了",
+  "newRecord": "新記録！",
+  "puzzleModes": "問題モード",
+  "leagueLabel": "リーグ",
+  "leagueRookie": "ルーキー",
+  "leagueBronze": "ブロンズ",
+  "leagueSilver": "シルバー",
+  "leagueGold": "ゴールド",
+  "leaguePlatinum": "プラチナ",
+  "leagueDiamond": "ダイヤモンド"
 }

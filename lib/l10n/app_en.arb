@@ -776,5 +776,20 @@
   "vsComputerSubtitle": "Pick a bot — offline AI",
   "vsFriendSubtitle": "Same device, pass-and-play",
   "vsOnlineSubtitle": "Live games via OGS",
-  "playFirstGameHint": "Play your first game — it will show up here."
+  "playFirstGameHint": "Play your first game — it will show up here.",
+
+  "puzzleStreak": "Puzzle Streak",
+  "puzzleStreakSubtitle": "Solve until you miss",
+  "currentStreak": "Streak",
+  "bestLabel": "Best",
+  "streakEndedTitle": "Streak Ended",
+  "newRecord": "New Record!",
+  "puzzleModes": "Puzzle Modes",
+  "leagueLabel": "League",
+  "leagueRookie": "Rookie",
+  "leagueBronze": "Bronze",
+  "leagueSilver": "Silver",
+  "leagueGold": "Gold",
+  "leaguePlatinum": "Platinum",
+  "leagueDiamond": "Diamond"
 }

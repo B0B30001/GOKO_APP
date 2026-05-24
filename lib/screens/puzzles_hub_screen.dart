@@ -12,6 +12,7 @@ import '../services/progress_service.dart';
 import '../services/subscription_service.dart';
 import 'puzzle_screen.dart';
 import 'puzzle_category_screen.dart';
+import 'puzzle_streak_screen.dart';
 import 'paywall_screen.dart';
 
 /// Chess.com-style puzzles hub: rating + streak header, daily-set strip
@@ -66,7 +67,11 @@ class _PuzzlesHubScreenState extends State<PuzzlesHubScreen> {
           ),
           const SizedBox(height: 12),
           const _QuotaPill(),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
+          _SectionHeader(label: l.puzzleModes, onTap: null),
+          const SizedBox(height: 10),
+          const _ModesSection(),
+          const SizedBox(height: 20),
           ChangeNotifierProvider.value(
             value: _daily,
             child: const _DailySetCard(),
@@ -115,33 +120,63 @@ class _HeaderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final cs = Theme.of(context).colorScheme;
+    final league = _PuzzleLeague.forRating(puzzleRating);
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 2,
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Row(
+        child: Column(
           children: [
-            _Stat(
-              icon: Icons.trending_up,
-              value: '$puzzleRating',
-              label: AppLocalizations.of(context).rating,
-              color: cs.primary,
+            Row(
+              children: [
+                _Stat(
+                  icon: Icons.trending_up,
+                  value: '$puzzleRating',
+                  label: l.rating,
+                  color: cs.primary,
+                ),
+                _Divider(color: cs.onSurface.withValues(alpha: 0.12)),
+                _Stat(
+                  icon: Icons.local_fire_department,
+                  value: '$streak',
+                  label: l.dayStreakLabel,
+                  color: Colors.orange,
+                ),
+                _Divider(color: cs.onSurface.withValues(alpha: 0.12)),
+                _Stat(
+                  icon: Icons.check_circle,
+                  value: '$solvedToday',
+                  label: l.today,
+                  color: Colors.green,
+                ),
+              ],
             ),
-            _Divider(color: cs.onSurface.withValues(alpha: 0.12)),
-            _Stat(
-              icon: Icons.local_fire_department,
-              value: '$streak',
-              label: AppLocalizations.of(context).dayStreakLabel,
-              color: Colors.orange,
-            ),
-            _Divider(color: cs.onSurface.withValues(alpha: 0.12)),
-            _Stat(
-              icon: Icons.check_circle,
-              value: '$solvedToday',
-              label: AppLocalizations.of(context).today,
-              color: Colors.green,
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+              decoration: BoxDecoration(
+                color: league.color.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: league.color.withValues(alpha: 0.4)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(league.icon, color: league.color, size: 16),
+                  const SizedBox(width: 6),
+                  Text(
+                    '${l.leagueLabel}: ${league.label(l)}',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: league.color,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -679,6 +714,153 @@ class _PillContainer extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ── Puzzle League ────────────────────────────────────────────────────────────
+
+class _PuzzleLeague {
+  final Color color;
+  final IconData icon;
+  final String Function(AppLocalizations) label;
+
+  const _PuzzleLeague({
+    required this.color,
+    required this.icon,
+    required this.label,
+  });
+
+  static _PuzzleLeague forRating(int rating) {
+    if (rating >= 1300) {
+      return _PuzzleLeague(
+        color: const Color(0xFF7C4DFF),
+        icon: Icons.diamond,
+        label: (l) => l.leagueDiamond,
+      );
+    }
+    if (rating >= 1200) {
+      return _PuzzleLeague(
+        color: const Color(0xFF00BCD4),
+        icon: Icons.water_drop,
+        label: (l) => l.leaguePlatinum,
+      );
+    }
+    if (rating >= 1150) {
+      return _PuzzleLeague(
+        color: const Color(0xFFFFD700),
+        icon: Icons.emoji_events,
+        label: (l) => l.leagueGold,
+      );
+    }
+    if (rating >= 1100) {
+      return _PuzzleLeague(
+        color: const Color(0xFFC0C0C0),
+        icon: Icons.shield,
+        label: (l) => l.leagueSilver,
+      );
+    }
+    if (rating >= 1050) {
+      return _PuzzleLeague(
+        color: const Color(0xFFCD7F32),
+        icon: Icons.military_tech,
+        label: (l) => l.leagueBronze,
+      );
+    }
+    return _PuzzleLeague(
+      color: Colors.grey,
+      icon: Icons.person,
+      label: (l) => l.leagueRookie,
+    );
+  }
+}
+
+// ── Puzzle Modes section ─────────────────────────────────────────────────────
+
+class _ModesSection extends StatelessWidget {
+  const _ModesSection();
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return _ModeCard(
+      icon: Icons.local_fire_department,
+      iconColor: Colors.orange,
+      title: l.puzzleStreak,
+      subtitle: l.puzzleStreakSubtitle,
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const PuzzleStreakScreen()),
+      ),
+    );
+  }
+}
+
+class _ModeCard extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  const _ModeCard({
+    required this.icon,
+    required this.iconColor,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 1.5,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: iconColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, color: iconColor, size: 26),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: cs.onSurface.withValues(alpha: 0.6),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.chevron_right,
+                color: cs.onSurface.withValues(alpha: 0.4),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

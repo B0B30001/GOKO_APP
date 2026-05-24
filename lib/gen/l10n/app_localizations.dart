@@ -1737,6 +1737,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Play your first game — it will show up here.'**
   String get playFirstGameHint;
+
+  /// No description provided for @puzzleStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Puzzle Streak'**
+  String get puzzleStreak;
+
+  /// No description provided for @puzzleStreakSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Solve until you miss'**
+  String get puzzleStreakSubtitle;
+
+  /// No description provided for @currentStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak'**
+  String get currentStreak;
+
+  /// No description provided for @bestLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Best'**
+  String get bestLabel;
+
+  /// No description provided for @streakEndedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak Ended'**
+  String get streakEndedTitle;
+
+  /// No description provided for @newRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'New Record!'**
+  String get newRecord;
+
+  /// No description provided for @puzzleModes.
+  ///
+  /// In en, this message translates to:
+  /// **'Puzzle Modes'**
+  String get puzzleModes;
+
+  /// No description provided for @leagueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'League'**
+  String get leagueLabel;
+
+  /// No description provided for @leagueRookie.
+  ///
+  /// In en, this message translates to:
+  /// **'Rookie'**
+  String get leagueRookie;
+
+  /// No description provided for @leagueBronze.
+  ///
+  /// In en, this message translates to:
+  /// **'Bronze'**
+  String get leagueBronze;
+
+  /// No description provided for @leagueSilver.
+  ///
+  /// In en, this message translates to:
+  /// **'Silver'**
+  String get leagueSilver;
+
+  /// No description provided for @leagueGold.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold'**
+  String get leagueGold;
+
+  /// No description provided for @leaguePlatinum.
+  ///
+  /// In en, this message translates to:
+  /// **'Platinum'**
+  String get leaguePlatinum;
+
+  /// No description provided for @leagueDiamond.
+  ///
+  /// In en, this message translates to:
+  /// **'Diamond'**
+  String get leagueDiamond;
 }
 
 class _AppLocalizationsDelegate

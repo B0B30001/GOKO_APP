@@ -861,4 +861,46 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get playFirstGameHint =>
       'Сыграйте первую партию — она появится здесь.';
+
+  @override
+  String get puzzleStreak => 'Цепочка задач';
+
+  @override
+  String get puzzleStreakSubtitle => 'Решайте до первой ошибки';
+
+  @override
+  String get currentStreak => 'Цепочка';
+
+  @override
+  String get bestLabel => 'Рекорд';
+
+  @override
+  String get streakEndedTitle => 'Цепочка прервана';
+
+  @override
+  String get newRecord => 'Новый рекорд!';
+
+  @override
+  String get puzzleModes => 'Режимы задач';
+
+  @override
+  String get leagueLabel => 'Лига';
+
+  @override
+  String get leagueRookie => 'Новичок';
+
+  @override
+  String get leagueBronze => 'Бронза';
+
+  @override
+  String get leagueSilver => 'Серебро';
+
+  @override
+  String get leagueGold => 'Золото';
+
+  @override
+  String get leaguePlatinum => 'Платина';
+
+  @override
+  String get leagueDiamond => 'Бриллиант';
 }

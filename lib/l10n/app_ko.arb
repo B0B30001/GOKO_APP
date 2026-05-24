@@ -322,5 +322,20 @@
   "vsComputerSubtitle": "봇 선택 — 오프라인 AI",
   "vsFriendSubtitle": "같은 기기에서 번갈아 두기",
   "vsOnlineSubtitle": "OGS 라이브 대국",
-  "playFirstGameHint": "첫 대국을 시작하세요 — 여기에 표시됩니다."
+  "playFirstGameHint": "첫 대국을 시작하세요 — 여기에 표시됩니다.",
+
+  "puzzleStreak": "연속 문제",
+  "puzzleStreakSubtitle": "틀릴 때까지 계속 풀기",
+  "currentStreak": "연속",
+  "bestLabel": "최고",
+  "streakEndedTitle": "연속 종료",
+  "newRecord": "새 기록!",
+  "puzzleModes": "문제 모드",
+  "leagueLabel": "리그",
+  "leagueRookie": "루키",
+  "leagueBronze": "브론즈",
+  "leagueSilver": "실버",
+  "leagueGold": "골드",
+  "leaguePlatinum": "플래티넘",
+  "leagueDiamond": "다이아몬드"
 }
