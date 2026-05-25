@@ -1098,6 +1098,55 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tutorialsTitle => 'Tutorials';
 
   @override
+  String get learnGardenTitle => 'Lernen';
+
+  @override
+  String get categoryFundamentals => 'Grundlagen';
+
+  @override
+  String get categoryRules => 'Regeln';
+
+  @override
+  String get categoryLifeDeath => 'Leben & Tod';
+
+  @override
+  String get categoryStrategy => 'Strategie';
+
+  @override
+  String lessonsInCategoryCount(int count) {
+    return '$count Lektionen';
+  }
+
+  @override
+  String get continueLessonCta => 'Lektion fortsetzen';
+
+  @override
+  String get startLessonCta => 'Erste Lektion starten';
+
+  @override
+  String get lessonLocked => 'Premium-Lektion';
+
+  @override
+  String get coachLearnIntro1 => 'Was als Nächstes?';
+
+  @override
+  String get coachLearnIntro2 => 'Eine Lektion pro Tag hält den Geist scharf.';
+
+  @override
+  String get coachLearnIntro3 =>
+      'Probier eine kurze Lektion — unter 5 Minuten.';
+
+  @override
+  String get coachLearnIntro4 =>
+      'Wähl eine Kategorie — jeder Weg führt irgendwohin.';
+
+  @override
+  String get coachLearnIntro5 => 'Tipp einen Stein an, um loszulegen!';
+
+  @override
+  String get coachCategoryDone => 'Ganze Kategorie geschafft — unglaublich!';
+
+  @override
   String get botDescPanda => 'Süß und albern. Spielt gerne zufällige Züge.';
 
   @override

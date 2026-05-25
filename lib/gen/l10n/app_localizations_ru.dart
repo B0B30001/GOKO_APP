@@ -1090,6 +1090,54 @@ class AppLocalizationsRu extends AppLocalizations {
   String get tutorialsTitle => 'Уроки';
 
   @override
+  String get learnGardenTitle => 'Обучение';
+
+  @override
+  String get categoryFundamentals => 'Основы';
+
+  @override
+  String get categoryRules => 'Правила';
+
+  @override
+  String get categoryLifeDeath => 'Жизнь и смерть';
+
+  @override
+  String get categoryStrategy => 'Стратегия';
+
+  @override
+  String lessonsInCategoryCount(int count) {
+    return '$count уроков';
+  }
+
+  @override
+  String get continueLessonCta => 'Продолжить урок';
+
+  @override
+  String get startLessonCta => 'Начать первый урок';
+
+  @override
+  String get lessonLocked => 'Премиум-урок';
+
+  @override
+  String get coachLearnIntro1 => 'Куда дальше?';
+
+  @override
+  String get coachLearnIntro2 => 'Один урок в день держит ум в форме.';
+
+  @override
+  String get coachLearnIntro3 => 'Попробуй короткий урок — меньше 5 минут.';
+
+  @override
+  String get coachLearnIntro4 =>
+      'Выбери категорию — каждый путь куда-то ведёт.';
+
+  @override
+  String get coachLearnIntro5 => 'Нажми на камень, чтобы начать учиться!';
+
+  @override
+  String get coachCategoryDone => 'Целая категория пройдена — невероятно!';
+
+  @override
   String get botDescPanda => 'Милая и забавная. Любит играть случайные ходы.';
 
   @override

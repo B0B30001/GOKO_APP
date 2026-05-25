@@ -1077,6 +1077,53 @@ class AppLocalizationsJa extends AppLocalizations {
   String get tutorialsTitle => 'チュートリアル';
 
   @override
+  String get learnGardenTitle => '学ぶ';
+
+  @override
+  String get categoryFundamentals => '基礎';
+
+  @override
+  String get categoryRules => 'ルール';
+
+  @override
+  String get categoryLifeDeath => '死活';
+
+  @override
+  String get categoryStrategy => '戦略';
+
+  @override
+  String lessonsInCategoryCount(int count) {
+    return '$count レッスン';
+  }
+
+  @override
+  String get continueLessonCta => 'レッスンを続ける';
+
+  @override
+  String get startLessonCta => '最初のレッスンを開始';
+
+  @override
+  String get lessonLocked => 'プレミアムレッスン';
+
+  @override
+  String get coachLearnIntro1 => '次はどこへ？';
+
+  @override
+  String get coachLearnIntro2 => '1日1レッスンで頭が冴える。';
+
+  @override
+  String get coachLearnIntro3 => '短いレッスンを試そう — 5分かからないよ。';
+
+  @override
+  String get coachLearnIntro4 => 'カテゴリを選ぼう — どの道もどこかに通じる。';
+
+  @override
+  String get coachLearnIntro5 => '石をタップして学習開始！';
+
+  @override
+  String get coachCategoryDone => 'カテゴリ完走 — すごい！';
+
+  @override
   String get botDescPanda => '甘くて少しおっちょこちょい。ランダムな手を好みます。';
 
   @override

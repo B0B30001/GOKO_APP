@@ -1076,6 +1076,53 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tutorialsTitle => '教程';
 
   @override
+  String get learnGardenTitle => '学习';
+
+  @override
+  String get categoryFundamentals => '基础';
+
+  @override
+  String get categoryRules => '规则';
+
+  @override
+  String get categoryLifeDeath => '死活';
+
+  @override
+  String get categoryStrategy => '策略';
+
+  @override
+  String lessonsInCategoryCount(int count) {
+    return '$count 节课';
+  }
+
+  @override
+  String get continueLessonCta => '继续学习';
+
+  @override
+  String get startLessonCta => '开始第一课';
+
+  @override
+  String get lessonLocked => '高级课程';
+
+  @override
+  String get coachLearnIntro1 => '下一站去哪？';
+
+  @override
+  String get coachLearnIntro2 => '每天一节课，大脑常清醒。';
+
+  @override
+  String get coachLearnIntro3 => '试一节小课 — 不到 5 分钟。';
+
+  @override
+  String get coachLearnIntro4 => '选一个分类 — 每条路都有终点。';
+
+  @override
+  String get coachLearnIntro5 => '点一个棋子开始学习吧！';
+
+  @override
+  String get coachCategoryDone => '整个分类全部完成 — 太棒了！';
+
+  @override
   String get botDescPanda => '甜美又有些傻气。喜欢下随意的着法。';
 
   @override

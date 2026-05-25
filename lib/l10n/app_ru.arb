@@ -423,6 +423,26 @@
   "shuffle": "Перемешать",
   "tutorialsTitle": "Уроки",
 
+  "learnGardenTitle": "Обучение",
+  "categoryFundamentals": "Основы",
+  "categoryRules": "Правила",
+  "categoryLifeDeath": "Жизнь и смерть",
+  "categoryStrategy": "Стратегия",
+  "lessonsInCategoryCount": "{count} уроков",
+  "@lessonsInCategoryCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "continueLessonCta": "Продолжить урок",
+  "startLessonCta": "Начать первый урок",
+  "lessonLocked": "Премиум-урок",
+  "coachLearnIntro1": "Куда дальше?",
+  "coachLearnIntro2": "Один урок в день держит ум в форме.",
+  "coachLearnIntro3": "Попробуй короткий урок — меньше 5 минут.",
+  "coachLearnIntro4": "Выбери категорию — каждый путь куда-то ведёт.",
+  "coachLearnIntro5": "Нажми на камень, чтобы начать учиться!",
+  "coachCategoryDone": "Целая категория пройдена — невероятно!",
+
+
   "botDescPanda": "Милая и забавная. Любит играть случайные ходы.",
   "botDescPup": "Игривый щенок гоняется за каждым камнем. Легко перехитрить.",
   "botDescBunny": "Скачет по доске с любопытными, непредсказуемыми ходами.",

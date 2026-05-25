@@ -423,6 +423,26 @@
   "shuffle": "シャッフル",
   "tutorialsTitle": "チュートリアル",
 
+  "learnGardenTitle": "学ぶ",
+  "categoryFundamentals": "基礎",
+  "categoryRules": "ルール",
+  "categoryLifeDeath": "死活",
+  "categoryStrategy": "戦略",
+  "lessonsInCategoryCount": "{count} レッスン",
+  "@lessonsInCategoryCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "continueLessonCta": "レッスンを続ける",
+  "startLessonCta": "最初のレッスンを開始",
+  "lessonLocked": "プレミアムレッスン",
+  "coachLearnIntro1": "次はどこへ？",
+  "coachLearnIntro2": "1日1レッスンで頭が冴える。",
+  "coachLearnIntro3": "短いレッスンを試そう — 5分かからないよ。",
+  "coachLearnIntro4": "カテゴリを選ぼう — どの道もどこかに通じる。",
+  "coachLearnIntro5": "石をタップして学習開始！",
+  "coachCategoryDone": "カテゴリ完走 — すごい！",
+
+
   "botDescPanda": "甘くて少しおっちょこちょい。ランダムな手を好みます。",
   "botDescPup": "石を追いかける元気な子犬。簡単に出し抜けます。",
   "botDescBunny": "盤上を跳ね回り、好奇心旺盛で予測不能な手を打ちます。",

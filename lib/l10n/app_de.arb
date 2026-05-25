@@ -419,6 +419,26 @@
   "shuffle": "Mischen",
   "tutorialsTitle": "Tutorials",
 
+  "learnGardenTitle": "Lernen",
+  "categoryFundamentals": "Grundlagen",
+  "categoryRules": "Regeln",
+  "categoryLifeDeath": "Leben & Tod",
+  "categoryStrategy": "Strategie",
+  "lessonsInCategoryCount": "{count} Lektionen",
+  "@lessonsInCategoryCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "continueLessonCta": "Lektion fortsetzen",
+  "startLessonCta": "Erste Lektion starten",
+  "lessonLocked": "Premium-Lektion",
+  "coachLearnIntro1": "Was als Nächstes?",
+  "coachLearnIntro2": "Eine Lektion pro Tag hält den Geist scharf.",
+  "coachLearnIntro3": "Probier eine kurze Lektion — unter 5 Minuten.",
+  "coachLearnIntro4": "Wähl eine Kategorie — jeder Weg führt irgendwohin.",
+  "coachLearnIntro5": "Tipp einen Stein an, um loszulegen!",
+  "coachCategoryDone": "Ganze Kategorie geschafft — unglaublich!",
+
+
   "botDescPanda": "Süß und albern. Spielt gerne zufällige Züge.",
   "botDescPup": "Eifriger Welpe, jagt jeden Stein. Leicht zu überlisten.",
   "botDescBunny": "Hüpft mit neugierigen, unvorhersehbaren Zügen übers Brett.",

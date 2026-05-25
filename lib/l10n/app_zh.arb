@@ -423,6 +423,26 @@
   "shuffle": "随机",
   "tutorialsTitle": "教程",
 
+  "learnGardenTitle": "学习",
+  "categoryFundamentals": "基础",
+  "categoryRules": "规则",
+  "categoryLifeDeath": "死活",
+  "categoryStrategy": "策略",
+  "lessonsInCategoryCount": "{count} 节课",
+  "@lessonsInCategoryCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "continueLessonCta": "继续学习",
+  "startLessonCta": "开始第一课",
+  "lessonLocked": "高级课程",
+  "coachLearnIntro1": "下一站去哪？",
+  "coachLearnIntro2": "每天一节课，大脑常清醒。",
+  "coachLearnIntro3": "试一节小课 — 不到 5 分钟。",
+  "coachLearnIntro4": "选一个分类 — 每条路都有终点。",
+  "coachLearnIntro5": "点一个棋子开始学习吧！",
+  "coachCategoryDone": "整个分类全部完成 — 太棒了！",
+
+
   "botDescPanda": "甜美又有些傻气。喜欢下随意的着法。",
   "botDescPup": "热情的小狗追着每颗棋子。容易智胜。",
   "botDescBunny": "在棋盘上跳跃，下出好奇而难以预料的着法。",

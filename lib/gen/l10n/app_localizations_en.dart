@@ -1092,6 +1092,55 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tutorialsTitle => 'Tutorials';
 
   @override
+  String get learnGardenTitle => 'Learn';
+
+  @override
+  String get categoryFundamentals => 'Fundamentals';
+
+  @override
+  String get categoryRules => 'Rules';
+
+  @override
+  String get categoryLifeDeath => 'Life & Death';
+
+  @override
+  String get categoryStrategy => 'Strategy';
+
+  @override
+  String lessonsInCategoryCount(int count) {
+    return '$count lessons';
+  }
+
+  @override
+  String get continueLessonCta => 'Continue Lesson';
+
+  @override
+  String get startLessonCta => 'Start First Lesson';
+
+  @override
+  String get lessonLocked => 'Premium lesson';
+
+  @override
+  String get coachLearnIntro1 => 'Where to next?';
+
+  @override
+  String get coachLearnIntro2 => 'One lesson a day keeps your brain sharp.';
+
+  @override
+  String get coachLearnIntro3 =>
+      'Try a quick lesson — it takes less than 5 minutes.';
+
+  @override
+  String get coachLearnIntro4 =>
+      'Pick a category — every path leads somewhere fun.';
+
+  @override
+  String get coachLearnIntro5 => 'Tap a stone to start learning!';
+
+  @override
+  String get coachCategoryDone => 'Whole category cleared — incredible!';
+
+  @override
   String get botDescPanda => 'Sweet and silly. Loves playing random moves.';
 
   @override

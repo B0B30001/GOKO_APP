@@ -1077,6 +1077,53 @@ class AppLocalizationsKo extends AppLocalizations {
   String get tutorialsTitle => '튜토리얼';
 
   @override
+  String get learnGardenTitle => '학습';
+
+  @override
+  String get categoryFundamentals => '기초';
+
+  @override
+  String get categoryRules => '규칙';
+
+  @override
+  String get categoryLifeDeath => '사활';
+
+  @override
+  String get categoryStrategy => '전략';
+
+  @override
+  String lessonsInCategoryCount(int count) {
+    return '$count개 레슨';
+  }
+
+  @override
+  String get continueLessonCta => '레슨 계속하기';
+
+  @override
+  String get startLessonCta => '첫 레슨 시작';
+
+  @override
+  String get lessonLocked => '프리미엄 레슨';
+
+  @override
+  String get coachLearnIntro1 => '다음은 어디로?';
+
+  @override
+  String get coachLearnIntro2 => '하루 한 레슨이면 머리가 맑아져요.';
+
+  @override
+  String get coachLearnIntro3 => '짧은 레슨을 시도해 보세요 — 5분도 안 걸려요.';
+
+  @override
+  String get coachLearnIntro4 => '카테고리를 골라 보세요 — 어느 길이든 재미있어요.';
+
+  @override
+  String get coachLearnIntro5 => '돌을 탭해 학습을 시작하세요!';
+
+  @override
+  String get coachCategoryDone => '한 카테고리를 모두 완료했어요 — 대단해요!';
+
+  @override
   String get botDescPanda => '달콤하고 엉뚱합니다. 무작위 수를 좋아합니다.';
 
   @override

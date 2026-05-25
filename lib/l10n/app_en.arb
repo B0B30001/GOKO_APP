@@ -879,6 +879,26 @@
   "shuffle": "Shuffle",
   "tutorialsTitle": "Tutorials",
 
+  "learnGardenTitle": "Learn",
+  "categoryFundamentals": "Fundamentals",
+  "categoryRules": "Rules",
+  "categoryLifeDeath": "Life & Death",
+  "categoryStrategy": "Strategy",
+  "lessonsInCategoryCount": "{count} lessons",
+  "@lessonsInCategoryCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "continueLessonCta": "Continue Lesson",
+  "startLessonCta": "Start First Lesson",
+  "lessonLocked": "Premium lesson",
+  "coachLearnIntro1": "Where to next?",
+  "coachLearnIntro2": "One lesson a day keeps your brain sharp.",
+  "coachLearnIntro3": "Try a quick lesson — it takes less than 5 minutes.",
+  "coachLearnIntro4": "Pick a category — every path leads somewhere fun.",
+  "coachLearnIntro5": "Tap a stone to start learning!",
+  "coachCategoryDone": "Whole category cleared — incredible!",
+
+
   "botDescPanda": "Sweet and silly. Loves playing random moves.",
   "botDescPup": "Eager puppy chasing every stone. Easy to outsmart.",
   "botDescBunny": "Hops around the board with curious, unpredictable moves.",

@@ -2170,6 +2170,96 @@ abstract class AppLocalizations {
   /// **'Tutorials'**
   String get tutorialsTitle;
 
+  /// No description provided for @learnGardenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn'**
+  String get learnGardenTitle;
+
+  /// No description provided for @categoryFundamentals.
+  ///
+  /// In en, this message translates to:
+  /// **'Fundamentals'**
+  String get categoryFundamentals;
+
+  /// No description provided for @categoryRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Rules'**
+  String get categoryRules;
+
+  /// No description provided for @categoryLifeDeath.
+  ///
+  /// In en, this message translates to:
+  /// **'Life & Death'**
+  String get categoryLifeDeath;
+
+  /// No description provided for @categoryStrategy.
+  ///
+  /// In en, this message translates to:
+  /// **'Strategy'**
+  String get categoryStrategy;
+
+  /// No description provided for @lessonsInCategoryCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} lessons'**
+  String lessonsInCategoryCount(int count);
+
+  /// No description provided for @continueLessonCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue Lesson'**
+  String get continueLessonCta;
+
+  /// No description provided for @startLessonCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Start First Lesson'**
+  String get startLessonCta;
+
+  /// No description provided for @lessonLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium lesson'**
+  String get lessonLocked;
+
+  /// No description provided for @coachLearnIntro1.
+  ///
+  /// In en, this message translates to:
+  /// **'Where to next?'**
+  String get coachLearnIntro1;
+
+  /// No description provided for @coachLearnIntro2.
+  ///
+  /// In en, this message translates to:
+  /// **'One lesson a day keeps your brain sharp.'**
+  String get coachLearnIntro2;
+
+  /// No description provided for @coachLearnIntro3.
+  ///
+  /// In en, this message translates to:
+  /// **'Try a quick lesson — it takes less than 5 minutes.'**
+  String get coachLearnIntro3;
+
+  /// No description provided for @coachLearnIntro4.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a category — every path leads somewhere fun.'**
+  String get coachLearnIntro4;
+
+  /// No description provided for @coachLearnIntro5.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a stone to start learning!'**
+  String get coachLearnIntro5;
+
+  /// No description provided for @coachCategoryDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Whole category cleared — incredible!'**
+  String get coachCategoryDone;
+
   /// No description provided for @botDescPanda.
   ///
   /// In en, this message translates to:
