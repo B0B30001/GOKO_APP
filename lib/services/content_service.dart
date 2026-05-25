@@ -102,6 +102,10 @@ class ContentService {
       return PuzzleMove(row, col, color);
     }).toList();
     final winCondition = _winConditionFromJson(json['winCondition']);
+    final treeRaw = json['solutionTree'];
+    final solutionTree = treeRaw is Map
+        ? SolutionNode.fromJson(treeRaw.cast<String, Object?>())
+        : null;
     return Puzzle(
       id: json['id']?.toString() ?? '',
       title: json['title']?.toString() ?? '',
@@ -115,6 +119,7 @@ class ContentService {
       hint: json['hint']?.toString() ?? '',
       explanation: json['explanation']?.toString() ?? '',
       winCondition: winCondition,
+      solutionTree: solutionTree,
     );
   }
 

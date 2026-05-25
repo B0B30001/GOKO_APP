@@ -33,6 +33,77 @@ class CaptureGroup extends WinCondition {
   }
 }
 
+/// Tree-shaped solution for puzzles with multiple valid lines.
+///
+/// OGS-imported tsumego often have several correct first-move alternatives
+/// (e.g. "kill at A *or* B"). A linear [Puzzle.solution] list cannot express
+/// this — any move not on the chosen path gets marked wrong even when it is
+/// objectively correct Go. [SolutionNode] models the full game-tree:
+///
+///   - Each node is a move (`row`, `col`, `color`)
+///   - [children] are the legal continuations from this node
+///   - [correct] true means "if the player reaches this leaf, the puzzle is
+///     solved." Non-leaf nodes with `correct: true` are allowed (some puzzles
+///     accept an early stop) but typical OGS data only marks leaves.
+///
+/// The root node is a virtual placeholder with `row = col = -1`; its [children]
+/// are the first-move alternatives. This mirrors the OGS `move_tree` shape.
+class SolutionNode {
+  final int row;
+  final int col;
+  final int color;
+  final bool correct;
+  final List<SolutionNode> children;
+
+  const SolutionNode({
+    required this.row,
+    required this.col,
+    required this.color,
+    this.correct = false,
+    this.children = const [],
+  });
+
+  /// Find the child whose coordinates and color match the player's move.
+  /// Returns null when no child matches — caller should treat as wrong move.
+  SolutionNode? matchChild(int row, int col, int color) {
+    for (final c in children) {
+      if (c.row == row && c.col == col && c.color == color) return c;
+    }
+    return null;
+  }
+
+  /// First child whose color is [color] — used to pick the opponent's
+  /// deterministic auto-response after a correct player move.
+  SolutionNode? firstChildOfColor(int color) {
+    for (final c in children) {
+      if (c.color == color) return c;
+    }
+    return null;
+  }
+
+  factory SolutionNode.fromJson(Map<String, Object?> json) {
+    final kids = (json['children'] as List?) ?? const [];
+    return SolutionNode(
+      row: (json['row'] as num?)?.toInt() ?? -1,
+      col: (json['col'] as num?)?.toInt() ?? -1,
+      color: (json['color'] as num?)?.toInt() ?? 0,
+      correct: json['correct'] == true,
+      children: kids
+          .whereType<Map>()
+          .map((m) => SolutionNode.fromJson(m.cast<String, Object?>()))
+          .toList(growable: false),
+    );
+  }
+
+  Map<String, Object?> toJson() => {
+    'row': row,
+    'col': col,
+    'color': color,
+    if (correct) 'correct': true,
+    if (children.isNotEmpty) 'children': [for (final c in children) c.toJson()],
+  };
+}
+
 class Puzzle {
   final String id;
   final String title;
@@ -55,6 +126,11 @@ class Puzzle {
   /// Defaults to [ExactSequence] (preserves legacy click-driven behavior).
   final WinCondition winCondition;
 
+  /// Optional branching solution. When non-null, the runtime evaluator walks
+  /// this tree instead of comparing against [solution] linearly — required for
+  /// OGS puzzles where multiple first-move alternatives are correct.
+  final SolutionNode? solutionTree;
+
   Puzzle({
     required this.id,
     required this.title,
@@ -69,6 +145,7 @@ class Puzzle {
     this.explanation = '',
     this.failureReasons = const {},
     this.winCondition = const ExactSequence(),
+    this.solutionTree,
   });
 }
 

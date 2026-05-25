@@ -72,15 +72,31 @@ Future<void> main(List<String> args) async {
     client.close();
   }
 
+  // Aggregate the diagnostic correct-leaf counts then drop them so they
+  // don't bloat the bundled JSON.
+  int totalCorrectLeaves = 0;
+  int multiSolutionPuzzles = 0;
+  for (final p in out) {
+    final n = (p['_correctLeaves'] as int?) ?? 1;
+    totalCorrectLeaves += n;
+    if (n > 1) multiSolutionPuzzles++;
+    p.remove('_correctLeaves');
+  }
+
   final outFile = File('assets/content/ogs_puzzles.json');
   await outFile.create(recursive: true);
   await outFile.writeAsString(const JsonEncoder.withIndent('  ').convert(out));
 
+  final avgLeaves = out.isEmpty
+      ? 0
+      : (totalCorrectLeaves / out.length).toStringAsFixed(2);
   stdout
     ..writeln('')
     ..writeln('Wrote ${out.length} puzzles to ${outFile.path}')
-    ..writeln('  OK:      $totalOk')
-    ..writeln('  skipped: $totalSkipped');
+    ..writeln('  OK:                $totalOk')
+    ..writeln('  skipped:           $totalSkipped')
+    ..writeln('  correct leaves:    $totalCorrectLeaves total, avg $avgLeaves')
+    ..writeln('  multi-solution:    $multiSolutionPuzzles puzzles');
 }
 
 // ── OGS API ──────────────────────────────────────────────────────────────────
@@ -137,40 +153,107 @@ List<List<int>> _decodeStones(String s, int boardSize) {
   return out;
 }
 
-/// Walks an OGS `move_tree`, returning a sequence of `[row, col, color]`
-/// moves from root to the first leaf marked `correct_answer: true`.
+/// Builds the full branching solution tree from an OGS `move_tree`.
 ///
-/// OGS marks each branch independently as `correct_answer` and/or
-/// `wrong_answer`. A node tagged `wrong_answer` is pruned. The algorithm is
-/// a depth-first search that finds a path of moves whose final node is
-/// marked correct and whose every intermediate node is not marked wrong.
-/// Returns empty if no such path exists.
-List<List<int>> _extractSolution(
+/// OGS marks each node independently as `correct_answer` and/or
+/// `wrong_answer`. Real tsumego routinely have multiple correct first-move
+/// alternatives (e.g. kill at A *or* B), which OGS encodes as sibling
+/// branches off the root. The v1 importer collapsed this to a single path,
+/// which made the runtime mark legitimate moves wrong.
+///
+/// Algorithm:
+///   1. Walk every branch where `wrong_answer != true`.
+///   2. Recurse into children, preserving the tree structure.
+///   3. Mark leaves as `correct: true` when the OGS node has
+///      `correct_answer: true`.
+///   4. Prune subtrees that contain zero correct leaves so we don't ship
+///      dead variations the player can never win from.
+///
+/// Returns null when no correct path exists anywhere in the tree.
+Map<String, Object?>? _buildSolutionTree(
   Map<String, Object?> rootTree,
   int firstPlayerColor,
 ) {
-  final path = <List<int>>[];
-  if (_dfs(rootTree, firstPlayerColor, path)) return path;
-  return const [];
+  final rootChildren = _convertBranches(rootTree, firstPlayerColor);
+  if (rootChildren.isEmpty) return null;
+  // Virtual root: holds the first-move alternatives. row=col=-1 marks it.
+  return <String, Object?>{
+    'row': -1,
+    'col': -1,
+    'color': firstPlayerColor,
+    'children': rootChildren,
+  };
 }
 
-/// Recursive DFS helper. Mutates [path] in place — appending on descent and
-/// popping on backtrack. Returns true if a correct-leaf path was found.
-bool _dfs(Map<String, Object?> node, int nextColor, List<List<int>> path) {
+/// Converts each branch under [node] into a SolutionNode-shaped Map.
+/// Drops branches whose subtree leads to no `correct_answer: true` leaf.
+List<Map<String, Object?>> _convertBranches(
+  Map<String, Object?> node,
+  int nextColor,
+) {
   final branches =
       (node['branches'] as List?)?.cast<Map<String, Object?>>() ??
       const <Map<String, Object?>>[];
+  final out = <Map<String, Object?>>[];
   for (final b in branches) {
     if (b['wrong_answer'] == true) continue;
     final x = (b['x'] as num?)?.toInt() ?? -1;
     final y = (b['y'] as num?)?.toInt() ?? -1;
     if (x < 0 || y < 0) continue;
-    path.add([y, x, nextColor]);
-    if (b['correct_answer'] == true) return true;
-    if (_dfs(b, nextColor == 1 ? 2 : 1, path)) return true;
+    final correct = b['correct_answer'] == true;
+    final children = _convertBranches(b, nextColor == 1 ? 2 : 1);
+    // Prune: keep this node only if it is a correct leaf or has a correct
+    // descendant. Otherwise it's a dead variation.
+    if (!correct && children.isEmpty) continue;
+    final entry = <String, Object?>{
+      'row': y,
+      'col': x,
+      'color': nextColor,
+      if (correct) 'correct': true,
+      if (children.isNotEmpty) 'children': children,
+    };
+    out.add(entry);
+  }
+  return out;
+}
+
+/// Returns the first correct path through [tree] for the legacy `solution`
+/// list. Mirrors the v1 first-leaf DFS so any consumer that still reads
+/// `puzzle.solution` keeps working unchanged.
+List<List<int>> _firstCorrectPath(Map<String, Object?> tree) {
+  final path = <List<int>>[];
+  if (_firstPathDfs(tree, path)) return path;
+  return const [];
+}
+
+bool _firstPathDfs(Map<String, Object?> node, List<List<int>> path) {
+  final children =
+      (node['children'] as List?)?.cast<Map<String, Object?>>() ??
+      const <Map<String, Object?>>[];
+  for (final c in children) {
+    final row = (c['row'] as num).toInt();
+    final col = (c['col'] as num).toInt();
+    final color = (c['color'] as num).toInt();
+    path.add([row, col, color]);
+    if (c['correct'] == true) return true;
+    if (_firstPathDfs(c, path)) return true;
     path.removeLast();
   }
   return false;
+}
+
+/// Returns the number of `correct: true` leaves anywhere in the tree —
+/// useful for the importer summary so we can confirm puzzles end up with
+/// >1 valid solution after the v2 rewrite.
+int _countCorrectLeaves(Map<String, Object?> node) {
+  int n = (node['correct'] == true) ? 1 : 0;
+  final children =
+      (node['children'] as List?)?.cast<Map<String, Object?>>() ??
+      const <Map<String, Object?>>[];
+  for (final c in children) {
+    n += _countCorrectLeaves(c);
+  }
+  return n;
 }
 
 /// Maps OGS puzzle `type` strings to the local category key used by
@@ -236,7 +319,9 @@ Map<String, Object?>? _convertPuzzle(
 
   final moveTree = inner['move_tree'] as Map<String, Object?>?;
   if (moveTree == null) return null;
-  final solution = _extractSolution(moveTree, playerColor);
+  final solutionTree = _buildSolutionTree(moveTree, playerColor);
+  if (solutionTree == null) return null;
+  final solution = _firstCorrectPath(solutionTree);
   if (solution.isEmpty) return null;
 
   final rank = (raw['rank'] as num?) ?? 0;
@@ -244,6 +329,7 @@ Map<String, Object?>? _convertPuzzle(
   final name = (raw['name'] as String?) ?? 'OGS Puzzle ${raw['id']}';
   final description = (inner['puzzle_description'] as String?)?.trim() ?? '';
   final hint = (moveTree['text'] as String?)?.trim() ?? '';
+  final correctLeaves = _countCorrectLeaves(solutionTree);
 
   return {
     'id': 'ogs-${collection.id}-${raw['id']}',
@@ -257,10 +343,12 @@ Map<String, Object?>? _convertPuzzle(
     'solution': [
       for (final m in solution) {'row': m[0], 'col': m[1], 'color': m[2]},
     ],
+    'solutionTree': solutionTree,
     'hint': hint,
     'explanation': '',
     'winCondition': {'type': 'exactSequence'},
     'source': 'OGS · ${collection.name} by ${collection.author} (CC-BY)',
+    '_correctLeaves': correctLeaves, // diagnostic only, dropped on write
   };
 }
 

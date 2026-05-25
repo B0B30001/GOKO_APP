@@ -47,6 +47,12 @@ class _PuzzleScreenState extends State<PuzzleScreen>
   /// Coordinates of the last wrong move ("row,col") for targeted feedback.
   String? _lastWrongMoveKey;
 
+  /// Current position in the branching solution tree. Null when the puzzle
+  /// only has a linear [Puzzle.solution] list (legacy hand-curated puzzles).
+  /// Initialised to `puzzle.solutionTree` so the virtual root's children are
+  /// the first-move alternatives.
+  SolutionNode? _treeCursor;
+
   // ignore: unused_field (kept for potential future use)
 
   late final AnimationController _shakeController;
@@ -71,6 +77,7 @@ class _PuzzleScreenState extends State<PuzzleScreen>
         );
     _game = Game(widget.puzzle.boardSize);
     _loadPuzzlePosition();
+    _treeCursor = widget.puzzle.solutionTree;
     if (!widget.isDrillMode) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _checkPuzzleQuota());
     }
@@ -114,25 +121,47 @@ class _PuzzleScreenState extends State<PuzzleScreen>
 
   void _onTapBoard(int i, int j) {
     if (_solved || _awaitingOpponent) return;
-    // View-only teaching puzzles have no moves — tapping does nothing.
-    if (widget.puzzle.solution.isEmpty) return;
     if (_game.board.getStone(i, j) != 0) return;
-    if (_moveCount >= widget.puzzle.solution.length) return;
 
-    final expectedMove = widget.puzzle.solution[_moveCount];
-
-    // Skip if this solution step is the opponent's turn (shouldn't be reachable
-    // since we auto-play opponent moves, but guard defensively).
-    if (expectedMove.color != widget.puzzle.playerColor) return;
-
-    final isExpectedCoord = i == expectedMove.row && j == expectedMove.col;
-
-    if (!isExpectedCoord) {
-      _handleWrongMove(i, j);
+    final tree = _treeCursor;
+    if (tree != null) {
+      // Tree-walk evaluator: descend into any child that matches the tap.
+      // Multiple correct first-move alternatives are honoured.
+      final next = tree.matchChild(i, j, widget.puzzle.playerColor);
+      if (next == null) {
+        _handleWrongMove(i, j);
+        return;
+      }
+      final capsBefore =
+          _game.board.capturedByBlack + _game.board.capturedByWhite;
+      final placed = _game.board.placeStone(i, j, widget.puzzle.playerColor);
+      if (!placed) {
+        _handleWrongMove(i, j, illegal: true);
+        return;
+      }
+      SfxService.instance.play(SfxSound.stonePlace);
+      final capsAfter =
+          _game.board.capturedByBlack + _game.board.capturedByWhite;
+      if (capsAfter > capsBefore) {
+        SfxService.instance.play(SfxSound.capture);
+      }
+      setState(() {
+        _moveCount++;
+        _treeCursor = next;
+      });
+      _checkWinAndContinueTree();
       return;
     }
 
-    // Correct coordinate — try to place through the engine.
+    // Legacy linear evaluator for hand-curated puzzles without a tree.
+    if (widget.puzzle.solution.isEmpty) return; // view-only teaching puzzle
+    if (_moveCount >= widget.puzzle.solution.length) return;
+    final expectedMove = widget.puzzle.solution[_moveCount];
+    if (expectedMove.color != widget.puzzle.playerColor) return;
+    if (i != expectedMove.row || j != expectedMove.col) {
+      _handleWrongMove(i, j);
+      return;
+    }
     final capsBefore =
         _game.board.capturedByBlack + _game.board.capturedByWhite;
     final placed = _game.board.placeStone(i, j, widget.puzzle.playerColor);
@@ -140,7 +169,6 @@ class _PuzzleScreenState extends State<PuzzleScreen>
       _handleWrongMove(i, j, illegal: true);
       return;
     }
-
     SfxService.instance.play(SfxSound.stonePlace);
     final capsAfter = _game.board.capturedByBlack + _game.board.capturedByWhite;
     if (capsAfter > capsBefore) {
@@ -148,6 +176,58 @@ class _PuzzleScreenState extends State<PuzzleScreen>
     }
     setState(() => _moveCount++);
     _checkWinAndContinue();
+  }
+
+  /// Tree-walk variant of [_checkWinAndContinue]. The puzzle solves when the
+  /// player's move lands on a `correct: true` leaf. Otherwise auto-play the
+  /// opponent's deterministic response (first opponent-coloured child of the
+  /// current cursor).
+  void _checkWinAndContinueTree() {
+    final cursor = _treeCursor;
+    if (cursor == null) return;
+    if (cursor.correct && cursor.color == widget.puzzle.playerColor) {
+      setState(() => _solved = true);
+      SfxService.instance.play(SfxSound.complete);
+      if (AppSettings.hapticsEnabled) HapticFeedback.mediumImpact();
+      context.read<ProgressService>().markPuzzleSolved(widget.puzzle.id);
+      if (widget.isDrillMode) {
+        Future.delayed(const Duration(milliseconds: 350), () {
+          if (!mounted) return;
+          Navigator.pop(context, {'solved': true, 'mistakes': _mistakeCount});
+        });
+      }
+      return;
+    }
+    final opponentColor = widget.puzzle.playerColor == 1 ? 2 : 1;
+    final opp = cursor.firstChildOfColor(opponentColor);
+    if (opp != null) {
+      _scheduleOpponentMoveTree(opp);
+    }
+  }
+
+  /// Schedules the opponent's pre-determined response from the tree.
+  void _scheduleOpponentMoveTree(SolutionNode oppNode) {
+    setState(() => _awaitingOpponent = true);
+    Future.delayed(const Duration(milliseconds: 650), () {
+      if (!mounted) return;
+      final capsBefore =
+          _game.board.capturedByBlack + _game.board.capturedByWhite;
+      _game.board.placeStone(oppNode.row, oppNode.col, oppNode.color);
+      SfxService.instance.play(SfxSound.stonePlace);
+      final capsAfter =
+          _game.board.capturedByBlack + _game.board.capturedByWhite;
+      if (capsAfter > capsBefore) {
+        SfxService.instance.play(SfxSound.capture);
+      }
+      setState(() {
+        _moveCount++;
+        _treeCursor = oppNode;
+        _awaitingOpponent = false;
+      });
+      // After the opponent moves, the cursor may itself be a correct-leaf
+      // (rare — usually the win is on the player's move) or branch further.
+      _checkWinAndContinueTree();
+    });
   }
 
   /// After a correct player move, check for win or schedule opponent response.
@@ -286,6 +366,7 @@ class _PuzzleScreenState extends State<PuzzleScreen>
       _solved = false;
       _moveCount = 0;
       _lastWrongMoveKey = null;
+      _treeCursor = widget.puzzle.solutionTree;
     });
   }
 
