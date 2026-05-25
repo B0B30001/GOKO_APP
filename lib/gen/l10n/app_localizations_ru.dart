@@ -954,4 +954,43 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get openLesson => 'Открыть';
+
+  @override
+  String get puzzleGardenTitle => 'Сад новичка';
+
+  @override
+  String get coachLeagueRookieUnlocked =>
+      'Добро пожаловать, Новичок! Поднимем рейтинг.';
+
+  @override
+  String get coachLeagueBronzeUnlocked => 'Бронзовая лига! Ты в игре.';
+
+  @override
+  String get coachLeagueSilverUnlocked => 'Серебряная лига! Уже видишь доску.';
+
+  @override
+  String get coachLeagueGoldUnlocked => 'Золотая лига! Настоящий боец.';
+
+  @override
+  String get coachLeaguePlatinumUnlocked =>
+      'Платиновая лига! Немногие доходят сюда.';
+
+  @override
+  String get coachLeagueDiamondUnlocked => 'Бриллиантовая лига! Мастер.';
+
+  @override
+  String get coachKeepGoing => 'Нажми следующий камень — продолжай!';
+
+  @override
+  String get coachTryAgain => 'Не страшно — попробуй другую точку.';
+
+  @override
+  String xpToNextLeague(int count, String league) {
+    return '$count XP до $league';
+  }
+
+  @override
+  String gateLockedUnlockAt(int xp) {
+    return 'Открыто при $xp XP';
+  }
 }

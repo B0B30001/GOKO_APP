@@ -355,5 +355,28 @@
   "coachSolve4": "꽤 어려웠어요!",
   "coachSolve5": "완벽한 수읽기.",
   "coachSolve6": "계속 가세요!",
-  "openLesson": "열기"
+  "openLesson": "열기",
+
+  "puzzleGardenTitle": "초보자의 정원",
+  "coachLeagueRookieUnlocked": "환영합니다, 루키! 레이팅을 올려봅시다.",
+  "coachLeagueBronzeUnlocked": "브론즈 리그! 출발이 좋아요.",
+  "coachLeagueSilverUnlocked": "실버 리그! 판이 보이기 시작해요.",
+  "coachLeagueGoldUnlocked": "골드 리그! 진정한 전사.",
+  "coachLeaguePlatinumUnlocked": "플래티넘 리그! 여기까지 오는 사람은 드물어요.",
+  "coachLeagueDiamondUnlocked": "다이아몬드 리그! 마스터급.",
+  "coachKeepGoing": "다음 돌을 두세요 — 계속 올라가요!",
+  "coachTryAgain": "괜찮아요 — 다른 곳을 시도해 보세요.",
+  "xpToNextLeague": "{league}까지 {count} XP",
+  "@xpToNextLeague": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "league": { "type": "String" }
+    }
+  },
+  "gateLockedUnlockAt": "{xp} XP에서 잠금 해제",
+  "@gateLockedUnlockAt": {
+    "placeholders": {
+      "xp": { "type": "int" }
+    }
+  }
 }

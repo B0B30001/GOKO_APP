@@ -809,5 +809,28 @@
   "coachSolve4": "That was tough!",
   "coachSolve5": "Perfect read.",
   "coachSolve6": "Keep it up!",
-  "openLesson": "Open"
+  "openLesson": "Open",
+
+  "puzzleGardenTitle": "Beginner Garden",
+  "coachLeagueRookieUnlocked": "Welcome, Rookie! Let's grow that rating.",
+  "coachLeagueBronzeUnlocked": "Bronze League! You're on the board.",
+  "coachLeagueSilverUnlocked": "Silver League! Reading the board now.",
+  "coachLeagueGoldUnlocked": "Gold League! Real fighter.",
+  "coachLeaguePlatinumUnlocked": "Platinum League! Few make it this far.",
+  "coachLeagueDiamondUnlocked": "Diamond League! Master class.",
+  "coachKeepGoing": "Tap the next stone — keep climbing!",
+  "coachTryAgain": "No worries — try a different point.",
+  "xpToNextLeague": "{count} XP to {league}",
+  "@xpToNextLeague": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "league": { "type": "String" }
+    }
+  },
+  "gateLockedUnlockAt": "Unlock at {xp} XP",
+  "@gateLockedUnlockAt": {
+    "placeholders": {
+      "xp": { "type": "int" }
+    }
+  }
 }

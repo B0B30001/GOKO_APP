@@ -355,5 +355,28 @@
   "coachSolve4": "这题真难！",
   "coachSolve5": "看得真准。",
   "coachSolve6": "继续加油！",
-  "openLesson": "打开"
+  "openLesson": "打开",
+
+  "puzzleGardenTitle": "新手花园",
+  "coachLeagueRookieUnlocked": "欢迎，新手！一起提升等级吧。",
+  "coachLeagueBronzeUnlocked": "铜级联赛！你上榜了。",
+  "coachLeagueSilverUnlocked": "银级联赛！开始看懂棋盘。",
+  "coachLeagueGoldUnlocked": "金级联赛！真正的战士。",
+  "coachLeaguePlatinumUnlocked": "白金联赛！很少有人到达。",
+  "coachLeagueDiamondUnlocked": "钻石联赛！大师级别。",
+  "coachKeepGoing": "点下一颗棋子——继续攀登！",
+  "coachTryAgain": "没关系——试试别的点。",
+  "xpToNextLeague": "距离{league}还差 {count} XP",
+  "@xpToNextLeague": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "league": { "type": "String" }
+    }
+  },
+  "gateLockedUnlockAt": "{xp} XP 解锁",
+  "@gateLockedUnlockAt": {
+    "placeholders": {
+      "xp": { "type": "int" }
+    }
+  }
 }

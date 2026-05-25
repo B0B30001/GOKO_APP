@@ -355,5 +355,28 @@
   "coachSolve4": "難しかった！",
   "coachSolve5": "完璧な読み。",
   "coachSolve6": "その調子！",
-  "openLesson": "開く"
+  "openLesson": "開く",
+
+  "puzzleGardenTitle": "初心者の庭",
+  "coachLeagueRookieUnlocked": "ようこそ、ルーキー！レーティングを上げよう。",
+  "coachLeagueBronzeUnlocked": "ブロンズリーグ！スタートを切ったね。",
+  "coachLeagueSilverUnlocked": "シルバーリーグ！盤面が見えてきた。",
+  "coachLeagueGoldUnlocked": "ゴールドリーグ！本物の戦士。",
+  "coachLeaguePlatinumUnlocked": "プラチナリーグ！ここまで来る人は少ない。",
+  "coachLeagueDiamondUnlocked": "ダイヤモンドリーグ！マスター級。",
+  "coachKeepGoing": "次の石をタップ — 登り続けよう！",
+  "coachTryAgain": "大丈夫 — 別の場所を試してみて。",
+  "xpToNextLeague": "{league}まで {count} XP",
+  "@xpToNextLeague": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "league": { "type": "String" }
+    }
+  },
+  "gateLockedUnlockAt": "{xp} XPでアンロック",
+  "@gateLockedUnlockAt": {
+    "placeholders": {
+      "xp": { "type": "int" }
+    }
+  }
 }

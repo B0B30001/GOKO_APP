@@ -952,4 +952,45 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get openLesson => 'Open';
+
+  @override
+  String get puzzleGardenTitle => 'Beginner Garden';
+
+  @override
+  String get coachLeagueRookieUnlocked =>
+      'Welcome, Rookie! Let\'s grow that rating.';
+
+  @override
+  String get coachLeagueBronzeUnlocked =>
+      'Bronze League! You\'re on the board.';
+
+  @override
+  String get coachLeagueSilverUnlocked =>
+      'Silver League! Reading the board now.';
+
+  @override
+  String get coachLeagueGoldUnlocked => 'Gold League! Real fighter.';
+
+  @override
+  String get coachLeaguePlatinumUnlocked =>
+      'Platinum League! Few make it this far.';
+
+  @override
+  String get coachLeagueDiamondUnlocked => 'Diamond League! Master class.';
+
+  @override
+  String get coachKeepGoing => 'Tap the next stone — keep climbing!';
+
+  @override
+  String get coachTryAgain => 'No worries — try a different point.';
+
+  @override
+  String xpToNextLeague(int count, String league) {
+    return '$count XP to $league';
+  }
+
+  @override
+  String gateLockedUnlockAt(int xp) {
+    return 'Unlock at $xp XP';
+  }
 }

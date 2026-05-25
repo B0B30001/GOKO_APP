@@ -351,5 +351,28 @@
   "coachSolve4": "Das war knifflig!",
   "coachSolve5": "Perfekt gesehen.",
   "coachSolve6": "Weiter so!",
-  "openLesson": "Öffnen"
+  "openLesson": "Öffnen",
+
+  "puzzleGardenTitle": "Anfängergarten",
+  "coachLeagueRookieUnlocked": "Willkommen, Neuling! Lass uns dein Rating steigern.",
+  "coachLeagueBronzeUnlocked": "Bronze-Liga! Du bist dabei.",
+  "coachLeagueSilverUnlocked": "Silber-Liga! Du liest das Brett.",
+  "coachLeagueGoldUnlocked": "Gold-Liga! Echter Kämpfer.",
+  "coachLeaguePlatinumUnlocked": "Platin-Liga! Wenige schaffen das.",
+  "coachLeagueDiamondUnlocked": "Diamant-Liga! Meisterklasse.",
+  "coachKeepGoing": "Tippe den nächsten Stein — weiter so!",
+  "coachTryAgain": "Kein Problem — probier einen anderen Punkt.",
+  "xpToNextLeague": "{count} XP bis {league}",
+  "@xpToNextLeague": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "league": { "type": "String" }
+    }
+  },
+  "gateLockedUnlockAt": "Freigeschaltet bei {xp} XP",
+  "@gateLockedUnlockAt": {
+    "placeholders": {
+      "xp": { "type": "int" }
+    }
+  }
 }

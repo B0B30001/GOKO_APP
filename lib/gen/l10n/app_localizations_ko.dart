@@ -944,4 +944,41 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get openLesson => '열기';
+
+  @override
+  String get puzzleGardenTitle => '초보자의 정원';
+
+  @override
+  String get coachLeagueRookieUnlocked => '환영합니다, 루키! 레이팅을 올려봅시다.';
+
+  @override
+  String get coachLeagueBronzeUnlocked => '브론즈 리그! 출발이 좋아요.';
+
+  @override
+  String get coachLeagueSilverUnlocked => '실버 리그! 판이 보이기 시작해요.';
+
+  @override
+  String get coachLeagueGoldUnlocked => '골드 리그! 진정한 전사.';
+
+  @override
+  String get coachLeaguePlatinumUnlocked => '플래티넘 리그! 여기까지 오는 사람은 드물어요.';
+
+  @override
+  String get coachLeagueDiamondUnlocked => '다이아몬드 리그! 마스터급.';
+
+  @override
+  String get coachKeepGoing => '다음 돌을 두세요 — 계속 올라가요!';
+
+  @override
+  String get coachTryAgain => '괜찮아요 — 다른 곳을 시도해 보세요.';
+
+  @override
+  String xpToNextLeague(int count, String league) {
+    return '$league까지 $count XP';
+  }
+
+  @override
+  String gateLockedUnlockAt(int xp) {
+    return '$xp XP에서 잠금 해제';
+  }
 }

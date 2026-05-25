@@ -944,4 +944,41 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get openLesson => '開く';
+
+  @override
+  String get puzzleGardenTitle => '初心者の庭';
+
+  @override
+  String get coachLeagueRookieUnlocked => 'ようこそ、ルーキー！レーティングを上げよう。';
+
+  @override
+  String get coachLeagueBronzeUnlocked => 'ブロンズリーグ！スタートを切ったね。';
+
+  @override
+  String get coachLeagueSilverUnlocked => 'シルバーリーグ！盤面が見えてきた。';
+
+  @override
+  String get coachLeagueGoldUnlocked => 'ゴールドリーグ！本物の戦士。';
+
+  @override
+  String get coachLeaguePlatinumUnlocked => 'プラチナリーグ！ここまで来る人は少ない。';
+
+  @override
+  String get coachLeagueDiamondUnlocked => 'ダイヤモンドリーグ！マスター級。';
+
+  @override
+  String get coachKeepGoing => '次の石をタップ — 登り続けよう！';
+
+  @override
+  String get coachTryAgain => '大丈夫 — 別の場所を試してみて。';
+
+  @override
+  String xpToNextLeague(int count, String league) {
+    return '$leagueまで $count XP';
+  }
+
+  @override
+  String gateLockedUnlockAt(int xp) {
+    return '$xp XPでアンロック';
+  }
 }

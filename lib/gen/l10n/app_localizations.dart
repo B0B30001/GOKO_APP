@@ -1923,6 +1923,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open'**
   String get openLesson;
+
+  /// No description provided for @puzzleGardenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Beginner Garden'**
+  String get puzzleGardenTitle;
+
+  /// No description provided for @coachLeagueRookieUnlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome, Rookie! Let\'s grow that rating.'**
+  String get coachLeagueRookieUnlocked;
+
+  /// No description provided for @coachLeagueBronzeUnlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Bronze League! You\'re on the board.'**
+  String get coachLeagueBronzeUnlocked;
+
+  /// No description provided for @coachLeagueSilverUnlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Silver League! Reading the board now.'**
+  String get coachLeagueSilverUnlocked;
+
+  /// No description provided for @coachLeagueGoldUnlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold League! Real fighter.'**
+  String get coachLeagueGoldUnlocked;
+
+  /// No description provided for @coachLeaguePlatinumUnlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Platinum League! Few make it this far.'**
+  String get coachLeaguePlatinumUnlocked;
+
+  /// No description provided for @coachLeagueDiamondUnlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Diamond League! Master class.'**
+  String get coachLeagueDiamondUnlocked;
+
+  /// No description provided for @coachKeepGoing.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the next stone — keep climbing!'**
+  String get coachKeepGoing;
+
+  /// No description provided for @coachTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'No worries — try a different point.'**
+  String get coachTryAgain;
+
+  /// No description provided for @xpToNextLeague.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} XP to {league}'**
+  String xpToNextLeague(int count, String league);
+
+  /// No description provided for @gateLockedUnlockAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock at {xp} XP'**
+  String gateLockedUnlockAt(int xp);
 }
 
 class _AppLocalizationsDelegate

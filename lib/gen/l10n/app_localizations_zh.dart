@@ -943,4 +943,41 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get openLesson => '打开';
+
+  @override
+  String get puzzleGardenTitle => '新手花园';
+
+  @override
+  String get coachLeagueRookieUnlocked => '欢迎，新手！一起提升等级吧。';
+
+  @override
+  String get coachLeagueBronzeUnlocked => '铜级联赛！你上榜了。';
+
+  @override
+  String get coachLeagueSilverUnlocked => '银级联赛！开始看懂棋盘。';
+
+  @override
+  String get coachLeagueGoldUnlocked => '金级联赛！真正的战士。';
+
+  @override
+  String get coachLeaguePlatinumUnlocked => '白金联赛！很少有人到达。';
+
+  @override
+  String get coachLeagueDiamondUnlocked => '钻石联赛！大师级别。';
+
+  @override
+  String get coachKeepGoing => '点下一颗棋子——继续攀登！';
+
+  @override
+  String get coachTryAgain => '没关系——试试别的点。';
+
+  @override
+  String xpToNextLeague(int count, String league) {
+    return '距离$league还差 $count XP';
+  }
+
+  @override
+  String gateLockedUnlockAt(int xp) {
+    return '$xp XP 解锁';
+  }
 }

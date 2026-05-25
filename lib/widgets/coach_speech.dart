@@ -1,16 +1,22 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 /// Panda coach character with a speech bubble.
 ///
-/// Used in two places per design:
-///  - Above the Puzzle Streak card on the hub (intro tip rotation).
-///  - On the puzzle-solve flash overlay (reactive praise).
-///
-/// Animates in via a scale + fade entry. Optionally auto-hides after
-/// [autoHide]. Tapping anywhere on the bubble dismisses early.
+/// Three flavours:
+///  - Default — single message that animates in, auto-hides, tap to dismiss
+///    early. Used on the hub intros and the puzzle-solve flash overlay.
+///  - [CoachSpeech.sticky] — never dismisses, rotates through a message
+///    list, and lets the user tap the bubble to skip to the next tip.
+///    Used as the persistent header on PuzzleGardenScreen.
 class CoachSpeech extends StatefulWidget {
-  /// Text shown inside the speech bubble.
+  /// Text shown inside the speech bubble. Ignored when [messages] is set.
   final String message;
+
+  /// Optional rotating list (sticky mode). When non-empty, [autoHide] is
+  /// forced off and tapping cycles to the next message.
+  final List<String> messages;
 
   /// Callback when the bubble is dismissed (auto or by tap). Optional.
   final VoidCallback? onDismiss;
@@ -21,13 +27,31 @@ class CoachSpeech extends StatefulWidget {
   /// Compact variant — smaller avatar + bubble, used inside dialogs/overlays.
   final bool compact;
 
+  /// Interval between message rotations in sticky mode.
+  final Duration rotateInterval;
+
   const CoachSpeech({
     super.key,
     required this.message,
     this.onDismiss,
     this.autoHide = const Duration(seconds: 6),
     this.compact = false,
-  });
+  }) : messages = const [],
+       rotateInterval = const Duration(seconds: 8);
+
+  /// Persistent coach header. Cycles through [messages] every
+  /// [rotateInterval]; tapping the bubble skips to the next message.
+  /// Never auto-hides.
+  const CoachSpeech.sticky({
+    super.key,
+    required this.messages,
+    this.rotateInterval = const Duration(seconds: 8),
+    this.compact = false,
+  }) : message = '',
+       autoHide = null,
+       onDismiss = null;
+
+  bool get _isSticky => messages.isNotEmpty;
 
   @override
   State<CoachSpeech> createState() => _CoachSpeechState();
@@ -39,6 +63,10 @@ class _CoachSpeechState extends State<CoachSpeech>
   late final Animation<double> _scale;
   bool _dismissed = false;
 
+  /// Index into widget.messages for sticky mode.
+  int _stickyIdx = 0;
+  Timer? _rotateTimer;
+
   @override
   void initState() {
     super.initState();
@@ -48,16 +76,28 @@ class _CoachSpeechState extends State<CoachSpeech>
     );
     _scale = CurvedAnimation(parent: _ctrl, curve: Curves.easeOutBack);
     _ctrl.forward();
-    final hide = widget.autoHide;
-    if (hide != null) {
-      Future.delayed(hide, _dismiss);
+    if (widget._isSticky) {
+      _rotateTimer = Timer.periodic(widget.rotateInterval, (_) => _advance());
+    } else {
+      final hide = widget.autoHide;
+      if (hide != null) {
+        Future.delayed(hide, _dismiss);
+      }
     }
   }
 
   @override
   void dispose() {
+    _rotateTimer?.cancel();
     _ctrl.dispose();
     super.dispose();
+  }
+
+  void _advance() {
+    if (!mounted || widget.messages.isEmpty) return;
+    setState(() {
+      _stickyIdx = (_stickyIdx + 1) % widget.messages.length;
+    });
   }
 
   Future<void> _dismiss() async {
@@ -68,6 +108,14 @@ class _CoachSpeechState extends State<CoachSpeech>
     widget.onDismiss?.call();
   }
 
+  void _onBubbleTap() {
+    if (widget._isSticky) {
+      _advance();
+    } else {
+      _dismiss();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
@@ -76,10 +124,13 @@ class _CoachSpeechState extends State<CoachSpeech>
         ? const EdgeInsets.symmetric(horizontal: 12, vertical: 8)
         : const EdgeInsets.symmetric(horizontal: 14, vertical: 10);
 
+    final displayMessage = widget._isSticky
+        ? widget.messages[_stickyIdx]
+        : widget.message;
     return ScaleTransition(
       scale: _scale,
       child: GestureDetector(
-        onTap: _dismiss,
+        onTap: _onBubbleTap,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -121,12 +172,26 @@ class _CoachSpeechState extends State<CoachSpeech>
                       ),
                     ],
                   ),
-                  child: Text(
-                    widget.message,
-                    style: TextStyle(
-                      color: cs.onSurface,
-                      fontSize: widget.compact ? 12.5 : 13.5,
-                      fontWeight: FontWeight.w600,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 220),
+                    transitionBuilder: (child, anim) => FadeTransition(
+                      opacity: anim,
+                      child: SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(0, 0.15),
+                          end: Offset.zero,
+                        ).animate(anim),
+                        child: child,
+                      ),
+                    ),
+                    child: Text(
+                      displayMessage,
+                      key: ValueKey(displayMessage),
+                      style: TextStyle(
+                        color: cs.onSurface,
+                        fontSize: widget.compact ? 12.5 : 13.5,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),

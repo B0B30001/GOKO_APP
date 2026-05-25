@@ -355,5 +355,28 @@
   "coachSolve4": "Это было сложно!",
   "coachSolve5": "Точный расчёт.",
   "coachSolve6": "Так держать!",
-  "openLesson": "Открыть"
+  "openLesson": "Открыть",
+
+  "puzzleGardenTitle": "Сад новичка",
+  "coachLeagueRookieUnlocked": "Добро пожаловать, Новичок! Поднимем рейтинг.",
+  "coachLeagueBronzeUnlocked": "Бронзовая лига! Ты в игре.",
+  "coachLeagueSilverUnlocked": "Серебряная лига! Уже видишь доску.",
+  "coachLeagueGoldUnlocked": "Золотая лига! Настоящий боец.",
+  "coachLeaguePlatinumUnlocked": "Платиновая лига! Немногие доходят сюда.",
+  "coachLeagueDiamondUnlocked": "Бриллиантовая лига! Мастер.",
+  "coachKeepGoing": "Нажми следующий камень — продолжай!",
+  "coachTryAgain": "Не страшно — попробуй другую точку.",
+  "xpToNextLeague": "{count} XP до {league}",
+  "@xpToNextLeague": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "league": { "type": "String" }
+    }
+  },
+  "gateLockedUnlockAt": "Открыто при {xp} XP",
+  "@gateLockedUnlockAt": {
+    "placeholders": {
+      "xp": { "type": "int" }
+    }
+  }
 }
