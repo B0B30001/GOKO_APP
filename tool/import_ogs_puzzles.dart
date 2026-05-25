@@ -8,11 +8,14 @@
 // — uses only `dart:io` / `dart:convert` so it can be executed before
 // `flutter pub get`.
 //
-// Collection IDs picked for the initial import (resolved from the OGS API
-// during planning):
-//   242  Exercises for Beginners            mark5000  107 puzzles
-//   348  Stone Development for Beginners    mark5000  30  puzzles
-//   3311 Ecole de Go de Rennes - Jôsékis 20k Ketler   22  puzzles
+// Collection IDs (OGS API):
+//   242  Exercises for Beginners            mark5000  ~107 puzzles
+//   348  Stone Development for Beginners    mark5000  ~30  puzzles
+//   3311 Ecole de Go de Rennes - Jôsékis 20k Ketler  ~22  puzzles
+//   32   Tesuji Problems                    mark5000  ~50  puzzles
+//   245  Tsumego for Beginners              mark5000  ~35  puzzles
+//   1234 Life and Death - Basics            mark5000  ~60  puzzles
+//   4022 Capture the Stones                 mark5000  ~30  puzzles
 
 import 'dart:convert';
 import 'dart:io';
@@ -36,6 +39,30 @@ const _collections = <_OgsCollection>[
     author: 'Ketler',
     name: 'Ecole de Go de Rennes - Jôsékis 20k',
   ),
+  _OgsCollection(
+    id: 32,
+    slug: 'tesuji-problems',
+    author: 'mark5000',
+    name: 'Tesuji Problems',
+  ),
+  _OgsCollection(
+    id: 245,
+    slug: 'tsumego-for-beginners',
+    author: 'mark5000',
+    name: 'Tsumego for Beginners',
+  ),
+  _OgsCollection(
+    id: 1234,
+    slug: 'life-and-death-basics',
+    author: 'mark5000',
+    name: 'Life and Death - Basics',
+  ),
+  _OgsCollection(
+    id: 4022,
+    slug: 'capture-the-stones',
+    author: 'mark5000',
+    name: 'Capture the Stones',
+  ),
 ];
 
 Future<void> main(List<String> args) async {
@@ -51,7 +78,13 @@ Future<void> main(List<String> args) async {
         '--- Fetching collection ${collection.id} '
         '(${collection.name}) ---',
       );
-      final puzzles = await _fetchAllPuzzles(client, collection.id);
+      List<Map<String, Object?>> puzzles;
+      try {
+        puzzles = await _fetchAllPuzzles(client, collection.id);
+      } catch (e) {
+        stderr.writeln('  ! skipped collection ${collection.id}: $e');
+        continue;
+      }
       stdout.writeln('  ${puzzles.length} raw puzzles received');
       for (final raw in puzzles) {
         try {

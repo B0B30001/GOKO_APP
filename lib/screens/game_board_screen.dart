@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:zaibal/gen/l10n/app_localizations.dart';
+import 'package:zaibal/l10n/bot_translations.dart';
 import 'package:zaibal/models/optimized_game.dart';
 import 'package:zaibal/models/app_settings.dart';
 import 'package:zaibal/widgets/fast_game_board.dart';
@@ -433,9 +434,9 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
                     color: Colors.green.shade600,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Text(
-                    'PRACTICE',
-                    style: TextStyle(
+                  child: Text(
+                    AppLocalizations.of(context).practiceBadge,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 9,
                       fontWeight: FontWeight.w900,
@@ -750,7 +751,7 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
                   setState(() {});
                 }
               : null,
-          tooltip: 'Undo move',
+          tooltip: AppLocalizations.of(context).undoMove,
         ),
         IconButton(
           icon: const Icon(Icons.skip_next),
@@ -772,7 +773,7 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
                   }
                 }
               : null,
-          tooltip: 'Pass turn',
+          tooltip: AppLocalizations.of(context).passTurn,
         ),
         // Hint button — shows the engine's best move, costs 1 ★ per use.
         IconButton(
@@ -830,12 +831,12 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
                   setState(() {});
                 }
               : null,
-          tooltip: 'Redo move',
+          tooltip: AppLocalizations.of(context).redoMove,
         ),
         IconButton(
           icon: const Icon(Icons.refresh),
           onPressed: _resetGame,
-          tooltip: 'New game',
+          tooltip: AppLocalizations.of(context).newGame,
         ),
       ],
     );
@@ -852,20 +853,27 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
   }
 
   Widget _buildScoreRow(String player, Map<String, dynamic> stats) {
+    final l = AppLocalizations.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(player),
         Row(
           children: [
-            Tooltip(message: 'Stones', child: Text('⚫ ${stats['stones']}')),
+            Tooltip(
+              message: l.scoreStonesLabel,
+              child: Text('⚫ ${stats['stones']}'),
+            ),
             const SizedBox(width: 8),
             Tooltip(
-              message: 'Territory',
+              message: l.scoreTerritoryLabel,
               child: Text('◻ ${stats['territory']}'),
             ),
             const SizedBox(width: 8),
-            Tooltip(message: 'Captured', child: Text('✕ ${stats['captured']}')),
+            Tooltip(
+              message: l.scoreCapturedLabel,
+              child: Text('✕ ${stats['captured']}'),
+            ),
             const SizedBox(width: 12),
             Text(
               '= ${stats['total']}',
@@ -939,15 +947,16 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
     } else {
       event = BotEvent.greet;
     }
-    final botLine =
-        widget.botProfile?.taunt(event) ??
-        (humanWon == true
-            ? 'Good game! You earned that one.'
-            : humanWon == false
-            ? (_game.resignedColor == 1
-                  ? 'Thanks for the game!'
-                  : 'Nicely played — better luck next time!')
-            : 'A close one!');
+    final l = AppLocalizations.of(context);
+    final botLine = widget.botProfile != null
+        ? botTaunt(context, widget.botProfile!, event)
+        : (humanWon == true
+              ? l.tauntDefaultWin
+              : humanWon == false
+              ? (_game.resignedColor == 1
+                    ? l.tauntDefaultResign
+                    : l.tauntDefaultLose)
+              : l.tauntDefaultGreet);
 
     return Positioned.fill(
       child: TweenAnimationBuilder<double>(

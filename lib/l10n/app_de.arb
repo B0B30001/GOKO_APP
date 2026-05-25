@@ -228,7 +228,6 @@
     "placeholders": { "points": { "type": "int" } }
   },
   "gameTied": "Partie unentschieden!",
-  "gameReviewComingSoon": "Partieanalyse kommt bald",
   "rating": "Rating",
   "today": "Heute",
   "streak": "Serie",
@@ -251,7 +250,7 @@
   "allBotsAndLessons": "Alle Bots & Lektionen",
   "allBotsAndLessonsDesc": "Anfänger-Bots und die ersten 4 Lektionen sind kostenlos",
   "postGameAnalysis": "Partieanalyse",
-  "postGameAnalysisDesc": "Tiefenanalyse jeder beendeten Partie (bald verfügbar)",
+  "postGameAnalysisDesc": "Spiele jede beendete Partie Zug für Zug erneut ab.",
   "profileFlair": "Profil-Abzeichen",
   "profileFlairDesc": "Premium-Abzeichen und Avatar-Rahmen",
   "restorePurchases": "Käufe wiederherstellen",
@@ -289,6 +288,8 @@
   "loginFailed": "Anmeldung fehlgeschlagen. Bitte Zugangsdaten prüfen.",
   "errorPrefix": "Fehler: ",
   "noAccountSignUp": "Kein Konto? Registriere dich auf OGS",
+  "orContinueWith": "oder weiter mit",
+  "continueWithOgs": "Mit OGS fortfahren (Google usw.)",
 
   "onlinePlay": "Online spielen",
   "onlineStatusConnected": "Online",
@@ -351,6 +352,8 @@
   "coachSolve4": "Das war knifflig!",
   "coachSolve5": "Perfekt gesehen.",
   "coachSolve6": "Weiter so!",
+  "illegalMoveFeedback": "Illegaler Zug (Ko / Selbstmord) — anderen Punkt wählen.",
+  "wrongMoveFeedback": "Falscher Zug — nochmal versuchen!",
   "openLesson": "Öffnen",
 
   "puzzleGardenTitle": "Anfängergarten",
@@ -374,5 +377,162 @@
     "placeholders": {
       "xp": { "type": "int" }
     }
-  }
+  },
+
+  "solvePuzzles": "Aufgaben lösen",
+  "levelN": "Level {n}",
+  "@levelN": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "puzzleBestMove": "Finde den besten Zug",
+  "xpToUnlock": "+{xp} XP",
+  "@xpToUnlock": {
+    "placeholders": {
+      "xp": { "type": "int" }
+    }
+  },
+  "worldStoneForest": "Steinwald",
+  "worldCrystalCave": "Kristallhöhle",
+  "worldCopperPeaks": "Kupfergipfel",
+  "worldDiamondTundra": "Diamanttundra",
+  "worldJadeHighlands": "Jadehochland",
+  "comingSoon": "Demnächst",
+
+  "quit": "Beenden",
+  "drillCompleteTitle": "Übung abgeschlossen",
+  "backToLearn": "Zurück zum Lernen",
+  "quitDrillTitle": "Übung beenden?",
+  "quitDrillBody": "Dein Fortschritt geht verloren, wenn du jetzt beendest.",
+  "resignGameTitle": "Partie aufgeben?",
+  "resignGameBody": "Möchtest du wirklich aufgeben?",
+  "undoRequestTitle": "Rücknahme-Anfrage",
+  "decline": "Ablehnen",
+  "accept": "Annehmen",
+  "gameInfoTitle": "Spielinfo",
+  "leaveGame": "Spiel verlassen",
+  "connectionTestTitle": "Verbindungstest",
+  "runConnectionTest": "Test starten",
+  "findOpponentSubtitle": "Finde sofort einen Gegner für ein schnelles Spiel",
+  "startMatchHint": "Starte ein schnelles Match!",
+  "shuffle": "Mischen",
+  "tutorialsTitle": "Tutorials",
+
+  "botDescPanda": "Süß und albern. Spielt gerne zufällige Züge.",
+  "botDescPup": "Eifriger Welpe, jagt jeden Stein. Leicht zu überlisten.",
+  "botDescBunny": "Hüpft mit neugierigen, unvorhersehbaren Zügen übers Brett.",
+  "botDescKoi": "Sanft und stetig. Liebt Randspiel und kleine Einkreisungen.",
+  "botDescTanuki": "Trickreicher Geist. Kennt einfache Fänge und Formen.",
+  "botDescPebble": "Ruhig und stetig. Baut langsam solide Rahmen auf.",
+  "botDescHeron": "Geduldig. Zerlegt lose Formen am Rand.",
+  "botDescOwl": "Weise und geduldig. Baut stabile Territorien.",
+  "botDescCrane": "Anmutig und ausgewogen. Spielt leichte, flexible Formen.",
+  "botDescMantis": "Scharf und schnell. Berechnet taktische Sequenzen.",
+  "botDescBadger": "Lässt keinen Stein kampflos ziehen.",
+  "botDescKitsune": "Listiger Fuchs. Bestraft Überspiel, belohnt gute Form.",
+  "botDescPhoenix": "Steht aus dem Druck auf mit scharfen Gegenangriffen.",
+  "botDescHawk": "Drucksspieler. Sucht ständig deine schwachen Gruppen.",
+  "botDescTiger": "Wilder Kämpfer. Greift gerne schwache Gruppen an.",
+  "botDescOtter": "Flexibel und verspielt. Wechselt zwischen Angriff und Verteidigung.",
+  "botDescDragon": "Starkes Lesen und sauberes Endspiel. Verlangt Präzision.",
+  "botDescSamurai": "Ehre und Disziplin. Starker Kampf plus klare Form.",
+  "botDescTengu": "Berggeist. Starker Kampf und effiziente Form.",
+  "botDescMonk": "Ruhiges, tiefes positionelles Verständnis. Ganz-Brett-Sicht.",
+  "botDescOracle": "Sieht Varianten ein Dutzend Züge voraus. Schwer zu täuschen.",
+  "botDescSensei": "Weiser Lehrer. Spielt die lehrreichsten Profizüge.",
+  "botDescKataGo": "Plant Dutzende Züge voraus mit neuronaler Vorausschau. Übermenschliche Sicht.",
+
+  "tauntDefaultGreet": "Lass uns spielen!",
+  "tauntDefaultWin": "Gutes Spiel! Den hast du verdient.",
+  "tauntDefaultLose": "Schön gespielt — beim nächsten Mal!",
+  "tauntDefaultResign": "Danke fürs Spiel!",
+  "tauntPandaGreet": "Hallo Freund! Lass uns spielen!",
+  "tauntPandaWin": "Juhu! Ich habe gewonnen!",
+  "tauntPandaLose": "Du bist richtig gut!",
+
+  "undoMove": "Zug zurück",
+  "passTurn": "Passen",
+  "redoMove": "Zug wiederholen",
+  "newGame": "Neues Spiel",
+  "practiceBadge": "ÜBUNG",
+  "notYourTurn": "Du bist nicht dran!",
+  "menuTooltip": "Menü",
+  "profileTooltip": "Profil",
+  "wins": "Siege",
+  "losses": "Niederlagen",
+  "draws": "Unentschieden",
+  "winLossLabel": "Sieg / Niederlage",
+  "playGamesHint": "Spiele Partien, um deine Statistik hier zu sehen.",
+  "filterAll": "Alle",
+  "noPuzzlesForFilter": "Keine Aufgaben für diesen Filter.",
+  "tutorialsLoadError": "Tutorials konnten nicht geladen werden: {error}",
+  "@tutorialsLoadError": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "noTutorialsYet": "Noch keine Tutorials verfügbar.",
+  "practiceModeTitle": "Übungsmodus",
+  "practiceModeSubtitle": "Bester Zug wird nach jedem Zug gezeigt · Ergebnis ist 1 ★",
+  "chooseBoardSize": "Brettgröße wählen",
+  "undoRequestSent": "Rücknahme-Anfrage gesendet",
+  "undoRequestDeclined": "Rücknahme-Anfrage abgelehnt",
+  "undoRequestAccepted": "Rücknahme-Anfrage angenommen",
+  "opponentRequestedUndo": "Dein Gegner möchte Zug #{moveNumber} zurücknehmen.",
+  "@opponentRequestedUndo": {
+    "placeholders": { "moveNumber": { "type": "int" } }
+  },
+  "suggestedRemovedStones": "{count} entfernte Steine vorgeschlagen",
+  "@suggestedRemovedStones": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "gameIdLabel": "Spiel-ID: {id}",
+  "@gameIdLabel": { "placeholders": { "id": { "type": "String" } } },
+  "moveLabel": "Zug: {n}",
+  "@moveLabel": { "placeholders": { "n": { "type": "int" } } },
+  "phaseLabel": "Phase: {phase}",
+  "@phaseLabel": { "placeholders": { "phase": { "type": "String" } } },
+  "boardLabel": "Brett: {size}",
+  "@boardLabel": { "placeholders": { "size": { "type": "String" } } },
+
+  "hintLookAt": "Schau auf Zeile {row}, Spalte {col} — hier ist ein starker Zug.",
+  "@hintLookAt": {
+    "placeholders": {
+      "row": { "type": "int" },
+      "col": { "type": "String" }
+    }
+  },
+  "hintFallbackGeneric": "Finde den Zug, der die gegnerischen Steine bedrängt — achte auf Atari, schwache Gruppen oder Augenformen.",
+
+  "paywallHeroTitle": "GOKO Premium freischalten",
+  "paywallHeroTagline": "Meistere das uralte Spiel",
+  "paywallFeatureUnlimitedPuzzles": "Unbegrenzte tägliche Aufgaben",
+  "paywallFeatureAllBots": "Alle Bots — Pup bis KataGo",
+  "paywallFeatureLessons": "Volle Lektionsbibliothek + Spielanalyse",
+  "paywallFeatureSync": "Cloud-Sync, Abzeichen & Profil-Flair",
+  "pricingTierMonthly": "Monatlich",
+  "pricingTierAnnual": "Jährlich",
+  "pricingTierLifetime": "Lebenslang",
+  "pricingPopular": "AM BELIEBTESTEN",
+  "pricingBestValue": "Bestes Angebot",
+  "pricingSave": "Spare {percent}%",
+  "@pricingSave": { "placeholders": { "percent": { "type": "int" } } },
+  "pricingPerMonth": "{price}/Mon.",
+  "@pricingPerMonth": { "placeholders": { "price": { "type": "String" } } },
+  "pricingPerYear": "{price}/Jahr",
+  "@pricingPerYear": { "placeholders": { "price": { "type": "String" } } },
+  "pricingOnce": "{price} einmalig",
+  "@pricingOnce": { "placeholders": { "price": { "type": "String" } } },
+  "startFreeTrial": "7 Tage kostenlos testen",
+  "restorePurchases": "Käufe wiederherstellen",
+  "cancelAnytime": "Jederzeit kündbar",
+  "renewsAtPrice": "Verlängert sich für {price}",
+  "@renewsAtPrice": { "placeholders": { "price": { "type": "String" } } },
+  "trustedByPlayers": "Vertraut von {count}+ Spielern",
+  "@trustedByPlayers": { "placeholders": { "count": { "type": "String" } } },
+  "freeTrialDuration": "7 Tage gratis",
+  "paywallContinueFree": "Vielleicht später",
+
+  "scoreStonesLabel": "Steine",
+  "scoreTerritoryLabel": "Gebiet",
+  "scoreCapturedLabel": "Gefangen"
 }

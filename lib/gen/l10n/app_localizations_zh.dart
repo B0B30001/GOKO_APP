@@ -129,6 +129,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tryAgain => '再试一次';
 
   @override
+  String get illegalMoveFeedback => '非法落子（打劫/自杀）——请选择其他点。';
+
+  @override
+  String get wrongMoveFeedback => '落子有误——请再试一次！';
+
+  @override
   String get giveUp => '放弃';
 
   @override
@@ -607,9 +613,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get gameTied => '平局！';
 
   @override
-  String get gameReviewComingSoon => '复盘功能即将上线';
-
-  @override
   String get rating => '等级分';
 
   @override
@@ -676,7 +679,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get postGameAnalysis => '赛后分析';
 
   @override
-  String get postGameAnalysisDesc => '深度回顾任何已完成对局（即将推出）';
+  String get postGameAnalysisDesc => '随时复盘任何已完成对局的每一手棋。';
 
   @override
   String get profileFlair => '个人资料装扮';
@@ -772,6 +775,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get noAccountSignUp => '还没有账号？在 OGS 上注册';
+
+  @override
+  String get orContinueWith => '或者通过以下方式继续';
+
+  @override
+  String get continueWithOgs => '通过 OGS 继续（Google 等）';
 
   @override
   String get onlinePlay => '在线对局';
@@ -980,4 +989,372 @@ class AppLocalizationsZh extends AppLocalizations {
   String gateLockedUnlockAt(int xp) {
     return '$xp XP 解锁';
   }
+
+  @override
+  String get solvePuzzles => '解决题目';
+
+  @override
+  String levelN(int n) {
+    return '第 $n 关';
+  }
+
+  @override
+  String get puzzleBestMove => '找出最佳着手';
+
+  @override
+  String xpToUnlock(int xp) {
+    return '+$xp XP';
+  }
+
+  @override
+  String get worldStoneForest => '石之森林';
+
+  @override
+  String get worldCrystalCave => '水晶洞穴';
+
+  @override
+  String get worldCopperPeaks => '铜峰';
+
+  @override
+  String get worldDiamondTundra => '钻石冻原';
+
+  @override
+  String get worldJadeHighlands => '翡翠高地';
+
+  @override
+  String get quit => '退出';
+
+  @override
+  String get drillCompleteTitle => '训练完成';
+
+  @override
+  String get backToLearn => '返回学习';
+
+  @override
+  String get quitDrillTitle => '退出训练？';
+
+  @override
+  String get quitDrillBody => '现在退出将不会保存进度。';
+
+  @override
+  String get resignGameTitle => '认输？';
+
+  @override
+  String get resignGameBody => '确定要认输吗？';
+
+  @override
+  String get undoRequestTitle => '悔棋请求';
+
+  @override
+  String get decline => '拒绝';
+
+  @override
+  String get accept => '接受';
+
+  @override
+  String get gameInfoTitle => '对局信息';
+
+  @override
+  String get leaveGame => '离开对局';
+
+  @override
+  String get connectionTestTitle => '连接测试';
+
+  @override
+  String get runConnectionTest => '运行测试';
+
+  @override
+  String get findOpponentSubtitle => '立即匹配对手开始快速对局';
+
+  @override
+  String get startMatchHint => '开始快速对局！';
+
+  @override
+  String get shuffle => '随机';
+
+  @override
+  String get tutorialsTitle => '教程';
+
+  @override
+  String get botDescPanda => '甜美又有些傻气。喜欢下随意的着法。';
+
+  @override
+  String get botDescPup => '热情的小狗追着每颗棋子。容易智胜。';
+
+  @override
+  String get botDescBunny => '在棋盘上跳跃，下出好奇而难以预料的着法。';
+
+  @override
+  String get botDescKoi => '柔和而稳健。喜欢边角的小型围地。';
+
+  @override
+  String get botDescTanuki => '狡黠的小精灵。懂基本的吃子和形状。';
+
+  @override
+  String get botDescPebble => '安静而稳定。慢慢建立坚实的格局。';
+
+  @override
+  String get botDescHeron => '耐心。拆解边线松散的形状。';
+
+  @override
+  String get botDescOwl => '睿智而耐心。建立坚实的地盘格局。';
+
+  @override
+  String get botDescCrane => '优雅而均衡。下轻盈灵活的形状。';
+
+  @override
+  String get botDescMantis => '锐利而敏捷。计算战术次序。';
+
+  @override
+  String get botDescBadger => '绝不让一颗棋子不战而走。';
+
+  @override
+  String get botDescKitsune => '狡猾的狐狸。惩罚过强，奖励好形。';
+
+  @override
+  String get botDescPhoenix => '在压力中以犀利反击崛起。';
+
+  @override
+  String get botDescHawk => '压迫型棋手。不断试探你的弱棋。';
+
+  @override
+  String get botDescTiger => '凶猛的斗士。喜欢攻击弱棋。';
+
+  @override
+  String get botDescOtter => '灵活而俏皮。在攻守间灵活切换。';
+
+  @override
+  String get botDescDragon => '强大的读棋与干净的官子。要求精准。';
+
+  @override
+  String get botDescSamurai => '荣誉与纪律。强力战斗加干净形状。';
+
+  @override
+  String get botDescTengu => '山岳精灵。强力战斗与高效形状。';
+
+  @override
+  String get botDescMonk => '沉静、深邃的形势判断。全局视野。';
+
+  @override
+  String get botDescOracle => '看到十几手后的变化。难以欺骗。';
+
+  @override
+  String get botDescSensei => '睿智的导师。下最具教学意义的职业着法。';
+
+  @override
+  String get botDescKataGo => '用神经网络预读数十手。超人的战略视野。';
+
+  @override
+  String get tauntDefaultGreet => '我们开始吧！';
+
+  @override
+  String get tauntDefaultWin => '好棋！这局你赢得漂亮。';
+
+  @override
+  String get tauntDefaultLose => '下得漂亮——下次好运！';
+
+  @override
+  String get tauntDefaultResign => '感谢这局棋！';
+
+  @override
+  String get tauntPandaGreet => '嗨朋友！来下棋吧！';
+
+  @override
+  String get tauntPandaWin => '耶！我赢啦！';
+
+  @override
+  String get tauntPandaLose => '你真厉害！';
+
+  @override
+  String get undoMove => '悔棋';
+
+  @override
+  String get passTurn => '弃权';
+
+  @override
+  String get redoMove => '重做';
+
+  @override
+  String get newGame => '新游戏';
+
+  @override
+  String get practiceBadge => '练习';
+
+  @override
+  String get notYourTurn => '现在不是你的回合！';
+
+  @override
+  String get menuTooltip => '菜单';
+
+  @override
+  String get profileTooltip => '个人资料';
+
+  @override
+  String get wins => '胜';
+
+  @override
+  String get losses => '负';
+
+  @override
+  String get draws => '和';
+
+  @override
+  String get winLossLabel => '胜 / 负';
+
+  @override
+  String get playGamesHint => '对局后会在此显示战绩。';
+
+  @override
+  String get filterAll => '全部';
+
+  @override
+  String get noPuzzlesForFilter => '此筛选下无题目。';
+
+  @override
+  String tutorialsLoadError(String error) {
+    return '无法加载教程：$error';
+  }
+
+  @override
+  String get noTutorialsYet => '暂无教程。';
+
+  @override
+  String get practiceModeTitle => '练习模式';
+
+  @override
+  String get practiceModeSubtitle => '每手棋后显示最佳着法 · 结果为 1 ★';
+
+  @override
+  String get chooseBoardSize => '选择棋盘大小';
+
+  @override
+  String get undoRequestSent => '已发送悔棋请求';
+
+  @override
+  String get undoRequestDeclined => '悔棋请求已拒绝';
+
+  @override
+  String get undoRequestAccepted => '悔棋请求已接受';
+
+  @override
+  String opponentRequestedUndo(int moveNumber) {
+    return '对手请求悔棋至第 #$moveNumber 手。';
+  }
+
+  @override
+  String suggestedRemovedStones(int count) {
+    return '建议移除 $count 颗棋子';
+  }
+
+  @override
+  String gameIdLabel(String id) {
+    return '对局 ID：$id';
+  }
+
+  @override
+  String moveLabel(int n) {
+    return '手数：$n';
+  }
+
+  @override
+  String phaseLabel(String phase) {
+    return '阶段：$phase';
+  }
+
+  @override
+  String boardLabel(String size) {
+    return '棋盘：$size';
+  }
+
+  @override
+  String hintLookAt(int row, String col) {
+    return '看第 $row 行，第 $col 列 — 这里有一手强着。';
+  }
+
+  @override
+  String get hintFallbackGeneric => '找出能压迫对手棋子的着法 — 注意征子、弱棋或眼形。';
+
+  @override
+  String get paywallHeroTitle => '解锁 GOKO Premium';
+
+  @override
+  String get paywallHeroTagline => '掌握这门古老的棋艺';
+
+  @override
+  String get paywallFeatureUnlimitedPuzzles => '无限每日题目';
+
+  @override
+  String get paywallFeatureAllBots => '全部机器人 — 从 Pup 到 KataGo';
+
+  @override
+  String get paywallFeatureLessons => '完整课程库 + 复盘分析';
+
+  @override
+  String get paywallFeatureSync => '云同步、徽章与个人风格';
+
+  @override
+  String get pricingTierMonthly => '按月';
+
+  @override
+  String get pricingTierAnnual => '按年';
+
+  @override
+  String get pricingTierLifetime => '终身';
+
+  @override
+  String get pricingPopular => '最受欢迎';
+
+  @override
+  String get pricingBestValue => '最划算';
+
+  @override
+  String pricingSave(int percent) {
+    return '节省 $percent%';
+  }
+
+  @override
+  String pricingPerMonth(String price) {
+    return '$price/月';
+  }
+
+  @override
+  String pricingPerYear(String price) {
+    return '$price/年';
+  }
+
+  @override
+  String pricingOnce(String price) {
+    return '$price 一次性';
+  }
+
+  @override
+  String get startFreeTrial => '开始 7 天免费试用';
+
+  @override
+  String get cancelAnytime => '随时取消';
+
+  @override
+  String renewsAtPrice(String price) {
+    return '续费 $price';
+  }
+
+  @override
+  String trustedByPlayers(String count) {
+    return '$count+ 玩家的信赖之选';
+  }
+
+  @override
+  String get freeTrialDuration => '7 天免费';
+
+  @override
+  String get paywallContinueFree => '稍后再说';
+
+  @override
+  String get scoreStonesLabel => '棋子';
+
+  @override
+  String get scoreTerritoryLabel => '地';
+
+  @override
+  String get scoreCapturedLabel => '提子';
 }

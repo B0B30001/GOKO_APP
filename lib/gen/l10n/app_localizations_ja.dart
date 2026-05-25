@@ -129,6 +129,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get tryAgain => 'もう一度';
 
   @override
+  String get illegalMoveFeedback => '違法な着手（コウ/自殺）— 別の点を選んでください。';
+
+  @override
+  String get wrongMoveFeedback => '正しい着手ではありません — もう一度！';
+
+  @override
   String get giveUp => 'あきらめる';
 
   @override
@@ -316,7 +322,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get whiteToPlay => '白番';
 
   @override
-  String get comingSoon => '近日';
+  String get comingSoon => '近日公開';
 
   @override
   String get general => '一般';
@@ -607,9 +613,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get gameTied => '引き分け！';
 
   @override
-  String get gameReviewComingSoon => '棋譜解析は近日公開';
-
-  @override
   String get rating => 'レート';
 
   @override
@@ -676,7 +679,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get postGameAnalysis => '対局解析';
 
   @override
-  String get postGameAnalysisDesc => '終了した対局の詳細レビュー（近日公開）';
+  String get postGameAnalysisDesc => '完了した対局を一手ずつ再生できます。';
 
   @override
   String get profileFlair => 'プロフィール装飾';
@@ -773,6 +776,12 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get noAccountSignUp => 'アカウントがありませんか？ OGS でサインアップ';
+
+  @override
+  String get orContinueWith => 'または次の方法で続ける';
+
+  @override
+  String get continueWithOgs => 'OGS で続ける（Google など）';
 
   @override
   String get onlinePlay => 'オンライン対局';
@@ -981,4 +990,372 @@ class AppLocalizationsJa extends AppLocalizations {
   String gateLockedUnlockAt(int xp) {
     return '$xp XPでアンロック';
   }
+
+  @override
+  String get solvePuzzles => '詰め碁を解く';
+
+  @override
+  String levelN(int n) {
+    return 'レベル $n';
+  }
+
+  @override
+  String get puzzleBestMove => '最善手を見つけよう';
+
+  @override
+  String xpToUnlock(int xp) {
+    return '+$xp XP';
+  }
+
+  @override
+  String get worldStoneForest => '石の森';
+
+  @override
+  String get worldCrystalCave => 'クリスタルの洞窟';
+
+  @override
+  String get worldCopperPeaks => '銅の山';
+
+  @override
+  String get worldDiamondTundra => 'ダイヤモンドの凍原';
+
+  @override
+  String get worldJadeHighlands => '翡翠の高地';
+
+  @override
+  String get quit => '終了';
+
+  @override
+  String get drillCompleteTitle => 'ドリル完了';
+
+  @override
+  String get backToLearn => '学習に戻る';
+
+  @override
+  String get quitDrillTitle => 'ドリルを終了しますか？';
+
+  @override
+  String get quitDrillBody => '今終了すると進捗は保存されません。';
+
+  @override
+  String get resignGameTitle => '投了しますか？';
+
+  @override
+  String get resignGameBody => '本当に投了しますか？';
+
+  @override
+  String get undoRequestTitle => '待ったのリクエスト';
+
+  @override
+  String get decline => '拒否';
+
+  @override
+  String get accept => '承認';
+
+  @override
+  String get gameInfoTitle => '対局情報';
+
+  @override
+  String get leaveGame => '対局を離れる';
+
+  @override
+  String get connectionTestTitle => '接続テスト';
+
+  @override
+  String get runConnectionTest => 'テストを実行';
+
+  @override
+  String get findOpponentSubtitle => 'クイック対局の相手をすぐに見つけよう';
+
+  @override
+  String get startMatchHint => 'クイックマッチで始めよう！';
+
+  @override
+  String get shuffle => 'シャッフル';
+
+  @override
+  String get tutorialsTitle => 'チュートリアル';
+
+  @override
+  String get botDescPanda => '甘くて少しおっちょこちょい。ランダムな手を好みます。';
+
+  @override
+  String get botDescPup => '石を追いかける元気な子犬。簡単に出し抜けます。';
+
+  @override
+  String get botDescBunny => '盤上を跳ね回り、好奇心旺盛で予測不能な手を打ちます。';
+
+  @override
+  String get botDescKoi => '穏やかで安定。辺の打ち回しと小さな囲いを好みます。';
+
+  @override
+  String get botDescTanuki => 'ずる賢い精霊。基本的な石取りと形を知っています。';
+
+  @override
+  String get botDescPebble => '静かで安定。じっくりと厚い形を築きます。';
+
+  @override
+  String get botDescHeron => '辛抱強い。辺の薄い形を咎めます。';
+
+  @override
+  String get botDescOwl => '賢く辛抱強い。固い地の枠組みを築きます。';
+
+  @override
+  String get botDescCrane => '優雅でバランス型。軽くて柔軟な形を打ちます。';
+
+  @override
+  String get botDescMantis => '鋭くて速い。手筋の手順を読み切ります。';
+
+  @override
+  String get botDescBadger => 'どの石も戦わずに譲りません。';
+
+  @override
+  String get botDescKitsune => 'ずる賢い狐。打ち過ぎを咎め、良形を評価します。';
+
+  @override
+  String get botDescPhoenix => 'プレッシャーから鋭い反撃で蘇ります。';
+
+  @override
+  String get botDescHawk => '圧力型。常にあなたの薄い石を狙います。';
+
+  @override
+  String get botDescTiger => '獰猛な戦士。薄い石を攻めるのが好きです。';
+
+  @override
+  String get botDescOtter => '柔軟で遊び心がある。攻めと守りを行き来します。';
+
+  @override
+  String get botDescDragon => '強い読みと綺麗なヨセ。精度を要求します。';
+
+  @override
+  String get botDescSamurai => '名誉と規律。強い戦闘と綺麗な形を兼備します。';
+
+  @override
+  String get botDescTengu => '山の精霊。強い戦闘と効率的な形。';
+
+  @override
+  String get botDescMonk => '落ち着いた深い形勢判断。全局視野。';
+
+  @override
+  String get botDescOracle => '十数手先の変化が見える。だましにくい相手です。';
+
+  @override
+  String get botDescSensei => '賢い師範。最も教育的なプロの手を打ちます。';
+
+  @override
+  String get botDescKataGo => 'ニューラルネットで数十手先を読む。超人的な戦略眼。';
+
+  @override
+  String get tauntDefaultGreet => '対局しましょう！';
+
+  @override
+  String get tauntDefaultWin => '良い対局でした！見事な一勝です。';
+
+  @override
+  String get tauntDefaultLose => '見事な打ち回しでした — また次回！';
+
+  @override
+  String get tauntDefaultResign => '対局ありがとうございました！';
+
+  @override
+  String get tauntPandaGreet => 'やあ友達！対局しよう！';
+
+  @override
+  String get tauntPandaWin => 'やった！勝ったよ！';
+
+  @override
+  String get tauntPandaLose => '君は本当に強いね！';
+
+  @override
+  String get undoMove => '手を戻す';
+
+  @override
+  String get passTurn => 'パス';
+
+  @override
+  String get redoMove => 'やり直し';
+
+  @override
+  String get newGame => '新規対局';
+
+  @override
+  String get practiceBadge => '練習';
+
+  @override
+  String get notYourTurn => 'あなたの手番ではありません！';
+
+  @override
+  String get menuTooltip => 'メニュー';
+
+  @override
+  String get profileTooltip => 'プロフィール';
+
+  @override
+  String get wins => '勝';
+
+  @override
+  String get losses => '負';
+
+  @override
+  String get draws => '引分';
+
+  @override
+  String get winLossLabel => '勝 / 負';
+
+  @override
+  String get playGamesHint => '対局するとここに戦績が表示されます。';
+
+  @override
+  String get filterAll => 'すべて';
+
+  @override
+  String get noPuzzlesForFilter => 'このフィルターの問題はありません。';
+
+  @override
+  String tutorialsLoadError(String error) {
+    return 'チュートリアルを読み込めませんでした：$error';
+  }
+
+  @override
+  String get noTutorialsYet => 'チュートリアルはまだありません。';
+
+  @override
+  String get practiceModeTitle => '練習モード';
+
+  @override
+  String get practiceModeSubtitle => '一手ごとに最善手が表示されます · 結果は 1 ★';
+
+  @override
+  String get chooseBoardSize => '盤の大きさを選択';
+
+  @override
+  String get undoRequestSent => '待ったを要請しました';
+
+  @override
+  String get undoRequestDeclined => '待ったの要請は拒否されました';
+
+  @override
+  String get undoRequestAccepted => '待ったの要請が承認されました';
+
+  @override
+  String opponentRequestedUndo(int moveNumber) {
+    return '相手が #$moveNumber 手目への待ったを要請しました。';
+  }
+
+  @override
+  String suggestedRemovedStones(int count) {
+    return '$count 個の死石を提示しました';
+  }
+
+  @override
+  String gameIdLabel(String id) {
+    return '対局 ID：$id';
+  }
+
+  @override
+  String moveLabel(int n) {
+    return '手数：$n';
+  }
+
+  @override
+  String phaseLabel(String phase) {
+    return '局面：$phase';
+  }
+
+  @override
+  String boardLabel(String size) {
+    return '盤：$size';
+  }
+
+  @override
+  String hintLookAt(int row, String col) {
+    return '$row 行、$col 列に注目 — ここに強い一手があります。';
+  }
+
+  @override
+  String get hintFallbackGeneric => '相手の石を圧迫する手を探そう — アタリ、薄い石、眼形を確認。';
+
+  @override
+  String get paywallHeroTitle => 'GOKO Premium を解錠';
+
+  @override
+  String get paywallHeroTagline => '古代のゲームを極めよう';
+
+  @override
+  String get paywallFeatureUnlimitedPuzzles => '無制限の毎日詰碁';
+
+  @override
+  String get paywallFeatureAllBots => '全ボット — Pup から KataGo まで';
+
+  @override
+  String get paywallFeatureLessons => '完全レッスン + 対局分析';
+
+  @override
+  String get paywallFeatureSync => 'クラウド同期・バッジ・プロフィール装飾';
+
+  @override
+  String get pricingTierMonthly => '月額';
+
+  @override
+  String get pricingTierAnnual => '年額';
+
+  @override
+  String get pricingTierLifetime => '永久';
+
+  @override
+  String get pricingPopular => '一番人気';
+
+  @override
+  String get pricingBestValue => 'おすすめ';
+
+  @override
+  String pricingSave(int percent) {
+    return '$percent% お得';
+  }
+
+  @override
+  String pricingPerMonth(String price) {
+    return '$price/月';
+  }
+
+  @override
+  String pricingPerYear(String price) {
+    return '$price/年';
+  }
+
+  @override
+  String pricingOnce(String price) {
+    return '$price 一回';
+  }
+
+  @override
+  String get startFreeTrial => '7 日間無料でお試し';
+
+  @override
+  String get cancelAnytime => 'いつでも解約可能';
+
+  @override
+  String renewsAtPrice(String price) {
+    return '$price で更新';
+  }
+
+  @override
+  String trustedByPlayers(String count) {
+    return '$count+ プレイヤーが信頼';
+  }
+
+  @override
+  String get freeTrialDuration => '7日間無料';
+
+  @override
+  String get paywallContinueFree => 'あとで';
+
+  @override
+  String get scoreStonesLabel => '石';
+
+  @override
+  String get scoreTerritoryLabel => '地';
+
+  @override
+  String get scoreCapturedLabel => 'アゲハマ';
 }

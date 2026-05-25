@@ -346,6 +346,18 @@ abstract class AppLocalizations {
   /// **'Try again'**
   String get tryAgain;
 
+  /// Snackbar shown when player attempts an illegal move in a puzzle
+  ///
+  /// In en, this message translates to:
+  /// **'Illegal move (Ko / suicide) — try another point.'**
+  String get illegalMoveFeedback;
+
+  /// Snackbar shown when player makes a wrong move in a puzzle
+  ///
+  /// In en, this message translates to:
+  /// **'Not the right move — try again!'**
+  String get wrongMoveFeedback;
+
   /// Give up button
   ///
   /// In en, this message translates to:
@@ -709,7 +721,7 @@ abstract class AppLocalizations {
   /// Coming soon chip on Bots screen
   ///
   /// In en, this message translates to:
-  /// **'Soon'**
+  /// **'Coming Soon'**
   String get comingSoon;
 
   /// Settings section header
@@ -1252,12 +1264,6 @@ abstract class AppLocalizations {
   /// **'Game is tied!'**
   String get gameTied;
 
-  /// Placeholder when analysis is not yet available
-  ///
-  /// In en, this message translates to:
-  /// **'Game Review coming soon'**
-  String get gameReviewComingSoon;
-
   /// Stat column label
   ///
   /// In en, this message translates to:
@@ -1393,7 +1399,7 @@ abstract class AppLocalizations {
   /// Paywall feature row subtitle
   ///
   /// In en, this message translates to:
-  /// **'Deep review of any finished game (coming soon)'**
+  /// **'Replay every move and rewind any finished game.'**
   String get postGameAnalysisDesc;
 
   /// Paywall feature row title
@@ -1411,7 +1417,7 @@ abstract class AppLocalizations {
   /// Paywall restore button
   ///
   /// In en, this message translates to:
-  /// **'Restore purchases'**
+  /// **'Restore Purchases'**
   String get restorePurchases;
 
   /// Paywall banner: puzzle quota hit
@@ -1525,7 +1531,7 @@ abstract class AppLocalizations {
   /// No description provided for @ogsLogin.
   ///
   /// In en, this message translates to:
-  /// **'OGS Login'**
+  /// **'Sign in to OGS'**
   String get ogsLogin;
 
   /// No description provided for @onlineGoServer.
@@ -1581,6 +1587,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Don\'t have an account? Sign up on OGS'**
   String get noAccountSignUp;
+
+  /// No description provided for @orContinueWith.
+  ///
+  /// In en, this message translates to:
+  /// **'or continue with'**
+  String get orContinueWith;
+
+  /// No description provided for @continueWithOgs.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with OGS (Google, etc.)'**
+  String get continueWithOgs;
 
   /// No description provided for @onlinePlay.
   ///
@@ -1989,6 +2007,678 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unlock at {xp} XP'**
   String gateLockedUnlockAt(int xp);
+
+  /// No description provided for @solvePuzzles.
+  ///
+  /// In en, this message translates to:
+  /// **'Solve Puzzles'**
+  String get solvePuzzles;
+
+  /// No description provided for @levelN.
+  ///
+  /// In en, this message translates to:
+  /// **'Level {n}'**
+  String levelN(int n);
+
+  /// No description provided for @puzzleBestMove.
+  ///
+  /// In en, this message translates to:
+  /// **'Find the best move'**
+  String get puzzleBestMove;
+
+  /// No description provided for @xpToUnlock.
+  ///
+  /// In en, this message translates to:
+  /// **'+{xp} XP'**
+  String xpToUnlock(int xp);
+
+  /// No description provided for @worldStoneForest.
+  ///
+  /// In en, this message translates to:
+  /// **'Stone Forest'**
+  String get worldStoneForest;
+
+  /// No description provided for @worldCrystalCave.
+  ///
+  /// In en, this message translates to:
+  /// **'Crystal Cave'**
+  String get worldCrystalCave;
+
+  /// No description provided for @worldCopperPeaks.
+  ///
+  /// In en, this message translates to:
+  /// **'Copper Peaks'**
+  String get worldCopperPeaks;
+
+  /// No description provided for @worldDiamondTundra.
+  ///
+  /// In en, this message translates to:
+  /// **'Diamond Tundra'**
+  String get worldDiamondTundra;
+
+  /// No description provided for @worldJadeHighlands.
+  ///
+  /// In en, this message translates to:
+  /// **'Jade Highlands'**
+  String get worldJadeHighlands;
+
+  /// No description provided for @quit.
+  ///
+  /// In en, this message translates to:
+  /// **'Quit'**
+  String get quit;
+
+  /// No description provided for @drillCompleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Drill Complete'**
+  String get drillCompleteTitle;
+
+  /// No description provided for @backToLearn.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Learn'**
+  String get backToLearn;
+
+  /// No description provided for @quitDrillTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quit Drill?'**
+  String get quitDrillTitle;
+
+  /// No description provided for @quitDrillBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your progress will not be saved if you quit now.'**
+  String get quitDrillBody;
+
+  /// No description provided for @resignGameTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Resign Game?'**
+  String get resignGameTitle;
+
+  /// No description provided for @resignGameBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to resign?'**
+  String get resignGameBody;
+
+  /// No description provided for @undoRequestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo Request'**
+  String get undoRequestTitle;
+
+  /// No description provided for @decline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get decline;
+
+  /// No description provided for @accept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get accept;
+
+  /// No description provided for @gameInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Game Info'**
+  String get gameInfoTitle;
+
+  /// No description provided for @leaveGame.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave Game'**
+  String get leaveGame;
+
+  /// No description provided for @connectionTestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection Test'**
+  String get connectionTestTitle;
+
+  /// No description provided for @runConnectionTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Run Connection Test'**
+  String get runConnectionTest;
+
+  /// No description provided for @findOpponentSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find an opponent instantly for a quick game'**
+  String get findOpponentSubtitle;
+
+  /// No description provided for @startMatchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a quick match to begin!'**
+  String get startMatchHint;
+
+  /// No description provided for @shuffle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shuffle'**
+  String get shuffle;
+
+  /// No description provided for @tutorialsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tutorials'**
+  String get tutorialsTitle;
+
+  /// No description provided for @botDescPanda.
+  ///
+  /// In en, this message translates to:
+  /// **'Sweet and silly. Loves playing random moves.'**
+  String get botDescPanda;
+
+  /// No description provided for @botDescPup.
+  ///
+  /// In en, this message translates to:
+  /// **'Eager puppy chasing every stone. Easy to outsmart.'**
+  String get botDescPup;
+
+  /// No description provided for @botDescBunny.
+  ///
+  /// In en, this message translates to:
+  /// **'Hops around the board with curious, unpredictable moves.'**
+  String get botDescBunny;
+
+  /// No description provided for @botDescKoi.
+  ///
+  /// In en, this message translates to:
+  /// **'Soft and steady. Loves edge play and small enclosures.'**
+  String get botDescKoi;
+
+  /// No description provided for @botDescTanuki.
+  ///
+  /// In en, this message translates to:
+  /// **'Tricky little spirit. Knows basic captures and shapes.'**
+  String get botDescTanuki;
+
+  /// No description provided for @botDescPebble.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet and steady. Builds slowly toward solid frameworks.'**
+  String get botDescPebble;
+
+  /// No description provided for @botDescHeron.
+  ///
+  /// In en, this message translates to:
+  /// **'Patient. Picks apart loose shapes near the side.'**
+  String get botDescHeron;
+
+  /// No description provided for @botDescOwl.
+  ///
+  /// In en, this message translates to:
+  /// **'Wise and patient. Builds solid frameworks of territory.'**
+  String get botDescOwl;
+
+  /// No description provided for @botDescCrane.
+  ///
+  /// In en, this message translates to:
+  /// **'Graceful and balanced. Plays light and flexible shapes.'**
+  String get botDescCrane;
+
+  /// No description provided for @botDescMantis.
+  ///
+  /// In en, this message translates to:
+  /// **'Sharp and quick. Calculates tactical sequences.'**
+  String get botDescMantis;
+
+  /// No description provided for @botDescBadger.
+  ///
+  /// In en, this message translates to:
+  /// **'Never lets a stone go without a fight.'**
+  String get botDescBadger;
+
+  /// No description provided for @botDescKitsune.
+  ///
+  /// In en, this message translates to:
+  /// **'Cunning fox. Punishes overplays and rewards good shape.'**
+  String get botDescKitsune;
+
+  /// No description provided for @botDescPhoenix.
+  ///
+  /// In en, this message translates to:
+  /// **'Rises from pressure with sharp counter-attacks.'**
+  String get botDescPhoenix;
+
+  /// No description provided for @botDescHawk.
+  ///
+  /// In en, this message translates to:
+  /// **'Pressure player. Always probing your weak groups.'**
+  String get botDescHawk;
+
+  /// No description provided for @botDescTiger.
+  ///
+  /// In en, this message translates to:
+  /// **'Fierce fighter. Loves to attack weak groups.'**
+  String get botDescTiger;
+
+  /// No description provided for @botDescOtter.
+  ///
+  /// In en, this message translates to:
+  /// **'Flexible and playful. Pivots between attack and defence.'**
+  String get botDescOtter;
+
+  /// No description provided for @botDescDragon.
+  ///
+  /// In en, this message translates to:
+  /// **'Powerful reading and clean endgame. Demands precision.'**
+  String get botDescDragon;
+
+  /// No description provided for @botDescSamurai.
+  ///
+  /// In en, this message translates to:
+  /// **'Honor and discipline. Strong fighting plus clean shape.'**
+  String get botDescSamurai;
+
+  /// No description provided for @botDescTengu.
+  ///
+  /// In en, this message translates to:
+  /// **'Mountain spirit. Strong fighting and efficient shape.'**
+  String get botDescTengu;
+
+  /// No description provided for @botDescMonk.
+  ///
+  /// In en, this message translates to:
+  /// **'Calm, deep positional understanding. Whole-board sight.'**
+  String get botDescMonk;
+
+  /// No description provided for @botDescOracle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sees variations a dozen moves ahead. Hard to fool.'**
+  String get botDescOracle;
+
+  /// No description provided for @botDescSensei.
+  ///
+  /// In en, this message translates to:
+  /// **'Wise teacher. Plays the most instructive professional moves.'**
+  String get botDescSensei;
+
+  /// No description provided for @botDescKataGo.
+  ///
+  /// In en, this message translates to:
+  /// **'Plans dozens of moves ahead with neural-network lookahead. Superhuman strategic vision.'**
+  String get botDescKataGo;
+
+  /// No description provided for @tauntDefaultGreet.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s play!'**
+  String get tauntDefaultGreet;
+
+  /// No description provided for @tauntDefaultWin.
+  ///
+  /// In en, this message translates to:
+  /// **'Good game! You earned that one.'**
+  String get tauntDefaultWin;
+
+  /// No description provided for @tauntDefaultLose.
+  ///
+  /// In en, this message translates to:
+  /// **'Nicely played — better luck next time!'**
+  String get tauntDefaultLose;
+
+  /// No description provided for @tauntDefaultResign.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks for the game!'**
+  String get tauntDefaultResign;
+
+  /// No description provided for @tauntPandaGreet.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi friend! Let\'s play!'**
+  String get tauntPandaGreet;
+
+  /// No description provided for @tauntPandaWin.
+  ///
+  /// In en, this message translates to:
+  /// **'Yay! I won!'**
+  String get tauntPandaWin;
+
+  /// No description provided for @tauntPandaLose.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re really good!'**
+  String get tauntPandaLose;
+
+  /// No description provided for @undoMove.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo move'**
+  String get undoMove;
+
+  /// No description provided for @passTurn.
+  ///
+  /// In en, this message translates to:
+  /// **'Pass turn'**
+  String get passTurn;
+
+  /// No description provided for @redoMove.
+  ///
+  /// In en, this message translates to:
+  /// **'Redo move'**
+  String get redoMove;
+
+  /// No description provided for @newGame.
+  ///
+  /// In en, this message translates to:
+  /// **'New game'**
+  String get newGame;
+
+  /// No description provided for @practiceBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'PRACTICE'**
+  String get practiceBadge;
+
+  /// No description provided for @notYourTurn.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s not your turn!'**
+  String get notYourTurn;
+
+  /// No description provided for @menuTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Menu'**
+  String get menuTooltip;
+
+  /// No description provided for @profileTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profileTooltip;
+
+  /// No description provided for @wins.
+  ///
+  /// In en, this message translates to:
+  /// **'Wins'**
+  String get wins;
+
+  /// No description provided for @losses.
+  ///
+  /// In en, this message translates to:
+  /// **'Losses'**
+  String get losses;
+
+  /// No description provided for @draws.
+  ///
+  /// In en, this message translates to:
+  /// **'Draws'**
+  String get draws;
+
+  /// No description provided for @winLossLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Win / Loss'**
+  String get winLossLabel;
+
+  /// No description provided for @playGamesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Play games to see your split here.'**
+  String get playGamesHint;
+
+  /// No description provided for @filterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get filterAll;
+
+  /// No description provided for @noPuzzlesForFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'No puzzles for this filter.'**
+  String get noPuzzlesForFilter;
+
+  /// No description provided for @tutorialsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load tutorials: {error}'**
+  String tutorialsLoadError(String error);
+
+  /// No description provided for @noTutorialsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No tutorials available yet.'**
+  String get noTutorialsYet;
+
+  /// No description provided for @practiceModeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice Mode'**
+  String get practiceModeTitle;
+
+  /// No description provided for @practiceModeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Best move shown after each turn · result is 1 ★'**
+  String get practiceModeSubtitle;
+
+  /// No description provided for @chooseBoardSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose board size'**
+  String get chooseBoardSize;
+
+  /// No description provided for @undoRequestSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo request sent'**
+  String get undoRequestSent;
+
+  /// No description provided for @undoRequestDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo request declined'**
+  String get undoRequestDeclined;
+
+  /// No description provided for @undoRequestAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo request accepted'**
+  String get undoRequestAccepted;
+
+  /// No description provided for @opponentRequestedUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Your opponent requested an undo to move #{moveNumber}.'**
+  String opponentRequestedUndo(int moveNumber);
+
+  /// No description provided for @suggestedRemovedStones.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested {count} removed stones'**
+  String suggestedRemovedStones(int count);
+
+  /// No description provided for @gameIdLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Game ID: {id}'**
+  String gameIdLabel(String id);
+
+  /// No description provided for @moveLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Move: {n}'**
+  String moveLabel(int n);
+
+  /// No description provided for @phaseLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Phase: {phase}'**
+  String phaseLabel(String phase);
+
+  /// No description provided for @boardLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Board: {size}'**
+  String boardLabel(String size);
+
+  /// No description provided for @hintLookAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Look at row {row}, column {col} — there\'s a strong move here.'**
+  String hintLookAt(int row, String col);
+
+  /// No description provided for @hintFallbackGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Find the move that pressures the opposing stones — look for atari, weak groups, or eye shapes.'**
+  String get hintFallbackGeneric;
+
+  /// No description provided for @paywallHeroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock GOKO Premium'**
+  String get paywallHeroTitle;
+
+  /// No description provided for @paywallHeroTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'Master the ancient game'**
+  String get paywallHeroTagline;
+
+  /// No description provided for @paywallFeatureUnlimitedPuzzles.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited daily puzzles'**
+  String get paywallFeatureUnlimitedPuzzles;
+
+  /// No description provided for @paywallFeatureAllBots.
+  ///
+  /// In en, this message translates to:
+  /// **'All bots — Pup to KataGo'**
+  String get paywallFeatureAllBots;
+
+  /// No description provided for @paywallFeatureLessons.
+  ///
+  /// In en, this message translates to:
+  /// **'Full lesson library + post-game analysis'**
+  String get paywallFeatureLessons;
+
+  /// No description provided for @paywallFeatureSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud sync, badges & profile flair'**
+  String get paywallFeatureSync;
+
+  /// No description provided for @pricingTierMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get pricingTierMonthly;
+
+  /// No description provided for @pricingTierAnnual.
+  ///
+  /// In en, this message translates to:
+  /// **'Annual'**
+  String get pricingTierAnnual;
+
+  /// No description provided for @pricingTierLifetime.
+  ///
+  /// In en, this message translates to:
+  /// **'Lifetime'**
+  String get pricingTierLifetime;
+
+  /// No description provided for @pricingPopular.
+  ///
+  /// In en, this message translates to:
+  /// **'MOST POPULAR'**
+  String get pricingPopular;
+
+  /// No description provided for @pricingBestValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Best value'**
+  String get pricingBestValue;
+
+  /// No description provided for @pricingSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save {percent}%'**
+  String pricingSave(int percent);
+
+  /// No description provided for @pricingPerMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'{price}/mo'**
+  String pricingPerMonth(String price);
+
+  /// No description provided for @pricingPerYear.
+  ///
+  /// In en, this message translates to:
+  /// **'{price}/yr'**
+  String pricingPerYear(String price);
+
+  /// No description provided for @pricingOnce.
+  ///
+  /// In en, this message translates to:
+  /// **'{price} once'**
+  String pricingOnce(String price);
+
+  /// No description provided for @startFreeTrial.
+  ///
+  /// In en, this message translates to:
+  /// **'Start 7-day Free Trial'**
+  String get startFreeTrial;
+
+  /// No description provided for @cancelAnytime.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel anytime'**
+  String get cancelAnytime;
+
+  /// No description provided for @renewsAtPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Renews at {price}'**
+  String renewsAtPrice(String price);
+
+  /// No description provided for @trustedByPlayers.
+  ///
+  /// In en, this message translates to:
+  /// **'Trusted by {count}+ players'**
+  String trustedByPlayers(String count);
+
+  /// No description provided for @freeTrialDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'7 days free'**
+  String get freeTrialDuration;
+
+  /// No description provided for @paywallContinueFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Maybe later'**
+  String get paywallContinueFree;
+
+  /// No description provided for @scoreStonesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Stones'**
+  String get scoreStonesLabel;
+
+  /// No description provided for @scoreTerritoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Territory'**
+  String get scoreTerritoryLabel;
+
+  /// No description provided for @scoreCapturedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Captured'**
+  String get scoreCapturedLabel;
 }
 
 class _AppLocalizationsDelegate

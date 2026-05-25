@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zaibal/gen/l10n/app_localizations.dart';
+import '../l10n/bot_translations.dart';
 import '../models/bot_engine_config.dart';
 import '../models/bot_profile.dart';
 import '../services/ai/go_ai_service.dart';
@@ -497,6 +498,8 @@ class _BotCard extends StatelessWidget {
 
   const _BotCard({required this.bot, required this.available});
 
+  bool get _isComingSoon => !available && bot.name == 'KataGo';
+
   @override
   Widget build(BuildContext context) {
     final color = available ? bot.color : Colors.grey;
@@ -518,14 +521,21 @@ class _BotCard extends StatelessWidget {
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: [
-                          color.withValues(alpha: 0.22),
-                          color.withValues(alpha: 0.06),
-                        ],
+                        colors: _isComingSoon
+                            ? [
+                                bot.color.withValues(alpha: 0.30),
+                                bot.color.withValues(alpha: 0.08),
+                              ]
+                            : [
+                                color.withValues(alpha: 0.22),
+                                color.withValues(alpha: 0.06),
+                              ],
                       ),
                     ),
                     alignment: Alignment.center,
-                    child: _Avatar(bot: bot, available: available),
+                    child: _isComingSoon
+                        ? _ShimmerAvatar(bot: bot)
+                        : _Avatar(bot: bot, available: available),
                   ),
                   if (bot.isPremium)
                     const Positioned(top: 8, right: 8, child: _PremiumPill()),
@@ -534,6 +544,30 @@ class _BotCard extends StatelessWidget {
                     left: 8,
                     child: _StarsBadge(stars: bot.stars, color: color),
                   ),
+                  if (_isComingSoon)
+                    const Positioned(
+                      bottom: 6,
+                      left: 6,
+                      right: 6,
+                      child: _ComingSoonBadge(),
+                    ),
+                  if (_isComingSoon)
+                    Positioned.fill(
+                      child: IgnorePointer(
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: RadialGradient(
+                              center: Alignment.center,
+                              radius: 0.9,
+                              colors: [
+                                Colors.transparent,
+                                bot.color.withValues(alpha: 0.10),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -775,6 +809,132 @@ class _Avatar extends StatelessWidget {
   }
 }
 
+/// Avatar variant for the KataGo "Coming Soon" card — same image at reduced
+/// opacity with a continuous shimmer sweep over the top so the card reads as
+/// "we're building this", not "this is broken".
+class _ShimmerAvatar extends StatefulWidget {
+  final BotProfile bot;
+  const _ShimmerAvatar({required this.bot});
+
+  @override
+  State<_ShimmerAvatar> createState() => _ShimmerAvatarState();
+}
+
+class _ShimmerAvatarState extends State<_ShimmerAvatar>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _shim;
+
+  @override
+  void initState() {
+    super.initState();
+    _shim = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1800),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _shim.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 76,
+      height: 76,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: widget.bot.color.withValues(alpha: 0.25),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Underlying image at reduced opacity so the bot is still recognisable.
+          Opacity(
+            opacity: 0.55,
+            child: Image.asset(
+              widget.bot.avatarAsset,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) =>
+                  Container(color: widget.bot.color.withValues(alpha: 0.25)),
+            ),
+          ),
+          // Shimmer sweep — a moving white band across the avatar.
+          AnimatedBuilder(
+            animation: _shim,
+            builder: (context, _) {
+              return ShaderMask(
+                blendMode: BlendMode.srcATop,
+                shaderCallback: (rect) => LinearGradient(
+                  begin: Alignment(-1.5 + _shim.value * 3, -0.5),
+                  end: Alignment(-0.5 + _shim.value * 3, 0.5),
+                  colors: const [
+                    Color(0x00FFFFFF),
+                    Color(0x88FFFFFF),
+                    Color(0x00FFFFFF),
+                  ],
+                  stops: const [0.0, 0.5, 1.0],
+                ).createShader(rect),
+                child: Container(color: Colors.white.withValues(alpha: 0.001)),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// "Coming Soon" pill anchored to the bottom of the KataGo card. Pulses to
+/// signal "this is being worked on, check back" instead of looking dead.
+class _ComingSoonBadge extends StatelessWidget {
+  const _ComingSoonBadge();
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: Colors.black.withValues(alpha: 0.72),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.35),
+            width: 0.8,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.hourglass_top, size: 12, color: Colors.amber),
+            const SizedBox(width: 4),
+            Text(
+              l.comingSoon.toUpperCase(),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 10,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.8,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 /// Chess.com-style detail sheet: shows bot info, strength, taunt, a Practice
 /// Mode toggle, then the board-size picker.
 class _BotDetailSheet extends StatefulWidget {
@@ -855,12 +1015,12 @@ class _BotDetailSheetState extends State<_BotDetailSheet> {
           ),
           const SizedBox(height: 14),
           Text(
-            widget.bot.description,
+            botDescription(context, widget.bot),
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 8),
           Text(
-            '"${widget.bot.taunt(BotEvent.greet)}"',
+            '"${botTaunt(context, widget.bot, BotEvent.greet)}"',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               fontStyle: FontStyle.italic,
               color: cs.onSurface.withValues(alpha: 0.65),
@@ -894,15 +1054,18 @@ class _BotDetailSheetState extends State<_BotDetailSheet> {
                     color: _practiceMode ? Colors.green.shade700 : cs.onSurface,
                   ),
                   const SizedBox(width: 7),
-                  const Text(
-                    'Practice Mode',
-                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                  Text(
+                    AppLocalizations.of(context).practiceModeTitle,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                    ),
                   ),
                 ],
               ),
-              subtitle: const Text(
-                'Best move shown after each turn · result is 1 ★',
-                style: TextStyle(fontSize: 11),
+              subtitle: Text(
+                AppLocalizations.of(context).practiceModeSubtitle,
+                style: const TextStyle(fontSize: 11),
               ),
               value: _practiceMode,
               onChanged: (v) => setState(() => _practiceMode = v),
@@ -911,7 +1074,7 @@ class _BotDetailSheetState extends State<_BotDetailSheet> {
           ),
           const SizedBox(height: 16),
           Text(
-            'Choose board size',
+            AppLocalizations.of(context).chooseBoardSize,
             style: Theme.of(
               context,
             ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),

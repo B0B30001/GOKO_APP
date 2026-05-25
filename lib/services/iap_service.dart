@@ -61,11 +61,15 @@ class IapService {
     }
   }
 
-  /// Opens the Google Play purchase sheet for the first available package.
-  /// Returns true on successful purchase. Throws [PurchasesErrorCode] on error
-  /// (the caller should check for [PurchasesErrorCode.purchaseCancelledError]
-  /// and treat that as a silent no-op).
-  Future<bool> purchase() async {
+  /// Opens the Google Play purchase sheet for the package whose
+  /// `storeProduct.identifier` equals [productId]. Falls back to the first
+  /// available package if no exact match is found.
+  ///
+  /// Returns true on successful purchase. Throws [PurchasesErrorCode] on
+  /// error (the caller should check for
+  /// [PurchasesErrorCode.purchaseCancelledError] and treat that as a silent
+  /// no-op).
+  Future<bool> purchase([String? productId]) async {
     if (!_configured) return false;
     final offerings = await Purchases.getOfferings();
     final current = offerings.current;
@@ -74,9 +78,14 @@ class IapService {
         'No RevenueCat offering found — verify dashboard configuration.',
       );
     }
-    final info = await Purchases.purchasePackage(
-      current.availablePackages.first,
-    );
+    Package pkg = current.availablePackages.first;
+    if (productId != null) {
+      pkg = current.availablePackages.firstWhere(
+        (p) => p.storeProduct.identifier == productId,
+        orElse: () => current.availablePackages.first,
+      );
+    }
+    final info = await Purchases.purchasePackage(pkg);
     return info.entitlements.active.containsKey(_entitlementId);
   }
 

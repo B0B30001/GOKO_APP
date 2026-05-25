@@ -5,6 +5,49 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zaibal/models/user.dart';
 import 'iap_service.dart';
 
+/// User-selectable purchase plan on the paywall. Maps 1:1 to a RevenueCat
+/// product identifier. The entitlement granted is the same (`premium`) for
+/// all three — what differs is billing cadence + price.
+enum PremiumPlan { monthly, annual, lifetime }
+
+extension PremiumPlanX on PremiumPlan {
+  /// Product identifier as configured in App Store Connect / Google Play
+  /// Console. Must match the SKU you create in your store dashboard and
+  /// attach as a package in RevenueCat's Offering.
+  String get productId => switch (this) {
+    PremiumPlan.monthly => 'goko_premium_monthly_499',
+    PremiumPlan.annual => 'goko_premium_annual_4999',
+    PremiumPlan.lifetime => 'goko_premium_lifetime_7999',
+  };
+
+  /// Default-display price in USD when the StoreKit/Play Billing product
+  /// hasn't loaded yet (e.g. offline, before init). Real price always
+  /// comes from the platform store via RevenueCat.
+  String get fallbackPrice => switch (this) {
+    PremiumPlan.monthly => '\$4.99',
+    PremiumPlan.annual => '\$49.99',
+    PremiumPlan.lifetime => '\$79.99',
+  };
+
+  /// "Original" anchored price (struck through on the card). Represents the
+  /// retail-equivalent cost if the user paid month-by-month: e.g. annual at
+  /// \$49.99 vs. 12 × monthly at \$59.88 → "Save 17%". The strikethrough is
+  /// the no-discount alternative, not a fabricated past price — that keeps
+  /// the false-discount pattern ethical per app-store guidelines.
+  String get anchorPrice => switch (this) {
+    PremiumPlan.monthly => '\$9.99',
+    PremiumPlan.annual => '\$119.88',
+    PremiumPlan.lifetime => '\$99.99',
+  };
+
+  /// Percentage savings vs. the anchor price — for the "Save X%" pill.
+  int get savePercent => switch (this) {
+    PremiumPlan.monthly => 50,
+    PremiumPlan.annual => 58,
+    PremiumPlan.lifetime => 20,
+  };
+}
+
 /// Entitlements derived from the current subscription tier.
 class Entitlements {
   final bool unlimitedPuzzles;
@@ -131,7 +174,8 @@ class SubscriptionService extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Launches the Google Play purchase sheet via RevenueCat.
+  /// Launches the Google Play purchase sheet via RevenueCat for the given
+  /// [plan]. When omitted, defaults to the Annual plan (best-value anchor).
   ///
   /// Falls back to a local stub flip when IapService is not yet configured
   /// (API key still has the placeholder value) so the paywall remains
@@ -139,14 +183,14 @@ class SubscriptionService extends ChangeNotifier {
   ///
   /// Throws [PurchasesErrorCode] on a real billing failure (not on cancel —
   /// cancel is treated as a silent no-op). The UI layer must catch these.
-  Future<void> purchasePremium() async {
+  Future<void> purchasePremium([PremiumPlan plan = PremiumPlan.annual]) async {
     if (!IapService.instance.isConfigured) {
       // Dev/test: RevenueCat not set up yet — use local stub.
       await _stubUnlockPremium();
       return;
     }
     try {
-      final success = await IapService.instance.purchase();
+      final success = await IapService.instance.purchase(plan.productId);
       if (success) {
         _tier = SubscriptionTier.premium;
         await _persist();

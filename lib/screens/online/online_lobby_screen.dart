@@ -218,7 +218,7 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
               ],
             ),
             const SizedBox(height: 12),
-            const Text('Find an opponent instantly for a quick game'),
+            Text(AppLocalizations.of(context).findOpponentSubtitle),
             const SizedBox(height: 16),
             if (_isSearching) ...[
               const LinearProgressIndicator(),
@@ -265,7 +265,7 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
                     _poolSize = null;
                   });
                 },
-                child: const Text('Cancel'),
+                child: Text(AppLocalizations.of(context).cancel),
               ),
             ] else ...[
               Row(
@@ -329,7 +329,7 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
                     style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                   ),
                   const SizedBox(height: 8),
-                  const Text('Start a quick match to begin!'),
+                  Text(AppLocalizations.of(context).startMatchHint),
                 ],
               ),
             );

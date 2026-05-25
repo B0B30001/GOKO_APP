@@ -41,6 +41,8 @@
   "hint": "Подсказка",
   "reset": "Сброс",
   "tryAgain": "Попробовать снова",
+  "illegalMoveFeedback": "Недопустимый ход (ко/суицид) — попробуйте другую точку.",
+  "wrongMoveFeedback": "Неверный ход — попробуйте ещё раз!",
   "giveUp": "Сдаться",
   "stepBack": "Шаг назад",
   "continue_": "Продолжить",
@@ -231,7 +233,6 @@
     "placeholders": { "points": { "type": "int" } }
   },
   "gameTied": "Ничья!",
-  "gameReviewComingSoon": "Разбор партии — скоро",
 
   "rating": "Рейтинг",
   "today": "Сегодня",
@@ -255,7 +256,7 @@
   "allBotsAndLessons": "Все боты и уроки",
   "allBotsAndLessonsDesc": "Боты-новички и первые 4 урока бесплатны",
   "postGameAnalysis": "Разбор партии",
-  "postGameAnalysisDesc": "Детальный разбор любой завершённой партии (скоро)",
+  "postGameAnalysisDesc": "Перематывайте любую завершённую партию ход за ходом.",
   "profileFlair": "Оформление профиля",
   "profileFlairDesc": "Премиум-значки и рамки аватара",
   "restorePurchases": "Восстановить покупки",
@@ -293,6 +294,8 @@
   "loginFailed": "Ошибка входа. Проверьте данные.",
   "errorPrefix": "Ошибка: ",
   "noAccountSignUp": "Нет аккаунта? Зарегистрируйтесь на OGS",
+  "orContinueWith": "или войти через",
+  "continueWithOgs": "Войти через OGS (Google и др.)",
 
   "onlinePlay": "Игра онлайн",
   "onlineStatusConnected": "Онлайн",
@@ -378,5 +381,162 @@
     "placeholders": {
       "xp": { "type": "int" }
     }
-  }
+  },
+
+  "solvePuzzles": "Решить задачи",
+  "levelN": "Уровень {n}",
+  "@levelN": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "puzzleBestMove": "Найдите лучший ход",
+  "xpToUnlock": "+{xp} XP",
+  "@xpToUnlock": {
+    "placeholders": {
+      "xp": { "type": "int" }
+    }
+  },
+  "worldStoneForest": "Каменный лес",
+  "worldCrystalCave": "Хрустальная пещера",
+  "worldCopperPeaks": "Медные вершины",
+  "worldDiamondTundra": "Алмазная тундра",
+  "worldJadeHighlands": "Нефритовые высоты",
+  "comingSoon": "Скоро",
+
+  "quit": "Выйти",
+  "drillCompleteTitle": "Тренировка завершена",
+  "backToLearn": "Назад к обучению",
+  "quitDrillTitle": "Выйти из тренировки?",
+  "quitDrillBody": "Прогресс не будет сохранён, если выйти сейчас.",
+  "resignGameTitle": "Сдаться?",
+  "resignGameBody": "Вы уверены, что хотите сдаться?",
+  "undoRequestTitle": "Запрос отмены хода",
+  "decline": "Отклонить",
+  "accept": "Принять",
+  "gameInfoTitle": "Информация об игре",
+  "leaveGame": "Покинуть игру",
+  "connectionTestTitle": "Тест подключения",
+  "runConnectionTest": "Запустить тест",
+  "findOpponentSubtitle": "Быстрый поиск соперника для матча",
+  "startMatchHint": "Начните быстрый матч!",
+  "shuffle": "Перемешать",
+  "tutorialsTitle": "Уроки",
+
+  "botDescPanda": "Милая и забавная. Любит играть случайные ходы.",
+  "botDescPup": "Игривый щенок гоняется за каждым камнем. Легко перехитрить.",
+  "botDescBunny": "Скачет по доске с любопытными, непредсказуемыми ходами.",
+  "botDescKoi": "Мягкий и стабильный. Любит игру у края и небольшие огороды.",
+  "botDescTanuki": "Хитрый дух. Знает основы захвата и форм.",
+  "botDescPebble": "Тихий и спокойный. Медленно строит крепкие рамки.",
+  "botDescHeron": "Терпеливый. Разбирает слабые формы у края.",
+  "botDescOwl": "Мудрый и терпеливый. Строит крепкие рамки территории.",
+  "botDescCrane": "Грациозный и сбалансированный. Играет лёгкие и гибкие формы.",
+  "botDescMantis": "Острый и быстрый. Рассчитывает тактические последовательности.",
+  "botDescBadger": "Не отпустит ни один камень без боя.",
+  "botDescKitsune": "Хитрый лис. Наказывает за переигрывание и поощряет хорошую форму.",
+  "botDescPhoenix": "Восстаёт из-под давления резкими контратаками.",
+  "botDescHawk": "Давящий игрок. Постоянно ищет ваши слабые группы.",
+  "botDescTiger": "Свирепый боец. Любит атаковать слабые группы.",
+  "botDescOtter": "Гибкий и игривый. Переходит от атаки к защите.",
+  "botDescDragon": "Сильное чтение и чистый эндшпиль. Требует точности.",
+  "botDescSamurai": "Честь и дисциплина. Сильная борьба и чистая форма.",
+  "botDescTengu": "Горный дух. Сильная борьба и эффективная форма.",
+  "botDescMonk": "Спокойное, глубокое позиционное понимание. Видение всей доски.",
+  "botDescOracle": "Видит варианты на дюжину ходов вперёд. Трудно обмануть.",
+  "botDescSensei": "Мудрый учитель. Играет самые поучительные профессиональные ходы.",
+  "botDescKataGo": "Планирует десятки ходов вперёд с нейросетевым анализом. Сверхчеловеческое видение.",
+
+  "tauntDefaultGreet": "Поиграем!",
+  "tauntDefaultWin": "Хорошая игра! Заслуженная победа.",
+  "tauntDefaultLose": "Красиво сыграно — в следующий раз повезёт!",
+  "tauntDefaultResign": "Спасибо за игру!",
+  "tauntPandaGreet": "Привет, друг! Давай поиграем!",
+  "tauntPandaWin": "Ура! Я выиграл!",
+  "tauntPandaLose": "Ты очень хорош!",
+
+  "undoMove": "Отменить ход",
+  "passTurn": "Пас",
+  "redoMove": "Повторить ход",
+  "newGame": "Новая игра",
+  "practiceBadge": "ТРЕНИРОВКА",
+  "notYourTurn": "Не ваш ход!",
+  "menuTooltip": "Меню",
+  "profileTooltip": "Профиль",
+  "wins": "Победы",
+  "losses": "Поражения",
+  "draws": "Ничьи",
+  "winLossLabel": "Победы / Поражения",
+  "playGamesHint": "Сыграйте партии, чтобы увидеть статистику здесь.",
+  "filterAll": "Все",
+  "noPuzzlesForFilter": "Нет задач для этого фильтра.",
+  "tutorialsLoadError": "Не удалось загрузить уроки: {error}",
+  "@tutorialsLoadError": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "noTutorialsYet": "Уроков пока нет.",
+  "practiceModeTitle": "Тренировочный режим",
+  "practiceModeSubtitle": "Лучший ход показан после каждого хода · результат 1 ★",
+  "chooseBoardSize": "Выберите размер доски",
+  "undoRequestSent": "Запрос отмены отправлен",
+  "undoRequestDeclined": "Запрос отмены отклонён",
+  "undoRequestAccepted": "Запрос отмены принят",
+  "opponentRequestedUndo": "Соперник запросил отмену хода #{moveNumber}.",
+  "@opponentRequestedUndo": {
+    "placeholders": { "moveNumber": { "type": "int" } }
+  },
+  "suggestedRemovedStones": "Предложено убрать камней: {count}",
+  "@suggestedRemovedStones": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "gameIdLabel": "ID игры: {id}",
+  "@gameIdLabel": { "placeholders": { "id": { "type": "String" } } },
+  "moveLabel": "Ход: {n}",
+  "@moveLabel": { "placeholders": { "n": { "type": "int" } } },
+  "phaseLabel": "Фаза: {phase}",
+  "@phaseLabel": { "placeholders": { "phase": { "type": "String" } } },
+  "boardLabel": "Доска: {size}",
+  "@boardLabel": { "placeholders": { "size": { "type": "String" } } },
+
+  "hintLookAt": "Посмотрите на строку {row}, столбец {col} — здесь сильный ход.",
+  "@hintLookAt": {
+    "placeholders": {
+      "row": { "type": "int" },
+      "col": { "type": "String" }
+    }
+  },
+  "hintFallbackGeneric": "Найдите ход, который давит на камни противника — ищите атари, слабые группы или формы глаз.",
+
+  "paywallHeroTitle": "Откройте GOKO Premium",
+  "paywallHeroTagline": "Освойте древнюю игру",
+  "paywallFeatureUnlimitedPuzzles": "Безлимит ежедневных задач",
+  "paywallFeatureAllBots": "Все боты — от Pup до KataGo",
+  "paywallFeatureLessons": "Полная библиотека уроков + анализ партий",
+  "paywallFeatureSync": "Облачная синхронизация, значки и оформление профиля",
+  "pricingTierMonthly": "Месяц",
+  "pricingTierAnnual": "Год",
+  "pricingTierLifetime": "Навсегда",
+  "pricingPopular": "ПОПУЛЯРНОЕ",
+  "pricingBestValue": "Лучшая цена",
+  "pricingSave": "Экономия {percent}%",
+  "@pricingSave": { "placeholders": { "percent": { "type": "int" } } },
+  "pricingPerMonth": "{price}/мес",
+  "@pricingPerMonth": { "placeholders": { "price": { "type": "String" } } },
+  "pricingPerYear": "{price}/год",
+  "@pricingPerYear": { "placeholders": { "price": { "type": "String" } } },
+  "pricingOnce": "{price} разово",
+  "@pricingOnce": { "placeholders": { "price": { "type": "String" } } },
+  "startFreeTrial": "Начать 7-дневный пробный период",
+  "restorePurchases": "Восстановить покупки",
+  "cancelAnytime": "Отмена в любое время",
+  "renewsAtPrice": "Возобновляется по {price}",
+  "@renewsAtPrice": { "placeholders": { "price": { "type": "String" } } },
+  "trustedByPlayers": "Нам доверяют {count}+ игроков",
+  "@trustedByPlayers": { "placeholders": { "count": { "type": "String" } } },
+  "freeTrialDuration": "7 дней бесплатно",
+  "paywallContinueFree": "Может быть позже",
+
+  "scoreStonesLabel": "Камни",
+  "scoreTerritoryLabel": "Территория",
+  "scoreCapturedLabel": "Пленные"
 }

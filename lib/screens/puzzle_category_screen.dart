@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../gen/l10n/app_localizations.dart';
 import '../models/puzzle.dart';
 import '../widgets/puzzle_list_card.dart';
 
@@ -45,7 +46,7 @@ class _PuzzleCategoryScreenState extends State<PuzzleCategoryScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _shuffle,
         icon: const Icon(Icons.shuffle),
-        label: const Text('Shuffle'),
+        label: Text(AppLocalizations.of(context).shuffle),
       ),
     );
   }
@@ -56,7 +57,7 @@ class _PuzzleCategoryScreenState extends State<PuzzleCategoryScreen> {
       child: Wrap(
         spacing: 8,
         children: [
-          _filterChip(label: 'All', value: 0),
+          _filterChip(label: AppLocalizations.of(context).filterAll, value: 0),
           _filterChip(label: '★', value: 1),
           _filterChip(label: '★★', value: 2),
           _filterChip(label: '★★★', value: 3),
@@ -76,7 +77,9 @@ class _PuzzleCategoryScreenState extends State<PuzzleCategoryScreen> {
   Widget _buildList() {
     final list = _visible;
     if (list.isEmpty) {
-      return const Center(child: Text('No puzzles for this filter.'));
+      return Center(
+        child: Text(AppLocalizations.of(context).noPuzzlesForFilter),
+      );
     }
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 96),

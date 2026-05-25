@@ -52,7 +52,7 @@ class ProfileScreen extends StatelessWidget {
             actions: [
               IconButton(
                 icon: const Icon(Icons.settings),
-                tooltip: 'Settings',
+                tooltip: AppLocalizations.of(context).settings,
                 onPressed: () => Navigator.pushNamed(context, '/settings'),
               ),
               IconButton(
@@ -239,7 +239,7 @@ class ProfileScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Win / Loss',
+              AppLocalizations.of(context).winLossLabel,
               style: Theme.of(
                 context,
               ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
@@ -259,25 +259,25 @@ class ProfileScreen extends StatelessWidget {
                     children: [
                       _LegendRow(
                         color: Colors.green,
-                        label: 'Wins',
+                        label: AppLocalizations.of(context).wins,
                         value: agg.wins,
                       ),
                       const SizedBox(height: 6),
                       _LegendRow(
                         color: Colors.red,
-                        label: 'Losses',
+                        label: AppLocalizations.of(context).losses,
                         value: agg.losses,
                       ),
                       const SizedBox(height: 6),
                       _LegendRow(
                         color: Colors.grey,
-                        label: 'Draws',
+                        label: AppLocalizations.of(context).draws,
                         value: agg.draws,
                       ),
                       const SizedBox(height: 10),
                       Text(
                         agg.total == 0
-                            ? 'Play games to see your split here.'
+                            ? AppLocalizations.of(context).playGamesHint
                             : '${(agg.winRate * 100).toStringAsFixed(0)}% win rate',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: cs.onSurface.withValues(alpha: 0.65),

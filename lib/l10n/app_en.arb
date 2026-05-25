@@ -121,6 +121,12 @@
   "tryAgain": "Try again",
   "@tryAgain": { "description": "Try again button" },
 
+  "illegalMoveFeedback": "Illegal move (Ko / suicide) — try another point.",
+  "@illegalMoveFeedback": { "description": "Snackbar shown when player attempts an illegal move in a puzzle" },
+
+  "wrongMoveFeedback": "Not the right move — try again!",
+  "@wrongMoveFeedback": { "description": "Snackbar shown when player makes a wrong move in a puzzle" },
+
   "giveUp": "Give up",
   "@giveUp": { "description": "Give up button" },
 
@@ -610,9 +616,6 @@
   "gameTied": "Game is tied!",
   "@gameTied": { "description": "Result text when scores are equal" },
 
-  "gameReviewComingSoon": "Game Review coming soon",
-  "@gameReviewComingSoon": { "description": "Placeholder when analysis is not yet available" },
-
   "rating": "Rating",
   "@rating": { "description": "Stat column label" },
 
@@ -679,7 +682,7 @@
   "postGameAnalysis": "Post-game analysis",
   "@postGameAnalysis": { "description": "Paywall feature row title" },
 
-  "postGameAnalysisDesc": "Deep review of any finished game (coming soon)",
+  "postGameAnalysisDesc": "Replay every move and rewind any finished game.",
   "@postGameAnalysisDesc": { "description": "Paywall feature row subtitle" },
 
   "profileFlair": "Profile flair",
@@ -737,7 +740,7 @@
   "freeTrialSubtitle": "Cancel anytime",
   "@freeTrialSubtitle": { "description": "Paywall: trial fine print" },
 
-  "ogsLogin": "OGS Login",
+  "ogsLogin": "Sign in to OGS",
   "onlineGoServer": "Online Go Server",
   "signInWithOgsAccount": "Sign in with your OGS account",
   "signIn": "Sign In",
@@ -747,6 +750,8 @@
   "loginFailed": "Login failed. Check your credentials.",
   "errorPrefix": "Error: ",
   "noAccountSignUp": "Don't have an account? Sign up on OGS",
+  "orContinueWith": "or continue with",
+  "continueWithOgs": "Continue with OGS (Google, etc.)",
 
   "onlinePlay": "Online Play",
   "onlineStatusConnected": "Online",
@@ -832,5 +837,162 @@
     "placeholders": {
       "xp": { "type": "int" }
     }
-  }
+  },
+
+  "solvePuzzles": "Solve Puzzles",
+  "levelN": "Level {n}",
+  "@levelN": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "puzzleBestMove": "Find the best move",
+  "xpToUnlock": "+{xp} XP",
+  "@xpToUnlock": {
+    "placeholders": {
+      "xp": { "type": "int" }
+    }
+  },
+  "worldStoneForest": "Stone Forest",
+  "worldCrystalCave": "Crystal Cave",
+  "worldCopperPeaks": "Copper Peaks",
+  "worldDiamondTundra": "Diamond Tundra",
+  "worldJadeHighlands": "Jade Highlands",
+  "comingSoon": "Coming Soon",
+
+  "quit": "Quit",
+  "drillCompleteTitle": "Drill Complete",
+  "backToLearn": "Back to Learn",
+  "quitDrillTitle": "Quit Drill?",
+  "quitDrillBody": "Your progress will not be saved if you quit now.",
+  "resignGameTitle": "Resign Game?",
+  "resignGameBody": "Are you sure you want to resign?",
+  "undoRequestTitle": "Undo Request",
+  "decline": "Decline",
+  "accept": "Accept",
+  "gameInfoTitle": "Game Info",
+  "leaveGame": "Leave Game",
+  "connectionTestTitle": "Connection Test",
+  "runConnectionTest": "Run Connection Test",
+  "findOpponentSubtitle": "Find an opponent instantly for a quick game",
+  "startMatchHint": "Start a quick match to begin!",
+  "shuffle": "Shuffle",
+  "tutorialsTitle": "Tutorials",
+
+  "botDescPanda": "Sweet and silly. Loves playing random moves.",
+  "botDescPup": "Eager puppy chasing every stone. Easy to outsmart.",
+  "botDescBunny": "Hops around the board with curious, unpredictable moves.",
+  "botDescKoi": "Soft and steady. Loves edge play and small enclosures.",
+  "botDescTanuki": "Tricky little spirit. Knows basic captures and shapes.",
+  "botDescPebble": "Quiet and steady. Builds slowly toward solid frameworks.",
+  "botDescHeron": "Patient. Picks apart loose shapes near the side.",
+  "botDescOwl": "Wise and patient. Builds solid frameworks of territory.",
+  "botDescCrane": "Graceful and balanced. Plays light and flexible shapes.",
+  "botDescMantis": "Sharp and quick. Calculates tactical sequences.",
+  "botDescBadger": "Never lets a stone go without a fight.",
+  "botDescKitsune": "Cunning fox. Punishes overplays and rewards good shape.",
+  "botDescPhoenix": "Rises from pressure with sharp counter-attacks.",
+  "botDescHawk": "Pressure player. Always probing your weak groups.",
+  "botDescTiger": "Fierce fighter. Loves to attack weak groups.",
+  "botDescOtter": "Flexible and playful. Pivots between attack and defence.",
+  "botDescDragon": "Powerful reading and clean endgame. Demands precision.",
+  "botDescSamurai": "Honor and discipline. Strong fighting plus clean shape.",
+  "botDescTengu": "Mountain spirit. Strong fighting and efficient shape.",
+  "botDescMonk": "Calm, deep positional understanding. Whole-board sight.",
+  "botDescOracle": "Sees variations a dozen moves ahead. Hard to fool.",
+  "botDescSensei": "Wise teacher. Plays the most instructive professional moves.",
+  "botDescKataGo": "Plans dozens of moves ahead with neural-network lookahead. Superhuman strategic vision.",
+
+  "tauntDefaultGreet": "Let's play!",
+  "tauntDefaultWin": "Good game! You earned that one.",
+  "tauntDefaultLose": "Nicely played — better luck next time!",
+  "tauntDefaultResign": "Thanks for the game!",
+  "tauntPandaGreet": "Hi friend! Let's play!",
+  "tauntPandaWin": "Yay! I won!",
+  "tauntPandaLose": "You're really good!",
+
+  "undoMove": "Undo move",
+  "passTurn": "Pass turn",
+  "redoMove": "Redo move",
+  "newGame": "New game",
+  "practiceBadge": "PRACTICE",
+  "notYourTurn": "It's not your turn!",
+  "menuTooltip": "Menu",
+  "profileTooltip": "Profile",
+  "wins": "Wins",
+  "losses": "Losses",
+  "draws": "Draws",
+  "winLossLabel": "Win / Loss",
+  "playGamesHint": "Play games to see your split here.",
+  "filterAll": "All",
+  "noPuzzlesForFilter": "No puzzles for this filter.",
+  "tutorialsLoadError": "Failed to load tutorials: {error}",
+  "@tutorialsLoadError": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "noTutorialsYet": "No tutorials available yet.",
+  "practiceModeTitle": "Practice Mode",
+  "practiceModeSubtitle": "Best move shown after each turn · result is 1 ★",
+  "chooseBoardSize": "Choose board size",
+  "undoRequestSent": "Undo request sent",
+  "undoRequestDeclined": "Undo request declined",
+  "undoRequestAccepted": "Undo request accepted",
+  "opponentRequestedUndo": "Your opponent requested an undo to move #{moveNumber}.",
+  "@opponentRequestedUndo": {
+    "placeholders": { "moveNumber": { "type": "int" } }
+  },
+  "suggestedRemovedStones": "Suggested {count} removed stones",
+  "@suggestedRemovedStones": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "gameIdLabel": "Game ID: {id}",
+  "@gameIdLabel": { "placeholders": { "id": { "type": "String" } } },
+  "moveLabel": "Move: {n}",
+  "@moveLabel": { "placeholders": { "n": { "type": "int" } } },
+  "phaseLabel": "Phase: {phase}",
+  "@phaseLabel": { "placeholders": { "phase": { "type": "String" } } },
+  "boardLabel": "Board: {size}",
+  "@boardLabel": { "placeholders": { "size": { "type": "String" } } },
+
+  "hintLookAt": "Look at row {row}, column {col} — there's a strong move here.",
+  "@hintLookAt": {
+    "placeholders": {
+      "row": { "type": "int" },
+      "col": { "type": "String" }
+    }
+  },
+  "hintFallbackGeneric": "Find the move that pressures the opposing stones — look for atari, weak groups, or eye shapes.",
+
+  "paywallHeroTitle": "Unlock GOKO Premium",
+  "paywallHeroTagline": "Master the ancient game",
+  "paywallFeatureUnlimitedPuzzles": "Unlimited daily puzzles",
+  "paywallFeatureAllBots": "All bots — Pup to KataGo",
+  "paywallFeatureLessons": "Full lesson library + post-game analysis",
+  "paywallFeatureSync": "Cloud sync, badges & profile flair",
+  "pricingTierMonthly": "Monthly",
+  "pricingTierAnnual": "Annual",
+  "pricingTierLifetime": "Lifetime",
+  "pricingPopular": "MOST POPULAR",
+  "pricingBestValue": "Best value",
+  "pricingSave": "Save {percent}%",
+  "@pricingSave": { "placeholders": { "percent": { "type": "int" } } },
+  "pricingPerMonth": "{price}/mo",
+  "@pricingPerMonth": { "placeholders": { "price": { "type": "String" } } },
+  "pricingPerYear": "{price}/yr",
+  "@pricingPerYear": { "placeholders": { "price": { "type": "String" } } },
+  "pricingOnce": "{price} once",
+  "@pricingOnce": { "placeholders": { "price": { "type": "String" } } },
+  "startFreeTrial": "Start 7-day Free Trial",
+  "restorePurchases": "Restore Purchases",
+  "cancelAnytime": "Cancel anytime",
+  "renewsAtPrice": "Renews at {price}",
+  "@renewsAtPrice": { "placeholders": { "price": { "type": "String" } } },
+  "trustedByPlayers": "Trusted by {count}+ players",
+  "@trustedByPlayers": { "placeholders": { "count": { "type": "String" } } },
+  "freeTrialDuration": "7 days free",
+  "paywallContinueFree": "Maybe later",
+
+  "scoreStonesLabel": "Stones",
+  "scoreTerritoryLabel": "Territory",
+  "scoreCapturedLabel": "Captured"
 }

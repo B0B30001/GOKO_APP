@@ -14,9 +14,18 @@ enum PaywallReason {
   premiumLessons,
 }
 
+/// Premium paywall. Built around RevenueCat best-practices for mobile
+/// subscription apps:
+///
+///   • Hard paywall — single primary CTA, no soft dismiss
+///   • Three-tier pricing with the annual plan pre-selected and visually
+///     anchored ("MOST POPULAR" gold border + strikethrough price)
+///   • 7-day free trial badge on the annual plan
+///   • Restore Purchases always visible (App Store policy)
+///   • Cancel-anytime + renewal-price fine print under the CTA
+///   • Soft social-proof footer
 class PaywallScreen extends StatefulWidget {
   final PaywallReason reason;
-
   const PaywallScreen({super.key, this.reason = PaywallReason.generic});
 
   @override
@@ -24,14 +33,16 @@ class PaywallScreen extends StatefulWidget {
 }
 
 class _PaywallScreenState extends State<PaywallScreen> {
+  PremiumPlan _selected = PremiumPlan.annual;
   bool _purchasing = false;
   bool _restoring = false;
 
   Future<void> _purchase() async {
     setState(() => _purchasing = true);
     try {
-      await context.read<SubscriptionService>().purchasePremium();
-      if (mounted && context.read<SubscriptionService>().isPremium) {
+      await context.read<SubscriptionService>().purchasePremium(_selected);
+      if (!mounted) return;
+      if (context.read<SubscriptionService>().isPremium) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(AppLocalizations.of(context).youArePremium)),
         );
@@ -75,131 +86,242 @@ class _PaywallScreenState extends State<PaywallScreen> {
     final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l.premium)),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (widget.reason != PaywallReason.generic)
-                _buildReasonBanner(context, l),
-              const Icon(
-                Icons.workspace_premium,
-                size: 80,
-                color: Colors.amber,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                l.unlockGokoPremium,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                l.paywallTagline,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
+        child: Stack(
+          children: [
+            // Hero gradient background
+            Positioned.fill(
+              child: DecoratedBox(
                 decoration: BoxDecoration(
-                  color: Colors.green.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.local_fire_department,
-                      size: 14,
-                      color: Colors.green.shade700,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      l.freeTrialBadge,
-                      style: TextStyle(
-                        color: Colors.green.shade700,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      const Color(0xFFFFE082),
+                      const Color(0xFFFFB300).withValues(alpha: 0.18),
+                      cs.surface,
+                    ],
+                    stops: const [0.0, 0.32, 0.55],
+                  ),
                 ),
               ),
-              const SizedBox(height: 24),
-              _FeatureRow(
-                icon: Icons.all_inclusive,
-                title: l.unlimitedPuzzles,
-                subtitle: l.freePuzzleLimit,
-              ),
-              _FeatureRow(
-                icon: Icons.school,
-                title: l.allBotsAndLessons,
-                subtitle: l.allBotsAndLessonsDesc,
-              ),
-              _FeatureRow(
-                icon: Icons.auto_graph,
-                title: l.postGameAnalysis,
-                subtitle: l.postGameAnalysisDesc,
-              ),
-              _FeatureRow(
-                icon: Icons.workspace_premium,
-                title: l.profileFlair,
-                subtitle: l.profileFlairDesc,
-              ),
-              const Spacer(),
-              if (subscription.isPremium)
-                FilledButton.icon(
-                  onPressed: null,
-                  icon: const Icon(Icons.check_circle),
-                  label: Text(l.youArePremium),
-                )
-              else
-                FilledButton(
-                  onPressed: _purchasing ? null : _purchase,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: cs.primary,
-                    foregroundColor: cs.onPrimary,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+            ),
+            SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Close button row
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Navigator.maybePop(context),
                     ),
                   ),
-                  child: _purchasing
-                      ? const SizedBox(
-                          height: 22,
-                          width: 22,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            color: Colors.white,
+                  // ── Hero ─────────────────────────────────────────────────
+                  Center(
+                    child: Container(
+                      width: 96,
+                      height: 96,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          colors: [Color(0xFFFFE082), Color(0xFFFFB300)],
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0x55FFB300),
+                            blurRadius: 30,
+                            spreadRadius: 4,
                           ),
-                        )
-                      : Text(
-                          l.unlockPremium,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.workspace_premium,
+                        size: 54,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    l.paywallHeroTitle,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    l.paywallHeroTagline,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: cs.onSurface.withValues(alpha: 0.72),
+                    ),
+                  ),
+                  if (widget.reason != PaywallReason.generic) ...[
+                    const SizedBox(height: 18),
+                    _buildReasonBanner(context, l),
+                  ],
+                  const SizedBox(height: 22),
+                  // ── Features ────────────────────────────────────────────
+                  _FeatureRow(text: l.paywallFeatureUnlimitedPuzzles),
+                  _FeatureRow(text: l.paywallFeatureAllBots),
+                  _FeatureRow(text: l.paywallFeatureLessons),
+                  _FeatureRow(text: l.paywallFeatureSync),
+                  const SizedBox(height: 22),
+                  // ── Tier cards ──────────────────────────────────────────
+                  // IntrinsicHeight makes the three Expanded children match
+                  // height (otherwise `crossAxisAlignment: stretch` inside a
+                  // SingleChildScrollView would force infinite height).
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Expanded(
+                          child: _TierCard(
+                            plan: PremiumPlan.monthly,
+                            title: l.pricingTierMonthly,
+                            priceLabel: l.pricingPerMonth(
+                              PremiumPlan.monthly.fallbackPrice,
+                            ),
+                            selected: _selected == PremiumPlan.monthly,
+                            onTap: () =>
+                                setState(() => _selected = PremiumPlan.monthly),
                           ),
                         ),
-                ),
-              const SizedBox(height: 8),
-              TextButton(
-                onPressed: (_restoring || _purchasing) ? null : _restore,
-                child: _restoring
-                    ? const SizedBox(
-                        height: 18,
-                        width: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Text(l.restorePurchases),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _TierCard(
+                            plan: PremiumPlan.annual,
+                            title: l.pricingTierAnnual,
+                            priceLabel: l.pricingPerYear(
+                              PremiumPlan.annual.fallbackPrice,
+                            ),
+                            selected: _selected == PremiumPlan.annual,
+                            badge: l.pricingPopular,
+                            subBadge: l.freeTrialDuration,
+                            onTap: () =>
+                                setState(() => _selected = PremiumPlan.annual),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _TierCard(
+                            plan: PremiumPlan.lifetime,
+                            title: l.pricingTierLifetime,
+                            priceLabel: l.pricingOnce(
+                              PremiumPlan.lifetime.fallbackPrice,
+                            ),
+                            selected: _selected == PremiumPlan.lifetime,
+                            subBadge: l.pricingBestValue,
+                            onTap: () => setState(
+                              () => _selected = PremiumPlan.lifetime,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 22),
+                  // ── CTA ──────────────────────────────────────────────────
+                  if (subscription.isPremium)
+                    FilledButton.icon(
+                      onPressed: null,
+                      icon: const Icon(Icons.check_circle),
+                      label: Text(l.youArePremium),
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                    )
+                  else
+                    FilledButton(
+                      onPressed: _purchasing ? null : _purchase,
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 18),
+                        backgroundColor: const Color(0xFFFFB300),
+                        foregroundColor: Colors.black87,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        elevation: 6,
+                        shadowColor: const Color(0x55FFB300),
+                      ),
+                      child: _purchasing
+                          ? const SizedBox(
+                              height: 22,
+                              width: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: Colors.black87,
+                              ),
+                            )
+                          : Text(
+                              _selected == PremiumPlan.annual
+                                  ? l.startFreeTrial
+                                  : l.unlockPremium,
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 0.3,
+                              ),
+                            ),
+                    ),
+                  const SizedBox(height: 10),
+                  // Fine-print row: cancel-anytime + renewal price
+                  Text(
+                    '${l.cancelAnytime} · '
+                    '${l.renewsAtPrice(_selected.fallbackPrice)}',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: cs.onSurface.withValues(alpha: 0.55),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  // Restore + soft-dismiss
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      TextButton(
+                        onPressed: (_restoring || _purchasing)
+                            ? null
+                            : _restore,
+                        child: _restoring
+                            ? const SizedBox(
+                                height: 18,
+                                width: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Text(l.restorePurchases),
+                      ),
+                      TextButton(
+                        onPressed: _purchasing
+                            ? null
+                            : () => Navigator.maybePop(context),
+                        child: Text(l.paywallContinueFree),
+                      ),
+                    ],
+                  ),
+                  // Social proof
+                  const SizedBox(height: 18),
+                  Center(
+                    child: Text(
+                      l.trustedByPlayers('12,000'),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: cs.onSurface.withValues(alpha: 0.55),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -216,12 +338,11 @@ class _PaywallScreenState extends State<PaywallScreen> {
     };
     if (text.isEmpty) return const SizedBox.shrink();
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.amber.withValues(alpha: 0.18),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.amber, width: 1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.amber, width: 1.2),
       ),
       child: Row(
         children: [
@@ -240,38 +361,188 @@ class _PaywallScreenState extends State<PaywallScreen> {
 }
 
 class _FeatureRow extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  const _FeatureRow({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-  });
+  final String text;
+  const _FeatureRow({required this.text});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         children: [
-          Icon(icon, size: 28, color: Theme.of(context).colorScheme.primary),
+          Container(
+            width: 28,
+            height: 28,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: const Color(0xFF66BB6A).withValues(alpha: 0.20),
+            ),
+            child: const Icon(Icons.check, color: Color(0xFF388E3C), size: 18),
+          ),
           const SizedBox(width: 12),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Text(subtitle, style: Theme.of(context).textTheme.bodySmall),
-              ],
+            child: Text(
+              text,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Pricing tier card. The user taps to select one before tapping the main CTA.
+class _TierCard extends StatelessWidget {
+  final PremiumPlan plan;
+  final String title;
+  final String priceLabel;
+  final bool selected;
+  final String? badge;
+  final String? subBadge;
+  final VoidCallback onTap;
+
+  const _TierCard({
+    required this.plan,
+    required this.title,
+    required this.priceLabel,
+    required this.selected,
+    this.badge,
+    this.subBadge,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final cs = Theme.of(context).colorScheme;
+    final borderColor = selected
+        ? const Color(0xFFFFB300)
+        : cs.outlineVariant.withValues(alpha: 0.5);
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(14),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.fromLTRB(6, 10, 6, 10),
+        decoration: BoxDecoration(
+          color: selected
+              ? const Color(0xFFFFF8E1)
+              : cs.surfaceContainerHighest.withValues(alpha: 0.4),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: borderColor, width: selected ? 2.5 : 1.2),
+          boxShadow: selected
+              ? [
+                  const BoxShadow(
+                    color: Color(0x33FFB300),
+                    blurRadius: 14,
+                    offset: Offset(0, 6),
+                  ),
+                ]
+              : null,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            if (badge != null) ...[
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 5,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFB300),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    badge!,
+                    style: const TextStyle(
+                      fontSize: 8.5,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.black87,
+                      letterSpacing: 0.4,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 6),
+            ],
+            Text(
+              title.toUpperCase(),
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 9.5,
+                fontWeight: FontWeight.w800,
+                color: cs.onSurface.withValues(alpha: 0.7),
+                letterSpacing: 0.6,
+              ),
+            ),
+            const SizedBox(height: 6),
+            // Anchor (strikethrough) price
+            Text(
+              plan.anchorPrice,
+              style: TextStyle(
+                fontSize: 11,
+                color: cs.onSurface.withValues(alpha: 0.45),
+                decoration: TextDecoration.lineThrough,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 2),
+            // Live discounted price
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                priceLabel,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            // Save % pill
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF388E3C).withValues(alpha: 0.16),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  l.pricingSave(plan.savePercent),
+                  style: const TextStyle(
+                    fontSize: 9.5,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF2E7D32),
+                  ),
+                ),
+              ),
+            ),
+            if (subBadge != null) ...[
+              const SizedBox(height: 6),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  subBadge!,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 9.5,
+                    color: cs.onSurface.withValues(alpha: 0.65),
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }

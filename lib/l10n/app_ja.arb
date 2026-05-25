@@ -231,7 +231,6 @@
     "placeholders": { "points": { "type": "int" } }
   },
   "gameTied": "引き分け！",
-  "gameReviewComingSoon": "棋譜解析は近日公開",
 
   "rating": "レート",
   "today": "今日",
@@ -255,7 +254,7 @@
   "allBotsAndLessons": "全ボットとレッスン",
   "allBotsAndLessonsDesc": "初心者ボットと最初の4レッスンは無料",
   "postGameAnalysis": "対局解析",
-  "postGameAnalysisDesc": "終了した対局の詳細レビュー（近日公開）",
+  "postGameAnalysisDesc": "完了した対局を一手ずつ再生できます。",
   "profileFlair": "プロフィール装飾",
   "profileFlairDesc": "プレミアムバッジとアバターボーダー",
   "restorePurchases": "購入を復元",
@@ -293,6 +292,8 @@
   "loginFailed": "ログインに失敗しました。資格情報を確認してください。",
   "errorPrefix": "エラー：",
   "noAccountSignUp": "アカウントがありませんか？ OGS でサインアップ",
+  "orContinueWith": "または次の方法で続ける",
+  "continueWithOgs": "OGS で続ける（Google など）",
 
   "onlinePlay": "オンライン対局",
   "onlineStatusConnected": "オンライン",
@@ -355,6 +356,8 @@
   "coachSolve4": "難しかった！",
   "coachSolve5": "完璧な読み。",
   "coachSolve6": "その調子！",
+  "illegalMoveFeedback": "違法な着手（コウ/自殺）— 別の点を選んでください。",
+  "wrongMoveFeedback": "正しい着手ではありません — もう一度！",
   "openLesson": "開く",
 
   "puzzleGardenTitle": "初心者の庭",
@@ -378,5 +381,162 @@
     "placeholders": {
       "xp": { "type": "int" }
     }
-  }
+  },
+
+  "solvePuzzles": "詰め碁を解く",
+  "levelN": "レベル {n}",
+  "@levelN": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "puzzleBestMove": "最善手を見つけよう",
+  "xpToUnlock": "+{xp} XP",
+  "@xpToUnlock": {
+    "placeholders": {
+      "xp": { "type": "int" }
+    }
+  },
+  "worldStoneForest": "石の森",
+  "worldCrystalCave": "クリスタルの洞窟",
+  "worldCopperPeaks": "銅の山",
+  "worldDiamondTundra": "ダイヤモンドの凍原",
+  "worldJadeHighlands": "翡翠の高地",
+  "comingSoon": "近日公開",
+
+  "quit": "終了",
+  "drillCompleteTitle": "ドリル完了",
+  "backToLearn": "学習に戻る",
+  "quitDrillTitle": "ドリルを終了しますか？",
+  "quitDrillBody": "今終了すると進捗は保存されません。",
+  "resignGameTitle": "投了しますか？",
+  "resignGameBody": "本当に投了しますか？",
+  "undoRequestTitle": "待ったのリクエスト",
+  "decline": "拒否",
+  "accept": "承認",
+  "gameInfoTitle": "対局情報",
+  "leaveGame": "対局を離れる",
+  "connectionTestTitle": "接続テスト",
+  "runConnectionTest": "テストを実行",
+  "findOpponentSubtitle": "クイック対局の相手をすぐに見つけよう",
+  "startMatchHint": "クイックマッチで始めよう！",
+  "shuffle": "シャッフル",
+  "tutorialsTitle": "チュートリアル",
+
+  "botDescPanda": "甘くて少しおっちょこちょい。ランダムな手を好みます。",
+  "botDescPup": "石を追いかける元気な子犬。簡単に出し抜けます。",
+  "botDescBunny": "盤上を跳ね回り、好奇心旺盛で予測不能な手を打ちます。",
+  "botDescKoi": "穏やかで安定。辺の打ち回しと小さな囲いを好みます。",
+  "botDescTanuki": "ずる賢い精霊。基本的な石取りと形を知っています。",
+  "botDescPebble": "静かで安定。じっくりと厚い形を築きます。",
+  "botDescHeron": "辛抱強い。辺の薄い形を咎めます。",
+  "botDescOwl": "賢く辛抱強い。固い地の枠組みを築きます。",
+  "botDescCrane": "優雅でバランス型。軽くて柔軟な形を打ちます。",
+  "botDescMantis": "鋭くて速い。手筋の手順を読み切ります。",
+  "botDescBadger": "どの石も戦わずに譲りません。",
+  "botDescKitsune": "ずる賢い狐。打ち過ぎを咎め、良形を評価します。",
+  "botDescPhoenix": "プレッシャーから鋭い反撃で蘇ります。",
+  "botDescHawk": "圧力型。常にあなたの薄い石を狙います。",
+  "botDescTiger": "獰猛な戦士。薄い石を攻めるのが好きです。",
+  "botDescOtter": "柔軟で遊び心がある。攻めと守りを行き来します。",
+  "botDescDragon": "強い読みと綺麗なヨセ。精度を要求します。",
+  "botDescSamurai": "名誉と規律。強い戦闘と綺麗な形を兼備します。",
+  "botDescTengu": "山の精霊。強い戦闘と効率的な形。",
+  "botDescMonk": "落ち着いた深い形勢判断。全局視野。",
+  "botDescOracle": "十数手先の変化が見える。だましにくい相手です。",
+  "botDescSensei": "賢い師範。最も教育的なプロの手を打ちます。",
+  "botDescKataGo": "ニューラルネットで数十手先を読む。超人的な戦略眼。",
+
+  "tauntDefaultGreet": "対局しましょう！",
+  "tauntDefaultWin": "良い対局でした！見事な一勝です。",
+  "tauntDefaultLose": "見事な打ち回しでした — また次回！",
+  "tauntDefaultResign": "対局ありがとうございました！",
+  "tauntPandaGreet": "やあ友達！対局しよう！",
+  "tauntPandaWin": "やった！勝ったよ！",
+  "tauntPandaLose": "君は本当に強いね！",
+
+  "undoMove": "手を戻す",
+  "passTurn": "パス",
+  "redoMove": "やり直し",
+  "newGame": "新規対局",
+  "practiceBadge": "練習",
+  "notYourTurn": "あなたの手番ではありません！",
+  "menuTooltip": "メニュー",
+  "profileTooltip": "プロフィール",
+  "wins": "勝",
+  "losses": "負",
+  "draws": "引分",
+  "winLossLabel": "勝 / 負",
+  "playGamesHint": "対局するとここに戦績が表示されます。",
+  "filterAll": "すべて",
+  "noPuzzlesForFilter": "このフィルターの問題はありません。",
+  "tutorialsLoadError": "チュートリアルを読み込めませんでした：{error}",
+  "@tutorialsLoadError": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "noTutorialsYet": "チュートリアルはまだありません。",
+  "practiceModeTitle": "練習モード",
+  "practiceModeSubtitle": "一手ごとに最善手が表示されます · 結果は 1 ★",
+  "chooseBoardSize": "盤の大きさを選択",
+  "undoRequestSent": "待ったを要請しました",
+  "undoRequestDeclined": "待ったの要請は拒否されました",
+  "undoRequestAccepted": "待ったの要請が承認されました",
+  "opponentRequestedUndo": "相手が #{moveNumber} 手目への待ったを要請しました。",
+  "@opponentRequestedUndo": {
+    "placeholders": { "moveNumber": { "type": "int" } }
+  },
+  "suggestedRemovedStones": "{count} 個の死石を提示しました",
+  "@suggestedRemovedStones": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "gameIdLabel": "対局 ID：{id}",
+  "@gameIdLabel": { "placeholders": { "id": { "type": "String" } } },
+  "moveLabel": "手数：{n}",
+  "@moveLabel": { "placeholders": { "n": { "type": "int" } } },
+  "phaseLabel": "局面：{phase}",
+  "@phaseLabel": { "placeholders": { "phase": { "type": "String" } } },
+  "boardLabel": "盤：{size}",
+  "@boardLabel": { "placeholders": { "size": { "type": "String" } } },
+
+  "hintLookAt": "{row} 行、{col} 列に注目 — ここに強い一手があります。",
+  "@hintLookAt": {
+    "placeholders": {
+      "row": { "type": "int" },
+      "col": { "type": "String" }
+    }
+  },
+  "hintFallbackGeneric": "相手の石を圧迫する手を探そう — アタリ、薄い石、眼形を確認。",
+
+  "paywallHeroTitle": "GOKO Premium を解錠",
+  "paywallHeroTagline": "古代のゲームを極めよう",
+  "paywallFeatureUnlimitedPuzzles": "無制限の毎日詰碁",
+  "paywallFeatureAllBots": "全ボット — Pup から KataGo まで",
+  "paywallFeatureLessons": "完全レッスン + 対局分析",
+  "paywallFeatureSync": "クラウド同期・バッジ・プロフィール装飾",
+  "pricingTierMonthly": "月額",
+  "pricingTierAnnual": "年額",
+  "pricingTierLifetime": "永久",
+  "pricingPopular": "一番人気",
+  "pricingBestValue": "おすすめ",
+  "pricingSave": "{percent}% お得",
+  "@pricingSave": { "placeholders": { "percent": { "type": "int" } } },
+  "pricingPerMonth": "{price}/月",
+  "@pricingPerMonth": { "placeholders": { "price": { "type": "String" } } },
+  "pricingPerYear": "{price}/年",
+  "@pricingPerYear": { "placeholders": { "price": { "type": "String" } } },
+  "pricingOnce": "{price} 一回",
+  "@pricingOnce": { "placeholders": { "price": { "type": "String" } } },
+  "startFreeTrial": "7 日間無料でお試し",
+  "restorePurchases": "購入を復元",
+  "cancelAnytime": "いつでも解約可能",
+  "renewsAtPrice": "{price} で更新",
+  "@renewsAtPrice": { "placeholders": { "price": { "type": "String" } } },
+  "trustedByPlayers": "{count}+ プレイヤーが信頼",
+  "@trustedByPlayers": { "placeholders": { "count": { "type": "String" } } },
+  "freeTrialDuration": "7日間無料",
+  "paywallContinueFree": "あとで",
+
+  "scoreStonesLabel": "石",
+  "scoreTerritoryLabel": "地",
+  "scoreCapturedLabel": "アゲハマ"
 }

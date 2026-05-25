@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:zaibal/gen/l10n/app_localizations.dart';
@@ -5,6 +8,57 @@ import 'package:zaibal/l10n/puzzle_translations.dart';
 import 'package:zaibal/models/puzzle.dart';
 
 void main() {
+  group('ARB completeness', () {
+    // Loads the raw ARB JSON for each locale once and asserts every key in
+    // English (ignoring @-prefixed metadata) has a non-empty value in all 5
+    // other locales. This is the only way to catch a missing translation
+    // since `flutter gen-l10n` will silently fall back to English at runtime.
+    final enRaw = File('lib/l10n/app_en.arb').readAsStringSync();
+    final en = jsonDecode(enRaw) as Map<String, dynamic>;
+    final keys = en.keys.where((k) => !k.startsWith('@')).toList();
+
+    for (final locale in ['ru', 'de', 'zh', 'ja', 'ko']) {
+      test('$locale has a non-empty value for every English key', () {
+        final raw = File('lib/l10n/app_$locale.arb').readAsStringSync();
+        final map = jsonDecode(raw) as Map<String, dynamic>;
+        final missing = <String>[];
+        final empty = <String>[];
+        for (final k in keys) {
+          if (!map.containsKey(k)) {
+            missing.add(k);
+            continue;
+          }
+          final v = map[k];
+          if (v is! String || v.trim().isEmpty) {
+            empty.add(k);
+          }
+        }
+        expect(
+          missing,
+          isEmpty,
+          reason: 'missing keys in $locale: ${missing.join(", ")}',
+        );
+        expect(
+          empty,
+          isEmpty,
+          reason: 'empty values in $locale: ${empty.join(", ")}',
+        );
+      });
+    }
+
+    test('English ARB has no orphaned @-metadata for absent keys', () {
+      final atKeys = en.keys
+          .where((k) => k.startsWith('@') && !k.startsWith('@@'))
+          .toList();
+      final orphans = <String>[];
+      for (final at in atKeys) {
+        final stripped = at.substring(1);
+        if (!en.containsKey(stripped)) orphans.add(at);
+      }
+      expect(orphans, isEmpty, reason: 'orphan @-keys: ${orphans.join(", ")}');
+    });
+  });
+
   group('AppLocalizations', () {
     test('supports en/ru/zh/ja/ko locales', () async {
       for (final code in ['en', 'ru', 'zh', 'ja', 'ko']) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:provider/provider.dart';
+import '../../gen/l10n/app_localizations.dart';
 import '../../services/ogs_service.dart';
 import '../../services/online/game_connection.dart';
 import '../../services/match_history_service.dart';
@@ -721,7 +722,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
                 ),
                 minimumSize: const Size(0, 0),
               ),
-              child: const Text('Leave Game'),
+              child: Text(AppLocalizations.of(context).leaveGame),
             ),
           ],
         ],
@@ -1123,15 +1124,16 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
   }
 
   void _resign() {
+    final l = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Resign Game?'),
-        content: const Text('Are you sure you want to resign?'),
+        title: Text(l.resignGameTitle),
+        content: Text(l.resignGameBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l.cancel),
           ),
           ElevatedButton(
             onPressed: () {
@@ -1139,7 +1141,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
               _gameConnection?.resign();
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Resign'),
+            child: Text(l.resign),
           ),
         ],
       ),
@@ -1157,7 +1159,11 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
     }
     _gameConnection?.setRemovedStones(coords);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Suggested ${coords.length} removed stones')),
+      SnackBar(
+        content: Text(
+          AppLocalizations.of(context).suggestedRemovedStones(coords.length),
+        ),
+      ),
     );
   }
 
@@ -1172,39 +1178,50 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
   void _requestUndo() {
     if (_moveNumber > 0) {
       _gameConnection?.requestUndo(_moveNumber);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Undo request sent')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context).undoRequestSent)),
+      );
     }
   }
 
   void _showUndoRequestDialog(int moveNumber) {
+    final l = AppLocalizations.of(context);
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: const Text('Undo Request'),
-        content: Text('Your opponent requested an undo to move #$moveNumber.'),
+        title: Text(l.undoRequestTitle),
+        content: Text(
+          AppLocalizations.of(context).opponentRequestedUndo(moveNumber),
+        ),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               _gameConnection?.declineUndo(moveNumber);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Undo request declined')),
+                SnackBar(
+                  content: Text(
+                    AppLocalizations.of(context).undoRequestDeclined,
+                  ),
+                ),
               );
             },
-            child: const Text('Decline'),
+            child: Text(l.decline),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
               _gameConnection?.acceptUndo(moveNumber);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Undo request accepted')),
+                SnackBar(
+                  content: Text(
+                    AppLocalizations.of(context).undoRequestAccepted,
+                  ),
+                ),
               );
             },
-            child: const Text('Accept'),
+            child: Text(l.accept),
           ),
         ],
       ),
@@ -1212,24 +1229,29 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
   }
 
   void _showGameInfo() {
+    final l = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Game Info'),
+        title: Text(l.gameInfoTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Game ID: ${widget.gameId}'),
-            Text('Move: $_moveNumber'),
-            Text('Phase: $_phase'),
-            Text('Board: ${_board?.length ?? 0}×${_board?.first.length ?? 0}'),
+            Text(AppLocalizations.of(context).gameIdLabel(widget.gameId)),
+            Text(AppLocalizations.of(context).moveLabel(_moveNumber)),
+            Text(AppLocalizations.of(context).phaseLabel(_phase)),
+            Text(
+              AppLocalizations.of(context).boardLabel(
+                '${_board?.length ?? 0}×${_board?.first.length ?? 0}',
+              ),
+            ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: Text(l.close),
           ),
         ],
       ),

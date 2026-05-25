@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import '../gen/l10n/app_localizations.dart';
 import '../models/drill.dart';
 import '../models/puzzle.dart';
 import 'puzzle_screen.dart';
@@ -251,7 +252,7 @@ class _DrillScreenState extends State<DrillScreen> {
             onPressed: () {
               _showQuitConfirmation(context);
             },
-            child: const Text('Quit'),
+            child: Text(AppLocalizations.of(context).quit),
           ),
         ],
       ),
@@ -302,7 +303,7 @@ class _DrillScreenState extends State<DrillScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Drill Complete'),
+        title: Text(AppLocalizations.of(context).drillCompleteTitle),
         automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
@@ -385,7 +386,7 @@ class _DrillScreenState extends State<DrillScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text('Back to Learn'),
+                    child: Text(AppLocalizations.of(context).backToLearn),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -483,22 +484,23 @@ class _DrillScreenState extends State<DrillScreen> {
   }
 
   void _showQuitConfirmation(BuildContext context) {
+    final l = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Quit Drill?'),
-        content: const Text('Your progress will not be saved if you quit now.'),
+        title: Text(l.quitDrillTitle),
+        content: Text(l.quitDrillBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(l.cancel),
           ),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(); // Close dialog
               Navigator.of(context).pop(); // Exit drill screen
             },
-            child: const Text('Quit', style: TextStyle(color: Colors.red)),
+            child: Text(l.quit, style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),

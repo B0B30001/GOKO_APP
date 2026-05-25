@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../gen/l10n/app_localizations.dart';
 import '../services/ogs_service.dart';
 
 /// Login dialog for OGS authentication
@@ -28,8 +29,9 @@ class _LoginDialogState extends State<LoginDialog> {
   Future<void> _login() async {
     if (_usernameController.text.trim().isEmpty ||
         _passwordController.text.isEmpty) {
+      final l = AppLocalizations.of(context);
       setState(() {
-        _errorMessage = 'Please enter username and password';
+        _errorMessage = l.enterUsernamePassword;
       });
       return;
     }
@@ -55,15 +57,17 @@ class _LoginDialogState extends State<LoginDialog> {
         // AppShell (home tab). No explicit navigation needed.
         Navigator.pop(context);
       } else {
+        final l = AppLocalizations.of(context);
         setState(() {
-          _errorMessage = 'Login failed. Check your credentials.';
+          _errorMessage = l.loginFailed;
           _isLoading = false;
         });
       }
     } catch (e) {
       if (!mounted) return;
+      final l = AppLocalizations.of(context);
       setState(() {
-        _errorMessage = 'Error: ${e.toString()}';
+        _errorMessage = '${l.errorPrefix}${e.toString()}';
         _isLoading = false;
       });
     }
@@ -71,6 +75,7 @@ class _LoginDialogState extends State<LoginDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
@@ -94,15 +99,15 @@ class _LoginDialogState extends State<LoginDialog> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Sign in to OGS',
-                          style: TextStyle(
+                        Text(
+                          l.ogsLogin,
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text(
-                          'Online Go Server',
+                          l.onlineGoServer,
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.grey[600],
@@ -123,10 +128,10 @@ class _LoginDialogState extends State<LoginDialog> {
               TextField(
                 controller: _usernameController,
                 enabled: !_isLoading,
-                decoration: const InputDecoration(
-                  labelText: 'Username',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.person),
+                decoration: InputDecoration(
+                  labelText: l.username,
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.person),
                 ),
                 autofocus: true,
                 textInputAction: TextInputAction.next,
@@ -139,7 +144,7 @@ class _LoginDialogState extends State<LoginDialog> {
                 enabled: !_isLoading,
                 obscureText: _obscurePassword,
                 decoration: InputDecoration(
-                  labelText: 'Password',
+                  labelText: l.password,
                   border: const OutlineInputBorder(),
                   prefixIcon: const Icon(Icons.lock),
                   suffixIcon: IconButton(
@@ -200,7 +205,7 @@ class _LoginDialogState extends State<LoginDialog> {
                           color: Colors.white,
                         ),
                       )
-                    : const Text('Sign In', style: TextStyle(fontSize: 16)),
+                    : Text(l.signIn, style: const TextStyle(fontSize: 16)),
               ),
               const SizedBox(height: 12),
 
@@ -208,9 +213,9 @@ class _LoginDialogState extends State<LoginDialog> {
               Row(
                 children: [
                   Expanded(child: Divider(color: Colors.grey[400])),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Text('or continue with'),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Text(l.orContinueWith),
                   ),
                   Expanded(child: Divider(color: Colors.grey[400])),
                 ],
@@ -229,7 +234,7 @@ class _LoginDialogState extends State<LoginDialog> {
                         await ogs.startOgsOAuth();
                       },
                 icon: const Icon(Icons.login),
-                label: const Text('Continue with OGS (Google, etc.)'),
+                label: Text(l.continueWithOgs),
               ),
               const SizedBox(height: 8),
 
@@ -247,7 +252,7 @@ class _LoginDialogState extends State<LoginDialog> {
                         );
                         await ogs.launchExternalUrl(uri);
                       },
-                child: const Text("Don't have an account? Sign up on OGS"),
+                child: Text(l.noAccountSignUp),
               ),
             ],
           ),

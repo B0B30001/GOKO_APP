@@ -129,6 +129,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tryAgain => 'Try again';
 
   @override
+  String get illegalMoveFeedback =>
+      'Illegal move (Ko / suicide) — try another point.';
+
+  @override
+  String get wrongMoveFeedback => 'Not the right move — try again!';
+
+  @override
   String get giveUp => 'Give up';
 
   @override
@@ -316,7 +323,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whiteToPlay => 'White to play';
 
   @override
-  String get comingSoon => 'Soon';
+  String get comingSoon => 'Coming Soon';
 
   @override
   String get general => 'General';
@@ -609,9 +616,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gameTied => 'Game is tied!';
 
   @override
-  String get gameReviewComingSoon => 'Game Review coming soon';
-
-  @override
   String get rating => 'Rating';
 
   @override
@@ -682,7 +686,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get postGameAnalysisDesc =>
-      'Deep review of any finished game (coming soon)';
+      'Replay every move and rewind any finished game.';
 
   @override
   String get profileFlair => 'Profile flair';
@@ -691,7 +695,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileFlairDesc => 'Premium badges and avatar borders';
 
   @override
-  String get restorePurchases => 'Restore purchases';
+  String get restorePurchases => 'Restore Purchases';
 
   @override
   String get puzzleDailyQuotaReached =>
@@ -752,7 +756,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get freeTrialSubtitle => 'Cancel anytime';
 
   @override
-  String get ogsLogin => 'OGS Login';
+  String get ogsLogin => 'Sign in to OGS';
 
   @override
   String get onlineGoServer => 'Online Go Server';
@@ -780,6 +784,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noAccountSignUp => 'Don\'t have an account? Sign up on OGS';
+
+  @override
+  String get orContinueWith => 'or continue with';
+
+  @override
+  String get continueWithOgs => 'Continue with OGS (Google, etc.)';
 
   @override
   String get onlinePlay => 'Online Play';
@@ -993,4 +1003,393 @@ class AppLocalizationsEn extends AppLocalizations {
   String gateLockedUnlockAt(int xp) {
     return 'Unlock at $xp XP';
   }
+
+  @override
+  String get solvePuzzles => 'Solve Puzzles';
+
+  @override
+  String levelN(int n) {
+    return 'Level $n';
+  }
+
+  @override
+  String get puzzleBestMove => 'Find the best move';
+
+  @override
+  String xpToUnlock(int xp) {
+    return '+$xp XP';
+  }
+
+  @override
+  String get worldStoneForest => 'Stone Forest';
+
+  @override
+  String get worldCrystalCave => 'Crystal Cave';
+
+  @override
+  String get worldCopperPeaks => 'Copper Peaks';
+
+  @override
+  String get worldDiamondTundra => 'Diamond Tundra';
+
+  @override
+  String get worldJadeHighlands => 'Jade Highlands';
+
+  @override
+  String get quit => 'Quit';
+
+  @override
+  String get drillCompleteTitle => 'Drill Complete';
+
+  @override
+  String get backToLearn => 'Back to Learn';
+
+  @override
+  String get quitDrillTitle => 'Quit Drill?';
+
+  @override
+  String get quitDrillBody =>
+      'Your progress will not be saved if you quit now.';
+
+  @override
+  String get resignGameTitle => 'Resign Game?';
+
+  @override
+  String get resignGameBody => 'Are you sure you want to resign?';
+
+  @override
+  String get undoRequestTitle => 'Undo Request';
+
+  @override
+  String get decline => 'Decline';
+
+  @override
+  String get accept => 'Accept';
+
+  @override
+  String get gameInfoTitle => 'Game Info';
+
+  @override
+  String get leaveGame => 'Leave Game';
+
+  @override
+  String get connectionTestTitle => 'Connection Test';
+
+  @override
+  String get runConnectionTest => 'Run Connection Test';
+
+  @override
+  String get findOpponentSubtitle =>
+      'Find an opponent instantly for a quick game';
+
+  @override
+  String get startMatchHint => 'Start a quick match to begin!';
+
+  @override
+  String get shuffle => 'Shuffle';
+
+  @override
+  String get tutorialsTitle => 'Tutorials';
+
+  @override
+  String get botDescPanda => 'Sweet and silly. Loves playing random moves.';
+
+  @override
+  String get botDescPup => 'Eager puppy chasing every stone. Easy to outsmart.';
+
+  @override
+  String get botDescBunny =>
+      'Hops around the board with curious, unpredictable moves.';
+
+  @override
+  String get botDescKoi =>
+      'Soft and steady. Loves edge play and small enclosures.';
+
+  @override
+  String get botDescTanuki =>
+      'Tricky little spirit. Knows basic captures and shapes.';
+
+  @override
+  String get botDescPebble =>
+      'Quiet and steady. Builds slowly toward solid frameworks.';
+
+  @override
+  String get botDescHeron => 'Patient. Picks apart loose shapes near the side.';
+
+  @override
+  String get botDescOwl =>
+      'Wise and patient. Builds solid frameworks of territory.';
+
+  @override
+  String get botDescCrane =>
+      'Graceful and balanced. Plays light and flexible shapes.';
+
+  @override
+  String get botDescMantis => 'Sharp and quick. Calculates tactical sequences.';
+
+  @override
+  String get botDescBadger => 'Never lets a stone go without a fight.';
+
+  @override
+  String get botDescKitsune =>
+      'Cunning fox. Punishes overplays and rewards good shape.';
+
+  @override
+  String get botDescPhoenix =>
+      'Rises from pressure with sharp counter-attacks.';
+
+  @override
+  String get botDescHawk => 'Pressure player. Always probing your weak groups.';
+
+  @override
+  String get botDescTiger => 'Fierce fighter. Loves to attack weak groups.';
+
+  @override
+  String get botDescOtter =>
+      'Flexible and playful. Pivots between attack and defence.';
+
+  @override
+  String get botDescDragon =>
+      'Powerful reading and clean endgame. Demands precision.';
+
+  @override
+  String get botDescSamurai =>
+      'Honor and discipline. Strong fighting plus clean shape.';
+
+  @override
+  String get botDescTengu =>
+      'Mountain spirit. Strong fighting and efficient shape.';
+
+  @override
+  String get botDescMonk =>
+      'Calm, deep positional understanding. Whole-board sight.';
+
+  @override
+  String get botDescOracle =>
+      'Sees variations a dozen moves ahead. Hard to fool.';
+
+  @override
+  String get botDescSensei =>
+      'Wise teacher. Plays the most instructive professional moves.';
+
+  @override
+  String get botDescKataGo =>
+      'Plans dozens of moves ahead with neural-network lookahead. Superhuman strategic vision.';
+
+  @override
+  String get tauntDefaultGreet => 'Let\'s play!';
+
+  @override
+  String get tauntDefaultWin => 'Good game! You earned that one.';
+
+  @override
+  String get tauntDefaultLose => 'Nicely played — better luck next time!';
+
+  @override
+  String get tauntDefaultResign => 'Thanks for the game!';
+
+  @override
+  String get tauntPandaGreet => 'Hi friend! Let\'s play!';
+
+  @override
+  String get tauntPandaWin => 'Yay! I won!';
+
+  @override
+  String get tauntPandaLose => 'You\'re really good!';
+
+  @override
+  String get undoMove => 'Undo move';
+
+  @override
+  String get passTurn => 'Pass turn';
+
+  @override
+  String get redoMove => 'Redo move';
+
+  @override
+  String get newGame => 'New game';
+
+  @override
+  String get practiceBadge => 'PRACTICE';
+
+  @override
+  String get notYourTurn => 'It\'s not your turn!';
+
+  @override
+  String get menuTooltip => 'Menu';
+
+  @override
+  String get profileTooltip => 'Profile';
+
+  @override
+  String get wins => 'Wins';
+
+  @override
+  String get losses => 'Losses';
+
+  @override
+  String get draws => 'Draws';
+
+  @override
+  String get winLossLabel => 'Win / Loss';
+
+  @override
+  String get playGamesHint => 'Play games to see your split here.';
+
+  @override
+  String get filterAll => 'All';
+
+  @override
+  String get noPuzzlesForFilter => 'No puzzles for this filter.';
+
+  @override
+  String tutorialsLoadError(String error) {
+    return 'Failed to load tutorials: $error';
+  }
+
+  @override
+  String get noTutorialsYet => 'No tutorials available yet.';
+
+  @override
+  String get practiceModeTitle => 'Practice Mode';
+
+  @override
+  String get practiceModeSubtitle =>
+      'Best move shown after each turn · result is 1 ★';
+
+  @override
+  String get chooseBoardSize => 'Choose board size';
+
+  @override
+  String get undoRequestSent => 'Undo request sent';
+
+  @override
+  String get undoRequestDeclined => 'Undo request declined';
+
+  @override
+  String get undoRequestAccepted => 'Undo request accepted';
+
+  @override
+  String opponentRequestedUndo(int moveNumber) {
+    return 'Your opponent requested an undo to move #$moveNumber.';
+  }
+
+  @override
+  String suggestedRemovedStones(int count) {
+    return 'Suggested $count removed stones';
+  }
+
+  @override
+  String gameIdLabel(String id) {
+    return 'Game ID: $id';
+  }
+
+  @override
+  String moveLabel(int n) {
+    return 'Move: $n';
+  }
+
+  @override
+  String phaseLabel(String phase) {
+    return 'Phase: $phase';
+  }
+
+  @override
+  String boardLabel(String size) {
+    return 'Board: $size';
+  }
+
+  @override
+  String hintLookAt(int row, String col) {
+    return 'Look at row $row, column $col — there\'s a strong move here.';
+  }
+
+  @override
+  String get hintFallbackGeneric =>
+      'Find the move that pressures the opposing stones — look for atari, weak groups, or eye shapes.';
+
+  @override
+  String get paywallHeroTitle => 'Unlock GOKO Premium';
+
+  @override
+  String get paywallHeroTagline => 'Master the ancient game';
+
+  @override
+  String get paywallFeatureUnlimitedPuzzles => 'Unlimited daily puzzles';
+
+  @override
+  String get paywallFeatureAllBots => 'All bots — Pup to KataGo';
+
+  @override
+  String get paywallFeatureLessons =>
+      'Full lesson library + post-game analysis';
+
+  @override
+  String get paywallFeatureSync => 'Cloud sync, badges & profile flair';
+
+  @override
+  String get pricingTierMonthly => 'Monthly';
+
+  @override
+  String get pricingTierAnnual => 'Annual';
+
+  @override
+  String get pricingTierLifetime => 'Lifetime';
+
+  @override
+  String get pricingPopular => 'MOST POPULAR';
+
+  @override
+  String get pricingBestValue => 'Best value';
+
+  @override
+  String pricingSave(int percent) {
+    return 'Save $percent%';
+  }
+
+  @override
+  String pricingPerMonth(String price) {
+    return '$price/mo';
+  }
+
+  @override
+  String pricingPerYear(String price) {
+    return '$price/yr';
+  }
+
+  @override
+  String pricingOnce(String price) {
+    return '$price once';
+  }
+
+  @override
+  String get startFreeTrial => 'Start 7-day Free Trial';
+
+  @override
+  String get cancelAnytime => 'Cancel anytime';
+
+  @override
+  String renewsAtPrice(String price) {
+    return 'Renews at $price';
+  }
+
+  @override
+  String trustedByPlayers(String count) {
+    return 'Trusted by $count+ players';
+  }
+
+  @override
+  String get freeTrialDuration => '7 days free';
+
+  @override
+  String get paywallContinueFree => 'Maybe later';
+
+  @override
+  String get scoreStonesLabel => 'Stones';
+
+  @override
+  String get scoreTerritoryLabel => 'Territory';
+
+  @override
+  String get scoreCapturedLabel => 'Captured';
 }

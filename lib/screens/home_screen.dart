@@ -93,13 +93,13 @@ class HomeScreen extends StatelessWidget {
         builder: (ctx) => IconButton(
           icon: const Icon(Icons.menu, color: Colors.white),
           onPressed: () => Scaffold.of(ctx).openDrawer(),
-          tooltip: 'Menu',
+          tooltip: AppLocalizations.of(ctx).menuTooltip,
         ),
       ),
       actions: [
         IconButton(
           icon: const Icon(Icons.person, color: Colors.white),
-          tooltip: 'Profile',
+          tooltip: AppLocalizations.of(context).profileTooltip,
           onPressed: () {
             appShellTabIndex.value = 3;
             Navigator.of(context).popUntil((r) => r.isFirst);

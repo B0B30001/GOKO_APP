@@ -231,7 +231,6 @@
     "placeholders": { "points": { "type": "int" } }
   },
   "gameTied": "平局！",
-  "gameReviewComingSoon": "复盘功能即将上线",
 
   "rating": "等级分",
   "today": "今日",
@@ -255,7 +254,7 @@
   "allBotsAndLessons": "全部机器人和课程",
   "allBotsAndLessonsDesc": "初级机器人和前4节课程免费",
   "postGameAnalysis": "赛后分析",
-  "postGameAnalysisDesc": "深度回顾任何已完成对局（即将推出）",
+  "postGameAnalysisDesc": "随时复盘任何已完成对局的每一手棋。",
   "profileFlair": "个人资料装扮",
   "profileFlairDesc": "高级徽章和头像边框",
   "restorePurchases": "恢复购买",
@@ -293,6 +292,8 @@
   "loginFailed": "登录失败，请检查凭据。",
   "errorPrefix": "错误：",
   "noAccountSignUp": "还没有账号？在 OGS 上注册",
+  "orContinueWith": "或者通过以下方式继续",
+  "continueWithOgs": "通过 OGS 继续（Google 等）",
 
   "onlinePlay": "在线对局",
   "onlineStatusConnected": "在线",
@@ -355,6 +356,8 @@
   "coachSolve4": "这题真难！",
   "coachSolve5": "看得真准。",
   "coachSolve6": "继续加油！",
+  "illegalMoveFeedback": "非法落子（打劫/自杀）——请选择其他点。",
+  "wrongMoveFeedback": "落子有误——请再试一次！",
   "openLesson": "打开",
 
   "puzzleGardenTitle": "新手花园",
@@ -378,5 +381,162 @@
     "placeholders": {
       "xp": { "type": "int" }
     }
-  }
+  },
+
+  "solvePuzzles": "解决题目",
+  "levelN": "第 {n} 关",
+  "@levelN": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "puzzleBestMove": "找出最佳着手",
+  "xpToUnlock": "+{xp} XP",
+  "@xpToUnlock": {
+    "placeholders": {
+      "xp": { "type": "int" }
+    }
+  },
+  "worldStoneForest": "石之森林",
+  "worldCrystalCave": "水晶洞穴",
+  "worldCopperPeaks": "铜峰",
+  "worldDiamondTundra": "钻石冻原",
+  "worldJadeHighlands": "翡翠高地",
+  "comingSoon": "即将推出",
+
+  "quit": "退出",
+  "drillCompleteTitle": "训练完成",
+  "backToLearn": "返回学习",
+  "quitDrillTitle": "退出训练？",
+  "quitDrillBody": "现在退出将不会保存进度。",
+  "resignGameTitle": "认输？",
+  "resignGameBody": "确定要认输吗？",
+  "undoRequestTitle": "悔棋请求",
+  "decline": "拒绝",
+  "accept": "接受",
+  "gameInfoTitle": "对局信息",
+  "leaveGame": "离开对局",
+  "connectionTestTitle": "连接测试",
+  "runConnectionTest": "运行测试",
+  "findOpponentSubtitle": "立即匹配对手开始快速对局",
+  "startMatchHint": "开始快速对局！",
+  "shuffle": "随机",
+  "tutorialsTitle": "教程",
+
+  "botDescPanda": "甜美又有些傻气。喜欢下随意的着法。",
+  "botDescPup": "热情的小狗追着每颗棋子。容易智胜。",
+  "botDescBunny": "在棋盘上跳跃，下出好奇而难以预料的着法。",
+  "botDescKoi": "柔和而稳健。喜欢边角的小型围地。",
+  "botDescTanuki": "狡黠的小精灵。懂基本的吃子和形状。",
+  "botDescPebble": "安静而稳定。慢慢建立坚实的格局。",
+  "botDescHeron": "耐心。拆解边线松散的形状。",
+  "botDescOwl": "睿智而耐心。建立坚实的地盘格局。",
+  "botDescCrane": "优雅而均衡。下轻盈灵活的形状。",
+  "botDescMantis": "锐利而敏捷。计算战术次序。",
+  "botDescBadger": "绝不让一颗棋子不战而走。",
+  "botDescKitsune": "狡猾的狐狸。惩罚过强，奖励好形。",
+  "botDescPhoenix": "在压力中以犀利反击崛起。",
+  "botDescHawk": "压迫型棋手。不断试探你的弱棋。",
+  "botDescTiger": "凶猛的斗士。喜欢攻击弱棋。",
+  "botDescOtter": "灵活而俏皮。在攻守间灵活切换。",
+  "botDescDragon": "强大的读棋与干净的官子。要求精准。",
+  "botDescSamurai": "荣誉与纪律。强力战斗加干净形状。",
+  "botDescTengu": "山岳精灵。强力战斗与高效形状。",
+  "botDescMonk": "沉静、深邃的形势判断。全局视野。",
+  "botDescOracle": "看到十几手后的变化。难以欺骗。",
+  "botDescSensei": "睿智的导师。下最具教学意义的职业着法。",
+  "botDescKataGo": "用神经网络预读数十手。超人的战略视野。",
+
+  "tauntDefaultGreet": "我们开始吧！",
+  "tauntDefaultWin": "好棋！这局你赢得漂亮。",
+  "tauntDefaultLose": "下得漂亮——下次好运！",
+  "tauntDefaultResign": "感谢这局棋！",
+  "tauntPandaGreet": "嗨朋友！来下棋吧！",
+  "tauntPandaWin": "耶！我赢啦！",
+  "tauntPandaLose": "你真厉害！",
+
+  "undoMove": "悔棋",
+  "passTurn": "弃权",
+  "redoMove": "重做",
+  "newGame": "新游戏",
+  "practiceBadge": "练习",
+  "notYourTurn": "现在不是你的回合！",
+  "menuTooltip": "菜单",
+  "profileTooltip": "个人资料",
+  "wins": "胜",
+  "losses": "负",
+  "draws": "和",
+  "winLossLabel": "胜 / 负",
+  "playGamesHint": "对局后会在此显示战绩。",
+  "filterAll": "全部",
+  "noPuzzlesForFilter": "此筛选下无题目。",
+  "tutorialsLoadError": "无法加载教程：{error}",
+  "@tutorialsLoadError": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "noTutorialsYet": "暂无教程。",
+  "practiceModeTitle": "练习模式",
+  "practiceModeSubtitle": "每手棋后显示最佳着法 · 结果为 1 ★",
+  "chooseBoardSize": "选择棋盘大小",
+  "undoRequestSent": "已发送悔棋请求",
+  "undoRequestDeclined": "悔棋请求已拒绝",
+  "undoRequestAccepted": "悔棋请求已接受",
+  "opponentRequestedUndo": "对手请求悔棋至第 #{moveNumber} 手。",
+  "@opponentRequestedUndo": {
+    "placeholders": { "moveNumber": { "type": "int" } }
+  },
+  "suggestedRemovedStones": "建议移除 {count} 颗棋子",
+  "@suggestedRemovedStones": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "gameIdLabel": "对局 ID：{id}",
+  "@gameIdLabel": { "placeholders": { "id": { "type": "String" } } },
+  "moveLabel": "手数：{n}",
+  "@moveLabel": { "placeholders": { "n": { "type": "int" } } },
+  "phaseLabel": "阶段：{phase}",
+  "@phaseLabel": { "placeholders": { "phase": { "type": "String" } } },
+  "boardLabel": "棋盘：{size}",
+  "@boardLabel": { "placeholders": { "size": { "type": "String" } } },
+
+  "hintLookAt": "看第 {row} 行，第 {col} 列 — 这里有一手强着。",
+  "@hintLookAt": {
+    "placeholders": {
+      "row": { "type": "int" },
+      "col": { "type": "String" }
+    }
+  },
+  "hintFallbackGeneric": "找出能压迫对手棋子的着法 — 注意征子、弱棋或眼形。",
+
+  "paywallHeroTitle": "解锁 GOKO Premium",
+  "paywallHeroTagline": "掌握这门古老的棋艺",
+  "paywallFeatureUnlimitedPuzzles": "无限每日题目",
+  "paywallFeatureAllBots": "全部机器人 — 从 Pup 到 KataGo",
+  "paywallFeatureLessons": "完整课程库 + 复盘分析",
+  "paywallFeatureSync": "云同步、徽章与个人风格",
+  "pricingTierMonthly": "按月",
+  "pricingTierAnnual": "按年",
+  "pricingTierLifetime": "终身",
+  "pricingPopular": "最受欢迎",
+  "pricingBestValue": "最划算",
+  "pricingSave": "节省 {percent}%",
+  "@pricingSave": { "placeholders": { "percent": { "type": "int" } } },
+  "pricingPerMonth": "{price}/月",
+  "@pricingPerMonth": { "placeholders": { "price": { "type": "String" } } },
+  "pricingPerYear": "{price}/年",
+  "@pricingPerYear": { "placeholders": { "price": { "type": "String" } } },
+  "pricingOnce": "{price} 一次性",
+  "@pricingOnce": { "placeholders": { "price": { "type": "String" } } },
+  "startFreeTrial": "开始 7 天免费试用",
+  "restorePurchases": "恢复购买",
+  "cancelAnytime": "随时取消",
+  "renewsAtPrice": "续费 {price}",
+  "@renewsAtPrice": { "placeholders": { "price": { "type": "String" } } },
+  "trustedByPlayers": "{count}+ 玩家的信赖之选",
+  "@trustedByPlayers": { "placeholders": { "count": { "type": "String" } } },
+  "freeTrialDuration": "7 天免费",
+  "paywallContinueFree": "稍后再说",
+
+  "scoreStonesLabel": "棋子",
+  "scoreTerritoryLabel": "地",
+  "scoreCapturedLabel": "提子"
 }

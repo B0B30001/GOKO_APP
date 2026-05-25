@@ -311,10 +311,11 @@ class _PuzzleScreenState extends State<PuzzleScreen>
     });
 
     // Show a rich feedback banner with targeted explanation when available.
+    final l = AppLocalizations.of(context);
     final targeted = widget.puzzle.failureReasons['$i,$j'];
     final feedbackMsg = illegal
-        ? 'Illegal move (Ko / suicide) — try another point.'
-        : targeted ?? 'Not the right move — try again!';
+        ? l.illegalMoveFeedback
+        : targeted ?? l.wrongMoveFeedback;
 
     ScaffoldMessenger.of(context)
       ..clearSnackBars()
@@ -343,20 +344,6 @@ class _PuzzleScreenState extends State<PuzzleScreen>
       );
 
     if (widget.isDrillMode) _resetPuzzle();
-  }
-
-  /// Reverts the most recent wrong move only, leaving previous correct moves
-  /// in place so the user can keep working from where they were.
-  void _stepBack() {
-    setState(() {
-      if (_lastWrongMoveKey != null) {
-        final parts = _lastWrongMoveKey!.split(',');
-        final r = int.parse(parts[0]);
-        final c = int.parse(parts[1]);
-        _game.board.setStone(r, c, 0);
-        _lastWrongMoveKey = null;
-      }
-    });
   }
 
   void _resetPuzzle() {
@@ -396,80 +383,101 @@ class _PuzzleScreenState extends State<PuzzleScreen>
   @override
   Widget build(BuildContext context) {
     final forceLight = AppSettings.forceLightThemeInGame;
-    final isDarkTheme = forceLight
+    final isDark = forceLight
         ? false
         : Theme.of(context).brightness == Brightness.dark;
+    final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
+      backgroundColor: isDark
+          ? const Color(0xFF1A1A2E)
+          : const Color(0xFFF0EBE3),
       appBar: AppBar(
-        backgroundColor: forceLight ? Colors.white : null,
+        backgroundColor: isDark
+            ? const Color(0xFF16213E)
+            : const Color(0xFF2D2D2D),
+        foregroundColor: Colors.white,
         title: Text(
           widget.puzzle.localizedTitle(context),
-          style: forceLight ? const TextStyle(color: Colors.black87) : null,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: forceLight ? Colors.black87 : null,
-          ),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: Icon(
-              Icons.lightbulb_outline,
-              color: forceLight ? Colors.black87 : null,
-            ),
+            icon: const Icon(Icons.lightbulb_outline, color: Colors.white),
             onPressed: _showHint,
             tooltip: AppLocalizations.of(context).hint,
           ),
           IconButton(
-            icon: Icon(
-              Icons.refresh,
-              color: forceLight ? Colors.black87 : null,
-            ),
+            icon: const Icon(Icons.refresh, color: Colors.white),
             onPressed: _resetPuzzle,
             tooltip: AppLocalizations.of(context).reset,
           ),
         ],
+        elevation: 0,
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final isWide = constraints.maxWidth > 600;
           return isWide
-              ? _buildDesktopLayout(constraints, isDarkTheme)
-              : _buildMobileLayout(constraints, isDarkTheme);
+              ? _buildDesktopLayout(constraints, isDark, cs)
+              : _buildMobileLayout(constraints, isDark, cs);
         },
       ),
     );
   }
 
-  Widget _buildDesktopLayout(BoxConstraints constraints, bool isDarkTheme) {
+  Widget _buildBoardWidget(double size, bool isDark) {
+    return AnimatedBuilder(
+      animation: _shakeAnimation,
+      builder: (context, child) => Transform.translate(
+        offset: Offset(_shakeAnimation.value, 0),
+        child: child,
+      ),
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha(isDark ? 120 : 60),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: FastGameBoard(
+            board: _game.board.board,
+            onTap: _onTapBoard,
+            isDarkTheme: isDark,
+            showCoordinates: AppSettings.showCoordinates,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDesktopLayout(
+    BoxConstraints constraints,
+    bool isDark,
+    ColorScheme cs,
+  ) {
     final double boardSize = constraints.maxHeight * 0.8;
     return Row(
       children: [
         Expanded(
           flex: 3,
-          child: Center(
-            child: AnimatedBuilder(
-              animation: _shakeAnimation,
-              builder: (context, child) => Transform.translate(
-                offset: Offset(_shakeAnimation.value, 0),
-                child: child,
-              ),
-              child: SizedBox(
-                width: boardSize,
-                height: boardSize,
-                child: FastGameBoard(
-                  board: _game.board.board,
-                  onTap: _onTapBoard,
-                  isDarkTheme: isDarkTheme,
-                  showCoordinates: AppSettings.showCoordinates,
-                ),
-              ),
-            ),
-          ),
+          child: Center(child: _buildBoardWidget(boardSize, isDark)),
         ),
         Expanded(
           flex: 1,
@@ -479,9 +487,9 @@ class _PuzzleScreenState extends State<PuzzleScreen>
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _buildInstruction(),
+                _buildInstruction(isDark),
                 const SizedBox(height: 20),
-                _buildStatusPanel(),
+                _buildStatusPanel(isDark, cs),
               ],
             ),
           ),
@@ -490,78 +498,84 @@ class _PuzzleScreenState extends State<PuzzleScreen>
     );
   }
 
-  Widget _buildMobileLayout(BoxConstraints constraints, bool isDarkTheme) {
-    final double boardSize = constraints.maxWidth * 0.95;
+  Widget _buildMobileLayout(
+    BoxConstraints constraints,
+    bool isDark,
+    ColorScheme cs,
+  ) {
+    final double boardSize = constraints.maxWidth * 0.96;
     return SingleChildScrollView(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _buildInstruction(),
-          const SizedBox(height: 8),
-          // Board with shake animation
-          Center(
-            child: AnimatedBuilder(
-              animation: _shakeAnimation,
-              builder: (context, child) => Transform.translate(
-                offset: Offset(_shakeAnimation.value, 0),
-                child: child,
-              ),
-              child: SizedBox(
-                width: boardSize,
-                height: boardSize,
-                child: FastGameBoard(
-                  board: _game.board.board,
-                  onTap: _onTapBoard,
-                  isDarkTheme: isDarkTheme,
-                  showCoordinates: AppSettings.showCoordinates,
-                ),
-              ),
-            ),
-          ),
+          _buildInstruction(isDark),
+          const SizedBox(height: 10),
+          Center(child: _buildBoardWidget(boardSize, isDark)),
           const SizedBox(height: 16),
-          _buildStatusPanel(),
+          _buildStatusPanel(isDark, cs),
           const SizedBox(height: 32),
         ],
       ),
     );
   }
 
-  /// Single instruction line above the board: "Black to play ●" / "White to play ○".
-  Widget _buildInstruction() {
+  /// Bold move-indicator bar: "● Ход чёрных" / "○ Ход белых".
+  Widget _buildInstruction(bool isDark) {
     final l = AppLocalizations.of(context);
     final isBlack = widget.puzzle.playerColor == 1;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+    final barBg = isDark ? const Color(0xFF0F3460) : const Color(0xFF2D2D2D);
+    return Container(
+      color: barBg,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Row(
         children: [
           Container(
-            width: 14,
-            height: 14,
+            width: 18,
+            height: 18,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: isBlack ? Colors.black : Colors.white,
-              border: Border.all(color: Colors.grey.shade500, width: 1.5),
+              border: Border.all(
+                color: isBlack ? Colors.grey.shade400 : Colors.grey.shade500,
+                width: 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withAlpha(80),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 10),
           Text(
             isBlack ? l.blackToPlay : l.whiteToPlay,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Theme.of(context).colorScheme.onSurface,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+              letterSpacing: 0.2,
             ),
           ),
+          if (_awaitingOpponent) ...[
+            const Spacer(),
+            const SizedBox(
+              width: 14,
+              height: 14,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.white54,
+              ),
+            ),
+          ],
         ],
       ),
     );
   }
 
-  /// Chess.com-style status panel below the board.
-  ///
-  /// • Not solved: description text + Hint / Reset buttons.
-  /// • Solved: green banner + explanation + Next Puzzle / Done button.
-  Widget _buildStatusPanel() {
+  /// Status panel below the board: description + actions, or solved banner.
+  Widget _buildStatusPanel(bool isDark, ColorScheme cs) {
     final l = AppLocalizations.of(context);
 
     if (_solved) {
@@ -571,52 +585,76 @@ class _PuzzleScreenState extends State<PuzzleScreen>
           widget.sequenceIndex! + 1 < widget.sequence!.length;
 
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 14),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // ✓ Correct! banner
+            // Success banner
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
-                color: Colors.green.shade500,
-                borderRadius: BorderRadius.circular(12),
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF2E7D32), Color(0xFF43A047)],
+                ),
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.green.withAlpha(80),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.check_circle, color: Colors.white, size: 22),
+                  const Icon(Icons.check_circle, color: Colors.white, size: 24),
                   const SizedBox(width: 10),
-                  Text(
-                    l.puzzleSolved,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
+                  Expanded(
+                    child: Text(
+                      l.puzzleSolved,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
-                  const Spacer(),
                   Text(
                     '⭐' * widget.puzzle.difficulty,
-                    style: const TextStyle(fontSize: 14),
+                    style: const TextStyle(fontSize: 15),
                   ),
                 ],
               ),
             ),
             if (widget.puzzle.explanation.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              Text(
-                widget.puzzle.explanation,
-                style: TextStyle(
-                  fontSize: 13,
-                  height: 1.5,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+              const SizedBox(height: 14),
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? Colors.white.withAlpha(12)
+                      : Colors.black.withAlpha(6),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: isDark
+                        ? Colors.white.withAlpha(20)
+                        : Colors.black.withAlpha(12),
+                  ),
+                ),
+                child: Text(
+                  widget.puzzle.localizedExplanation(context),
+                  style: TextStyle(
+                    fontSize: 13,
+                    height: 1.6,
+                    color: cs.onSurface.withAlpha(200),
+                  ),
                 ),
               ),
             ],
             const SizedBox(height: 16),
             if (hasNext)
-              ElevatedButton.icon(
+              FilledButton.icon(
                 onPressed: () {
                   final nextIndex = widget.sequenceIndex! + 1;
                   Navigator.pushReplacement(
@@ -632,8 +670,9 @@ class _PuzzleScreenState extends State<PuzzleScreen>
                 },
                 icon: const Icon(Icons.skip_next),
                 label: Text(l.nextPuzzle),
-                style: ElevatedButton.styleFrom(
+                style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
+                  backgroundColor: const Color(0xFF2E7D32),
                 ),
               )
             else
@@ -653,25 +692,46 @@ class _PuzzleScreenState extends State<PuzzleScreen>
       );
     }
 
-    // Not yet solved
+    // Not yet solved — description + hint/reset
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 14),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            widget.puzzle.localizedDescription(context),
-            style: TextStyle(
-              fontSize: 14,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? Colors.white.withAlpha(10)
+                  : Colors.black.withAlpha(5),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: isDark
+                    ? Colors.white.withAlpha(18)
+                    : Colors.black.withAlpha(10),
+              ),
+            ),
+            child: Text(
+              // OGS puzzles (solutionTree != null) use a generic "Find the
+              // best move" label — the OGS description is often in Japanese or
+              // uses category terms that don't match the board position.
+              widget.puzzle.solutionTree != null
+                  ? l.puzzleBestMove
+                  : widget.puzzle.localizedDescription(context),
+              style: TextStyle(
+                fontSize: 14,
+                height: 1.5,
+                color: isDark ? Colors.white70 : Colors.black87,
+              ),
             ),
           ),
           const SizedBox(height: 12),
           if (widget.puzzle.solution.isEmpty)
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton.icon(
+              child: FilledButton.icon(
                 onPressed: () {
                   setState(() => _solved = true);
                   context.read<ProgressService>().markPuzzleSolved(
@@ -685,16 +745,28 @@ class _PuzzleScreenState extends State<PuzzleScreen>
           else
             Row(
               children: [
-                TextButton.icon(
+                OutlinedButton.icon(
                   onPressed: _showHint,
-                  icon: const Icon(Icons.lightbulb_outline, size: 18),
+                  icon: const Icon(Icons.lightbulb_outline, size: 16),
                   label: Text(l.hint),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 8),
-                TextButton.icon(
+                OutlinedButton.icon(
                   onPressed: _resetPuzzle,
-                  icon: const Icon(Icons.refresh, size: 18),
+                  icon: const Icon(Icons.refresh, size: 16),
                   label: Text(l.reset),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
+                    ),
+                  ),
                 ),
               ],
             ),

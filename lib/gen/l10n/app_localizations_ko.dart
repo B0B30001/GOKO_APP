@@ -129,6 +129,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get tryAgain => '다시 시도';
 
   @override
+  String get illegalMoveFeedback => '불법 착점 (코 / 자살) — 다른 점을 선택하세요.';
+
+  @override
+  String get wrongMoveFeedback => '잘못된 착점 — 다시 시도하세요!';
+
+  @override
   String get giveUp => '포기';
 
   @override
@@ -316,7 +322,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get whiteToPlay => '백번';
 
   @override
-  String get comingSoon => '곧 출시';
+  String get comingSoon => '출시 예정';
 
   @override
   String get general => '일반';
@@ -607,9 +613,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get gameTied => '무승부!';
 
   @override
-  String get gameReviewComingSoon => '기보 분석 곧 제공';
-
-  @override
   String get rating => '레이팅';
 
   @override
@@ -676,7 +679,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get postGameAnalysis => '대국 분석';
 
   @override
-  String get postGameAnalysisDesc => '완료된 대국의 심층 리뷰 (출시 예정)';
+  String get postGameAnalysisDesc => '완료된 대국을 한 수씩 되감아 보세요.';
 
   @override
   String get profileFlair => '프로필 꾸미기';
@@ -773,6 +776,12 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get noAccountSignUp => '계정이 없나요? OGS에서 가입';
+
+  @override
+  String get orContinueWith => '또는 다음으로 계속';
+
+  @override
+  String get continueWithOgs => 'OGS로 계속하기 (Google 등)';
 
   @override
   String get onlinePlay => '온라인 대국';
@@ -981,4 +990,372 @@ class AppLocalizationsKo extends AppLocalizations {
   String gateLockedUnlockAt(int xp) {
     return '$xp XP에서 잠금 해제';
   }
+
+  @override
+  String get solvePuzzles => '문제 풀기';
+
+  @override
+  String levelN(int n) {
+    return '레벨 $n';
+  }
+
+  @override
+  String get puzzleBestMove => '최선의 수를 찾으세요';
+
+  @override
+  String xpToUnlock(int xp) {
+    return '+$xp XP';
+  }
+
+  @override
+  String get worldStoneForest => '돌의 숲';
+
+  @override
+  String get worldCrystalCave => '수정 동굴';
+
+  @override
+  String get worldCopperPeaks => '구리 봉우리';
+
+  @override
+  String get worldDiamondTundra => '다이아몬드 툰드라';
+
+  @override
+  String get worldJadeHighlands => '옥 고원';
+
+  @override
+  String get quit => '종료';
+
+  @override
+  String get drillCompleteTitle => '드릴 완료';
+
+  @override
+  String get backToLearn => '학습으로 돌아가기';
+
+  @override
+  String get quitDrillTitle => '드릴 종료?';
+
+  @override
+  String get quitDrillBody => '지금 종료하면 진행 상황이 저장되지 않습니다.';
+
+  @override
+  String get resignGameTitle => '기권하시겠습니까?';
+
+  @override
+  String get resignGameBody => '정말 기권하시겠습니까?';
+
+  @override
+  String get undoRequestTitle => '무르기 요청';
+
+  @override
+  String get decline => '거절';
+
+  @override
+  String get accept => '수락';
+
+  @override
+  String get gameInfoTitle => '대국 정보';
+
+  @override
+  String get leaveGame => '대국 떠나기';
+
+  @override
+  String get connectionTestTitle => '연결 테스트';
+
+  @override
+  String get runConnectionTest => '테스트 실행';
+
+  @override
+  String get findOpponentSubtitle => '빠른 대국 상대를 즉시 찾기';
+
+  @override
+  String get startMatchHint => '빠른 대국으로 시작하세요!';
+
+  @override
+  String get shuffle => '셔플';
+
+  @override
+  String get tutorialsTitle => '튜토리얼';
+
+  @override
+  String get botDescPanda => '달콤하고 엉뚱합니다. 무작위 수를 좋아합니다.';
+
+  @override
+  String get botDescPup => '돌을 쫓는 신난 강아지. 쉽게 따돌릴 수 있습니다.';
+
+  @override
+  String get botDescBunny => '호기심 많고 예측 불가한 수로 판 위를 깡총거립니다.';
+
+  @override
+  String get botDescKoi => '부드럽고 안정적. 변과 작은 집을 좋아합니다.';
+
+  @override
+  String get botDescTanuki => '교활한 정령. 기본적인 잡기와 형태를 알고 있습니다.';
+
+  @override
+  String get botDescPebble => '조용하고 안정적. 천천히 견고한 형태를 쌓습니다.';
+
+  @override
+  String get botDescHeron => '참을성이 있음. 변의 허술한 형태를 부숩니다.';
+
+  @override
+  String get botDescOwl => '지혜롭고 인내심. 견고한 집의 틀을 쌓습니다.';
+
+  @override
+  String get botDescCrane => '우아하고 균형 잡힘. 가볍고 유연한 형태를 둡니다.';
+
+  @override
+  String get botDescMantis => '예리하고 빠름. 수읽기로 전술 수순을 계산합니다.';
+
+  @override
+  String get botDescBadger => '어떤 돌도 싸움 없이 보내지 않습니다.';
+
+  @override
+  String get botDescKitsune => '교활한 여우. 과수를 응징하고 좋은 형을 보상합니다.';
+
+  @override
+  String get botDescPhoenix => '압박 속에서 날카로운 역공으로 일어섭니다.';
+
+  @override
+  String get botDescHawk => '압박형 기사. 끊임없이 약한 돌을 노립니다.';
+
+  @override
+  String get botDescTiger => '사나운 전사. 약한 돌을 공격하는 걸 좋아합니다.';
+
+  @override
+  String get botDescOtter => '유연하고 장난기 많음. 공격과 수비를 오갑니다.';
+
+  @override
+  String get botDescDragon => '강한 수읽기와 깔끔한 끝내기. 정확함을 요구합니다.';
+
+  @override
+  String get botDescSamurai => '명예와 절제. 강한 싸움과 깨끗한 모양.';
+
+  @override
+  String get botDescTengu => '산의 정령. 강한 전투와 효율적인 형태.';
+
+  @override
+  String get botDescMonk => '차분하고 깊은 형세 판단. 전판을 봅니다.';
+
+  @override
+  String get botDescOracle => '수십 수 앞의 변화를 봅니다. 속이기 어려운 상대.';
+
+  @override
+  String get botDescSensei => '현명한 스승. 가장 교훈적인 프로 수를 둡니다.';
+
+  @override
+  String get botDescKataGo => '신경망으로 수십 수 앞을 계획. 초인적 전략 시야.';
+
+  @override
+  String get tauntDefaultGreet => '한 판 두시죠!';
+
+  @override
+  String get tauntDefaultWin => '좋은 대국이었습니다! 잘 두셨네요.';
+
+  @override
+  String get tauntDefaultLose => '멋진 대국이었습니다 — 다음 기회에!';
+
+  @override
+  String get tauntDefaultResign => '대국 감사합니다!';
+
+  @override
+  String get tauntPandaGreet => '안녕 친구! 같이 두자!';
+
+  @override
+  String get tauntPandaWin => '야호! 내가 이겼다!';
+
+  @override
+  String get tauntPandaLose => '정말 잘 두시네요!';
+
+  @override
+  String get undoMove => '수 무르기';
+
+  @override
+  String get passTurn => '패스';
+
+  @override
+  String get redoMove => '다시 두기';
+
+  @override
+  String get newGame => '새 대국';
+
+  @override
+  String get practiceBadge => '연습';
+
+  @override
+  String get notYourTurn => '당신 차례가 아닙니다!';
+
+  @override
+  String get menuTooltip => '메뉴';
+
+  @override
+  String get profileTooltip => '프로필';
+
+  @override
+  String get wins => '승';
+
+  @override
+  String get losses => '패';
+
+  @override
+  String get draws => '무';
+
+  @override
+  String get winLossLabel => '승 / 패';
+
+  @override
+  String get playGamesHint => '대국을 하면 여기에 통계가 표시됩니다.';
+
+  @override
+  String get filterAll => '전체';
+
+  @override
+  String get noPuzzlesForFilter => '이 필터에 해당하는 문제가 없습니다.';
+
+  @override
+  String tutorialsLoadError(String error) {
+    return '튜토리얼을 불러올 수 없습니다: $error';
+  }
+
+  @override
+  String get noTutorialsYet => '아직 튜토리얼이 없습니다.';
+
+  @override
+  String get practiceModeTitle => '연습 모드';
+
+  @override
+  String get practiceModeSubtitle => '수마다 최선의 수 표시 · 결과는 1 ★';
+
+  @override
+  String get chooseBoardSize => '판 크기 선택';
+
+  @override
+  String get undoRequestSent => '무르기 요청을 보냈습니다';
+
+  @override
+  String get undoRequestDeclined => '무르기 요청이 거절되었습니다';
+
+  @override
+  String get undoRequestAccepted => '무르기 요청이 수락되었습니다';
+
+  @override
+  String opponentRequestedUndo(int moveNumber) {
+    return '상대가 #$moveNumber수에 대한 무르기를 요청했습니다.';
+  }
+
+  @override
+  String suggestedRemovedStones(int count) {
+    return '$count개의 죽은 돌을 제안했습니다';
+  }
+
+  @override
+  String gameIdLabel(String id) {
+    return '대국 ID: $id';
+  }
+
+  @override
+  String moveLabel(int n) {
+    return '수: $n';
+  }
+
+  @override
+  String phaseLabel(String phase) {
+    return '단계: $phase';
+  }
+
+  @override
+  String boardLabel(String size) {
+    return '판: $size';
+  }
+
+  @override
+  String hintLookAt(int row, String col) {
+    return '$row행, $col열을 보세요 — 여기에 강한 수가 있습니다.';
+  }
+
+  @override
+  String get hintFallbackGeneric => '상대 돌을 압박하는 수를 찾으세요 — 단수, 약한 그룹, 눈 모양에 주목.';
+
+  @override
+  String get paywallHeroTitle => 'GOKO Premium 잠금 해제';
+
+  @override
+  String get paywallHeroTagline => '고대의 게임을 마스터하세요';
+
+  @override
+  String get paywallFeatureUnlimitedPuzzles => '무제한 일일 문제';
+
+  @override
+  String get paywallFeatureAllBots => '모든 봇 — Pup부터 KataGo까지';
+
+  @override
+  String get paywallFeatureLessons => '전체 레슨 + 복기 분석';
+
+  @override
+  String get paywallFeatureSync => '클라우드 동기화, 배지, 프로필 장식';
+
+  @override
+  String get pricingTierMonthly => '월간';
+
+  @override
+  String get pricingTierAnnual => '연간';
+
+  @override
+  String get pricingTierLifetime => '평생';
+
+  @override
+  String get pricingPopular => '가장 인기';
+
+  @override
+  String get pricingBestValue => '최고의 가치';
+
+  @override
+  String pricingSave(int percent) {
+    return '$percent% 절약';
+  }
+
+  @override
+  String pricingPerMonth(String price) {
+    return '$price/월';
+  }
+
+  @override
+  String pricingPerYear(String price) {
+    return '$price/년';
+  }
+
+  @override
+  String pricingOnce(String price) {
+    return '$price 1회';
+  }
+
+  @override
+  String get startFreeTrial => '7일 무료 체험 시작';
+
+  @override
+  String get cancelAnytime => '언제든 취소';
+
+  @override
+  String renewsAtPrice(String price) {
+    return '$price로 갱신';
+  }
+
+  @override
+  String trustedByPlayers(String count) {
+    return '$count+ 플레이어가 신뢰';
+  }
+
+  @override
+  String get freeTrialDuration => '7일 무료';
+
+  @override
+  String get paywallContinueFree => '나중에';
+
+  @override
+  String get scoreStonesLabel => '돌';
+
+  @override
+  String get scoreTerritoryLabel => '집';
+
+  @override
+  String get scoreCapturedLabel => '사석';
 }

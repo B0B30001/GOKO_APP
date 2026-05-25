@@ -130,6 +130,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get tryAgain => 'Попробовать снова';
 
   @override
+  String get illegalMoveFeedback =>
+      'Недопустимый ход (ко/суицид) — попробуйте другую точку.';
+
+  @override
+  String get wrongMoveFeedback => 'Неверный ход — попробуйте ещё раз!';
+
+  @override
   String get giveUp => 'Сдаться';
 
   @override
@@ -610,9 +617,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get gameTied => 'Ничья!';
 
   @override
-  String get gameReviewComingSoon => 'Разбор партии — скоро';
-
-  @override
   String get rating => 'Рейтинг';
 
   @override
@@ -682,7 +686,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get postGameAnalysisDesc =>
-      'Детальный разбор любой завершённой партии (скоро)';
+      'Перематывайте любую завершённую партию ход за ходом.';
 
   @override
   String get profileFlair => 'Оформление профиля';
@@ -781,6 +785,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get noAccountSignUp => 'Нет аккаунта? Зарегистрируйтесь на OGS';
+
+  @override
+  String get orContinueWith => 'или войти через';
+
+  @override
+  String get continueWithOgs => 'Войти через OGS (Google и др.)';
 
   @override
   String get onlinePlay => 'Игра онлайн';
@@ -993,4 +1003,391 @@ class AppLocalizationsRu extends AppLocalizations {
   String gateLockedUnlockAt(int xp) {
     return 'Открыто при $xp XP';
   }
+
+  @override
+  String get solvePuzzles => 'Решить задачи';
+
+  @override
+  String levelN(int n) {
+    return 'Уровень $n';
+  }
+
+  @override
+  String get puzzleBestMove => 'Найдите лучший ход';
+
+  @override
+  String xpToUnlock(int xp) {
+    return '+$xp XP';
+  }
+
+  @override
+  String get worldStoneForest => 'Каменный лес';
+
+  @override
+  String get worldCrystalCave => 'Хрустальная пещера';
+
+  @override
+  String get worldCopperPeaks => 'Медные вершины';
+
+  @override
+  String get worldDiamondTundra => 'Алмазная тундра';
+
+  @override
+  String get worldJadeHighlands => 'Нефритовые высоты';
+
+  @override
+  String get quit => 'Выйти';
+
+  @override
+  String get drillCompleteTitle => 'Тренировка завершена';
+
+  @override
+  String get backToLearn => 'Назад к обучению';
+
+  @override
+  String get quitDrillTitle => 'Выйти из тренировки?';
+
+  @override
+  String get quitDrillBody => 'Прогресс не будет сохранён, если выйти сейчас.';
+
+  @override
+  String get resignGameTitle => 'Сдаться?';
+
+  @override
+  String get resignGameBody => 'Вы уверены, что хотите сдаться?';
+
+  @override
+  String get undoRequestTitle => 'Запрос отмены хода';
+
+  @override
+  String get decline => 'Отклонить';
+
+  @override
+  String get accept => 'Принять';
+
+  @override
+  String get gameInfoTitle => 'Информация об игре';
+
+  @override
+  String get leaveGame => 'Покинуть игру';
+
+  @override
+  String get connectionTestTitle => 'Тест подключения';
+
+  @override
+  String get runConnectionTest => 'Запустить тест';
+
+  @override
+  String get findOpponentSubtitle => 'Быстрый поиск соперника для матча';
+
+  @override
+  String get startMatchHint => 'Начните быстрый матч!';
+
+  @override
+  String get shuffle => 'Перемешать';
+
+  @override
+  String get tutorialsTitle => 'Уроки';
+
+  @override
+  String get botDescPanda => 'Милая и забавная. Любит играть случайные ходы.';
+
+  @override
+  String get botDescPup =>
+      'Игривый щенок гоняется за каждым камнем. Легко перехитрить.';
+
+  @override
+  String get botDescBunny =>
+      'Скачет по доске с любопытными, непредсказуемыми ходами.';
+
+  @override
+  String get botDescKoi =>
+      'Мягкий и стабильный. Любит игру у края и небольшие огороды.';
+
+  @override
+  String get botDescTanuki => 'Хитрый дух. Знает основы захвата и форм.';
+
+  @override
+  String get botDescPebble =>
+      'Тихий и спокойный. Медленно строит крепкие рамки.';
+
+  @override
+  String get botDescHeron => 'Терпеливый. Разбирает слабые формы у края.';
+
+  @override
+  String get botDescOwl =>
+      'Мудрый и терпеливый. Строит крепкие рамки территории.';
+
+  @override
+  String get botDescCrane =>
+      'Грациозный и сбалансированный. Играет лёгкие и гибкие формы.';
+
+  @override
+  String get botDescMantis =>
+      'Острый и быстрый. Рассчитывает тактические последовательности.';
+
+  @override
+  String get botDescBadger => 'Не отпустит ни один камень без боя.';
+
+  @override
+  String get botDescKitsune =>
+      'Хитрый лис. Наказывает за переигрывание и поощряет хорошую форму.';
+
+  @override
+  String get botDescPhoenix => 'Восстаёт из-под давления резкими контратаками.';
+
+  @override
+  String get botDescHawk => 'Давящий игрок. Постоянно ищет ваши слабые группы.';
+
+  @override
+  String get botDescTiger => 'Свирепый боец. Любит атаковать слабые группы.';
+
+  @override
+  String get botDescOtter => 'Гибкий и игривый. Переходит от атаки к защите.';
+
+  @override
+  String get botDescDragon =>
+      'Сильное чтение и чистый эндшпиль. Требует точности.';
+
+  @override
+  String get botDescSamurai =>
+      'Честь и дисциплина. Сильная борьба и чистая форма.';
+
+  @override
+  String get botDescTengu => 'Горный дух. Сильная борьба и эффективная форма.';
+
+  @override
+  String get botDescMonk =>
+      'Спокойное, глубокое позиционное понимание. Видение всей доски.';
+
+  @override
+  String get botDescOracle =>
+      'Видит варианты на дюжину ходов вперёд. Трудно обмануть.';
+
+  @override
+  String get botDescSensei =>
+      'Мудрый учитель. Играет самые поучительные профессиональные ходы.';
+
+  @override
+  String get botDescKataGo =>
+      'Планирует десятки ходов вперёд с нейросетевым анализом. Сверхчеловеческое видение.';
+
+  @override
+  String get tauntDefaultGreet => 'Поиграем!';
+
+  @override
+  String get tauntDefaultWin => 'Хорошая игра! Заслуженная победа.';
+
+  @override
+  String get tauntDefaultLose => 'Красиво сыграно — в следующий раз повезёт!';
+
+  @override
+  String get tauntDefaultResign => 'Спасибо за игру!';
+
+  @override
+  String get tauntPandaGreet => 'Привет, друг! Давай поиграем!';
+
+  @override
+  String get tauntPandaWin => 'Ура! Я выиграл!';
+
+  @override
+  String get tauntPandaLose => 'Ты очень хорош!';
+
+  @override
+  String get undoMove => 'Отменить ход';
+
+  @override
+  String get passTurn => 'Пас';
+
+  @override
+  String get redoMove => 'Повторить ход';
+
+  @override
+  String get newGame => 'Новая игра';
+
+  @override
+  String get practiceBadge => 'ТРЕНИРОВКА';
+
+  @override
+  String get notYourTurn => 'Не ваш ход!';
+
+  @override
+  String get menuTooltip => 'Меню';
+
+  @override
+  String get profileTooltip => 'Профиль';
+
+  @override
+  String get wins => 'Победы';
+
+  @override
+  String get losses => 'Поражения';
+
+  @override
+  String get draws => 'Ничьи';
+
+  @override
+  String get winLossLabel => 'Победы / Поражения';
+
+  @override
+  String get playGamesHint =>
+      'Сыграйте партии, чтобы увидеть статистику здесь.';
+
+  @override
+  String get filterAll => 'Все';
+
+  @override
+  String get noPuzzlesForFilter => 'Нет задач для этого фильтра.';
+
+  @override
+  String tutorialsLoadError(String error) {
+    return 'Не удалось загрузить уроки: $error';
+  }
+
+  @override
+  String get noTutorialsYet => 'Уроков пока нет.';
+
+  @override
+  String get practiceModeTitle => 'Тренировочный режим';
+
+  @override
+  String get practiceModeSubtitle =>
+      'Лучший ход показан после каждого хода · результат 1 ★';
+
+  @override
+  String get chooseBoardSize => 'Выберите размер доски';
+
+  @override
+  String get undoRequestSent => 'Запрос отмены отправлен';
+
+  @override
+  String get undoRequestDeclined => 'Запрос отмены отклонён';
+
+  @override
+  String get undoRequestAccepted => 'Запрос отмены принят';
+
+  @override
+  String opponentRequestedUndo(int moveNumber) {
+    return 'Соперник запросил отмену хода #$moveNumber.';
+  }
+
+  @override
+  String suggestedRemovedStones(int count) {
+    return 'Предложено убрать камней: $count';
+  }
+
+  @override
+  String gameIdLabel(String id) {
+    return 'ID игры: $id';
+  }
+
+  @override
+  String moveLabel(int n) {
+    return 'Ход: $n';
+  }
+
+  @override
+  String phaseLabel(String phase) {
+    return 'Фаза: $phase';
+  }
+
+  @override
+  String boardLabel(String size) {
+    return 'Доска: $size';
+  }
+
+  @override
+  String hintLookAt(int row, String col) {
+    return 'Посмотрите на строку $row, столбец $col — здесь сильный ход.';
+  }
+
+  @override
+  String get hintFallbackGeneric =>
+      'Найдите ход, который давит на камни противника — ищите атари, слабые группы или формы глаз.';
+
+  @override
+  String get paywallHeroTitle => 'Откройте GOKO Premium';
+
+  @override
+  String get paywallHeroTagline => 'Освойте древнюю игру';
+
+  @override
+  String get paywallFeatureUnlimitedPuzzles => 'Безлимит ежедневных задач';
+
+  @override
+  String get paywallFeatureAllBots => 'Все боты — от Pup до KataGo';
+
+  @override
+  String get paywallFeatureLessons =>
+      'Полная библиотека уроков + анализ партий';
+
+  @override
+  String get paywallFeatureSync =>
+      'Облачная синхронизация, значки и оформление профиля';
+
+  @override
+  String get pricingTierMonthly => 'Месяц';
+
+  @override
+  String get pricingTierAnnual => 'Год';
+
+  @override
+  String get pricingTierLifetime => 'Навсегда';
+
+  @override
+  String get pricingPopular => 'ПОПУЛЯРНОЕ';
+
+  @override
+  String get pricingBestValue => 'Лучшая цена';
+
+  @override
+  String pricingSave(int percent) {
+    return 'Экономия $percent%';
+  }
+
+  @override
+  String pricingPerMonth(String price) {
+    return '$price/мес';
+  }
+
+  @override
+  String pricingPerYear(String price) {
+    return '$price/год';
+  }
+
+  @override
+  String pricingOnce(String price) {
+    return '$price разово';
+  }
+
+  @override
+  String get startFreeTrial => 'Начать 7-дневный пробный период';
+
+  @override
+  String get cancelAnytime => 'Отмена в любое время';
+
+  @override
+  String renewsAtPrice(String price) {
+    return 'Возобновляется по $price';
+  }
+
+  @override
+  String trustedByPlayers(String count) {
+    return 'Нам доверяют $count+ игроков';
+  }
+
+  @override
+  String get freeTrialDuration => '7 дней бесплатно';
+
+  @override
+  String get paywallContinueFree => 'Может быть позже';
+
+  @override
+  String get scoreStonesLabel => 'Камни';
+
+  @override
+  String get scoreTerritoryLabel => 'Территория';
+
+  @override
+  String get scoreCapturedLabel => 'Пленные';
 }

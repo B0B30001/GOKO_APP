@@ -65,6 +65,15 @@ class SolutionNode {
 
   /// Find the child whose coordinates and color match the player's move.
   /// Returns null when no child matches — caller should treat as wrong move.
+  ///
+  /// **Why this isn't DFS or BFS**: the runtime keeps a `_treeCursor`
+  /// pointing at "where we are in the solution tree." Each player move only
+  /// needs to inspect the cursor's *direct* children (1–10 branches for
+  /// typical tsumego), not search the whole tree. The matcher is
+  /// O(branching_factor) per move — effectively O(1) — and full puzzle
+  /// evaluation is O(depth × branching). A graph search over the whole tree
+  /// would be strictly slower *and* incorrect: the player's position in the
+  /// tree must advance one node at a time as they play, not jump to a goal.
   SolutionNode? matchChild(int row, int col, int color) {
     for (final c in children) {
       if (c.row == row && c.col == col && c.color == color) return c;

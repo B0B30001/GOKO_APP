@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../gen/l10n/app_localizations.dart';
 import '../models/tutorial.dart';
 import '../services/content_service.dart';
 import 'tutorial_screen.dart';
@@ -11,7 +12,10 @@ class TutorialListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Tutorials'), centerTitle: true),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context).tutorialsTitle),
+        centerTitle: true,
+      ),
       body: FutureBuilder<List<Tutorial>>(
         future: ContentService.loadTutorials(
           languageCode: Localizations.localeOf(context).languageCode,
@@ -24,13 +28,19 @@ class TutorialListScreen extends StatelessWidget {
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(24),
-                child: Text('Failed to load tutorials: ${snapshot.error}'),
+                child: Text(
+                  AppLocalizations.of(
+                    context,
+                  ).tutorialsLoadError(snapshot.error.toString()),
+                ),
               ),
             );
           }
           final tutorials = snapshot.data ?? const <Tutorial>[];
           if (tutorials.isEmpty) {
-            return const Center(child: Text('No tutorials available yet.'));
+            return Center(
+              child: Text(AppLocalizations.of(context).noTutorialsYet),
+            );
           }
           return ListView.separated(
             padding: const EdgeInsets.all(12),

@@ -231,7 +231,6 @@
     "placeholders": { "points": { "type": "int" } }
   },
   "gameTied": "무승부!",
-  "gameReviewComingSoon": "기보 분석 곧 제공",
 
   "rating": "레이팅",
   "today": "오늘",
@@ -255,7 +254,7 @@
   "allBotsAndLessons": "모든 봇과 수업",
   "allBotsAndLessonsDesc": "초급 봇과 처음 4개 수업은 무료",
   "postGameAnalysis": "대국 분석",
-  "postGameAnalysisDesc": "완료된 대국의 심층 리뷰 (출시 예정)",
+  "postGameAnalysisDesc": "완료된 대국을 한 수씩 되감아 보세요.",
   "profileFlair": "프로필 꾸미기",
   "profileFlairDesc": "프리미엄 뱃지와 아바타 테두리",
   "restorePurchases": "구매 복원",
@@ -293,6 +292,8 @@
   "loginFailed": "로그인 실패. 자격 증명을 확인하세요.",
   "errorPrefix": "오류: ",
   "noAccountSignUp": "계정이 없나요? OGS에서 가입",
+  "orContinueWith": "또는 다음으로 계속",
+  "continueWithOgs": "OGS로 계속하기 (Google 등)",
 
   "onlinePlay": "온라인 대국",
   "onlineStatusConnected": "온라인",
@@ -355,6 +356,8 @@
   "coachSolve4": "꽤 어려웠어요!",
   "coachSolve5": "완벽한 수읽기.",
   "coachSolve6": "계속 가세요!",
+  "illegalMoveFeedback": "불법 착점 (코 / 자살) — 다른 점을 선택하세요.",
+  "wrongMoveFeedback": "잘못된 착점 — 다시 시도하세요!",
   "openLesson": "열기",
 
   "puzzleGardenTitle": "초보자의 정원",
@@ -378,5 +381,162 @@
     "placeholders": {
       "xp": { "type": "int" }
     }
-  }
+  },
+
+  "solvePuzzles": "문제 풀기",
+  "levelN": "레벨 {n}",
+  "@levelN": {
+    "placeholders": {
+      "n": { "type": "int" }
+    }
+  },
+  "puzzleBestMove": "최선의 수를 찾으세요",
+  "xpToUnlock": "+{xp} XP",
+  "@xpToUnlock": {
+    "placeholders": {
+      "xp": { "type": "int" }
+    }
+  },
+  "worldStoneForest": "돌의 숲",
+  "worldCrystalCave": "수정 동굴",
+  "worldCopperPeaks": "구리 봉우리",
+  "worldDiamondTundra": "다이아몬드 툰드라",
+  "worldJadeHighlands": "옥 고원",
+  "comingSoon": "출시 예정",
+
+  "quit": "종료",
+  "drillCompleteTitle": "드릴 완료",
+  "backToLearn": "학습으로 돌아가기",
+  "quitDrillTitle": "드릴 종료?",
+  "quitDrillBody": "지금 종료하면 진행 상황이 저장되지 않습니다.",
+  "resignGameTitle": "기권하시겠습니까?",
+  "resignGameBody": "정말 기권하시겠습니까?",
+  "undoRequestTitle": "무르기 요청",
+  "decline": "거절",
+  "accept": "수락",
+  "gameInfoTitle": "대국 정보",
+  "leaveGame": "대국 떠나기",
+  "connectionTestTitle": "연결 테스트",
+  "runConnectionTest": "테스트 실행",
+  "findOpponentSubtitle": "빠른 대국 상대를 즉시 찾기",
+  "startMatchHint": "빠른 대국으로 시작하세요!",
+  "shuffle": "셔플",
+  "tutorialsTitle": "튜토리얼",
+
+  "botDescPanda": "달콤하고 엉뚱합니다. 무작위 수를 좋아합니다.",
+  "botDescPup": "돌을 쫓는 신난 강아지. 쉽게 따돌릴 수 있습니다.",
+  "botDescBunny": "호기심 많고 예측 불가한 수로 판 위를 깡총거립니다.",
+  "botDescKoi": "부드럽고 안정적. 변과 작은 집을 좋아합니다.",
+  "botDescTanuki": "교활한 정령. 기본적인 잡기와 형태를 알고 있습니다.",
+  "botDescPebble": "조용하고 안정적. 천천히 견고한 형태를 쌓습니다.",
+  "botDescHeron": "참을성이 있음. 변의 허술한 형태를 부숩니다.",
+  "botDescOwl": "지혜롭고 인내심. 견고한 집의 틀을 쌓습니다.",
+  "botDescCrane": "우아하고 균형 잡힘. 가볍고 유연한 형태를 둡니다.",
+  "botDescMantis": "예리하고 빠름. 수읽기로 전술 수순을 계산합니다.",
+  "botDescBadger": "어떤 돌도 싸움 없이 보내지 않습니다.",
+  "botDescKitsune": "교활한 여우. 과수를 응징하고 좋은 형을 보상합니다.",
+  "botDescPhoenix": "압박 속에서 날카로운 역공으로 일어섭니다.",
+  "botDescHawk": "압박형 기사. 끊임없이 약한 돌을 노립니다.",
+  "botDescTiger": "사나운 전사. 약한 돌을 공격하는 걸 좋아합니다.",
+  "botDescOtter": "유연하고 장난기 많음. 공격과 수비를 오갑니다.",
+  "botDescDragon": "강한 수읽기와 깔끔한 끝내기. 정확함을 요구합니다.",
+  "botDescSamurai": "명예와 절제. 강한 싸움과 깨끗한 모양.",
+  "botDescTengu": "산의 정령. 강한 전투와 효율적인 형태.",
+  "botDescMonk": "차분하고 깊은 형세 판단. 전판을 봅니다.",
+  "botDescOracle": "수십 수 앞의 변화를 봅니다. 속이기 어려운 상대.",
+  "botDescSensei": "현명한 스승. 가장 교훈적인 프로 수를 둡니다.",
+  "botDescKataGo": "신경망으로 수십 수 앞을 계획. 초인적 전략 시야.",
+
+  "tauntDefaultGreet": "한 판 두시죠!",
+  "tauntDefaultWin": "좋은 대국이었습니다! 잘 두셨네요.",
+  "tauntDefaultLose": "멋진 대국이었습니다 — 다음 기회에!",
+  "tauntDefaultResign": "대국 감사합니다!",
+  "tauntPandaGreet": "안녕 친구! 같이 두자!",
+  "tauntPandaWin": "야호! 내가 이겼다!",
+  "tauntPandaLose": "정말 잘 두시네요!",
+
+  "undoMove": "수 무르기",
+  "passTurn": "패스",
+  "redoMove": "다시 두기",
+  "newGame": "새 대국",
+  "practiceBadge": "연습",
+  "notYourTurn": "당신 차례가 아닙니다!",
+  "menuTooltip": "메뉴",
+  "profileTooltip": "프로필",
+  "wins": "승",
+  "losses": "패",
+  "draws": "무",
+  "winLossLabel": "승 / 패",
+  "playGamesHint": "대국을 하면 여기에 통계가 표시됩니다.",
+  "filterAll": "전체",
+  "noPuzzlesForFilter": "이 필터에 해당하는 문제가 없습니다.",
+  "tutorialsLoadError": "튜토리얼을 불러올 수 없습니다: {error}",
+  "@tutorialsLoadError": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "noTutorialsYet": "아직 튜토리얼이 없습니다.",
+  "practiceModeTitle": "연습 모드",
+  "practiceModeSubtitle": "수마다 최선의 수 표시 · 결과는 1 ★",
+  "chooseBoardSize": "판 크기 선택",
+  "undoRequestSent": "무르기 요청을 보냈습니다",
+  "undoRequestDeclined": "무르기 요청이 거절되었습니다",
+  "undoRequestAccepted": "무르기 요청이 수락되었습니다",
+  "opponentRequestedUndo": "상대가 #{moveNumber}수에 대한 무르기를 요청했습니다.",
+  "@opponentRequestedUndo": {
+    "placeholders": { "moveNumber": { "type": "int" } }
+  },
+  "suggestedRemovedStones": "{count}개의 죽은 돌을 제안했습니다",
+  "@suggestedRemovedStones": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "gameIdLabel": "대국 ID: {id}",
+  "@gameIdLabel": { "placeholders": { "id": { "type": "String" } } },
+  "moveLabel": "수: {n}",
+  "@moveLabel": { "placeholders": { "n": { "type": "int" } } },
+  "phaseLabel": "단계: {phase}",
+  "@phaseLabel": { "placeholders": { "phase": { "type": "String" } } },
+  "boardLabel": "판: {size}",
+  "@boardLabel": { "placeholders": { "size": { "type": "String" } } },
+
+  "hintLookAt": "{row}행, {col}열을 보세요 — 여기에 강한 수가 있습니다.",
+  "@hintLookAt": {
+    "placeholders": {
+      "row": { "type": "int" },
+      "col": { "type": "String" }
+    }
+  },
+  "hintFallbackGeneric": "상대 돌을 압박하는 수를 찾으세요 — 단수, 약한 그룹, 눈 모양에 주목.",
+
+  "paywallHeroTitle": "GOKO Premium 잠금 해제",
+  "paywallHeroTagline": "고대의 게임을 마스터하세요",
+  "paywallFeatureUnlimitedPuzzles": "무제한 일일 문제",
+  "paywallFeatureAllBots": "모든 봇 — Pup부터 KataGo까지",
+  "paywallFeatureLessons": "전체 레슨 + 복기 분석",
+  "paywallFeatureSync": "클라우드 동기화, 배지, 프로필 장식",
+  "pricingTierMonthly": "월간",
+  "pricingTierAnnual": "연간",
+  "pricingTierLifetime": "평생",
+  "pricingPopular": "가장 인기",
+  "pricingBestValue": "최고의 가치",
+  "pricingSave": "{percent}% 절약",
+  "@pricingSave": { "placeholders": { "percent": { "type": "int" } } },
+  "pricingPerMonth": "{price}/월",
+  "@pricingPerMonth": { "placeholders": { "price": { "type": "String" } } },
+  "pricingPerYear": "{price}/년",
+  "@pricingPerYear": { "placeholders": { "price": { "type": "String" } } },
+  "pricingOnce": "{price} 1회",
+  "@pricingOnce": { "placeholders": { "price": { "type": "String" } } },
+  "startFreeTrial": "7일 무료 체험 시작",
+  "restorePurchases": "구매 복원",
+  "cancelAnytime": "언제든 취소",
+  "renewsAtPrice": "{price}로 갱신",
+  "@renewsAtPrice": { "placeholders": { "price": { "type": "String" } } },
+  "trustedByPlayers": "{count}+ 플레이어가 신뢰",
+  "@trustedByPlayers": { "placeholders": { "count": { "type": "String" } } },
+  "freeTrialDuration": "7일 무료",
+  "paywallContinueFree": "나중에",
+
+  "scoreStonesLabel": "돌",
+  "scoreTerritoryLabel": "집",
+  "scoreCapturedLabel": "사석"
 }

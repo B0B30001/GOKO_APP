@@ -130,6 +130,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tryAgain => 'Erneut versuchen';
 
   @override
+  String get illegalMoveFeedback =>
+      'Illegaler Zug (Ko / Selbstmord) — anderen Punkt wählen.';
+
+  @override
+  String get wrongMoveFeedback => 'Falscher Zug — nochmal versuchen!';
+
+  @override
   String get giveUp => 'Aufgeben';
 
   @override
@@ -319,7 +326,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get whiteToPlay => 'Weiß ist am Zug';
 
   @override
-  String get comingSoon => 'Bald';
+  String get comingSoon => 'Demnächst';
 
   @override
   String get general => 'Allgemein';
@@ -614,9 +621,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get gameTied => 'Partie unentschieden!';
 
   @override
-  String get gameReviewComingSoon => 'Partieanalyse kommt bald';
-
-  @override
   String get rating => 'Rating';
 
   @override
@@ -688,7 +692,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get postGameAnalysisDesc =>
-      'Tiefenanalyse jeder beendeten Partie (bald verfügbar)';
+      'Spiele jede beendete Partie Zug für Zug erneut ab.';
 
   @override
   String get profileFlair => 'Profil-Abzeichen';
@@ -788,6 +792,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get noAccountSignUp => 'Kein Konto? Registriere dich auf OGS';
+
+  @override
+  String get orContinueWith => 'oder weiter mit';
+
+  @override
+  String get continueWithOgs => 'Mit OGS fortfahren (Google usw.)';
 
   @override
   String get onlinePlay => 'Online spielen';
@@ -999,4 +1009,395 @@ class AppLocalizationsDe extends AppLocalizations {
   String gateLockedUnlockAt(int xp) {
     return 'Freigeschaltet bei $xp XP';
   }
+
+  @override
+  String get solvePuzzles => 'Aufgaben lösen';
+
+  @override
+  String levelN(int n) {
+    return 'Level $n';
+  }
+
+  @override
+  String get puzzleBestMove => 'Finde den besten Zug';
+
+  @override
+  String xpToUnlock(int xp) {
+    return '+$xp XP';
+  }
+
+  @override
+  String get worldStoneForest => 'Steinwald';
+
+  @override
+  String get worldCrystalCave => 'Kristallhöhle';
+
+  @override
+  String get worldCopperPeaks => 'Kupfergipfel';
+
+  @override
+  String get worldDiamondTundra => 'Diamanttundra';
+
+  @override
+  String get worldJadeHighlands => 'Jadehochland';
+
+  @override
+  String get quit => 'Beenden';
+
+  @override
+  String get drillCompleteTitle => 'Übung abgeschlossen';
+
+  @override
+  String get backToLearn => 'Zurück zum Lernen';
+
+  @override
+  String get quitDrillTitle => 'Übung beenden?';
+
+  @override
+  String get quitDrillBody =>
+      'Dein Fortschritt geht verloren, wenn du jetzt beendest.';
+
+  @override
+  String get resignGameTitle => 'Partie aufgeben?';
+
+  @override
+  String get resignGameBody => 'Möchtest du wirklich aufgeben?';
+
+  @override
+  String get undoRequestTitle => 'Rücknahme-Anfrage';
+
+  @override
+  String get decline => 'Ablehnen';
+
+  @override
+  String get accept => 'Annehmen';
+
+  @override
+  String get gameInfoTitle => 'Spielinfo';
+
+  @override
+  String get leaveGame => 'Spiel verlassen';
+
+  @override
+  String get connectionTestTitle => 'Verbindungstest';
+
+  @override
+  String get runConnectionTest => 'Test starten';
+
+  @override
+  String get findOpponentSubtitle =>
+      'Finde sofort einen Gegner für ein schnelles Spiel';
+
+  @override
+  String get startMatchHint => 'Starte ein schnelles Match!';
+
+  @override
+  String get shuffle => 'Mischen';
+
+  @override
+  String get tutorialsTitle => 'Tutorials';
+
+  @override
+  String get botDescPanda => 'Süß und albern. Spielt gerne zufällige Züge.';
+
+  @override
+  String get botDescPup =>
+      'Eifriger Welpe, jagt jeden Stein. Leicht zu überlisten.';
+
+  @override
+  String get botDescBunny =>
+      'Hüpft mit neugierigen, unvorhersehbaren Zügen übers Brett.';
+
+  @override
+  String get botDescKoi =>
+      'Sanft und stetig. Liebt Randspiel und kleine Einkreisungen.';
+
+  @override
+  String get botDescTanuki =>
+      'Trickreicher Geist. Kennt einfache Fänge und Formen.';
+
+  @override
+  String get botDescPebble =>
+      'Ruhig und stetig. Baut langsam solide Rahmen auf.';
+
+  @override
+  String get botDescHeron => 'Geduldig. Zerlegt lose Formen am Rand.';
+
+  @override
+  String get botDescOwl => 'Weise und geduldig. Baut stabile Territorien.';
+
+  @override
+  String get botDescCrane =>
+      'Anmutig und ausgewogen. Spielt leichte, flexible Formen.';
+
+  @override
+  String get botDescMantis =>
+      'Scharf und schnell. Berechnet taktische Sequenzen.';
+
+  @override
+  String get botDescBadger => 'Lässt keinen Stein kampflos ziehen.';
+
+  @override
+  String get botDescKitsune =>
+      'Listiger Fuchs. Bestraft Überspiel, belohnt gute Form.';
+
+  @override
+  String get botDescPhoenix =>
+      'Steht aus dem Druck auf mit scharfen Gegenangriffen.';
+
+  @override
+  String get botDescHawk =>
+      'Drucksspieler. Sucht ständig deine schwachen Gruppen.';
+
+  @override
+  String get botDescTiger =>
+      'Wilder Kämpfer. Greift gerne schwache Gruppen an.';
+
+  @override
+  String get botDescOtter =>
+      'Flexibel und verspielt. Wechselt zwischen Angriff und Verteidigung.';
+
+  @override
+  String get botDescDragon =>
+      'Starkes Lesen und sauberes Endspiel. Verlangt Präzision.';
+
+  @override
+  String get botDescSamurai =>
+      'Ehre und Disziplin. Starker Kampf plus klare Form.';
+
+  @override
+  String get botDescTengu => 'Berggeist. Starker Kampf und effiziente Form.';
+
+  @override
+  String get botDescMonk =>
+      'Ruhiges, tiefes positionelles Verständnis. Ganz-Brett-Sicht.';
+
+  @override
+  String get botDescOracle =>
+      'Sieht Varianten ein Dutzend Züge voraus. Schwer zu täuschen.';
+
+  @override
+  String get botDescSensei =>
+      'Weiser Lehrer. Spielt die lehrreichsten Profizüge.';
+
+  @override
+  String get botDescKataGo =>
+      'Plant Dutzende Züge voraus mit neuronaler Vorausschau. Übermenschliche Sicht.';
+
+  @override
+  String get tauntDefaultGreet => 'Lass uns spielen!';
+
+  @override
+  String get tauntDefaultWin => 'Gutes Spiel! Den hast du verdient.';
+
+  @override
+  String get tauntDefaultLose => 'Schön gespielt — beim nächsten Mal!';
+
+  @override
+  String get tauntDefaultResign => 'Danke fürs Spiel!';
+
+  @override
+  String get tauntPandaGreet => 'Hallo Freund! Lass uns spielen!';
+
+  @override
+  String get tauntPandaWin => 'Juhu! Ich habe gewonnen!';
+
+  @override
+  String get tauntPandaLose => 'Du bist richtig gut!';
+
+  @override
+  String get undoMove => 'Zug zurück';
+
+  @override
+  String get passTurn => 'Passen';
+
+  @override
+  String get redoMove => 'Zug wiederholen';
+
+  @override
+  String get newGame => 'Neues Spiel';
+
+  @override
+  String get practiceBadge => 'ÜBUNG';
+
+  @override
+  String get notYourTurn => 'Du bist nicht dran!';
+
+  @override
+  String get menuTooltip => 'Menü';
+
+  @override
+  String get profileTooltip => 'Profil';
+
+  @override
+  String get wins => 'Siege';
+
+  @override
+  String get losses => 'Niederlagen';
+
+  @override
+  String get draws => 'Unentschieden';
+
+  @override
+  String get winLossLabel => 'Sieg / Niederlage';
+
+  @override
+  String get playGamesHint =>
+      'Spiele Partien, um deine Statistik hier zu sehen.';
+
+  @override
+  String get filterAll => 'Alle';
+
+  @override
+  String get noPuzzlesForFilter => 'Keine Aufgaben für diesen Filter.';
+
+  @override
+  String tutorialsLoadError(String error) {
+    return 'Tutorials konnten nicht geladen werden: $error';
+  }
+
+  @override
+  String get noTutorialsYet => 'Noch keine Tutorials verfügbar.';
+
+  @override
+  String get practiceModeTitle => 'Übungsmodus';
+
+  @override
+  String get practiceModeSubtitle =>
+      'Bester Zug wird nach jedem Zug gezeigt · Ergebnis ist 1 ★';
+
+  @override
+  String get chooseBoardSize => 'Brettgröße wählen';
+
+  @override
+  String get undoRequestSent => 'Rücknahme-Anfrage gesendet';
+
+  @override
+  String get undoRequestDeclined => 'Rücknahme-Anfrage abgelehnt';
+
+  @override
+  String get undoRequestAccepted => 'Rücknahme-Anfrage angenommen';
+
+  @override
+  String opponentRequestedUndo(int moveNumber) {
+    return 'Dein Gegner möchte Zug #$moveNumber zurücknehmen.';
+  }
+
+  @override
+  String suggestedRemovedStones(int count) {
+    return '$count entfernte Steine vorgeschlagen';
+  }
+
+  @override
+  String gameIdLabel(String id) {
+    return 'Spiel-ID: $id';
+  }
+
+  @override
+  String moveLabel(int n) {
+    return 'Zug: $n';
+  }
+
+  @override
+  String phaseLabel(String phase) {
+    return 'Phase: $phase';
+  }
+
+  @override
+  String boardLabel(String size) {
+    return 'Brett: $size';
+  }
+
+  @override
+  String hintLookAt(int row, String col) {
+    return 'Schau auf Zeile $row, Spalte $col — hier ist ein starker Zug.';
+  }
+
+  @override
+  String get hintFallbackGeneric =>
+      'Finde den Zug, der die gegnerischen Steine bedrängt — achte auf Atari, schwache Gruppen oder Augenformen.';
+
+  @override
+  String get paywallHeroTitle => 'GOKO Premium freischalten';
+
+  @override
+  String get paywallHeroTagline => 'Meistere das uralte Spiel';
+
+  @override
+  String get paywallFeatureUnlimitedPuzzles => 'Unbegrenzte tägliche Aufgaben';
+
+  @override
+  String get paywallFeatureAllBots => 'Alle Bots — Pup bis KataGo';
+
+  @override
+  String get paywallFeatureLessons => 'Volle Lektionsbibliothek + Spielanalyse';
+
+  @override
+  String get paywallFeatureSync => 'Cloud-Sync, Abzeichen & Profil-Flair';
+
+  @override
+  String get pricingTierMonthly => 'Monatlich';
+
+  @override
+  String get pricingTierAnnual => 'Jährlich';
+
+  @override
+  String get pricingTierLifetime => 'Lebenslang';
+
+  @override
+  String get pricingPopular => 'AM BELIEBTESTEN';
+
+  @override
+  String get pricingBestValue => 'Bestes Angebot';
+
+  @override
+  String pricingSave(int percent) {
+    return 'Spare $percent%';
+  }
+
+  @override
+  String pricingPerMonth(String price) {
+    return '$price/Mon.';
+  }
+
+  @override
+  String pricingPerYear(String price) {
+    return '$price/Jahr';
+  }
+
+  @override
+  String pricingOnce(String price) {
+    return '$price einmalig';
+  }
+
+  @override
+  String get startFreeTrial => '7 Tage kostenlos testen';
+
+  @override
+  String get cancelAnytime => 'Jederzeit kündbar';
+
+  @override
+  String renewsAtPrice(String price) {
+    return 'Verlängert sich für $price';
+  }
+
+  @override
+  String trustedByPlayers(String count) {
+    return 'Vertraut von $count+ Spielern';
+  }
+
+  @override
+  String get freeTrialDuration => '7 Tage gratis';
+
+  @override
+  String get paywallContinueFree => 'Vielleicht später';
+
+  @override
+  String get scoreStonesLabel => 'Steine';
+
+  @override
+  String get scoreTerritoryLabel => 'Gebiet';
+
+  @override
+  String get scoreCapturedLabel => 'Gefangen';
 }
