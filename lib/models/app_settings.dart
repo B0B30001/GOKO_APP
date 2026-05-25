@@ -1,3 +1,5 @@
+import 'dart:ui' show PlatformDispatcher;
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -57,7 +59,27 @@ class AppSettings {
   static String themePresetId = 'darkBlue';
 
   /// BCP-47 language code used for the app locale.  Supported: 'en', 'zh', 'ru', 'ja', 'ko', 'de'.
+  ///
+  /// Resolution order on startup:
+  ///   1. Stored user preference (set the moment the user picks a language
+  ///      in Settings, see [userPickedLanguage])
+  ///   2. The device's system locale, intersected with [supportedCodes]
+  ///   3. 'en' as final fallback
+  ///
+  /// When the user has not made an explicit choice, [userPickedLanguage]
+  /// stays false and MaterialApp is given a null [locale] so it flows
+  /// through the system-locale resolver — this lets a user who later
+  /// switches their phone's language see the app follow along.
   static String languageCode = 'en';
+
+  /// True once the user has explicitly picked a language in Settings. Until
+  /// then we treat [languageCode] as a system-resolved suggestion and pass
+  /// null to MaterialApp.locale so future OS-locale changes flow through.
+  static bool userPickedLanguage = false;
+
+  /// The full set of locales the app ships translations for. Mirrors the
+  /// MaterialApp supportedLocales list and the ARB files under lib/l10n/.
+  static const supportedCodes = <String>{'en', 'de', 'ru', 'zh', 'ja', 'ko'};
 
   /// Stone color preset id (see [StoneColorId]). Defaults to classic black+ivory.
   static String stoneColorId = StoneColorId.classic;
@@ -83,6 +105,7 @@ class AppSettings {
   static const _kBackgroundThemeId = 'backgroundThemeId';
   static const _kThemePresetId = 'themePresetId';
   static const _kLanguageCode = 'languageCode';
+  static const _kUserPickedLanguage = 'userPickedLanguage';
   static const _kSoundEnabled = 'soundEnabled';
   static const _kHapticsEnabled = 'hapticsEnabled';
   static const _kStoneColorId = 'stoneColorId';
@@ -108,7 +131,16 @@ class AppSettings {
     backgroundThemeId =
         prefs.getString(_kBackgroundThemeId) ?? backgroundThemeId;
     themePresetId = prefs.getString(_kThemePresetId) ?? themePresetId;
-    languageCode = prefs.getString(_kLanguageCode) ?? languageCode;
+    final storedLang = prefs.getString(_kLanguageCode);
+    userPickedLanguage = prefs.getBool(_kUserPickedLanguage) ?? false;
+    if (storedLang != null && userPickedLanguage) {
+      languageCode = storedLang;
+    } else {
+      // First launch (or pre-flag install): try to match the OS locale to
+      // one of our supported ARB files. Falls back to 'en' when no match.
+      final systemCode = PlatformDispatcher.instance.locale.languageCode;
+      languageCode = supportedCodes.contains(systemCode) ? systemCode : 'en';
+    }
     soundEnabled = prefs.getBool(_kSoundEnabled) ?? soundEnabled;
     hapticsEnabled = prefs.getBool(_kHapticsEnabled) ?? hapticsEnabled;
     stoneColorId = prefs.getString(_kStoneColorId) ?? stoneColorId;
@@ -125,6 +157,7 @@ class AppSettings {
     await prefs.setString(_kBackgroundThemeId, backgroundThemeId);
     await prefs.setString(_kThemePresetId, themePresetId);
     await prefs.setString(_kLanguageCode, languageCode);
+    await prefs.setBool(_kUserPickedLanguage, userPickedLanguage);
     await prefs.setBool(_kSoundEnabled, soundEnabled);
     await prefs.setBool(_kHapticsEnabled, hapticsEnabled);
     await prefs.setString(_kStoneColorId, stoneColorId);

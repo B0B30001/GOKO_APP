@@ -154,7 +154,12 @@ class _GokoAppState extends State<GokoApp> {
   }
 
   void _setLanguage(String code) {
-    setState(() => AppSettings.languageCode = code);
+    setState(() {
+      AppSettings.languageCode = code;
+      // User-driven choice — lock it in so future system-locale changes
+      // don't override the explicit preference.
+      AppSettings.userPickedLanguage = true;
+    });
     AppSettings.save();
   }
 
@@ -176,7 +181,13 @@ class _GokoAppState extends State<GokoApp> {
         theme: activeTheme,
         darkTheme: activeTheme,
         themeMode: AppSettings.themeMode,
-        locale: Locale(AppSettings.languageCode),
+        // When the user hasn't picked a language explicitly, pass null so
+        // MaterialApp resolves against the OS locale via supportedLocales —
+        // this is what flips the app to German on a German phone on first
+        // launch (and lets it follow system-locale changes thereafter).
+        locale: AppSettings.userPickedLanguage
+            ? Locale(AppSettings.languageCode)
+            : null,
         localizationsDelegates: const [
           AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
