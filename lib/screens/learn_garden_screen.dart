@@ -5,10 +5,8 @@ import 'package:zaibal/gen/l10n/app_localizations.dart';
 import 'package:zaibal/models/tutorial.dart';
 import 'package:zaibal/services/content_service.dart';
 import 'package:zaibal/services/progress_service.dart';
-import 'package:zaibal/services/subscription_service.dart';
 import 'package:zaibal/widgets/coach_speech.dart';
 import 'package:zaibal/widgets/garden/garden.dart';
-import 'paywall_screen.dart';
 import 'tutorial_screen.dart';
 
 /// Gamified Learn page modelled on the Puzzle Garden — a winding vertical
@@ -110,25 +108,8 @@ class _LearnGardenScreenState extends State<LearnGardenScreen> {
     if (mounted) setState(() {});
   }
 
-  Future<void> _onTileTap(
-    Tutorial t,
-    bool locked,
-    SubscriptionService subscription,
-  ) async {
-    if (locked) {
-      // Premium-gated lesson — push the paywall instead.
-      await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) =>
-              const PaywallScreen(reason: PaywallReason.premiumLessons),
-        ),
-      );
-      if (mounted) setState(() {});
-      return;
-    }
-    await _openTutorial(t);
-  }
+  /// All lessons are free in the current build — just open the tutorial.
+  Future<void> _onTileTap(Tutorial t) => _openTutorial(t);
 
   List<String> _coachLines(AppLocalizations l) => [
     l.coachLearnIntro1,
@@ -142,7 +123,6 @@ class _LearnGardenScreenState extends State<LearnGardenScreen> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final progress = context.watch<ProgressService>();
-    final subscription = context.watch<SubscriptionService>();
     // Single theme derived from user palette — Learn doesn't rotate themes
     // like Puzzle Garden does (which earns the theme change via XP).
     final theme = themeForCurrentSettings();
@@ -181,16 +161,11 @@ class _LearnGardenScreenState extends State<LearnGardenScreen> {
       for (final tutorial in lessons) {
         final completed = progress.isLessonCompleted(tutorial.id);
         final bookmark = progress.getLessonBookmark(tutorial.id);
-        final locked = tutorial.difficulty >= 2 && !subscription.isPremium;
         // Path connector lives BETWEEN tiles, not before the first one of a
         // category (the WorldGate provides visual separation there).
         if (firstTileEmitted) {
           children.add(
-            PathConnector(
-              rowIndex: rowIndex,
-              unlocked: !locked || completed,
-              theme: theme,
-            ),
+            PathConnector(rowIndex: rowIndex, unlocked: true, theme: theme),
           );
         }
         firstTileEmitted = true;
@@ -201,8 +176,8 @@ class _LearnGardenScreenState extends State<LearnGardenScreen> {
             theme: theme,
             completed: completed,
             bookmarkStep: bookmark,
-            locked: locked,
-            onTap: () => _onTileTap(tutorial, locked, subscription),
+            locked: false,
+            onTap: () => _onTileTap(tutorial),
           ),
         );
         rowIndex++;

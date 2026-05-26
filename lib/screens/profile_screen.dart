@@ -7,8 +7,6 @@ import 'package:zaibal/services/ogs_service.dart';
 import 'package:zaibal/services/user_service.dart';
 import 'package:zaibal/services/match_history_service.dart';
 import 'package:zaibal/services/progress_service.dart';
-import 'package:zaibal/services/subscription_service.dart';
-import 'package:zaibal/screens/paywall_screen.dart';
 import 'package:zaibal/screens/analysis_screen.dart';
 import 'package:zaibal/utils/ogs_rank.dart';
 import 'package:zaibal/widgets/game_record_tile.dart';
@@ -30,7 +28,6 @@ class ProfileScreen extends StatelessWidget {
     final user = context.watch<UserService>().currentUser;
     final history = context.watch<MatchHistoryService>();
     final progress = context.watch<ProgressService>();
-    final subscription = context.watch<SubscriptionService>();
     final ogs = context.watch<OgsService>();
     final agg = history.aggregate();
 
@@ -65,7 +62,7 @@ class ProfileScreen extends StatelessWidget {
             ],
             flexibleSpace: FlexibleSpaceBar(
               title: Text(displayName),
-              background: _buildHeader(context, user, subscription, ogs, rank),
+              background: _buildHeader(context, user, ogs, rank),
             ),
           ),
           SliverPadding(
@@ -78,7 +75,6 @@ class ProfileScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 _buildSparklineCard(context, progress),
                 const SizedBox(height: 16),
-                if (!subscription.isPremium) _buildPremiumCta(context),
                 _buildRecentGamesPanel(context, history),
               ]),
             ),
@@ -101,7 +97,6 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildHeader(
     BuildContext context,
     User? user,
-    SubscriptionService subscription,
     OgsService ogs,
     String? rank,
   ) {
@@ -146,50 +141,6 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
               ),
-            if (subscription.isPremium) ...[
-              const SizedBox(height: 6),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFFFD45A), Color(0xFFFF9F1C)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.amber.withValues(alpha: 0.4),
-                      blurRadius: 8,
-                      spreadRadius: 1,
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.workspace_premium,
-                      size: 16,
-                      color: Colors.white,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      'GOKO ${AppLocalizations.of(context).premium}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 12,
-                        letterSpacing: 0.6,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
           ],
         ),
       ),
@@ -332,27 +283,6 @@ class ProfileScreen extends StatelessWidget {
 
   // ── premium CTA (free users only) ────────────────────────────────────────
 
-  Widget _buildPremiumCta(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        child: ListTile(
-          leading: const Icon(Icons.workspace_premium, color: Colors.amber),
-          title: Text(AppLocalizations.of(context).unlockPremium),
-          subtitle: Text(
-            '${AppLocalizations.of(context).unlimitedPuzzles}, ${AppLocalizations.of(context).postGameAnalysis}, ${AppLocalizations.of(context).profileFlair}',
-          ),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const PaywallScreen()),
-          ),
-        ),
-      ),
-    );
-  }
-
   // ── recent games ─────────────────────────────────────────────────────────
 
   /// Always-visible panel of the last 10 games — chess.com pattern.
@@ -434,14 +364,7 @@ class ProfileScreen extends StatelessWidget {
   }
 
   void _openRecord(BuildContext context, MatchRecord r) {
-    final entitlements = context.read<SubscriptionService>().entitlements;
-    if (!entitlements.postGameAnalysis) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const PaywallScreen()),
-      );
-      return;
-    }
+    // Game review is free — open the analysis screen directly.
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => AnalysisScreen(matchId: r.id)),

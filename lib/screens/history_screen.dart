@@ -6,9 +6,7 @@ import '../widgets/app_shell.dart';
 import '../widgets/game_record_tile.dart';
 import '../services/ogs_service.dart';
 import '../services/match_history_service.dart';
-import '../services/subscription_service.dart';
 import 'analysis_screen.dart';
-import 'paywall_screen.dart';
 
 /// Unified game history. Reads local records (AI / local 2P / synced OGS)
 /// from [MatchHistoryService] and triggers an OGS refresh in the background
@@ -122,14 +120,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   void _openRecord(MatchRecord r) {
-    final entitlements = context.read<SubscriptionService>().entitlements;
-    if (!entitlements.postGameAnalysis) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const PaywallScreen()),
-      );
-      return;
-    }
+    // Game review is free — open the analysis screen directly.
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => AnalysisScreen(matchId: r.id)),

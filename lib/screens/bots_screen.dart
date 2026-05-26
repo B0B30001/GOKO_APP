@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:zaibal/gen/l10n/app_localizations.dart';
 import '../l10n/bot_translations.dart';
 import '../models/bot_engine_config.dart';
 import '../models/bot_profile.dart';
 import '../services/ai/go_ai_service.dart';
-import '../services/subscription_service.dart';
 import '../widgets/goko_logo.dart';
 import 'game_board_screen.dart';
-import 'paywall_screen.dart';
 
 /// Skill tier grouping for chess.com-style sections on the bots screen.
 enum _Tier { beginner, intermediate, advanced, master }
@@ -30,7 +27,7 @@ extension _TierLabel on _Tier {
 }
 
 /// Full 22-bot ladder. Elo runs ~800 → 3500+, ranks from 25 kyu to 9 dan+.
-/// Each tier mixes free + premium so the upsell sits at every difficulty.
+/// All bots are free — GOKO has no paid tier in the current build.
 const _bots = <_Tier, List<BotProfile>>{
   _Tier.beginner: [
     BotProfile(
@@ -130,7 +127,6 @@ const _bots = <_Tier, List<BotProfile>>{
       avatarAsset: 'assets/avatars/heron.png',
       engineConfig: BotEngineConfig.intermediate,
       legacyDifficulty: AIDifficulty.medium,
-      isPremium: true,
     ),
     BotProfile(
       name: 'Owl',
@@ -211,7 +207,6 @@ const _bots = <_Tier, List<BotProfile>>{
       avatarAsset: 'assets/avatars/phoenix.png',
       engineConfig: BotEngineConfig.advanced,
       legacyDifficulty: AIDifficulty.hard,
-      isPremium: true,
     ),
     BotProfile(
       name: 'Hawk',
@@ -277,7 +272,6 @@ const _bots = <_Tier, List<BotProfile>>{
       avatarAsset: 'assets/avatars/samurai.png',
       engineConfig: BotEngineConfig.master,
       legacyDifficulty: AIDifficulty.hard,
-      isPremium: true,
     ),
   ],
   _Tier.master: [
@@ -293,7 +287,6 @@ const _bots = <_Tier, List<BotProfile>>{
       avatarAsset: 'assets/avatars/tengu.png',
       engineConfig: BotEngineConfig.master,
       legacyDifficulty: AIDifficulty.hard,
-      isPremium: true,
     ),
     BotProfile(
       name: 'Monk',
@@ -307,7 +300,6 @@ const _bots = <_Tier, List<BotProfile>>{
       avatarAsset: 'assets/avatars/monk.png',
       engineConfig: BotEngineConfig.master,
       legacyDifficulty: AIDifficulty.hard,
-      isPremium: true,
     ),
     BotProfile(
       name: 'Oracle',
@@ -321,7 +313,6 @@ const _bots = <_Tier, List<BotProfile>>{
       avatarAsset: 'assets/avatars/oracle.png',
       engineConfig: BotEngineConfig.master,
       legacyDifficulty: AIDifficulty.hard,
-      isPremium: true,
     ),
     BotProfile(
       name: 'Sensei',
@@ -336,7 +327,6 @@ const _bots = <_Tier, List<BotProfile>>{
       avatarAsset: 'assets/avatars/sensei.png',
       engineConfig: BotEngineConfig.master,
       legacyDifficulty: AIDifficulty.hard,
-      isPremium: true,
     ),
     BotProfile(
       name: 'KataGo',
@@ -350,7 +340,6 @@ const _bots = <_Tier, List<BotProfile>>{
       color: Color(0xFF7C4DFF),
       avatarAsset: 'assets/avatars/katago.png',
       engineConfig: BotEngineConfig.superhuman,
-      isPremium: true,
     ),
   ],
 };
@@ -429,8 +418,6 @@ class _TierHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tierBots = _bots[tier]!;
-    final pro = tierBots.where((b) => b.isPremium).length;
-    final free = tierBots.length - pro;
     final fadedOnSurface = Theme.of(
       context,
     ).colorScheme.onSurface.withValues(alpha: 0.55);
@@ -461,31 +448,6 @@ class _TierHeader extends StatelessWidget {
               context,
             ).textTheme.bodySmall?.copyWith(color: fadedOnSurface),
           ),
-          const SizedBox(width: 6),
-          Text(
-            '·',
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: fadedOnSurface),
-          ),
-          const SizedBox(width: 6),
-          Text(
-            '$free free',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: tier.accent,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          if (pro > 0) ...[
-            const SizedBox(width: 6),
-            Text(
-              '· $pro pro',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Colors.amber.shade700,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
         ],
       ),
     );
@@ -537,8 +499,6 @@ class _BotCard extends StatelessWidget {
                         ? _ShimmerAvatar(bot: bot)
                         : _Avatar(bot: bot, available: available),
                   ),
-                  if (bot.isPremium)
-                    const Positioned(top: 8, right: 8, child: _PremiumPill()),
                   Positioned(
                     top: 8,
                     left: 8,
@@ -611,16 +571,6 @@ class _BotCard extends StatelessWidget {
   }
 
   void _handleTap(BuildContext context) {
-    if (bot.isPremium && !context.read<SubscriptionService>().isPremium) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) =>
-              const PaywallScreen(reason: PaywallReason.advancedBots),
-        ),
-      );
-      return;
-    }
     showModalBottomSheet<void>(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -721,30 +671,6 @@ class _StarsBadge extends StatelessWidget {
             color: i < stars ? Colors.amber : Colors.white54,
           );
         }),
-      ),
-    );
-  }
-}
-
-class _PremiumPill extends StatelessWidget {
-  const _PremiumPill();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-      decoration: BoxDecoration(
-        color: Colors.amber,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: const Text(
-        'PRO',
-        style: TextStyle(
-          fontSize: 9,
-          fontWeight: FontWeight.w900,
-          color: Colors.black87,
-          letterSpacing: 0.8,
-        ),
       ),
     );
   }

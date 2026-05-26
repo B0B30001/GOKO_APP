@@ -68,13 +68,6 @@ class UserService extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setSubscriptionTier(SubscriptionTier tier) async {
-    if (_currentUser == null || _currentUser!.subscriptionTier == tier) return;
-    _currentUser!.subscriptionTier = tier;
-    await _persist();
-    notifyListeners();
-  }
-
   Future<void> _persist() async {
     if (_currentUser == null) return;
     final prefs = await SharedPreferences.getInstance();

@@ -59,10 +59,6 @@ dependencies:
   # Audio playback for sound effects (stone placement, captures, puzzle feedback).
   audioplayers: ^6.1.0
 
-  # RevenueCat — cross-platform in-app purchase management (Android Play Billing,
-  # iOS StoreKit). Replace the API key constant before shipping.
-  purchases_flutter: ^8.9.3
-
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8

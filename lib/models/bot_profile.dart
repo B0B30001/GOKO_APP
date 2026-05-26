@@ -44,7 +44,6 @@ class BotProfile {
   final IconData icon;
   final Color color;
   final String avatarAsset;
-  final bool isPremium;
 
   /// Engine tuning for cloud KataGo. MCTS fallback only reads `maxVisits`
   /// and `blunderRate` (via [legacyDifficulty]).
@@ -72,7 +71,6 @@ class BotProfile {
     required this.avatarAsset,
     required this.engineConfig,
     this.legacyDifficulty,
-    this.isPremium = false,
     this.taunts = const {},
   });
 

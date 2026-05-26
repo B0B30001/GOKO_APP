@@ -7,10 +7,8 @@ import '../models/puzzle.dart';
 import '../models/optimized_game.dart';
 import '../widgets/fast_game_board.dart';
 import '../models/app_settings.dart';
-import '../services/subscription_service.dart';
 import '../services/progress_service.dart';
 import '../services/sfx_service.dart';
-import 'paywall_screen.dart';
 
 class PuzzleScreen extends StatefulWidget {
   final Puzzle puzzle;
@@ -89,22 +87,9 @@ class _PuzzleScreenState extends State<PuzzleScreen>
     super.dispose();
   }
 
-  Future<void> _checkPuzzleQuota() async {
-    if (!mounted) return;
-    final subscription = context.read<SubscriptionService>();
-    if (!subscription.canSolveAnotherPuzzle()) {
-      if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) =>
-              const PaywallScreen(reason: PaywallReason.puzzleDailyQuota),
-        ),
-      );
-      return;
-    }
-    await subscription.recordPuzzleAttempted();
-  }
+  /// Daily-quota gate is now a no-op — GOKO is fully free. Kept as a hook
+  /// in case a soft daily-streak counter is reintroduced later.
+  Future<void> _checkPuzzleQuota() async {}
 
   void _loadPuzzlePosition() {
     // Load the initial puzzle position

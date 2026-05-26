@@ -13,11 +13,9 @@ import '../widgets/goko_logo.dart';
 import '../services/ogs_service.dart';
 import '../services/match_history_service.dart';
 import '../services/progress_service.dart';
-import '../services/subscription_service.dart';
 import './game_board_screen.dart';
 import './online/online_lobby_screen.dart';
 import './analysis_screen.dart';
-import './paywall_screen.dart';
 import '../services/ai/go_ai_service.dart';
 import '../utils/ogs_rank.dart';
 
@@ -649,14 +647,7 @@ class _RecentGameRow extends StatelessWidget {
   }
 
   void _openRecord(BuildContext context, MatchRecord r) {
-    final entitlements = context.read<SubscriptionService>().entitlements;
-    if (!entitlements.postGameAnalysis) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const PaywallScreen()),
-      );
-      return;
-    }
+    // Game review is free — open the analysis screen directly.
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => AnalysisScreen(matchId: r.id)),

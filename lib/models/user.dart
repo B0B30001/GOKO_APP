@@ -1,10 +1,12 @@
-/// Subscription tier for the freemium model.
-enum SubscriptionTier { free, premium }
-
 /// Represents the locally signed-in player.
 ///
 /// Fields are intentionally optional where a fresh first-launch user has no
 /// data yet (e.g., no rank until they sign in to OGS).
+///
+/// GOKO is fully free in the current build — there is no subscription tier,
+/// no premium gates, no IAP. The User model deliberately has no `isPremium`
+/// flag any more; the [SubscriptionService] stub reports all features as
+/// available unconditionally.
 class User {
   final String id;
   String displayName;
@@ -18,9 +20,7 @@ class User {
   int losses;
   int puzzleRating;
 
-  SubscriptionTier subscriptionTier;
-
-  /// Premium-only cosmetic flair identifiers (badges, border styles).
+  /// Cosmetic flair identifiers (badges, border styles). Award flow is local.
   List<String> badges;
 
   User({
@@ -32,13 +32,10 @@ class User {
     this.wins = 0,
     this.losses = 0,
     this.puzzleRating = 1200,
-    this.subscriptionTier = SubscriptionTier.free,
     List<String>? badges,
   }) : badges = badges ?? <String>[];
 
   double get winRate => gamesPlayed == 0 ? 0 : wins / gamesPlayed;
-
-  bool get isPremium => subscriptionTier == SubscriptionTier.premium;
 
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -49,7 +46,6 @@ class User {
     'wins': wins,
     'losses': losses,
     'puzzleRating': puzzleRating,
-    'subscriptionTier': subscriptionTier.name,
     'badges': badges,
   };
 
@@ -62,10 +58,6 @@ class User {
     wins: (json['wins'] as num?)?.toInt() ?? 0,
     losses: (json['losses'] as num?)?.toInt() ?? 0,
     puzzleRating: (json['puzzleRating'] as num?)?.toInt() ?? 1200,
-    subscriptionTier: SubscriptionTier.values.firstWhere(
-      (t) => t.name == json['subscriptionTier'],
-      orElse: () => SubscriptionTier.free,
-    ),
     badges: (json['badges'] as List?)?.cast<String>() ?? const <String>[],
   );
 }
