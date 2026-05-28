@@ -1438,4 +1438,37 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get scoreCapturedLabel => 'Пленные';
+
+  @override
+  String get gameEndedMarkDeadStones =>
+      'Игра завершена - отметьте мёртвые камни для подсчёта';
+
+  @override
+  String get gameFinished => 'Игра завершена';
+
+  @override
+  String get stoneRemovalAccepted => 'Удаление камней принято';
+
+  @override
+  String get waitForPreviousMove => 'Пожалуйста, ждите предыдущего хода';
+
+  @override
+  String get positionAlreadyOccupied => 'Позиция уже занята';
+
+  @override
+  String get invalidMoveSuicideOrKo =>
+      'Недопустимый ход (самоубийство или нарушение правила Ко)';
+
+  @override
+  String get moveTimedOut => 'Время на ход истекло - попробуйте снова';
+
+  @override
+  String timeSecondsRemaining(int seconds) {
+    return '$seconds секунд осталось!';
+  }
+
+  @override
+  String periodTimeRemaining(int periods, int time) {
+    return 'Период $periods - ${time}s';
+  }
 }

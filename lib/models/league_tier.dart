@@ -20,7 +20,7 @@ class LeagueTier {
   });
 
   /// All tiers in ascending threshold order. Stable list — index 0 is
-  /// Rookie. Used to drive the "X XP to <next tier>" progress bar.
+  /// Rookie. Used to drive the "X XP to `next tier`" progress bar.
   static final List<LeagueTier> tiers = [
     LeagueTier(
       threshold: 1000,

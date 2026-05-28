@@ -46,17 +46,31 @@ class _LearnGardenScreenState extends State<LearnGardenScreen> {
   List<Tutorial> _all = const [];
   bool _loading = true;
   final ScrollController _scroll = ScrollController();
+  double _scrollOffset = 0.0;
 
   @override
   void initState() {
     super.initState();
     _load();
+    // Listen to scroll changes to update parallax background
+    _scroll.addListener(_onScroll);
   }
 
   @override
   void dispose() {
+    _scroll.removeListener(_onScroll);
     _scroll.dispose();
     super.dispose();
+  }
+
+  void _onScroll() {
+    // Update scroll offset for parallax effect
+    final newOffset = _scroll.offset;
+    if (_scrollOffset != newOffset) {
+      setState(() {
+        _scrollOffset = newOffset;
+      });
+    }
   }
 
   Future<void> _load() async {
@@ -193,7 +207,12 @@ class _LearnGardenScreenState extends State<LearnGardenScreen> {
 
     return Stack(
       children: [
-        Positioned.fill(child: ThemedBackground(themeIdx: safeThemeIdx)),
+        Positioned.fill(
+          child: ThemedBackground(
+            themeIdx: safeThemeIdx,
+            scrollOffset: _scrollOffset,
+          ),
+        ),
         Positioned.fill(
           child: IgnorePointer(
             child: AmbientDecorations(themeIdx: safeThemeIdx),
@@ -455,7 +474,7 @@ class _LessonTileState extends State<_LessonTile>
                       bottom: 0,
                       child: CustomPaint(
                         size: Size(width, height),
-                        painter: PedestalPainter(
+                        painter: LessonPedestalPainter(
                           baseColor: tileColor,
                           unlocked: !widget.locked,
                         ),

@@ -72,17 +72,27 @@ class _PuzzleGardenScreenState extends State<PuzzleGardenScreen> {
   LeagueTier? _lastLeague;
   String? _celebrateMessage;
   final ScrollController _scroll = ScrollController();
+  double _scrollOffset = 0.0;
 
   @override
   void initState() {
     super.initState();
     _load();
+    _scroll.addListener(_onScroll);
   }
 
   @override
   void dispose() {
+    _scroll.removeListener(_onScroll);
     _scroll.dispose();
     super.dispose();
+  }
+
+  void _onScroll() {
+    final newOffset = _scroll.offset;
+    if (_scrollOffset != newOffset) {
+      setState(() => _scrollOffset = newOffset);
+    }
   }
 
   Future<void> _load() async {
@@ -205,7 +215,10 @@ class _PuzzleGardenScreenState extends State<PuzzleGardenScreen> {
             duration: const Duration(milliseconds: 700),
             child: KeyedSubtree(
               key: ValueKey(themeIdx),
-              child: ThemedBackground(themeIdx: themeIdx),
+              child: ThemedBackground(
+                themeIdx: themeIdx,
+                scrollOffset: _scrollOffset,
+              ),
             ),
           ),
         ),
@@ -397,7 +410,7 @@ class _StickyCoachHeader extends StatelessWidget {
   }
 }
 
-// ── Puzzle level tile (uses shared PedestalPainter + PlayerStone3D) ─────────
+// ── Puzzle level tile (uses PuzzlePedestalPainter + PlayerStone3D) ──────────
 
 class _LevelTile extends StatefulWidget {
   final int level;
@@ -513,7 +526,7 @@ class _LevelTileState extends State<_LevelTile>
                     bottom: 0,
                     child: CustomPaint(
                       size: Size(width, height),
-                      painter: PedestalPainter(
+                      painter: PuzzlePedestalPainter(
                         baseColor: tileColor,
                         unlocked: widget.unlocked,
                       ),

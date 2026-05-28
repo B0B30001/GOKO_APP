@@ -114,15 +114,32 @@ class ProfileScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(height: 24),
-            CircleAvatar(
-              radius: 44,
-              backgroundColor: Colors.white,
-              backgroundImage: user?.avatarPath != null
-                  ? AssetImage(user!.avatarPath!)
-                  : null,
-              child: user?.avatarPath == null
-                  ? Icon(Icons.person, size: 44, color: cs.primary)
-                  : null,
+            Container(
+              width: 88,
+              height: 88,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.25),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+                border: Border.all(color: Colors.white, width: 3),
+              ),
+              child: ClipOval(
+                child: user?.avatarPath != null
+                    ? Image.asset(
+                        user!.avatarPath!,
+                        fit: BoxFit.cover,
+                        filterQuality: FilterQuality.high,
+                        errorBuilder: (_, __, ___) =>
+                            Icon(Icons.person, size: 44, color: cs.primary),
+                      )
+                    : Icon(Icons.person, size: 44, color: cs.primary),
+              ),
             ),
             const SizedBox(height: 8),
             if (rank != null)

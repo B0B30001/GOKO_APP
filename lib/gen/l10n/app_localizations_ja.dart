@@ -1405,4 +1405,35 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get scoreCapturedLabel => 'アゲハマ';
+
+  @override
+  String get gameEndedMarkDeadStones => '対局終了 - 死石を選んで計算';
+
+  @override
+  String get gameFinished => '対局が終わりました';
+
+  @override
+  String get stoneRemovalAccepted => '石の除去が受け入れられました';
+
+  @override
+  String get waitForPreviousMove => '前の着手を待ってください';
+
+  @override
+  String get positionAlreadyOccupied => 'その点は既に占められています';
+
+  @override
+  String get invalidMoveSuicideOrKo => '違反です（自殺またはコウ）';
+
+  @override
+  String get moveTimedOut => '着手がタイムアウトしました - もう一度試してください';
+
+  @override
+  String timeSecondsRemaining(int seconds) {
+    return '$seconds 秒残っています！';
+  }
+
+  @override
+  String periodTimeRemaining(int periods, int time) {
+    return '秒読み $periods - ${time}s';
+  }
 }

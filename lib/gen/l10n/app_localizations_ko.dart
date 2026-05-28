@@ -1405,4 +1405,35 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get scoreCapturedLabel => '사석';
+
+  @override
+  String get gameEndedMarkDeadStones => '대국 끝 - 죽은 돌을 표시해 계산하기';
+
+  @override
+  String get gameFinished => '대국 완료';
+
+  @override
+  String get stoneRemovalAccepted => '돌 제거 승인됨';
+
+  @override
+  String get waitForPreviousMove => '이전 수를 기다려주세요';
+
+  @override
+  String get positionAlreadyOccupied => '이미 점유된 위치입니다';
+
+  @override
+  String get invalidMoveSuicideOrKo => '불법적 수 (자살 또는 코 규칙 위반)';
+
+  @override
+  String get moveTimedOut => '수의 시간이 초과됨 - 다시 시도해주세요';
+
+  @override
+  String timeSecondsRemaining(int seconds) {
+    return '$seconds초 남음!';
+  }
+
+  @override
+  String periodTimeRemaining(int periods, int time) {
+    return '초읽기 $periods - ${time}s';
+  }
 }

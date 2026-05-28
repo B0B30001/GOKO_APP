@@ -1449,4 +1449,38 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get scoreCapturedLabel => 'Gefangen';
+
+  @override
+  String get gameEndedMarkDeadStones =>
+      'Spiel beendet - Tote Steine markieren zum Bewerten';
+
+  @override
+  String get gameFinished => 'Spiel beendet';
+
+  @override
+  String get stoneRemovalAccepted => 'Steinentfernung akzeptiert';
+
+  @override
+  String get waitForPreviousMove => 'Bitte warten Sie auf den vorherigen Zug';
+
+  @override
+  String get positionAlreadyOccupied => 'Position bereits besetzt';
+
+  @override
+  String get invalidMoveSuicideOrKo =>
+      'Ungültiger Zug (Selbstmord oder Ko-Regelverstoß)';
+
+  @override
+  String get moveTimedOut =>
+      'Zug hat das Zeitlimit überschritten - versuchen Sie es erneut';
+
+  @override
+  String timeSecondsRemaining(int seconds) {
+    return '$seconds Sekunden verbleibend!';
+  }
+
+  @override
+  String periodTimeRemaining(int periods, int time) {
+    return 'Periode $periods - ${time}s';
+  }
 }

@@ -2769,6 +2769,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Captured'**
   String get scoreCapturedLabel;
+
+  /// Snackbar when game enters scoring phase
+  ///
+  /// In en, this message translates to:
+  /// **'Game ended - Mark dead stones for scoring'**
+  String get gameEndedMarkDeadStones;
+
+  /// Snackbar when game is complete
+  ///
+  /// In en, this message translates to:
+  /// **'Game finished'**
+  String get gameFinished;
+
+  /// Snackbar confirming stone removal
+  ///
+  /// In en, this message translates to:
+  /// **'Stone removal accepted'**
+  String get stoneRemovalAccepted;
+
+  /// Snackbar when trying to move while another move pending
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait for previous move'**
+  String get waitForPreviousMove;
+
+  /// Snackbar when trying to place stone on occupied point
+  ///
+  /// In en, this message translates to:
+  /// **'Position already occupied'**
+  String get positionAlreadyOccupied;
+
+  /// Snackbar when move violates go rules
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid move (suicide or ko rule violation)'**
+  String get invalidMoveSuicideOrKo;
+
+  /// Snackbar when move submission times out
+  ///
+  /// In en, this message translates to:
+  /// **'Move timed out - please try again'**
+  String get moveTimedOut;
+
+  /// Low time alert
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds} seconds remaining!'**
+  String timeSecondsRemaining(int seconds);
+
+  /// Byoyomi time display
+  ///
+  /// In en, this message translates to:
+  /// **'Period {periods} - {time}s'**
+  String periodTimeRemaining(int periods, int time);
 }
 
 class _AppLocalizationsDelegate

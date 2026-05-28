@@ -558,5 +558,41 @@
 
   "scoreStonesLabel": "돌",
   "scoreTerritoryLabel": "집",
-  "scoreCapturedLabel": "사석"
+  "scoreCapturedLabel": "사석",
+
+  "gameEndedMarkDeadStones": "대국 끝 - 죽은 돌을 표시해 계산하기",
+  "@gameEndedMarkDeadStones": { "description": "Snackbar when game enters scoring phase" },
+
+  "gameFinished": "대국 완료",
+  "@gameFinished": { "description": "Snackbar when game is complete" },
+
+  "stoneRemovalAccepted": "돌 제거 승인됨",
+  "@stoneRemovalAccepted": { "description": "Snackbar confirming stone removal" },
+
+  "waitForPreviousMove": "이전 수를 기다려주세요",
+  "@waitForPreviousMove": { "description": "Snackbar when trying to move while another move pending" },
+
+  "positionAlreadyOccupied": "이미 점유된 위치입니다",
+  "@positionAlreadyOccupied": { "description": "Snackbar when trying to place stone on occupied point" },
+
+  "invalidMoveSuicideOrKo": "불법적 수 (자살 또는 코 규칙 위반)",
+  "@invalidMoveSuicideOrKo": { "description": "Snackbar when move violates go rules" },
+
+  "moveTimedOut": "수의 시간이 초과됨 - 다시 시도해주세요",
+  "@moveTimedOut": { "description": "Snackbar when move submission times out" },
+
+  "timeSecondsRemaining": "{seconds}초 남음!",
+  "@timeSecondsRemaining": {
+    "description": "Low time alert",
+    "placeholders": { "seconds": { "type": "int" } }
+  },
+
+  "periodTimeRemaining": "초읽기 {periods} - {time}s",
+  "@periodTimeRemaining": {
+    "description": "Byoyomi time display",
+    "placeholders": { 
+      "periods": { "type": "int" },
+      "time": { "type": "int" }
+    }
+  }
 }

@@ -558,5 +558,41 @@
 
   "scoreStonesLabel": "Камни",
   "scoreTerritoryLabel": "Территория",
-  "scoreCapturedLabel": "Пленные"
+  "scoreCapturedLabel": "Пленные",
+
+  "gameEndedMarkDeadStones": "Игра завершена - отметьте мёртвые камни для подсчёта",
+  "@gameEndedMarkDeadStones": { "description": "Snackbar when game enters scoring phase" },
+
+  "gameFinished": "Игра завершена",
+  "@gameFinished": { "description": "Snackbar when game is complete" },
+
+  "stoneRemovalAccepted": "Удаление камней принято",
+  "@stoneRemovalAccepted": { "description": "Snackbar confirming stone removal" },
+
+  "waitForPreviousMove": "Пожалуйста, ждите предыдущего хода",
+  "@waitForPreviousMove": { "description": "Snackbar when trying to move while another move pending" },
+
+  "positionAlreadyOccupied": "Позиция уже занята",
+  "@positionAlreadyOccupied": { "description": "Snackbar when trying to place stone on occupied point" },
+
+  "invalidMoveSuicideOrKo": "Недопустимый ход (самоубийство или нарушение правила Ко)",
+  "@invalidMoveSuicideOrKo": { "description": "Snackbar when move violates go rules" },
+
+  "moveTimedOut": "Время на ход истекло - попробуйте снова",
+  "@moveTimedOut": { "description": "Snackbar when move submission times out" },
+
+  "timeSecondsRemaining": "{seconds} секунд осталось!",
+  "@timeSecondsRemaining": {
+    "description": "Low time alert",
+    "placeholders": { "seconds": { "type": "int" } }
+  },
+
+  "periodTimeRemaining": "Период {periods} - {time}s",
+  "@periodTimeRemaining": {
+    "description": "Byoyomi time display",
+    "placeholders": { 
+      "periods": { "type": "int" },
+      "time": { "type": "int" }
+    }
+  }
 }

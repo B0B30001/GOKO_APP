@@ -1441,4 +1441,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get scoreCapturedLabel => 'Captured';
+
+  @override
+  String get gameEndedMarkDeadStones =>
+      'Game ended - Mark dead stones for scoring';
+
+  @override
+  String get gameFinished => 'Game finished';
+
+  @override
+  String get stoneRemovalAccepted => 'Stone removal accepted';
+
+  @override
+  String get waitForPreviousMove => 'Please wait for previous move';
+
+  @override
+  String get positionAlreadyOccupied => 'Position already occupied';
+
+  @override
+  String get invalidMoveSuicideOrKo =>
+      'Invalid move (suicide or ko rule violation)';
+
+  @override
+  String get moveTimedOut => 'Move timed out - please try again';
+
+  @override
+  String timeSecondsRemaining(int seconds) {
+    return '$seconds seconds remaining!';
+  }
+
+  @override
+  String periodTimeRemaining(int periods, int time) {
+    return 'Period $periods - ${time}s';
+  }
 }

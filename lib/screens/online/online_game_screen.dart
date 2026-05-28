@@ -33,6 +33,8 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
   int _boardVersion = 0;
   String _blackPlayer = 'Black';
   String _whitePlayer = 'White';
+  String? _blackIcon;
+  String? _whiteIcon;
   int _moveNumber = 0;
   String _phase = 'play';
   int _blackTime = 0;
@@ -141,6 +143,8 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
         _phase = data.phase;
         _blackPlayer = data.blackPlayerName;
         _whitePlayer = data.whitePlayerName;
+        _blackIcon = data.blackIcon;
+        _whiteIcon = data.whiteIcon;
         _currentPlayer = data.currentPlayer;
         _moveNumber = data.moveNumber;
         // Result fields (used for banners/UI when finished)
@@ -372,17 +376,18 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
 
       // Show user-friendly notifications for phase changes
       if (mounted && oldPhase != phase) {
+        final l = AppLocalizations.of(context);
         if (phase == 'stone removal') {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Game ended - Mark dead stones for scoring'),
-              duration: Duration(seconds: 3),
+            SnackBar(
+              content: Text(l.gameEndedMarkDeadStones),
+              duration: const Duration(seconds: 3),
             ),
           );
         } else if (phase == 'finished') {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Game finished'),
+              content: Text(l.gameFinished),
               duration: const Duration(seconds: 2),
               action: SnackBarAction(
                 label: 'OK',
@@ -419,9 +424,10 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
     // Listen to acceptance confirmations
     _gameConnection!.removedStonesAccepted.listen((accepted) {
       if (!mounted) return;
+      final l = AppLocalizations.of(context);
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Stone removal accepted')));
+      ).showSnackBar(SnackBar(content: Text(l.stoneRemovalAccepted)));
     });
 
     // Listen to undo requests from opponent/server
@@ -732,6 +738,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
 
   Widget _buildPlayerInfo(bool isBlack, bool isDarkTheme) {
     final name = isBlack ? _blackPlayer : _whitePlayer;
+    final icon = isBlack ? _blackIcon : _whiteIcon;
     final time = isBlack ? _blackTime : _whiteTime;
     final periods = isBlack ? _blackPeriods : _whitePeriods;
     final isCurrentPlayer =
@@ -753,11 +760,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
       ),
       child: Row(
         children: [
-          CircleAvatar(
-            backgroundColor: isBlack ? Colors.black : Colors.white,
-            foregroundColor: isBlack ? Colors.white : Colors.black,
-            child: Text(name[0].toUpperCase()),
-          ),
+          _OnlinePlayerAvatar(iconUrl: icon, name: name, isBlack: isBlack),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -981,20 +984,22 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
 
     if (_pendingMove) {
       debugPrint('❌ Cannot place stone - move already pending');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please wait for previous move')),
-      );
+      final l = AppLocalizations.of(context);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l.waitForPreviousMove)));
       return;
     }
 
     if (_phase != 'play') {
       debugPrint('❌ Cannot place stone - game phase is $_phase');
+      final l = AppLocalizations.of(context);
 
       String message;
       if (_phase == 'finished') {
         message = 'Game has ended';
       } else if (_phase == 'stone removal') {
-        message = 'Game ended - Mark dead stones for scoring';
+        message = l.gameEndedMarkDeadStones;
       } else {
         message = 'Game is in $_phase phase';
       }
@@ -1015,9 +1020,10 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
 
     if (!_isMyTurn) {
       debugPrint('❌ Cannot place stone - not your turn');
+      final l = AppLocalizations.of(context);
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('It\'s not your turn!')));
+      ).showSnackBar(SnackBar(content: Text(l.notYourTurn)));
       return;
     }
 
@@ -1025,9 +1031,10 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
       debugPrint(
         '❌ Cannot place stone - position occupied (value: ${_board![i][j]})',
       );
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Position already occupied')),
-      );
+      final l = AppLocalizations.of(context);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l.positionAlreadyOccupied)));
       return; // Already occupied
     }
 
@@ -1035,11 +1042,10 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
     if (_validationBoard != null && _myColor != null) {
       if (!_validationBoard!.isValidMove(i, j, _myColor!)) {
         debugPrint('❌ Cannot place stone - invalid move (ko/suicide)');
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Invalid move (suicide or ko rule violation)'),
-          ),
-        );
+        final l = AppLocalizations.of(context);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l.invalidMoveSuicideOrKo)));
         return;
       }
     }
@@ -1615,5 +1621,78 @@ class _OwnershipOverlayPainter extends CustomPainter {
       if (ownership[i] != oldDelegate.ownership[i]) return true;
     }
     return false;
+  }
+}
+
+/// Opponent / self avatar for the online game screen. Renders the OGS-served
+/// icon URL with FilterQuality.high, falling back to the first-letter chip if
+/// the URL is missing or the network image fails to load. The black/white
+/// background keeps the stone-colour signalling intact during load.
+class _OnlinePlayerAvatar extends StatelessWidget {
+  final String? iconUrl;
+  final String name;
+  final bool isBlack;
+  const _OnlinePlayerAvatar({
+    required this.iconUrl,
+    required this.name,
+    required this.isBlack,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final bgColor = isBlack ? Colors.black : Colors.white;
+    final fgColor = isBlack ? Colors.white : Colors.black;
+    final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
+    final hasUrl = iconUrl != null && iconUrl!.isNotEmpty;
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        color: bgColor,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.18),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ClipOval(
+        child: hasUrl
+            ? Image.network(
+                iconUrl!,
+                fit: BoxFit.cover,
+                filterQuality: FilterQuality.high,
+                errorBuilder: (_, __, ___) => Center(
+                  child: Text(
+                    initial,
+                    style: TextStyle(
+                      color: fgColor,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                loadingBuilder: (_, child, progress) {
+                  if (progress == null) return child;
+                  return Center(
+                    child: Text(
+                      initial,
+                      style: TextStyle(
+                        color: fgColor,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  );
+                },
+              )
+            : Center(
+                child: Text(
+                  initial,
+                  style: TextStyle(color: fgColor, fontWeight: FontWeight.w700),
+                ),
+              ),
+      ),
+    );
   }
 }

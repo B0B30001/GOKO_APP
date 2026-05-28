@@ -1162,15 +1162,33 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
     final name = widget.opponentName ?? AppLocalizations.of(context).computer;
     return Row(
       children: [
-        CircleAvatar(
-          radius: 26,
-          backgroundColor: Theme.of(
-            context,
-          ).colorScheme.primary.withValues(alpha: 0.15),
-          backgroundImage: avatarPath != null ? AssetImage(avatarPath) : null,
-          child: avatarPath == null
-              ? const Icon(Icons.smart_toy, size: 28)
-              : null,
+        Container(
+          width: 52,
+          height: 52,
+          decoration: BoxDecoration(
+            color: Theme.of(
+              context,
+            ).colorScheme.primary.withValues(alpha: 0.15),
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.15),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: ClipOval(
+            child: avatarPath != null
+                ? Image.asset(
+                    avatarPath,
+                    fit: BoxFit.cover,
+                    filterQuality: FilterQuality.high,
+                    errorBuilder: (_, __, ___) =>
+                        const Icon(Icons.smart_toy, size: 28),
+                  )
+                : const Icon(Icons.smart_toy, size: 28),
+          ),
         ),
         const SizedBox(width: 10),
         Expanded(

@@ -1014,5 +1014,41 @@
 
   "scoreStonesLabel": "Stones",
   "scoreTerritoryLabel": "Territory",
-  "scoreCapturedLabel": "Captured"
+  "scoreCapturedLabel": "Captured",
+
+  "gameEndedMarkDeadStones": "Game ended - Mark dead stones for scoring",
+  "@gameEndedMarkDeadStones": { "description": "Snackbar when game enters scoring phase" },
+
+  "gameFinished": "Game finished",
+  "@gameFinished": { "description": "Snackbar when game is complete" },
+
+  "stoneRemovalAccepted": "Stone removal accepted",
+  "@stoneRemovalAccepted": { "description": "Snackbar confirming stone removal" },
+
+  "waitForPreviousMove": "Please wait for previous move",
+  "@waitForPreviousMove": { "description": "Snackbar when trying to move while another move pending" },
+
+  "positionAlreadyOccupied": "Position already occupied",
+  "@positionAlreadyOccupied": { "description": "Snackbar when trying to place stone on occupied point" },
+
+  "invalidMoveSuicideOrKo": "Invalid move (suicide or ko rule violation)",
+  "@invalidMoveSuicideOrKo": { "description": "Snackbar when move violates go rules" },
+
+  "moveTimedOut": "Move timed out - please try again",
+  "@moveTimedOut": { "description": "Snackbar when move submission times out" },
+
+  "timeSecondsRemaining": "{seconds} seconds remaining!",
+  "@timeSecondsRemaining": {
+    "description": "Low time alert",
+    "placeholders": { "seconds": { "type": "int" } }
+  },
+
+  "periodTimeRemaining": "Period {periods} - {time}s",
+  "@periodTimeRemaining": {
+    "description": "Byoyomi time display",
+    "placeholders": { 
+      "periods": { "type": "int" },
+      "time": { "type": "int" }
+    }
+  }
 }

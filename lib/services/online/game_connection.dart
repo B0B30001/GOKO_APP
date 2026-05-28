@@ -385,6 +385,11 @@ class GameData {
   final String whitePlayerName;
   final int? blackPlayerId;
   final int? whitePlayerId;
+  // OGS-provided avatar URLs (the `icon` field on the player payload).
+  // Null when the server doesn't ship one (rare — most accounts have a
+  // default Gravatar-style icon).
+  final String? blackIcon;
+  final String? whiteIcon;
   final int moveNumber;
   // Optional result/score fields (present when finished or in stone removal)
   final int? winnerColor; // 1=black, 2=white
@@ -407,6 +412,8 @@ class GameData {
     required this.whitePlayerName,
     this.blackPlayerId,
     this.whitePlayerId,
+    this.blackIcon,
+    this.whiteIcon,
     required this.moveNumber,
     this.winnerColor,
     this.blackScore,
@@ -482,10 +489,11 @@ class GameData {
           for (var cell in row) {
             if (cell == 1) {
               blackCount++;
-            } else if (cell == 2)
+            } else if (cell == 2) {
               whiteCount++;
-            else
+            } else {
               emptyCount++;
+            }
           }
         }
         debugPrint(
@@ -637,6 +645,9 @@ class GameData {
     final whitePlayerName = white?['username'] as String? ?? 'White';
     final blackPlayerId = black?['id'] as int?;
     final whitePlayerId = white?['id'] as int?;
+    // OGS player payloads carry the avatar URL on the `icon` field.
+    final blackIcon = (black?['icon'] as String?)?.trim();
+    final whiteIcon = (white?['icon'] as String?)?.trim();
 
     // Result/score parsing (best-effort)
     int? winnerColor;
@@ -800,6 +811,8 @@ class GameData {
       whitePlayerName: whitePlayerName,
       blackPlayerId: blackPlayerId,
       whitePlayerId: whitePlayerId,
+      blackIcon: (blackIcon != null && blackIcon.isNotEmpty) ? blackIcon : null,
+      whiteIcon: (whiteIcon != null && whiteIcon.isNotEmpty) ? whiteIcon : null,
       moveNumber: moveNumber,
       winnerColor: winnerColor,
       blackScore: blackScore,

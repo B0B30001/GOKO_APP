@@ -1404,4 +1404,35 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get scoreCapturedLabel => '提子';
+
+  @override
+  String get gameEndedMarkDeadStones => '对局结束 - 标记死棋以计分';
+
+  @override
+  String get gameFinished => '对局已完成';
+
+  @override
+  String get stoneRemovalAccepted => '棋子移除已接受';
+
+  @override
+  String get waitForPreviousMove => '请等待前一步棋';
+
+  @override
+  String get positionAlreadyOccupied => '这个位置已被占据';
+
+  @override
+  String get invalidMoveSuicideOrKo => '无效着法（自杀或打劫违规）';
+
+  @override
+  String get moveTimedOut => '着法超时 - 请重试';
+
+  @override
+  String timeSecondsRemaining(int seconds) {
+    return '还剩 $seconds 秒！';
+  }
+
+  @override
+  String periodTimeRemaining(int periods, int time) {
+    return '秒读 $periods - ${time}s';
+  }
 }

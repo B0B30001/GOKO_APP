@@ -53,26 +53,42 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
           ),
           StreamBuilder<bool>(
             stream: ogsService.connectionState,
+            initialData: ogsService.isAuthenticated,
             builder: (context, snapshot) {
-              final connected = snapshot.data ?? false;
+              // Show "Connected" if authenticated AND socket is connected.
+              // Show "Authenticated" if logged in but socket is temporarily offline (reconnecting).
+              // Show "Offline" if not authenticated.
+              final socketConnected = snapshot.data ?? false;
+              final isAuth = ogsService.isAuthenticated;
+
+              String statusLabel;
+              Color statusColor;
+              IconData statusIcon;
+
+              if (!isAuth) {
+                statusLabel = l.onlineStatusOffline;
+                statusColor = Colors.grey;
+                statusIcon = Icons.cloud_off;
+              } else if (socketConnected) {
+                statusLabel = l.onlineStatusConnected;
+                statusColor = Colors.green;
+                statusIcon = Icons.cloud_done;
+              } else {
+                // Authenticated but socket reconnecting
+                statusLabel = 'Reconnecting...';
+                statusColor = Colors.orange;
+                statusIcon = Icons.cloud_queue;
+              }
+
               return Padding(
                 padding: const EdgeInsets.only(right: 16),
                 child: Row(
                   children: [
-                    Icon(
-                      connected ? Icons.cloud_done : Icons.cloud_off,
-                      color: connected ? Colors.green : Colors.red,
-                      size: 20,
-                    ),
+                    Icon(statusIcon, color: statusColor, size: 20),
                     const SizedBox(width: 8),
                     Text(
-                      connected
-                          ? l.onlineStatusConnected
-                          : l.onlineStatusOffline,
-                      style: TextStyle(
-                        color: connected ? Colors.green : Colors.red,
-                        fontSize: 14,
-                      ),
+                      statusLabel,
+                      style: TextStyle(color: statusColor, fontSize: 14),
                     ),
                   ],
                 ),

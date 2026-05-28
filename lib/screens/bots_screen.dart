@@ -729,6 +729,7 @@ class _Avatar extends StatelessWidget {
       child: Image.asset(
         bot.avatarAsset,
         fit: BoxFit.cover,
+        filterQuality: FilterQuality.high,
         errorBuilder: (_, __, ___) => _gradientFallback(),
       ),
     );
@@ -791,6 +792,7 @@ class _ShimmerAvatarState extends State<_ShimmerAvatar>
             child: Image.asset(
               widget.bot.avatarAsset,
               fit: BoxFit.cover,
+              filterQuality: FilterQuality.high,
               errorBuilder: (_, __, ___) =>
                   Container(color: widget.bot.color.withValues(alpha: 0.25)),
             ),

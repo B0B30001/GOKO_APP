@@ -13,14 +13,23 @@ const _themeAssetNames = <String>[
 ];
 
 /// Tries to load the Canva-designed background PNG for the given theme. If
-/// the asset isn't bundled, falls back to the procedural
+/// the asset isn't bundled, falls back to the procedural parallax
 /// [GardenBackgroundPainter] so the screen always has something to render.
 ///
 /// To swap a background in: drop `assets/backgrounds/<theme>.png` into the
 /// repo (see `assets/backgrounds/README.md`). No code change needed.
 class ThemedBackground extends StatelessWidget {
   final int themeIdx;
-  const ThemedBackground({super.key, required this.themeIdx});
+
+  /// Scroll offset for parallax effect. Typically from ScrollController.offset
+  /// or scroll notification. Defaults to 0 for static background.
+  final double scrollOffset;
+
+  const ThemedBackground({
+    super.key,
+    required this.themeIdx,
+    this.scrollOffset = 0.0,
+  });
 
   String get _assetPath {
     final name =
@@ -31,7 +40,10 @@ class ThemedBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final painter = CustomPaint(
-      painter: GardenBackgroundPainter(themeIdx: themeIdx),
+      painter: GardenBackgroundPainter(
+        themeIdx: themeIdx,
+        scrollOffset: scrollOffset,
+      ),
       size: Size.infinite,
     );
     // `Image.asset` throws asynchronously on missing files; route the error
@@ -46,14 +58,25 @@ class ThemedBackground extends StatelessWidget {
   }
 }
 
-/// Procedural background painter (fallback when no PNG asset is bundled).
+/// Procedural background painter with parallax scrolling support.
 ///
 /// Draws a sky gradient, a soft sun/moon halo, three layered mountain ridges,
 /// mid-ground rolling hills, and a foreground ground band with grass speckles.
+///
+/// **Parallax Effect**:
+/// Each layer (sky, mountains, hills, ground) shifts vertically based on the
+/// scroll offset, creating a 3D depth illusion. Layers closer to the camera
+/// (foreground) move faster than distant layers (background).
+///
 /// All colours come from the [gardenThemes] entry for [themeIdx].
 class GardenBackgroundPainter extends CustomPainter {
   final int themeIdx;
-  const GardenBackgroundPainter({required this.themeIdx});
+  final double scrollOffset;
+
+  const GardenBackgroundPainter({
+    required this.themeIdx,
+    this.scrollOffset = 0.0,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -61,23 +84,32 @@ class GardenBackgroundPainter extends CustomPainter {
     final w = size.width;
     final h = size.height;
 
-    // Sky gradient — soft three-stop blend for natural light depth.
+    // Parallax factors for each layer (0 = no movement, 1 = full scroll movement)
+    // Distant layers move slower, creating depth illusion
+    const skyParallax = 0.1; // Sky barely moves
+    const mountainParallax = 0.3; // Far mountains move slowly
+    const hillsParallax = 0.6; // Mid hills move moderately
+    const groundParallax = 1.0; // Foreground moves fastest
+
+    // Sky gradient with parallax — soft three-stop blend for natural light depth.
+    final skyOffset = scrollOffset * skyParallax;
     final skyMid = Color.lerp(theme.skyTop, theme.skyBottom, 0.55)!;
     canvas.drawRect(
-      Rect.fromLTWH(0, 0, w, h),
+      Rect.fromLTWH(0, -skyOffset, w, h + skyOffset * 2),
       Paint()
         ..shader = LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [theme.skyTop, skyMid, theme.skyBottom],
           stops: const [0.0, 0.55, 1.0],
-        ).createShader(Rect.fromLTWH(0, 0, w, h)),
+        ).createShader(Rect.fromLTWH(0, -skyOffset, w, h + skyOffset * 2)),
     );
 
     // Soft sun/moon halo near the upper-right — adds focal light without
-    // looking like a hard disc.
+    // looking like a hard disc. Subtle parallax movement.
+    final sunOffset = scrollOffset * skyParallax;
     canvas.drawCircle(
-      Offset(w * 0.78, h * 0.16),
+      Offset(w * 0.78, h * 0.16 - sunOffset),
       80,
       Paint()
         ..shader =
@@ -87,14 +119,19 @@ class GardenBackgroundPainter extends CustomPainter {
                 Colors.white.withValues(alpha: 0.0),
               ],
             ).createShader(
-              Rect.fromCircle(center: Offset(w * 0.78, h * 0.16), radius: 80),
+              Rect.fromCircle(
+                center: Offset(w * 0.78, h * 0.16 - sunOffset),
+                radius: 80,
+              ),
             )
         ..blendMode = BlendMode.plus,
     );
 
     // Three layered mountain ridges with cubic-Bezier silhouettes.
+    // Each ridge gets progressively more parallax offset for depth.
+    final mountainOffset = scrollOffset * mountainParallax;
     for (int layer = 0; layer < 3; layer++) {
-      final yBase = h * (0.30 + layer * 0.08);
+      final yBase = h * (0.30 + layer * 0.08) - mountainOffset;
       final amplitude = 28.0 + layer * 16.0;
       final opacity = 0.30 + layer * 0.18;
       final ridgePaint = Paint()
@@ -123,18 +160,44 @@ class GardenBackgroundPainter extends CustomPainter {
       canvas.drawPath(path, ridgePaint);
     }
 
-    // Mid-ground rolling hills — quadratic Bezier curves.
+    // Atmospheric haze band between distant ridges and mid hills — sells
+    // depth without competing with the animated clouds drawn separately by
+    // AmbientDecorations. Parallax sits between mountain (0.3) and hills
+    // (0.6) for a believable middle layer.
+    const hazeParallax = 0.45;
+    final hazeOffset = scrollOffset * hazeParallax;
+    final hazeRect = Rect.fromLTWH(
+      0,
+      h * 0.38 - hazeOffset,
+      w,
+      h * 0.14 + hazeOffset,
+    );
+    canvas.drawRect(
+      hazeRect,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.white.withValues(alpha: 0.18),
+            Colors.white.withValues(alpha: 0.0),
+          ],
+        ).createShader(hazeRect),
+    );
+
+    // Mid-ground rolling hills — quadratic Bezier curves with parallax offset.
+    final hillsOffset = scrollOffset * hillsParallax;
     final hills = Path()
       ..moveTo(0, h)
-      ..lineTo(0, h * 0.62);
+      ..lineTo(0, h * 0.62 - hillsOffset);
     const hillPeaks = 5;
     final hdx = w / hillPeaks;
     double prevX = 0;
     for (int p = 0; p < hillPeaks; p++) {
       final endX = prevX + hdx;
       final midX = prevX + hdx / 2;
-      final dip = h * 0.62 - (p.isEven ? 28.0 : 18.0);
-      hills.quadraticBezierTo(midX, dip, endX, h * 0.62);
+      final dip = h * 0.62 - (p.isEven ? 28.0 : 18.0) - hillsOffset;
+      hills.quadraticBezierTo(midX, dip, endX, h * 0.62 - hillsOffset);
       prevX = endX;
     }
     hills
@@ -142,23 +205,37 @@ class GardenBackgroundPainter extends CustomPainter {
       ..close();
     canvas.drawPath(hills, Paint()..color = theme.hillTop);
 
-    // Foreground ground band gradient.
+    // Foreground ground band gradient with parallax offset.
+    final groundOffset = scrollOffset * groundParallax;
     canvas.drawRect(
-      Rect.fromLTWH(0, h * 0.74, w, h * 0.26),
+      Rect.fromLTWH(0, h * 0.74 - groundOffset, w, h * 0.26 + groundOffset),
       Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [theme.hillTop, theme.hillBottom],
-        ).createShader(Rect.fromLTWH(0, h * 0.74, w, h * 0.26)),
+        ..shader =
+            LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                theme.hillTop,
+                Color.lerp(theme.hillTop, theme.hillBottom, 0.5)!,
+                theme.hillBottom,
+              ],
+              stops: const [0.0, 0.5, 1.0],
+            ).createShader(
+              Rect.fromLTWH(
+                0,
+                h * 0.74 - groundOffset,
+                w,
+                h * 0.26 + groundOffset,
+              ),
+            ),
     );
 
-    // Subtle ground-line speckles.
+    // Subtle ground-line speckles. Position adjusts with parallax.
     final speckle = Paint()..color = theme.hillBottom.withValues(alpha: 0.4);
     final speckleRng = math.Random(themeIdx * 13 + 5);
     for (int i = 0; i < 40; i++) {
       final sx = speckleRng.nextDouble() * w;
-      final sy = h * 0.76 + speckleRng.nextDouble() * (h * 0.22);
+      final sy = h * 0.76 + speckleRng.nextDouble() * (h * 0.22) - groundOffset;
       canvas.drawCircle(
         Offset(sx, sy),
         0.8 + speckleRng.nextDouble() * 1.4,
@@ -169,5 +246,5 @@ class GardenBackgroundPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant GardenBackgroundPainter old) =>
-      old.themeIdx != themeIdx;
+      old.themeIdx != themeIdx || old.scrollOffset != scrollOffset;
 }

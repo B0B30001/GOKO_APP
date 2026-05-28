@@ -558,5 +558,41 @@
 
   "scoreStonesLabel": "棋子",
   "scoreTerritoryLabel": "地",
-  "scoreCapturedLabel": "提子"
+  "scoreCapturedLabel": "提子",
+
+  "gameEndedMarkDeadStones": "对局结束 - 标记死棋以计分",
+  "@gameEndedMarkDeadStones": { "description": "Snackbar when game enters scoring phase" },
+
+  "gameFinished": "对局已完成",
+  "@gameFinished": { "description": "Snackbar when game is complete" },
+
+  "stoneRemovalAccepted": "棋子移除已接受",
+  "@stoneRemovalAccepted": { "description": "Snackbar confirming stone removal" },
+
+  "waitForPreviousMove": "请等待前一步棋",
+  "@waitForPreviousMove": { "description": "Snackbar when trying to move while another move pending" },
+
+  "positionAlreadyOccupied": "这个位置已被占据",
+  "@positionAlreadyOccupied": { "description": "Snackbar when trying to place stone on occupied point" },
+
+  "invalidMoveSuicideOrKo": "无效着法（自杀或打劫违规）",
+  "@invalidMoveSuicideOrKo": { "description": "Snackbar when move violates go rules" },
+
+  "moveTimedOut": "着法超时 - 请重试",
+  "@moveTimedOut": { "description": "Snackbar when move submission times out" },
+
+  "timeSecondsRemaining": "还剩 {seconds} 秒！",
+  "@timeSecondsRemaining": {
+    "description": "Low time alert",
+    "placeholders": { "seconds": { "type": "int" } }
+  },
+
+  "periodTimeRemaining": "秒读 {periods} - {time}s",
+  "@periodTimeRemaining": {
+    "description": "Byoyomi time display",
+    "placeholders": { 
+      "periods": { "type": "int" },
+      "time": { "type": "int" }
+    }
+  }
 }

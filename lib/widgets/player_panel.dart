@@ -98,24 +98,44 @@ class PlayerPanel extends StatelessWidget {
   }
 
   Widget _buildAvatar() {
+    final bgColor = color == 1
+        ? Colors.black87
+        : color == 2
+        ? Colors.white
+        : Colors.grey.shade400;
+    final fallbackIconColor = color == 2 ? Colors.black54 : Colors.white;
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        CircleAvatar(
-          radius: 22,
-          backgroundColor: color == 1
-              ? Colors.black87
-              : color == 2
-              ? Colors.white
-              : Colors.grey.shade400,
-          backgroundImage: avatarPath != null ? AssetImage(avatarPath!) : null,
-          child: avatarPath == null
-              ? Icon(
-                  Icons.person,
-                  color: color == 2 ? Colors.black54 : Colors.white,
-                  size: 22,
-                )
-              : null,
+        // 44px = CircleAvatar(radius: 22) equivalent. Hand-rolled with
+        // ClipOval so we can set FilterQuality.high — CircleAvatar's
+        // backgroundImage doesn't expose it and 128×128 source PNGs end up
+        // fuzzy when scaled.
+        Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            color: bgColor,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.18),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: ClipOval(
+            child: avatarPath != null
+                ? Image.asset(
+                    avatarPath!,
+                    fit: BoxFit.cover,
+                    filterQuality: FilterQuality.high,
+                    errorBuilder: (_, __, ___) =>
+                        Icon(Icons.person, color: fallbackIconColor, size: 22),
+                  )
+                : Icon(Icons.person, color: fallbackIconColor, size: 22),
+          ),
         ),
         if (color != 0)
           Positioned(

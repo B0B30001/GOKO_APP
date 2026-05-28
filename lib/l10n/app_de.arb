@@ -554,5 +554,41 @@
 
   "scoreStonesLabel": "Steine",
   "scoreTerritoryLabel": "Gebiet",
-  "scoreCapturedLabel": "Gefangen"
+  "scoreCapturedLabel": "Gefangen",
+
+  "gameEndedMarkDeadStones": "Spiel beendet - Tote Steine markieren zum Bewerten",
+  "@gameEndedMarkDeadStones": { "description": "Snackbar when game enters scoring phase" },
+
+  "gameFinished": "Spiel beendet",
+  "@gameFinished": { "description": "Snackbar when game is complete" },
+
+  "stoneRemovalAccepted": "Steinentfernung akzeptiert",
+  "@stoneRemovalAccepted": { "description": "Snackbar confirming stone removal" },
+
+  "waitForPreviousMove": "Bitte warten Sie auf den vorherigen Zug",
+  "@waitForPreviousMove": { "description": "Snackbar when trying to move while another move pending" },
+
+  "positionAlreadyOccupied": "Position bereits besetzt",
+  "@positionAlreadyOccupied": { "description": "Snackbar when trying to place stone on occupied point" },
+
+  "invalidMoveSuicideOrKo": "Ungültiger Zug (Selbstmord oder Ko-Regelverstoß)",
+  "@invalidMoveSuicideOrKo": { "description": "Snackbar when move violates go rules" },
+
+  "moveTimedOut": "Zug hat das Zeitlimit überschritten - versuchen Sie es erneut",
+  "@moveTimedOut": { "description": "Snackbar when move submission times out" },
+
+  "timeSecondsRemaining": "{seconds} Sekunden verbleibend!",
+  "@timeSecondsRemaining": {
+    "description": "Low time alert",
+    "placeholders": { "seconds": { "type": "int" } }
+  },
+
+  "periodTimeRemaining": "Periode {periods} - {time}s",
+  "@periodTimeRemaining": {
+    "description": "Byoyomi time display",
+    "placeholders": { 
+      "periods": { "type": "int" },
+      "time": { "type": "int" }
+    }
+  }
 }
