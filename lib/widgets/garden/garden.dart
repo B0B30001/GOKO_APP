@@ -8,6 +8,7 @@
 library;
 
 export 'ambient_decorations.dart';
+export 'garden_mascot.dart';
 export 'garden_theme.dart';
 export 'path_connector.dart';
 export 'pedestal_painter.dart';

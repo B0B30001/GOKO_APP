@@ -736,11 +736,11 @@ class _LessonTileState extends State<_LessonTile>
                             ),
                           ),
                         ),
-                      // Player stone perched on the current pedestal.
+                      // Mascot perched on the current pedestal.
                       if (_isCurrent)
                         Positioned(
                           bottom: height * 0.55,
-                          child: const PlayerStone3D(color: 1),
+                          child: const GardenMascot(),
                         ),
                     ],
                   ),

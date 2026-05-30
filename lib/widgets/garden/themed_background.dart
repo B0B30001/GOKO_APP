@@ -203,6 +203,12 @@ class GardenBackgroundPainter extends CustomPainter {
       ..close();
     canvas.drawPath(hills, Paint()..color = theme.hillTop);
 
+    // Distant 3-tier pagoda silhouette resting on the hill line — a far-off
+    // temple that grounds the scene in the zen-garden world of the mockups.
+    // Drawn as a low-opacity dark-hill tone so it reads as atmosphere, never
+    // crude clip-art.
+    _drawPagoda(canvas, w, h, theme, h * 0.60 - hillsOffset);
+
     // Foreground ground band gradient with parallax offset.
     final groundOffset = scrollOffset * groundParallax;
     canvas.drawRect(
@@ -281,6 +287,61 @@ class GardenBackgroundPainter extends CustomPainter {
         ripple,
       );
     }
+  }
+
+  /// Draws a far-off 3-tier pagoda silhouette centred near the right third of
+  /// the hill line at [baseY]. Each tier is a curved-eave roof over a slim body,
+  /// shrinking as it rises, topped with a finial.
+  void _drawPagoda(
+    Canvas canvas,
+    double w,
+    double h,
+    GardenTheme theme,
+    double baseY,
+  ) {
+    final cx = w * 0.72;
+    final unit = (h * 0.012).clamp(3.0, 9.0);
+    final paint = Paint()
+      ..color = Color.lerp(
+        theme.hillBottom,
+        Colors.black,
+        0.30,
+      )!.withValues(alpha: 0.42);
+
+    double y = baseY;
+    double halfW = unit * 3.2;
+    double roofH = unit * 1.7;
+    double bodyH = unit * 1.5;
+
+    for (int tier = 0; tier < 3; tier++) {
+      // Slim body wall under this tier's roof.
+      canvas.drawRect(
+        Rect.fromLTWH(cx - halfW * 0.55, y - bodyH, halfW * 1.1, bodyH),
+        paint,
+      );
+      // Curved-eave roof: ridge up to the centre, eaves drooping at the ends.
+      final roof = Path()
+        ..moveTo(cx - halfW, y - bodyH)
+        ..quadraticBezierTo(cx, y - bodyH - roofH, cx + halfW, y - bodyH)
+        ..quadraticBezierTo(cx, y - bodyH + roofH * 0.22, cx - halfW, y - bodyH)
+        ..close();
+      canvas.drawPath(roof, paint);
+
+      y = y - bodyH - roofH * 0.55;
+      halfW *= 0.74;
+      roofH *= 0.82;
+      bodyH *= 0.82;
+    }
+    // Finial spire on top.
+    canvas.drawRect(
+      Rect.fromCenter(
+        center: Offset(cx, y - unit * 0.4),
+        width: unit * 0.34,
+        height: unit * 1.3,
+      ),
+      paint,
+    );
+    canvas.drawCircle(Offset(cx, y - unit * 1.1), unit * 0.42, paint);
   }
 
   @override

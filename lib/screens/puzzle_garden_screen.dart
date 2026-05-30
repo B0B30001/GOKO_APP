@@ -743,7 +743,7 @@ class _LevelTileState extends State<_LevelTile> with TickerProviderStateMixin {
                       if (widget.isCurrent)
                         Positioned(
                           bottom: height * 0.55,
-                          child: const PlayerStone3D(color: 1),
+                          child: const GardenMascot(),
                         ),
                     ],
                   ),
