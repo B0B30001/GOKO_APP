@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 
 import 'garden_theme.dart';
@@ -230,16 +228,57 @@ class GardenBackgroundPainter extends CustomPainter {
             ),
     );
 
-    // Subtle ground-line speckles. Position adjusts with parallax.
-    final speckle = Paint()..color = theme.hillBottom.withValues(alpha: 0.4);
-    final speckleRng = math.Random(themeIdx * 13 + 5);
-    for (int i = 0; i < 40; i++) {
-      final sx = speckleRng.nextDouble() * w;
-      final sy = h * 0.76 + speckleRng.nextDouble() * (h * 0.22) - groundOffset;
-      canvas.drawCircle(
-        Offset(sx, sy),
-        0.8 + speckleRng.nextDouble() * 1.4,
-        speckle,
+    // Zen paving grid on the foreground — a faint isometric diamond lattice
+    // that reads as a tiled stone courtyard (the Gemini-mockup garden floor)
+    // instead of random grass grain. Clipped to the ground band and parallaxed
+    // with the foreground so it scrolls believably.
+    final groundTop = h * 0.74 - groundOffset;
+    canvas.save();
+    canvas.clipRect(Rect.fromLTWH(0, groundTop, w, h - groundTop + 40));
+    final paving = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0
+      ..color = Colors.white.withValues(alpha: 0.08);
+    final step = w / 7;
+    // Two crossing families of diagonals → diamond tiles.
+    for (double x = -h; x < w + h; x += step) {
+      canvas.drawLine(Offset(x, groundTop), Offset(x + h, h + 40), paving);
+      canvas.drawLine(Offset(x, groundTop), Offset(x - h, h + 40), paving);
+    }
+    canvas.restore();
+
+    // A soft reflective water band at the very foot — hints at the koi pond in
+    // the mockups without needing illustrated art.
+    final pondTop = h * 0.92 - groundOffset * 0.3;
+    final pondRect = Rect.fromLTWH(0, pondTop, w, h - pondTop + 40);
+    if (pondRect.height > 0) {
+      final water = Color.lerp(theme.skyBottom, theme.hillBottom, 0.4)!;
+      canvas.drawRect(
+        pondRect,
+        Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              water.withValues(alpha: 0.0),
+              water.withValues(alpha: 0.55),
+            ],
+          ).createShader(pondRect),
+      );
+      // Two faint ripple lines.
+      final ripple = Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.2
+        ..color = Colors.white.withValues(alpha: 0.14);
+      canvas.drawLine(
+        Offset(w * 0.12, pondTop + pondRect.height * 0.4),
+        Offset(w * 0.42, pondTop + pondRect.height * 0.4),
+        ripple,
+      );
+      canvas.drawLine(
+        Offset(w * 0.58, pondTop + pondRect.height * 0.6),
+        Offset(w * 0.86, pondTop + pondRect.height * 0.6),
+        ripple,
       );
     }
   }

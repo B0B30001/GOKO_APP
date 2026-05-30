@@ -61,70 +61,55 @@ class _PathConnectorPainter extends CustomPainter {
     final xPrev = xFor(rowIndex - 1);
     final xNext = xFor(rowIndex);
 
-    final color = unlocked
-        ? const Color(0xFFF5E6D3) // dirt/cream
-        : Colors.grey.shade500;
-
     // Cubic Bezier from previous tile centre to next, with a vertical bulge
     // to suggest the path arcs around the level badge.
     final path = Path()
       ..moveTo(xPrev, h)
       ..cubicTo(xPrev, h * 0.4, xNext, h * 0.6, xNext, 0);
 
-    // Soft drop shadow under the line for depth.
-    canvas.drawPath(
-      path,
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 7
-        ..strokeCap = StrokeCap.round
-        ..color = Colors.black.withValues(alpha: 0.15)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
-    );
+    // Render as a trail of stepping stones along the arc (Gemini-mockup style)
+    // rather than a continuous line. Unlocked stones read as warm cream pavers;
+    // locked ones are faded grey to signal "future levels".
+    final fill = unlocked ? const Color(0xFFF3E4CC) : Colors.grey.shade500;
+    final alpha = unlocked ? 0.95 : 0.45;
 
-    if (unlocked) {
-      canvas.drawPath(
-        path,
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 5
-          ..strokeCap = StrokeCap.round
-          ..color = color.withValues(alpha: 0.85),
-      );
-    } else {
-      // Dashed segment for locked future levels.
-      final dashed = Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 4.5
-        ..strokeCap = StrokeCap.round
-        ..color = color.withValues(alpha: 0.55);
-      _drawDashedPath(canvas, path, dashed, dashLength: 7, gapLength: 5);
-    }
-  }
+    for (final metric in path.computeMetrics()) {
+      // Evenly space stones along the arc; skip the very ends so stones don't
+      // collide with the tiles they connect.
+      const spacing = 13.0;
+      final count = (metric.length / spacing).floor().clamp(1, 6);
+      for (int i = 1; i <= count; i++) {
+        final t = i / (count + 1);
+        final pos = metric.getTangentForOffset(metric.length * t)?.position;
+        if (pos == null) continue;
+        // Stones shrink slightly toward the (more distant) top.
+        final scale = 0.85 + 0.15 * t;
+        final rx = 4.2 * scale;
+        final ry = 3.0 * scale;
 
-  /// Walks [path] in arc-length steps and emits alternating filled/empty
-  /// segments. Used for locked connectors to read as "future levels."
-  void _drawDashedPath(
-    Canvas canvas,
-    Path path,
-    Paint paint, {
-    required double dashLength,
-    required double gapLength,
-  }) {
-    final metrics = path.computeMetrics();
-    for (final metric in metrics) {
-      double distance = 0;
-      bool draw = true;
-      while (distance < metric.length) {
-        final next = distance + (draw ? dashLength : gapLength);
-        if (draw) {
-          canvas.drawPath(
-            metric.extractPath(distance, next.clamp(0, metric.length)),
-            paint,
-          );
-        }
-        distance = next;
-        draw = !draw;
+        // Soft contact shadow.
+        canvas.drawOval(
+          Rect.fromCenter(
+            center: pos.translate(0, 1.2),
+            width: rx * 2.2,
+            height: ry * 2.0,
+          ),
+          Paint()
+            ..color = Colors.black.withValues(alpha: unlocked ? 0.18 : 0.10)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.5),
+        );
+        // Paver fill + thin rim.
+        canvas.drawOval(
+          Rect.fromCenter(center: pos, width: rx * 2, height: ry * 2),
+          Paint()..color = fill.withValues(alpha: alpha),
+        );
+        canvas.drawOval(
+          Rect.fromCenter(center: pos, width: rx * 2, height: ry * 2),
+          Paint()
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 0.8
+            ..color = Colors.black.withValues(alpha: 0.12),
+        );
       }
     }
   }

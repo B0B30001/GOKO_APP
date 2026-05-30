@@ -25,33 +25,56 @@ class WorldGate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final base = unlocked ? theme.tileBase : Colors.blueGrey.shade600;
+    // Vertically lit gradient (top highlight → base → darker foot) reads as a
+    // carved-stone banner rather than a flat pill.
+    final top = Color.lerp(base, Colors.white, 0.22)!;
+    final bottom = Color.lerp(base, Colors.black, 0.30)!;
+
     return Padding(
       padding: const EdgeInsets.only(top: 26, bottom: 18),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: unlocked
-                ? [theme.tileBase.withValues(alpha: 0.85), theme.tileBase]
-                : [Colors.grey.shade600, Colors.grey.shade800],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [top, base, bottom],
+            stops: const [0.0, 0.45, 1.0],
           ),
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(20),
+          // Light inner top edge + dark foot = embossed/engraved look.
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.25),
+            width: 1,
+          ),
           boxShadow: [
             BoxShadow(
-              color: (unlocked ? theme.tileBase : Colors.black).withValues(
-                alpha: 0.38,
-              ),
-              blurRadius: 18,
-              offset: const Offset(0, 8),
+              color: base.withValues(alpha: 0.45),
+              blurRadius: 22,
+              offset: const Offset(0, 10),
             ),
           ],
         ),
         child: Row(
           children: [
-            Icon(
-              unlocked ? theme.icon : Icons.lock,
-              color: Colors.white,
-              size: 28,
+            // Frosted circular icon badge.
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.18),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.45),
+                  width: 1.5,
+                ),
+              ),
+              child: Icon(
+                unlocked ? theme.icon : Icons.lock,
+                color: Colors.white,
+                size: 24,
+              ),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -65,6 +88,13 @@ class WorldGate extends StatelessWidget {
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.6,
                       fontSize: 15,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black38,
+                          blurRadius: 2,
+                          offset: Offset(0, 1),
+                        ),
+                      ],
                     ),
                   ),
                   if (subtitle != null && subtitle!.isNotEmpty) ...[
@@ -72,7 +102,7 @@ class WorldGate extends StatelessWidget {
                     Text(
                       subtitle!,
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.85),
+                        color: Colors.white.withValues(alpha: 0.88),
                         fontWeight: FontWeight.w600,
                         fontSize: 12,
                       ),
