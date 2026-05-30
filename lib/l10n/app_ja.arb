@@ -594,5 +594,19 @@
       "periods": { "type": "int" },
       "time": { "type": "int" }
     }
-  }
+  },
+  "learningRankNovice": "初心者",
+  "learningRankApprentice": "見習い",
+  "learningRankScholar": "学者",
+  "learningRankMaster": "達人",
+  "learningRankGrandmaster": "名人",
+  "lessonsToNextRank": "{rank}まであと{count}レッスン",
+  "@lessonsToNextRank": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "rank": { "type": "String" }
+    }
+  },
+  "newBadge": "新着",
+  "nextUp": "次へ"
 }

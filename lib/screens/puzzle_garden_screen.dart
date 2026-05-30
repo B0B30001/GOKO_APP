@@ -69,6 +69,12 @@ class _PuzzleGardenScreenState extends State<PuzzleGardenScreen> {
   /// excluded (they lack a `solutionTree` and are reached via the categories
   /// screen for explicit per-puzzle study).
   List<Puzzle> _solvePool = const [];
+
+  /// The puzzle the floating CTA card previews and launches. Chosen at random
+  /// from [_solvePool] once on load and re-rolled each time the solver returns,
+  /// so the card always shows a concrete "next up" title instead of a blind
+  /// "Solve Puzzles" label (mirrors the Learn garden's next-lesson CTA).
+  Puzzle? _featured;
   LeagueTier? _lastLeague;
   String? _celebrateMessage;
   final ScrollController _scroll = ScrollController();
@@ -100,6 +106,7 @@ class _PuzzleGardenScreenState extends State<PuzzleGardenScreen> {
     if (!mounted) return;
     setState(() {
       _solvePool = all.where((p) => p.solutionTree != null).toList();
+      _featured = _pickFeatured();
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _scrollToCurrentLevel();
@@ -123,14 +130,27 @@ class _PuzzleGardenScreenState extends State<PuzzleGardenScreen> {
     );
   }
 
-  Future<void> _launchRandomPuzzle() async {
-    if (_solvePool.isEmpty) return;
-    final puzzle = _solvePool[math.Random().nextInt(_solvePool.length)];
+  /// Pick a random solvable puzzle, avoiding an immediate repeat of the
+  /// currently-featured one when the pool is large enough to allow it.
+  Puzzle? _pickFeatured() {
+    if (_solvePool.isEmpty) return null;
+    if (_solvePool.length == 1) return _solvePool.first;
+    Puzzle pick;
+    do {
+      pick = _solvePool[math.Random().nextInt(_solvePool.length)];
+    } while (pick.id == _featured?.id);
+    return pick;
+  }
+
+  Future<void> _launchFeaturedPuzzle() async {
+    final puzzle = _featured;
+    if (puzzle == null) return;
     await Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => PuzzleScreen(puzzle: puzzle)),
     );
-    if (mounted) setState(() {});
+    // Re-roll the next featured puzzle and refresh progress-driven UI.
+    if (mounted) setState(() => _featured = _pickFeatured());
   }
 
   void _maybeCelebrateLeague(LeagueTier current, AppLocalizations l) {
@@ -249,38 +269,138 @@ class _PuzzleGardenScreenState extends State<PuzzleGardenScreen> {
             celebrateMessage: _celebrateMessage,
           ),
         ),
-        // Floating "Solve Puzzles" CTA — the only entry-point into puzzle play.
+        // Floating "Solve Puzzles" CTA — card-style with next-puzzle preview,
+        // matching the Learn garden's continue-lesson card.
         Positioned(
           bottom: 20,
           left: 20,
           right: 20,
           child: SafeArea(
             top: false,
-            child: FilledButton.icon(
-              onPressed: _solvePool.isEmpty ? null : _launchRandomPuzzle,
-              icon: const Icon(Icons.extension, size: 20),
-              label: Text(
-                l.solvePuzzles,
-                style: const TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.3,
-                ),
-              ),
-              style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                backgroundColor: const Color(0xFF1565C0),
-                foregroundColor: Colors.white,
-                elevation: 8,
-                shadowColor: Colors.black54,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
+            child: _SolvePuzzleCta(
+              featured: _featured,
+              onTap: _featured == null ? null : _launchFeaturedPuzzle,
             ),
           ),
         ),
       ],
+    );
+  }
+}
+
+// ── Floating "Solve Puzzles" CTA card ────────────────────────────────────────
+
+/// Card-style call-to-action pinned at the bottom of the puzzle map. Shows a
+/// "NEXT PUZZLE" eyebrow, the featured puzzle's title and a difficulty-dot
+/// strip, then launches that puzzle on tap. Disabled (dimmed) while the pool
+/// is still loading or empty.
+class _SolvePuzzleCta extends StatelessWidget {
+  final Puzzle? featured;
+  final VoidCallback? onTap;
+
+  const _SolvePuzzleCta({required this.featured, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final title = featured?.title ?? l.solvePuzzles;
+    final difficulty = (featured?.difficulty ?? 1).clamp(1, 5);
+
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedOpacity(
+        opacity: onTap == null ? 0.5 : 1.0,
+        duration: const Duration(milliseconds: 200),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1565C0),
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x551565C0),
+                blurRadius: 18,
+                offset: Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.18),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.extension,
+                  color: Colors.white,
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      l.nextUp.toUpperCase(),
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.70),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.0,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    if (featured != null) ...[
+                      const SizedBox(height: 4),
+                      // Difficulty as a 5-dot strip (filled = this puzzle's level).
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: List.generate(5, (i) {
+                          final filled = i < difficulty;
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 4),
+                            child: Container(
+                              width: 7,
+                              height: 7,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: filled
+                                    ? const Color(0xFFFFD54F)
+                                    : Colors.white.withValues(alpha: 0.25),
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              const Icon(
+                Icons.arrow_forward_ios,
+                color: Colors.white,
+                size: 16,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -433,9 +553,10 @@ class _LevelTile extends StatefulWidget {
   State<_LevelTile> createState() => _LevelTileState();
 }
 
-class _LevelTileState extends State<_LevelTile>
-    with SingleTickerProviderStateMixin {
+class _LevelTileState extends State<_LevelTile> with TickerProviderStateMixin {
   late final AnimationController _pulse;
+  late final AnimationController _tap;
+  late final Animation<double> _tapScale;
 
   @override
   void initState() {
@@ -444,9 +565,16 @@ class _LevelTileState extends State<_LevelTile>
       vsync: this,
       duration: const Duration(milliseconds: 1800),
     );
-    if (widget.isCurrent) {
-      _pulse.repeat(reverse: true);
-    }
+    _tap = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 80),
+      reverseDuration: const Duration(milliseconds: 180),
+    );
+    _tapScale = Tween<double>(
+      begin: 1.0,
+      end: 0.88,
+    ).animate(CurvedAnimation(parent: _tap, curve: Curves.easeIn));
+    if (widget.isCurrent) _pulse.repeat(reverse: true);
   }
 
   @override
@@ -463,6 +591,7 @@ class _LevelTileState extends State<_LevelTile>
   @override
   void dispose() {
     _pulse.dispose();
+    _tap.dispose();
     super.dispose();
   }
 
@@ -483,107 +612,145 @@ class _LevelTileState extends State<_LevelTile>
         ? Colors.blueGrey.shade700
         : widget.theme.tileBase;
 
+    // Completed = unlocked and level < currentLevel (player has moved past it).
+    final isCompleted = widget.unlocked && !widget.isCurrent;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Align(
         alignment: alignment,
-        child: AnimatedBuilder(
-          animation: _pulse,
-          builder: (context, _) {
-            final glow = widget.isCurrent
-                ? Curves.easeInOut.transform(_pulse.value)
-                : 0.0;
-            return SizedBox(
-              width: width,
-              height: height + (widget.isCurrent ? 36 : 0),
-              child: Stack(
-                alignment: Alignment.bottomCenter,
-                clipBehavior: Clip.none,
-                children: [
-                  if (widget.isCurrent)
-                    Positioned(
-                      bottom: 0,
-                      child: Container(
-                        width: width,
-                        height: height * 0.5,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(
-                            Radius.elliptical(width, height),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: tileColor.withValues(
-                                alpha: 0.30 + glow * 0.30,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTapDown: (_) => _tap.forward(),
+          onTapUp: (_) => _tap.reverse(),
+          onTapCancel: () => _tap.reverse(),
+          child: AnimatedBuilder(
+            animation: Listenable.merge([_pulse, _tap]),
+            builder: (context, _) {
+              final glow = widget.isCurrent
+                  ? Curves.easeInOut.transform(_pulse.value)
+                  : 0.0;
+              return ScaleTransition(
+                scale: _tapScale,
+                child: SizedBox(
+                  width: width,
+                  height: height + (widget.isCurrent ? 36 : 0),
+                  child: Stack(
+                    alignment: Alignment.bottomCenter,
+                    clipBehavior: Clip.none,
+                    children: [
+                      if (widget.isCurrent)
+                        Positioned(
+                          bottom: 0,
+                          child: Container(
+                            width: width,
+                            height: height * 0.5,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                Radius.elliptical(width, height),
                               ),
-                              blurRadius: 18 + glow * 14,
-                              spreadRadius: 2 + glow * 5,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: tileColor.withValues(
+                                    alpha: 0.30 + glow * 0.30,
+                                  ),
+                                  blurRadius: 18 + glow * 14,
+                                  spreadRadius: 2 + glow * 5,
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
+                        ),
+                      Positioned(
+                        bottom: 0,
+                        child: CustomPaint(
+                          size: Size(width, height),
+                          painter: PuzzlePedestalPainter(
+                            baseColor: tileColor,
+                            unlocked: widget.unlocked,
+                          ),
                         ),
                       ),
-                    ),
-                  Positioned(
-                    bottom: 0,
-                    child: CustomPaint(
-                      size: Size(width, height),
-                      painter: PuzzlePedestalPainter(
-                        baseColor: tileColor,
-                        unlocked: widget.unlocked,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: height * 0.30,
-                    child: SizedBox(
-                      width: width,
-                      child: Center(
-                        child: widget.unlocked
-                            ? Text(
-                                '${widget.level}',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: widget.isCurrent ? 30 : 22,
-                                  fontWeight: FontWeight.w900,
-                                  shadows: const [
-                                    Shadow(
-                                      color: Colors.black54,
-                                      blurRadius: 4,
-                                      offset: Offset(0, 2),
+                      Positioned(
+                        bottom: height * 0.30,
+                        child: SizedBox(
+                          width: width,
+                          child: Center(
+                            child: widget.unlocked
+                                ? Text(
+                                    '${widget.level}',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: widget.isCurrent ? 30 : 22,
+                                      fontWeight: FontWeight.w900,
+                                      shadows: const [
+                                        Shadow(
+                                          color: Colors.black54,
+                                          blurRadius: 4,
+                                          offset: Offset(0, 2),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              )
-                            : Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(
-                                    Icons.lock,
-                                    color: Colors.white70,
-                                    size: 20,
-                                  ),
-                                  if (widget.xpNeeded > 0)
-                                    Text(
-                                      l.xpToUnlock(widget.xpNeeded),
-                                      style: const TextStyle(
+                                  )
+                                : Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(
+                                        Icons.lock,
                                         color: Colors.white70,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w700,
+                                        size: 20,
                                       ),
-                                    ),
-                                ],
-                              ),
+                                      if (widget.xpNeeded > 0)
+                                        Text(
+                                          l.xpToUnlock(widget.xpNeeded),
+                                          style: const TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                          ),
+                        ),
                       ),
-                    ),
+                      // ⭐ Gold star on completed levels.
+                      if (isCompleted)
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: Container(
+                            width: 20,
+                            height: 20,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFFFD700),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black26,
+                                  blurRadius: 3,
+                                  offset: Offset(0, 1),
+                                ),
+                              ],
+                            ),
+                            child: const Icon(
+                              Icons.star,
+                              color: Colors.white,
+                              size: 13,
+                            ),
+                          ),
+                        ),
+                      if (widget.isCurrent)
+                        Positioned(
+                          bottom: height * 0.55,
+                          child: const PlayerStone3D(color: 1),
+                        ),
+                    ],
                   ),
-                  if (widget.isCurrent)
-                    Positioned(
-                      bottom: height * 0.55,
-                      child: const PlayerStone3D(color: 1),
-                    ),
-                ],
-              ),
-            );
-          },
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

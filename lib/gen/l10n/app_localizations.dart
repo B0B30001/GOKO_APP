@@ -2823,6 +2823,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Period {periods} - {time}s'**
   String periodTimeRemaining(int periods, int time);
+
+  /// Learn rank tier — 0 lessons completed
+  ///
+  /// In en, this message translates to:
+  /// **'Novice'**
+  String get learningRankNovice;
+
+  /// Learn rank tier — 3+ lessons completed
+  ///
+  /// In en, this message translates to:
+  /// **'Apprentice'**
+  String get learningRankApprentice;
+
+  /// Learn rank tier — 7+ lessons completed
+  ///
+  /// In en, this message translates to:
+  /// **'Scholar'**
+  String get learningRankScholar;
+
+  /// Learn rank tier — 12+ lessons completed
+  ///
+  /// In en, this message translates to:
+  /// **'Master'**
+  String get learningRankMaster;
+
+  /// Learn rank tier — 18+ lessons completed
+  ///
+  /// In en, this message translates to:
+  /// **'Grandmaster'**
+  String get learningRankGrandmaster;
+
+  /// Sub-text on Learn header — how many more lessons until the next rank
+  ///
+  /// In en, this message translates to:
+  /// **'{count} lessons to {rank}'**
+  String lessonsToNextRank(int count, String rank);
+
+  /// Badge on the next-up unfinished lesson/level tile
+  ///
+  /// In en, this message translates to:
+  /// **'NEW'**
+  String get newBadge;
+
+  /// Tiny label above the title in the floating CTA card
+  ///
+  /// In en, this message translates to:
+  /// **'Next up'**
+  String get nextUp;
 }
 
 class _AppLocalizationsDelegate

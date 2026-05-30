@@ -1046,9 +1046,33 @@
   "periodTimeRemaining": "Period {periods} - {time}s",
   "@periodTimeRemaining": {
     "description": "Byoyomi time display",
-    "placeholders": { 
+    "placeholders": {
       "periods": { "type": "int" },
       "time": { "type": "int" }
     }
-  }
+  },
+
+  "learningRankNovice": "Novice",
+  "@learningRankNovice": { "description": "Learn rank tier — 0 lessons completed" },
+  "learningRankApprentice": "Apprentice",
+  "@learningRankApprentice": { "description": "Learn rank tier — 3+ lessons completed" },
+  "learningRankScholar": "Scholar",
+  "@learningRankScholar": { "description": "Learn rank tier — 7+ lessons completed" },
+  "learningRankMaster": "Master",
+  "@learningRankMaster": { "description": "Learn rank tier — 12+ lessons completed" },
+  "learningRankGrandmaster": "Grandmaster",
+  "@learningRankGrandmaster": { "description": "Learn rank tier — 18+ lessons completed" },
+
+  "lessonsToNextRank": "{count} lessons to {rank}",
+  "@lessonsToNextRank": {
+    "description": "Sub-text on Learn header — how many more lessons until the next rank",
+    "placeholders": {
+      "count": { "type": "int" },
+      "rank": { "type": "String" }
+    }
+  },
+  "newBadge": "NEW",
+  "@newBadge": { "description": "Badge on the next-up unfinished lesson/level tile" },
+  "nextUp": "Next up",
+  "@nextUp": { "description": "Tiny label above the title in the floating CTA card" }
 }

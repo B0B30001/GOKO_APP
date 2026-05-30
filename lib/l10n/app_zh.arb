@@ -594,5 +594,19 @@
       "periods": { "type": "int" },
       "time": { "type": "int" }
     }
-  }
+  },
+  "learningRankNovice": "新手",
+  "learningRankApprentice": "学徒",
+  "learningRankScholar": "学者",
+  "learningRankMaster": "大师",
+  "learningRankGrandmaster": "宗师",
+  "lessonsToNextRank": "还差 {count} 课升至{rank}",
+  "@lessonsToNextRank": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "rank": { "type": "String" }
+    }
+  },
+  "newBadge": "新",
+  "nextUp": "接下来"
 }

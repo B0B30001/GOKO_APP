@@ -1471,4 +1471,30 @@ class AppLocalizationsRu extends AppLocalizations {
   String periodTimeRemaining(int periods, int time) {
     return 'Период $periods - ${time}s';
   }
+
+  @override
+  String get learningRankNovice => 'Новичок';
+
+  @override
+  String get learningRankApprentice => 'Ученик';
+
+  @override
+  String get learningRankScholar => 'Знаток';
+
+  @override
+  String get learningRankMaster => 'Мастер';
+
+  @override
+  String get learningRankGrandmaster => 'Гроссмейстер';
+
+  @override
+  String lessonsToNextRank(int count, String rank) {
+    return '$count уроков до $rank';
+  }
+
+  @override
+  String get newBadge => 'НОВОЕ';
+
+  @override
+  String get nextUp => 'Далее';
 }

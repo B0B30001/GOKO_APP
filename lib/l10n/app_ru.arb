@@ -594,5 +594,19 @@
       "periods": { "type": "int" },
       "time": { "type": "int" }
     }
-  }
+  },
+  "learningRankNovice": "Новичок",
+  "learningRankApprentice": "Ученик",
+  "learningRankScholar": "Знаток",
+  "learningRankMaster": "Мастер",
+  "learningRankGrandmaster": "Гроссмейстер",
+  "lessonsToNextRank": "{count} уроков до {rank}",
+  "@lessonsToNextRank": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "rank": { "type": "String" }
+    }
+  },
+  "newBadge": "НОВОЕ",
+  "nextUp": "Далее"
 }

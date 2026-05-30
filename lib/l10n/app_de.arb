@@ -590,5 +590,19 @@
       "periods": { "type": "int" },
       "time": { "type": "int" }
     }
-  }
+  },
+  "learningRankNovice": "Anfänger",
+  "learningRankApprentice": "Lehrling",
+  "learningRankScholar": "Gelehrter",
+  "learningRankMaster": "Meister",
+  "learningRankGrandmaster": "Großmeister",
+  "lessonsToNextRank": "{count} Lektionen bis {rank}",
+  "@lessonsToNextRank": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "rank": { "type": "String" }
+    }
+  },
+  "newBadge": "NEU",
+  "nextUp": "Als Nächstes"
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:zaibal/gen/l10n/app_localizations.dart';
+import 'package:zaibal/models/learning_rank.dart';
 import 'package:zaibal/models/tutorial.dart';
 import 'package:zaibal/services/content_service.dart';
 import 'package:zaibal/services/progress_service.dart';
@@ -236,32 +237,86 @@ class _LearnGardenScreenState extends State<LearnGardenScreen> {
             totalCount: _all.length,
           ),
         ),
-        // Floating CTA: jump to the next not-yet-completed lesson.
+        // Floating CTA: card-style with next-lesson title preview.
         Positioned(
           bottom: 20,
           left: 20,
           right: 20,
           child: SafeArea(
             top: false,
-            child: FilledButton.icon(
-              onPressed: next == null ? null : () => _openTutorial(next),
-              icon: const Icon(Icons.school, size: 20),
-              label: Text(
-                ctaLabel,
-                style: const TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.3,
-                ),
-              ),
-              style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                backgroundColor: const Color(0xFF1565C0),
-                foregroundColor: Colors.white,
-                elevation: 8,
-                shadowColor: Colors.black54,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+            child: GestureDetector(
+              onTap: next == null ? null : () => _openTutorial(next),
+              child: AnimatedOpacity(
+                opacity: next == null ? 0.5 : 1.0,
+                duration: const Duration(milliseconds: 200),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 14,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1565C0),
+                    borderRadius: BorderRadius.circular(18),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x551565C0),
+                        blurRadius: 18,
+                        offset: Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.18),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.school,
+                          color: Colors.white,
+                          size: 22,
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              l.nextUp.toUpperCase(),
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.70),
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 1.0,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              next?.title ?? ctaLabel,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -272,7 +327,7 @@ class _LearnGardenScreenState extends State<LearnGardenScreen> {
   }
 }
 
-// ── Sticky Learn header (Panda coach + progress) ────────────────────────────
+// ── Sticky Learn header (coach + chess.com-style rank + progress) ───────────
 
 class _StickyLearnHeader extends StatelessWidget {
   final List<String> messages;
@@ -287,16 +342,24 @@ class _StickyLearnHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final frac = totalCount == 0
-        ? 0.0
-        : (completedCount / totalCount).clamp(0.0, 1.0);
+    final l = AppLocalizations.of(context);
+    final rank = LearningRank.forLessonsCompleted(completedCount);
+    final nextRank = LearningRank.nextAbove(completedCount);
+
+    // Progress within current rank band.
+    final frac = nextRank == null
+        ? 1.0
+        : ((completedCount - rank.threshold) /
+                  (nextRank.threshold - rank.threshold))
+              .clamp(0.0, 1.0);
+
     return SafeArea(
       bottom: false,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(14, 10, 14, 0),
         child: DecoratedBox(
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.92),
+            color: Colors.white.withValues(alpha: 0.94),
             borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
@@ -313,33 +376,80 @@ class _StickyLearnHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CoachSpeech.sticky(messages: messages),
-                const SizedBox(height: 12),
+                const SizedBox(height: 10),
+                // ── Rank row (chess.com "Learning Rank" style) ──────────
                 Row(
                   children: [
-                    const Icon(
-                      Icons.school,
-                      size: 18,
-                      color: Color(0xFF1565C0),
+                    // Rank icon in a coloured circle.
+                    Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: rank.color.withValues(alpha: 0.15),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: rank.color, width: 1.5),
+                      ),
+                      child: Icon(rank.icon, color: rank.color, size: 16),
                     ),
-                    const SizedBox(width: 6),
-                    Text(
-                      '$completedCount / $totalCount',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFF555555),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            rank.label(l).toUpperCase(),
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1.1,
+                              color: rank.color,
+                            ),
+                          ),
+                          Text(
+                            '$completedCount / $totalCount ${l.lessons}',
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF777777),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+                    // Lessons-to-next-rank chip.
+                    if (nextRank != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: nextRank.color.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          l.lessonsToNextRank(
+                            nextRank.threshold - completedCount,
+                            nextRank.label(l),
+                          ),
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            color: nextRank.color,
+                          ),
+                        ),
+                      ),
                   ],
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 8),
+                // ── Progress bar coloured to the current rank ───────────
                 ClipRRect(
                   borderRadius: BorderRadius.circular(6),
                   child: LinearProgressIndicator(
                     value: frac,
-                    minHeight: 10,
+                    minHeight: 8,
                     backgroundColor: const Color(0xFFE4E2DC),
-                    valueColor: const AlwaysStoppedAnimation(Color(0xFF1565C0)),
+                    valueColor: AlwaysStoppedAnimation(rank.color),
                   ),
                 ),
               ],
@@ -377,9 +487,15 @@ class _LessonTile extends StatefulWidget {
 }
 
 class _LessonTileState extends State<_LessonTile>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late final AnimationController _pulse;
-  bool get _isCurrent => !widget.completed && !widget.locked; // visible next-up
+  late final AnimationController _tap;
+  late final Animation<double> _tapScale;
+
+  bool get _isCurrent =>
+      !widget.completed && !widget.locked && widget.bookmarkStep == null;
+  bool get _isNew =>
+      !widget.completed && !widget.locked && widget.bookmarkStep == null;
 
   @override
   void initState() {
@@ -388,6 +504,15 @@ class _LessonTileState extends State<_LessonTile>
       vsync: this,
       duration: const Duration(milliseconds: 1800),
     );
+    _tap = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 80),
+      reverseDuration: const Duration(milliseconds: 180),
+    );
+    _tapScale = Tween<double>(
+      begin: 1.0,
+      end: 0.88,
+    ).animate(CurvedAnimation(parent: _tap, curve: Curves.easeIn));
     if (_isCurrent) _pulse.repeat(reverse: true);
   }
 
@@ -405,19 +530,29 @@ class _LessonTileState extends State<_LessonTile>
   @override
   void dispose() {
     _pulse.dispose();
+    _tap.dispose();
     super.dispose();
   }
 
+  void _handleTapDown(TapDownDetails _) => _tap.forward();
+  void _handleTapUp(TapUpDetails _) {
+    _tap.reverse();
+    widget.onTap();
+  }
+
+  void _handleTapCancel() => _tap.reverse();
+
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final alignment = switch (widget.rowIndex % 4) {
       0 => Alignment.centerLeft,
       1 => Alignment.center,
       2 => Alignment.centerRight,
       _ => Alignment.center,
     };
-    final width = 100.0;
-    final height = 72.0;
+    const width = 100.0;
+    const height = 72.0;
 
     final tileColor = widget.locked
         ? Colors.blueGrey.shade700
@@ -431,122 +566,184 @@ class _LessonTileState extends State<_LessonTile>
         alignment: alignment,
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: widget.onTap,
+          onTapDown: _handleTapDown,
+          onTapUp: _handleTapUp,
+          onTapCancel: _handleTapCancel,
           child: AnimatedBuilder(
-            animation: _pulse,
+            animation: Listenable.merge([_pulse, _tap]),
             builder: (context, _) {
               final glow = _isCurrent
                   ? Curves.easeInOut.transform(_pulse.value)
                   : 0.0;
-              return SizedBox(
-                width: width,
-                // Reserve a bit of headroom above the pedestal for the player
-                // stone (which sits ON the back-top of the pedestal). 36px
-                // matches PuzzleGardenScreen's _LevelTile.
-                height: height + (_isCurrent ? 36 : 0),
-                child: Stack(
-                  alignment: Alignment.bottomCenter,
-                  clipBehavior: Clip.none,
-                  children: [
-                    if (_isCurrent)
+              return ScaleTransition(
+                scale: _tapScale,
+                child: SizedBox(
+                  width: width,
+                  height: height + (_isCurrent ? 36 : 0),
+                  child: Stack(
+                    alignment: Alignment.bottomCenter,
+                    clipBehavior: Clip.none,
+                    children: [
+                      // Pulsing glow halo under the current tile.
+                      if (_isCurrent)
+                        Positioned(
+                          bottom: 0,
+                          child: Container(
+                            width: width,
+                            height: height * 0.5,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                Radius.elliptical(width, height),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: tileColor.withValues(
+                                    alpha: 0.30 + glow * 0.30,
+                                  ),
+                                  blurRadius: 18 + glow * 14,
+                                  spreadRadius: 2 + glow * 5,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      // 3D book-stack pedestal.
                       Positioned(
                         bottom: 0,
-                        child: Container(
+                        child: CustomPaint(
+                          size: const Size(width, height),
+                          painter: LessonPedestalPainter(
+                            baseColor: tileColor,
+                            unlocked: !widget.locked,
+                          ),
+                        ),
+                      ),
+                      // Status icon + lesson title on the top face.
+                      Positioned(
+                        bottom: height * 0.28,
+                        child: SizedBox(
                           width: width,
-                          height: height * 0.5,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(
-                              Radius.elliptical(width, height),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: tileColor.withValues(
-                                  alpha: 0.30 + glow * 0.30,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (widget.locked)
+                                const Icon(
+                                  Icons.lock,
+                                  color: Colors.white70,
+                                  size: 22,
+                                )
+                              else if (widget.completed)
+                                const Icon(
+                                  Icons.check,
+                                  color: Colors.white,
+                                  size: 26,
+                                )
+                              else if (widget.bookmarkStep != null)
+                                const Icon(
+                                  Icons.play_arrow,
+                                  color: Colors.white,
+                                  size: 24,
+                                )
+                              else
+                                const Icon(
+                                  Icons.menu_book,
+                                  color: Colors.white,
+                                  size: 22,
                                 ),
-                                blurRadius: 18 + glow * 14,
-                                spreadRadius: 2 + glow * 5,
+                              const SizedBox(height: 2),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 4,
+                                ),
+                                child: Text(
+                                  widget.tutorial.title,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w900,
+                                    shadows: [
+                                      Shadow(
+                                        color: Colors.black54,
+                                        blurRadius: 3,
+                                        offset: Offset(0, 1),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ],
                           ),
                         ),
                       ),
-                    Positioned(
-                      bottom: 0,
-                      child: CustomPaint(
-                        size: Size(width, height),
-                        painter: LessonPedestalPainter(
-                          baseColor: tileColor,
-                          unlocked: !widget.locked,
-                        ),
-                      ),
-                    ),
-                    // Title fragment + status icon, centred on the pedestal top face.
-                    Positioned(
-                      bottom: height * 0.28,
-                      child: SizedBox(
-                        width: width,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (widget.locked)
-                              const Icon(
-                                Icons.lock,
-                                color: Colors.white70,
-                                size: 22,
-                              )
-                            else if (widget.completed)
-                              const Icon(
-                                Icons.check,
-                                color: Colors.white,
-                                size: 26,
-                              )
-                            else if (widget.bookmarkStep != null)
-                              const Icon(
-                                Icons.play_arrow,
-                                color: Colors.white,
-                                size: 24,
-                              )
-                            else
-                              const Icon(
-                                Icons.menu_book,
-                                color: Colors.white,
-                                size: 22,
-                              ),
-                            const SizedBox(height: 2),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 4,
-                              ),
-                              child: Text(
-                                widget.tutorial.title,
-                                textAlign: TextAlign.center,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w900,
-                                  shadows: [
-                                    Shadow(
-                                      color: Colors.black54,
-                                      blurRadius: 3,
-                                      offset: Offset(0, 1),
-                                    ),
-                                  ],
+                      // ⭐ Completion star badge (top-right corner).
+                      if (widget.completed)
+                        Positioned(
+                          top: _isCurrent ? 36 - height : 0,
+                          right: 0,
+                          child: Container(
+                            width: 22,
+                            height: 22,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFFFD700),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black26,
+                                  blurRadius: 4,
+                                  offset: Offset(0, 1),
                                 ),
+                              ],
+                            ),
+                            child: const Icon(
+                              Icons.star,
+                              color: Colors.white,
+                              size: 14,
+                            ),
+                          ),
+                        ),
+                      // 🆕 NEW badge on the very first untouched tile.
+                      if (_isNew && widget.rowIndex == 0)
+                        Positioned(
+                          top: _isCurrent ? 36 - height : 0,
+                          left: 0,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 5,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE53935),
+                              borderRadius: BorderRadius.circular(6),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Colors.black26,
+                                  blurRadius: 3,
+                                  offset: Offset(0, 1),
+                                ),
+                              ],
+                            ),
+                            child: Text(
+                              l.newBadge,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 8,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 0.5,
                               ),
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
-                    // Player stone perched on the next-up pedestal.
-                    if (_isCurrent)
-                      Positioned(
-                        bottom: height * 0.55,
-                        child: const PlayerStone3D(color: 1),
-                      ),
-                  ],
+                      // Player stone perched on the current pedestal.
+                      if (_isCurrent)
+                        Positioned(
+                          bottom: height * 0.55,
+                          child: const PlayerStone3D(color: 1),
+                        ),
+                    ],
+                  ),
                 ),
               );
             },

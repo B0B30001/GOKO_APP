@@ -594,5 +594,19 @@
       "periods": { "type": "int" },
       "time": { "type": "int" }
     }
-  }
+  },
+  "learningRankNovice": "초심자",
+  "learningRankApprentice": "수련생",
+  "learningRankScholar": "학자",
+  "learningRankMaster": "사범",
+  "learningRankGrandmaster": "명인",
+  "lessonsToNextRank": "{rank}까지 {count}개 레슨",
+  "@lessonsToNextRank": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "rank": { "type": "String" }
+    }
+  },
+  "newBadge": "신규",
+  "nextUp": "다음"
 }

@@ -1436,4 +1436,30 @@ class AppLocalizationsJa extends AppLocalizations {
   String periodTimeRemaining(int periods, int time) {
     return '秒読み $periods - ${time}s';
   }
+
+  @override
+  String get learningRankNovice => '初心者';
+
+  @override
+  String get learningRankApprentice => '見習い';
+
+  @override
+  String get learningRankScholar => '学者';
+
+  @override
+  String get learningRankMaster => '達人';
+
+  @override
+  String get learningRankGrandmaster => '名人';
+
+  @override
+  String lessonsToNextRank(int count, String rank) {
+    return '$rankまであと$countレッスン';
+  }
+
+  @override
+  String get newBadge => '新着';
+
+  @override
+  String get nextUp => '次へ';
 }

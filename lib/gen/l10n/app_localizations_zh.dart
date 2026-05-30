@@ -1435,4 +1435,30 @@ class AppLocalizationsZh extends AppLocalizations {
   String periodTimeRemaining(int periods, int time) {
     return '秒读 $periods - ${time}s';
   }
+
+  @override
+  String get learningRankNovice => '新手';
+
+  @override
+  String get learningRankApprentice => '学徒';
+
+  @override
+  String get learningRankScholar => '学者';
+
+  @override
+  String get learningRankMaster => '大师';
+
+  @override
+  String get learningRankGrandmaster => '宗师';
+
+  @override
+  String lessonsToNextRank(int count, String rank) {
+    return '还差 $count 课升至$rank';
+  }
+
+  @override
+  String get newBadge => '新';
+
+  @override
+  String get nextUp => '接下来';
 }
