@@ -2,20 +2,15 @@ import 'package:flutter/material.dart';
 
 import 'garden_theme.dart';
 
-const _themeAssetNames = <String>[
-  'stone_forest',
-  'crystal_cave',
-  'copper_peaks',
-  'diamond_tundra',
-  'jade_highlands',
-];
-
-/// Tries to load the Canva-designed background PNG for the given theme. If
-/// the asset isn't bundled, falls back to the procedural parallax
-/// [GardenBackgroundPainter] so the screen always has something to render.
+/// Global procedural backdrop for the gamified gardens — a parallax sky →
+/// hills → ground → pond scene painted from the active [GardenTheme].
 ///
-/// To swap a background in: drop `assets/backgrounds/<theme>.png` into the
-/// repo (see `assets/backgrounds/README.md`). No code change needed.
+/// This is the *base* layer behind the scroll. Illustrated per-world scenery
+/// PNGs are layered on top inside the scroll by [GardenWorldPanel] (see
+/// `garden_scenery.dart`), which scroll with the path and never stretch. This
+/// widget intentionally no longer loads a full-screen background image: a
+/// single image stretched across a fixed viewport behind a long scroll was the
+/// source of the distortion the painter never had.
 class ThemedBackground extends StatelessWidget {
   final int themeIdx;
 
@@ -29,29 +24,14 @@ class ThemedBackground extends StatelessWidget {
     this.scrollOffset = 0.0,
   });
 
-  String get _assetPath {
-    final name =
-        _themeAssetNames[themeIdx.clamp(0, _themeAssetNames.length - 1)];
-    return 'assets/backgrounds/$name.png';
-  }
-
   @override
   Widget build(BuildContext context) {
-    final painter = CustomPaint(
+    return CustomPaint(
       painter: GardenBackgroundPainter(
         themeIdx: themeIdx,
         scrollOffset: scrollOffset,
       ),
       size: Size.infinite,
-    );
-    // `Image.asset` throws asynchronously on missing files; route the error
-    // to the painter so we never see a broken image icon.
-    return Image.asset(
-      _assetPath,
-      fit: BoxFit.cover,
-      width: double.infinity,
-      height: double.infinity,
-      errorBuilder: (_, __, ___) => painter,
     );
   }
 }

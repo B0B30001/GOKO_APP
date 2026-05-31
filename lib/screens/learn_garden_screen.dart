@@ -158,14 +158,32 @@ class _LearnGardenScreenState extends State<LearnGardenScreen> {
       byCategory.putIfAbsent(t.category, () => []).add(t);
     }
 
-    final children = <Widget>[];
+    // Each lesson category becomes one GardenWorldPanel whose scenery scrolls
+    // with the path (Learn uses a single palette, so every panel shares
+    // safeThemeIdx). reverse:false ⇒ panels and their columns stay in natural
+    // top-to-bottom order.
+    final panels = <Widget>[];
+    var bandChildren = <Widget>[];
     int rowIndex = 0;
     bool firstTileEmitted = false;
+
+    void flushBand() {
+      if (bandChildren.isEmpty) return;
+      panels.add(
+        GardenWorldPanel(
+          themeIdx: safeThemeIdx,
+          child: Column(mainAxisSize: MainAxisSize.min, children: bandChildren),
+        ),
+      );
+      bandChildren = <Widget>[];
+    }
+
     for (final category in _categoryOrder) {
       final lessons = byCategory[category];
       if (lessons == null || lessons.isEmpty) continue;
+      flushBand();
       // Category banner.
-      children.add(
+      bandChildren.add(
         WorldGate(
           theme: theme,
           title: _categoryTitle(category, l),
@@ -176,15 +194,14 @@ class _LearnGardenScreenState extends State<LearnGardenScreen> {
       for (final tutorial in lessons) {
         final completed = progress.isLessonCompleted(tutorial.id);
         final bookmark = progress.getLessonBookmark(tutorial.id);
-        // Path connector lives BETWEEN tiles, not before the first one of a
-        // category (the WorldGate provides visual separation there).
+        // Path connector lives BETWEEN tiles, not before the very first one.
         if (firstTileEmitted) {
-          children.add(
+          bandChildren.add(
             PathConnector(rowIndex: rowIndex, unlocked: true, theme: theme),
           );
         }
         firstTileEmitted = true;
-        children.add(
+        bandChildren.add(
           _LessonTile(
             tutorial: tutorial,
             rowIndex: rowIndex,
@@ -198,6 +215,7 @@ class _LearnGardenScreenState extends State<LearnGardenScreen> {
         rowIndex++;
       }
     }
+    flushBand();
 
     final next = _nextUnfinished(progress);
     final ctaLabel = next == null
@@ -222,8 +240,8 @@ class _LearnGardenScreenState extends State<LearnGardenScreen> {
         Positioned.fill(
           child: ListView(
             controller: _scroll,
-            padding: const EdgeInsets.fromLTRB(16, 120, 16, 160),
-            children: children,
+            padding: const EdgeInsets.only(top: 120, bottom: 160),
+            children: panels,
           ),
         ),
         // Sticky Panda coach at the top.

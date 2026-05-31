@@ -183,18 +183,38 @@ class _PuzzleGardenScreenState extends State<PuzzleGardenScreen> {
     final currentTier = LeagueTier.forRating(progress.puzzleRating);
     _maybeCelebrateLeague(currentTier, l);
 
-    // Build the level milestone list. A world gate banner is inserted at the
-    // start of every 5-level band (indices 0, 5, 10, 15…). Connector path
-    // segments are drawn between consecutive level tiles to give the map a
-    // Candy Crush / Chess.com winding-path feel.
-    final children = <Widget>[];
+    // Build the world map as a list of per-world scenery panels. Each 5-level
+    // band becomes one GardenWorldPanel whose illustrated scenery scrolls with
+    // the path (no fixed/stretched background). Within a panel the children are
+    // reversed so that — under the outer reverse:true ListView — Level 1 sits at
+    // the bottom and the player climbs upward through the bands.
+    final panels = <Widget>[];
+    var bandChildren = <Widget>[];
+    var bandThemeIdx = 0;
+
+    void flushBand() {
+      if (bandChildren.isEmpty) return;
+      panels.add(
+        GardenWorldPanel(
+          themeIdx: bandThemeIdx,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: bandChildren.reversed.toList(),
+          ),
+        ),
+      );
+      bandChildren = <Widget>[];
+    }
+
     for (int i = 0; i < _levelThresholds.length; i++) {
       final level = i + 1;
       if (i % 5 == 0) {
-        final bandThemeIdx = (i ~/ 5).clamp(0, gardenThemes.length - 1);
+        // New band starts — close the previous panel, open this world's.
+        flushBand();
+        bandThemeIdx = (i ~/ 5).clamp(0, gardenThemes.length - 1);
         final bandTheme = gardenThemes[bandThemeIdx];
         final unlocked = xp >= _levelThresholds[i];
-        children.add(
+        bandChildren.add(
           WorldGate(
             theme: bandTheme,
             title: gardenThemeName(bandThemeIdx, l),
@@ -206,7 +226,7 @@ class _PuzzleGardenScreenState extends State<PuzzleGardenScreen> {
         );
       } else {
         // Connector lives BETWEEN tiles (skip before the first tile of a band).
-        children.add(
+        bandChildren.add(
           PathConnector(
             rowIndex: i,
             unlocked: xp >= _levelThresholds[i],
@@ -214,7 +234,7 @@ class _PuzzleGardenScreenState extends State<PuzzleGardenScreen> {
           ),
         );
       }
-      children.add(
+      bandChildren.add(
         _LevelTile(
           level: level,
           rowIndex: i,
@@ -225,6 +245,7 @@ class _PuzzleGardenScreenState extends State<PuzzleGardenScreen> {
         ),
       );
     }
+    flushBand();
 
     return Stack(
       children: [
@@ -247,13 +268,15 @@ class _PuzzleGardenScreenState extends State<PuzzleGardenScreen> {
           child: IgnorePointer(child: AmbientDecorations(themeIdx: themeIdx)),
         ),
         // Scrollable level map. reverse:true puts Level 1 at the bottom so the
-        // player climbs upward through the world bands.
+        // player climbs upward through the world bands. Padding is vertical
+        // only — panels are full-bleed so each world's scenery reaches the
+        // screen edges (tiles keep their inset inside GardenWorldPanel).
         Positioned.fill(
           child: ListView(
             controller: _scroll,
             reverse: true,
-            padding: const EdgeInsets.fromLTRB(16, 24, 16, 160),
-            children: children,
+            padding: const EdgeInsets.only(top: 24, bottom: 160),
+            children: panels,
           ),
         ),
         // Sticky panda coach + XP progress bar.
@@ -530,7 +553,7 @@ class _StickyCoachHeader extends StatelessWidget {
   }
 }
 
-// ── Puzzle level tile (uses PuzzlePedestalPainter + PlayerStone3D) ──────────
+// ── Puzzle level tile (uses PuzzlePedestalPainter + GardenMascot) ───────────
 
 class _LevelTile extends StatefulWidget {
   final int level;
@@ -608,12 +631,17 @@ class _LevelTileState extends State<_LevelTile> with TickerProviderStateMixin {
     final width = widget.isCurrent ? 108.0 : 92.0;
     final height = widget.isCurrent ? 78.0 : 66.0;
 
+    // Completed = unlocked and not the current level (player has moved past it).
+    final isCompleted = widget.unlocked && !widget.isCurrent;
+
+    // Completed tiles read as jade-green checkmark pavers (Gemini concept);
+    // the current tile keeps the active world colour; locked tiles are slate.
+    const jade = Color(0xFF6FAE83);
     final tileColor = !widget.unlocked
         ? Colors.blueGrey.shade700
+        : isCompleted
+        ? jade
         : widget.theme.tileBase;
-
-    // Completed = unlocked and level < currentLevel (player has moved past it).
-    final isCompleted = widget.unlocked && !widget.isCurrent;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -676,23 +704,8 @@ class _LevelTileState extends State<_LevelTile> with TickerProviderStateMixin {
                         child: SizedBox(
                           width: width,
                           child: Center(
-                            child: widget.unlocked
-                                ? Text(
-                                    '${widget.level}',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: widget.isCurrent ? 30 : 22,
-                                      fontWeight: FontWeight.w900,
-                                      shadows: const [
-                                        Shadow(
-                                          color: Colors.black54,
-                                          blurRadius: 4,
-                                          offset: Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                : Column(
+                            child: !widget.unlocked
+                                ? Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       const Icon(
@@ -710,36 +723,40 @@ class _LevelTileState extends State<_LevelTile> with TickerProviderStateMixin {
                                           ),
                                         ),
                                     ],
+                                  )
+                                : isCompleted
+                                // Completed → bold white check (Gemini concept).
+                                ? const Icon(
+                                    Icons.check_rounded,
+                                    color: Colors.white,
+                                    size: 30,
+                                    shadows: [
+                                      Shadow(
+                                        color: Colors.black54,
+                                        blurRadius: 4,
+                                        offset: Offset(0, 2),
+                                      ),
+                                    ],
+                                  )
+                                // Current → the level number.
+                                : Text(
+                                    '${widget.level}',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: widget.isCurrent ? 30 : 22,
+                                      fontWeight: FontWeight.w900,
+                                      shadows: const [
+                                        Shadow(
+                                          color: Colors.black54,
+                                          blurRadius: 4,
+                                          offset: Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                           ),
                         ),
                       ),
-                      // ⭐ Gold star on completed levels.
-                      if (isCompleted)
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: Container(
-                            width: 20,
-                            height: 20,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFFFD700),
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black26,
-                                  blurRadius: 3,
-                                  offset: Offset(0, 1),
-                                ),
-                              ],
-                            ),
-                            child: const Icon(
-                              Icons.star,
-                              color: Colors.white,
-                              size: 13,
-                            ),
-                          ),
-                        ),
                       if (widget.isCurrent)
                         Positioned(
                           bottom: height * 0.55,

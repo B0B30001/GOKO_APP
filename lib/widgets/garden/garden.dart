@@ -9,9 +9,9 @@ library;
 
 export 'ambient_decorations.dart';
 export 'garden_mascot.dart';
+export 'garden_scenery.dart';
 export 'garden_theme.dart';
 export 'path_connector.dart';
 export 'pedestal_painter.dart';
-export 'player_stone_3d.dart';
 export 'themed_background.dart';
 export 'world_gate.dart';
