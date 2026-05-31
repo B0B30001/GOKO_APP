@@ -189,6 +189,11 @@ class GardenBackgroundPainter extends CustomPainter {
     // crude clip-art.
     _drawPagoda(canvas, w, h, theme, h * 0.60 - hillsOffset);
 
+    // Companion scenery on the same hill line — a vermilion torii gate and a
+    // cluster of evergreen pines — to make the world read as an intentional
+    // zen garden rather than a bare gradient.
+    _drawSceneryProps(canvas, w, h, theme, h * 0.615 - hillsOffset);
+
     // Foreground ground band gradient with parallax offset.
     final groundOffset = scrollOffset * groundParallax;
     canvas.drawRect(
@@ -322,6 +327,86 @@ class GardenBackgroundPainter extends CustomPainter {
       paint,
     );
     canvas.drawCircle(Offset(cx, y - unit * 1.1), unit * 0.42, paint);
+  }
+
+  /// Draws a vermilion torii gate (left) and a small cluster of evergreen
+  /// pines along the hill line at [baseY]. Moderate alpha so they read as
+  /// distant scenery in any theme palette.
+  void _drawSceneryProps(
+    Canvas canvas,
+    double w,
+    double h,
+    GardenTheme theme,
+    double baseY,
+  ) {
+    final unit = (h * 0.012).clamp(3.0, 9.0);
+
+    // ── Evergreen pines (stacked triangles) ──────────────────────────────
+    final pineColor = Color.lerp(
+      theme.hillBottom,
+      Colors.black,
+      0.25,
+    )!.withValues(alpha: 0.55);
+    final trunkColor = const Color(0xFF5A3A22).withValues(alpha: 0.55);
+    void pine(double cx, double scale) {
+      final s = unit * scale;
+      canvas.drawRect(
+        Rect.fromLTWH(cx - s * 0.18, baseY - s * 0.9, s * 0.36, s * 0.9),
+        Paint()..color = trunkColor,
+      );
+      for (int i = 0; i < 3; i++) {
+        final tierBase = baseY - s * 0.7 - i * s * 1.1;
+        final halfW = (1.7 - i * 0.45) * s;
+        final tierH = 1.6 * s;
+        final p = Path()
+          ..moveTo(cx, tierBase - tierH)
+          ..lineTo(cx - halfW, tierBase)
+          ..lineTo(cx + halfW, tierBase)
+          ..close();
+        canvas.drawPath(p, Paint()..color = pineColor);
+      }
+    }
+
+    pine(w * 0.30, 1.0);
+    pine(w * 0.40, 0.78);
+    pine(w * 0.88, 0.9);
+
+    // ── Torii gate (vermilion silhouette) ────────────────────────────────
+    final torii = Paint()
+      ..color = const Color(0xFF9E3B2E).withValues(alpha: 0.62);
+    final cx = w * 0.16;
+    final gh = unit * 2.6; // gate height
+    final spread = unit * 1.7; // half distance between posts
+    final postW = unit * 0.42;
+    final topY = baseY - gh;
+    canvas.drawRect(
+      Rect.fromLTWH(cx - spread - postW / 2, topY, postW, gh),
+      torii,
+    );
+    canvas.drawRect(
+      Rect.fromLTWH(cx + spread - postW / 2, topY, postW, gh),
+      torii,
+    );
+    // Lower tie beam (nuki).
+    canvas.drawRect(
+      Rect.fromLTWH(
+        cx - spread - unit * 0.3,
+        topY + gh * 0.30,
+        spread * 2 + unit * 0.6,
+        unit * 0.42,
+      ),
+      torii,
+    );
+    // Top lintel (kasagi) — overhangs the posts.
+    canvas.drawRect(
+      Rect.fromLTWH(
+        cx - spread - unit * 0.9,
+        topY,
+        spread * 2 + unit * 1.8,
+        unit * 0.55,
+      ),
+      torii,
+    );
   }
 
   @override
