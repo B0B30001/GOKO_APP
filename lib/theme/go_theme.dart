@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// Top-level visual presets the user can switch between in Settings.
 /// Each preset bundles a brightness, a scaffold/surface palette, and an
@@ -83,29 +84,42 @@ class GoTheme {
   /// Builds a [ThemeData] for the given [preset]. Replaces the older
   /// static `light` / `dark` getters; those remain for back-compat below.
   static ThemeData fromPreset(ThemePreset preset) {
-    switch (preset) {
-      case ThemePreset.darkBlue:
-        return _buildDarkBlue();
-      case ThemePreset.oledBlack:
-        return _buildOledBlack();
-      case ThemePreset.classicWood:
-        return _buildClassicWood();
-      case ThemePreset.lightMode:
-        return _buildLightMode();
-      case ThemePreset.halloween:
-        return _buildHalloween();
-      case ThemePreset.winter:
-        return _buildWinter();
-      case ThemePreset.forest:
-        return _buildForest();
-    }
+    final base = switch (preset) {
+      ThemePreset.darkBlue => _buildDarkBlue(),
+      ThemePreset.oledBlack => _buildOledBlack(),
+      ThemePreset.classicWood => _buildClassicWood(),
+      ThemePreset.lightMode => _buildLightMode(),
+      ThemePreset.halloween => _buildHalloween(),
+      ThemePreset.winter => _buildWinter(),
+      ThemePreset.forest => _buildForest(),
+    };
+    return _withTypography(base);
   }
 
   /// Backward-compatible default light theme — alias of Light Mode preset.
-  static ThemeData get light => _buildLightMode();
+  static ThemeData get light => _withTypography(_buildLightMode());
 
   /// Backward-compatible default dark theme — alias of Dark Blue preset.
-  static ThemeData get dark => _buildDarkBlue();
+  static ThemeData get dark => _withTypography(_buildDarkBlue());
+
+  /// Applies the premium type pairing recommended by the ui-ux-pro-max design
+  /// system for a calm/wellness product: Lora (serif) for large headings,
+  /// Raleway (sans) for body, labels, and smaller titles. GoogleFonts merges
+  /// onto each preset's existing TextTheme, preserving weights/sizes/colors.
+  static ThemeData _withTypography(ThemeData base) {
+    final body = GoogleFonts.ralewayTextTheme(base.textTheme);
+    final lora = GoogleFonts.loraTextTheme(base.textTheme);
+    final merged = body.copyWith(
+      displayLarge: lora.displayLarge,
+      displayMedium: lora.displayMedium,
+      displaySmall: lora.displaySmall,
+      headlineLarge: lora.headlineLarge,
+      headlineMedium: lora.headlineMedium,
+      headlineSmall: lora.headlineSmall,
+      titleLarge: lora.titleLarge,
+    );
+    return base.copyWith(textTheme: merged, primaryTextTheme: merged);
+  }
 
   // ----- Preset builders -----
 
