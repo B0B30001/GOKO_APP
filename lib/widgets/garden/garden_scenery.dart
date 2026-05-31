@@ -64,6 +64,22 @@ class GardenWorldPanel extends StatelessWidget {
             errorBuilder: (_, __, ___) => const SizedBox.shrink(),
           ),
         ),
+        // Gentle dark veil to mute the illustration so the interface reads as
+        // premium atmosphere, not a loud focal image — and to lift tile/text
+        // contrast. Slightly stronger toward the bottom where the path sits.
+        const Positioned.fill(
+          child: IgnorePointer(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Color(0x14000000), Color(0x40000000)],
+                ),
+              ),
+            ),
+          ),
+        ),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: horizontalInset),
           child: child,

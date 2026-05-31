@@ -24,7 +24,7 @@ class GardenMascot extends StatefulWidget {
   const GardenMascot({
     super.key,
     this.asset = 'assets/avatars/panda.png',
-    this.size = 56,
+    this.size = 46,
     this.glow = const Color(0xFFFFE08A),
   });
 

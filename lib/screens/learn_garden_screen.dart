@@ -162,6 +162,9 @@ class _LearnGardenScreenState extends State<LearnGardenScreen> {
     // with the path (Learn uses a single palette, so every panel shares
     // safeThemeIdx). reverse:false ⇒ panels and their columns stay in natural
     // top-to-bottom order.
+    // The single next-unfinished lesson — only this tile gets the mascot.
+    final nextLesson = _nextUnfinished(progress);
+
     final panels = <Widget>[];
     var bandChildren = <Widget>[];
     int rowIndex = 0;
@@ -209,6 +212,7 @@ class _LearnGardenScreenState extends State<LearnGardenScreen> {
             completed: completed,
             bookmarkStep: bookmark,
             locked: false,
+            isCurrent: nextLesson != null && tutorial.id == nextLesson.id,
             onTap: () => _onTileTap(tutorial),
           ),
         );
@@ -217,7 +221,7 @@ class _LearnGardenScreenState extends State<LearnGardenScreen> {
     }
     flushBand();
 
-    final next = _nextUnfinished(progress);
+    final next = nextLesson;
     final ctaLabel = next == null
         ? l.startLessonCta
         : (progress.getLessonBookmark(next.id) != null
@@ -523,6 +527,11 @@ class _LessonTile extends StatefulWidget {
   final bool completed;
   final int? bookmarkStep;
   final bool locked;
+
+  /// True for exactly ONE tile — the next unfinished lesson. Only this tile
+  /// shows the mascot + pulse glow (previously every untouched tile did, which
+  /// stamped the panda on every node).
+  final bool isCurrent;
   final VoidCallback onTap;
 
   const _LessonTile({
@@ -532,6 +541,7 @@ class _LessonTile extends StatefulWidget {
     required this.completed,
     required this.bookmarkStep,
     required this.locked,
+    required this.isCurrent,
     required this.onTap,
   });
 
@@ -545,10 +555,8 @@ class _LessonTileState extends State<_LessonTile>
   late final AnimationController _tap;
   late final Animation<double> _tapScale;
 
-  bool get _isCurrent =>
-      !widget.completed && !widget.locked && widget.bookmarkStep == null;
-  bool get _isNew =>
-      !widget.completed && !widget.locked && widget.bookmarkStep == null;
+  bool get _isCurrent => widget.isCurrent;
+  bool get _isNew => widget.isCurrent && widget.rowIndex == 0;
 
   @override
   void initState() {
@@ -703,30 +711,36 @@ class _LessonTileState extends State<_LessonTile>
                                   color: Colors.white,
                                   size: 22,
                                 ),
-                              const SizedBox(height: 2),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 4,
-                                ),
-                                child: Text(
-                                  widget.tutorial.title,
-                                  textAlign: TextAlign.center,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w900,
-                                    shadows: [
-                                      Shadow(
-                                        color: Colors.black54,
-                                        blurRadius: 3,
-                                        offset: Offset(0, 1),
-                                      ),
-                                    ],
+                              // Only the current lesson is labelled
+                              // (Duolingo-style) — keeps other nodes clean and
+                              // avoids truncated titles across the whole map.
+                              if (_isCurrent) ...[
+                                const SizedBox(height: 2),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 2,
+                                  ),
+                                  child: Text(
+                                    widget.tutorial.title,
+                                    textAlign: TextAlign.center,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 9.5,
+                                      height: 1.05,
+                                      fontWeight: FontWeight.w800,
+                                      shadows: [
+                                        Shadow(
+                                          color: Colors.black54,
+                                          blurRadius: 3,
+                                          offset: Offset(0, 1),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
+                              ],
                             ],
                           ),
                         ),
