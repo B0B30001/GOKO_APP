@@ -116,13 +116,26 @@ class PuzzlePedestalPainter extends CustomPainter {
     );
     canvas.restore();
 
-    // Crisp outer rim for definition against busy backgrounds.
+    // Subtle white outer hairline so the node pops cleanly on busy
+    // illustrated scenery without adding visual bulk.
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        topRect.inflate(1.3),
+        Radius.circular(w * 0.24 + 1.3),
+      ),
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.4
+        ..color = Colors.white.withValues(alpha: 0.55),
+    );
+
+    // Crisp dark inner rim for definition against busy backgrounds.
     canvas.drawRRect(
       topRRect,
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.0
-        ..color = Colors.black.withValues(alpha: 0.10),
+        ..color = Colors.black.withValues(alpha: 0.12),
     );
   }
 

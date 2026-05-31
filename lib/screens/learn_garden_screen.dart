@@ -244,6 +244,41 @@ class _LearnGardenScreenState extends State<LearnGardenScreen> {
             children: panels,
           ),
         ),
+        // Legibility scrims so the header + CTA stay readable over busy art.
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          child: IgnorePointer(
+            child: Container(
+              height: 150,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Color(0x47000000), Color(0x00000000)],
+                ),
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: IgnorePointer(
+            child: Container(
+              height: 170,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [Color(0x47000000), Color(0x00000000)],
+                ),
+              ),
+            ),
+          ),
+        ),
         // Sticky Panda coach at the top.
         Positioned(
           top: 0,

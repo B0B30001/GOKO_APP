@@ -51,14 +51,15 @@ class GardenWorldPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // Full-bleed scenery behind the (inset) content. fitWidth + repeatY ⇒
-        // no horizontal stretch; tiles down to cover any band height. Missing
-        // asset ⇒ transparent, so the global procedural background shows through.
+        // Full-bleed scenery behind the (inset) content. The art is a complete
+        // 9:16 portrait scene, so we show it ONCE with BoxFit.cover (top-aligned)
+        // — fills the band preserving aspect (no stretch, no repeating the pond
+        // or clouds mid-scroll). Missing asset ⇒ transparent, so the global
+        // procedural background shows through.
         Positioned.fill(
           child: Image.asset(
             _assetPath,
-            fit: BoxFit.fitWidth,
-            repeat: ImageRepeat.repeatY,
+            fit: BoxFit.cover,
             alignment: Alignment.topCenter,
             errorBuilder: (_, __, ___) => const SizedBox.shrink(),
           ),

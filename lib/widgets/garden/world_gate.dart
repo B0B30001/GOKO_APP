@@ -26,54 +26,53 @@ class WorldGate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final base = unlocked ? theme.tileBase : Colors.blueGrey.shade600;
-    // Vertically lit gradient (top highlight → base → darker foot) reads as a
-    // carved-stone banner rather than a flat pill.
-    final top = Color.lerp(base, Colors.white, 0.22)!;
-    final bottom = Color.lerp(base, Colors.black, 0.30)!;
 
     return Padding(
-      padding: const EdgeInsets.only(top: 26, bottom: 18),
+      padding: const EdgeInsets.only(top: 20, bottom: 12),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
         decoration: BoxDecoration(
+          // Translucent frosted pill — the world art shows through so the gate
+          // reads as a light label, not a heavy opaque banner.
           gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [top, base, bottom],
-            stops: const [0.0, 0.45, 1.0],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              base.withValues(alpha: 0.34),
+              Colors.black.withValues(alpha: 0.42),
+            ],
           ),
-          borderRadius: BorderRadius.circular(20),
-          // Light inner top edge + dark foot = embossed/engraved look.
+          borderRadius: BorderRadius.circular(22),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.25),
+            color: Colors.white.withValues(alpha: 0.22),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: base.withValues(alpha: 0.45),
-              blurRadius: 22,
-              offset: const Offset(0, 10),
+              color: Colors.black.withValues(alpha: 0.22),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Row(
           children: [
-            // Frosted circular icon badge.
+            // Small frosted icon badge.
             Container(
-              width: 44,
-              height: 44,
+              width: 34,
+              height: 34,
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.18),
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: Colors.white.withValues(alpha: 0.45),
-                  width: 1.5,
+                  width: 1.3,
                 ),
               ),
               child: Icon(
                 unlocked ? theme.icon : Icons.lock,
                 color: Colors.white,
-                size: 24,
+                size: 19,
               ),
             ),
             const SizedBox(width: 14),

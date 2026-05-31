@@ -24,19 +24,18 @@ them in as you create them, no code changes required.
 
 ## How they're rendered (important — this is why nothing stretches now)
 
-`GardenWorldPanel` paints the scenery with **`BoxFit.fitWidth` +
-`ImageRepeat.repeatY`**, anchored top-center:
+`GardenWorldPanel` paints each world's art **once** with **`BoxFit.cover`**,
+anchored top-center (no repeat):
 
-- **fitWidth** scales the image to the panel width with its aspect preserved →
-  **never horizontally stretched**, on any device.
-- **repeatY** tiles it vertically so it covers a band of any height.
-
-So author the art **seamless on the top/bottom edges** (so the vertical repeat
-joins cleanly), or make it tall enough that one copy covers the whole band.
+- **cover** scales the image to fill the band preserving aspect → **never
+  horizontally stretched**, on any device, and never repeats the scene.
+- The art is treated as one complete scene per world; the band crops it only
+  slightly at the bottom/sides. Keep the focal interest in the upper-middle.
 
 ## Export specs
 
-- **Width**: 1080 px. **Height**: 1080–2400 px (taller = fewer visible repeats).
+- **Aspect**: tall portrait ~**9:16** (e.g. 940×1670). One full scene — it is
+  shown once, not tiled, so seamless edges are NOT required.
 - **Format**: PNG, 24-bit (no alpha needed — it's a full backdrop).
 - **CRITICAL — scenery only**: **NO game tiles, NO winding path, NO checkmarks,
   NO buttons, NO UI, NO characters.** Those are drawn live on top. If you bake
