@@ -63,6 +63,11 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
   bool _isAiThinking = false;
   bool _resultRecorded = false;
 
+  /// Set when the human passes in computer mode. The bot reciprocates the pass
+  /// on its next turn (→ double pass → game ends + scoring) instead of playing
+  /// on forever, so a game is actually finishable against the AI.
+  bool _humanPassedLast = false;
+
   /// Per-frame re-entry guard for [_onTapBoard]. Prevents two taps inside the
   /// same frame (which can happen with fast-finger inputs or scroll-translated
   /// gestures) from placing two stones before the rebuild.
@@ -139,7 +144,29 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
   }
 
   Future<void> _triggerAiMove() async {
+    // If the human just passed, the bot reciprocates (passes too) so the game
+    // ends and scoring runs, rather than playing on forever.
+    final reciprocatePass = _humanPassedLast;
+    _humanPassedLast = false;
+
     setState(() => _isAiThinking = true);
+
+    if (reciprocatePass) {
+      await Future.delayed(const Duration(milliseconds: 500));
+      if (!mounted) return;
+      _game.pass();
+      _moves.add(HistoryMove(-1, -1, _aiPlayer));
+      setState(() {});
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) setState(() => _isAiThinking = false);
+      });
+      if (_game.isGameOver) {
+        Future.microtask(() {
+          if (mounted) _showGameOverDialog();
+        });
+      }
+      return;
+    }
 
     // Pace the move: weak engines return in tens of ms which feels robotic.
     // Subtract whatever the search actually took so strong engines stay snappy.
@@ -765,6 +792,7 @@ class _GameBoardScreenState extends State<GameBoardScreen> {
                       if (mounted) _showGameOverDialog();
                     });
                   } else if (widget.isComputerMode) {
+                    _humanPassedLast = true;
                     _triggerAiMove();
                   } else if (!_game.hasValidMoves()) {
                     Future.microtask(() {
