@@ -22,7 +22,7 @@ import 'package:flutter/material.dart';
 /// richer **procedural** scene painted globally by `GardenBackgroundPainter`
 /// shows through, scrolling with parallax. Flip to `true` to restore the 5
 /// Gemini PNGs if you prefer the painted look.
-const bool _useSceneryPngs = true;
+const bool _useSceneryPngs = false;
 
 class GardenWorldPanel extends StatelessWidget {
   /// Theme-band index (0..4); selects which scenery asset to look for.

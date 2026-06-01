@@ -8,7 +8,6 @@ import '../models/league_tier.dart';
 import '../models/puzzle.dart';
 import '../services/content_service.dart';
 import '../services/progress_service.dart';
-import '../widgets/coach_speech.dart';
 import '../widgets/garden/garden.dart';
 import 'puzzle_screen.dart';
 
@@ -272,7 +271,7 @@ class _PuzzleGardenScreenState extends State<PuzzleGardenScreen> {
           child: ListView(
             controller: _scroll,
             reverse: true,
-            padding: const EdgeInsets.only(top: 200, bottom: 170),
+            padding: const EdgeInsets.only(top: 110, bottom: 170),
             children: panels,
           ),
         ),
@@ -477,19 +476,6 @@ class _StickyCoachHeader extends StatelessWidget {
     required this.celebrateMessage,
   });
 
-  List<String> _lines(AppLocalizations l) {
-    final base = [
-      l.coachStreakIntro1,
-      l.coachStreakIntro2,
-      l.coachStreakIntro3,
-      l.coachStreakIntro4,
-      l.coachStreakIntro5,
-      l.coachKeepGoing,
-    ];
-    if (streakCount >= 3) base.insert(0, l.coachSolve3);
-    return base;
-  }
-
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
@@ -499,9 +485,6 @@ class _StickyCoachHeader extends StatelessWidget {
         : ((rating - currentTier.threshold) /
                   (nextTier.threshold - currentTier.threshold))
               .clamp(0.0, 1.0);
-    final xpToNext = nextTier == null
-        ? 0
-        : math.max(0, (nextTier.threshold - rating) * 3);
 
     return SafeArea(
       bottom: false,
@@ -509,32 +492,38 @@ class _StickyCoachHeader extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(14, 10, 14, 0),
         child: DecoratedBox(
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.92),
-            borderRadius: BorderRadius.circular(18),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.18),
-                blurRadius: 14,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            color: Colors.black.withValues(alpha: 0.48),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.14),
+              width: 1,
+            ),
           ),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(12, 12, 14, 12),
+            padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CoachSpeech.sticky(
-                  messages: celebrateMessage != null
-                      ? [celebrateMessage!, ..._lines(l)]
-                      : _lines(l),
-                ),
-                const SizedBox(height: 12),
                 Row(
                   children: [
-                    Icon(currentTier.icon, color: currentTier.color, size: 20),
-                    const SizedBox(width: 6),
+                    Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        color: currentTier.color.withValues(alpha: 0.22),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: currentTier.color.withValues(alpha: 0.70),
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Icon(
+                        currentTier.icon,
+                        color: currentTier.color,
+                        size: 14,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
                     Text(
                       currentTier.label(l).toUpperCase(),
                       style: TextStyle(
@@ -547,31 +536,42 @@ class _StickyCoachHeader extends StatelessWidget {
                     const Spacer(),
                     Text(
                       '$xp XP',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFF555555),
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white.withValues(alpha: 0.80),
                       ),
                     ),
+                    if (nextTier != null) ...[
+                      const SizedBox(width: 6),
+                      Text(
+                        '→ ${nextTier.label(l)}',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.white.withValues(alpha: 0.45),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 7),
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
                     value: frac,
-                    minHeight: 10,
-                    backgroundColor: const Color(0xFFE4E2DC),
+                    minHeight: 5,
+                    backgroundColor: Colors.white.withValues(alpha: 0.15),
                     valueColor: AlwaysStoppedAnimation(currentTier.color),
                   ),
                 ),
-                if (nextTier != null) ...[
-                  const SizedBox(height: 4),
+                if (celebrateMessage != null) ...[
+                  const SizedBox(height: 6),
                   Text(
-                    l.xpToNextLeague(xpToNext, nextTier.label(l)),
-                    style: const TextStyle(
-                      fontSize: 11.5,
-                      color: Color(0xFF666666),
+                    celebrateMessage!,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white.withValues(alpha: 0.90),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
