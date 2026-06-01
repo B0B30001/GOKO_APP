@@ -1,41 +1,21 @@
 import 'package:flutter/material.dart';
 
-/// Tile pedestal painter shared by the gamified Learn and Puzzle gardens.
+/// Claymorphism tile painter shared by both gamified gardens.
 ///
-/// [PuzzlePedestalPainter] renders one clean "jade paver": a rounded-square top
-/// face with a thin extruded edge, a soft cast shadow, a subtle bevel highlight,
-/// and a white outer hairline so it reads cleanly over illustrated scenery.
-/// Both gardens use the same painter so the maps share one tile language.
+/// Per the ui-ux-pro-max design system recommendation for "gamified puzzle apps":
+/// clay-style, soft, bubbly, highly rounded tiles with multi-layer shadows that
+/// give a physical, pressable feel — not a flat card and not a heavy 3D coin.
 ///
-/// `baseColor` typically comes from the active GardenTheme; `unlocked`
-/// dims/darkens the shadow when the tile isn't yet reachable.
-
-/// Soft elliptical ambient-occlusion shadow on the ground below a pedestal.
-/// Shared between both painter variants so they ground-attach the same way.
-void _drawPedestalShadow(Canvas canvas, Size size, bool unlocked) {
-  final w = size.width;
-  final h = size.height;
-  final shadowRect = Rect.fromLTWH(w * 0.08, h * 0.88, w * 0.84, h * 0.18);
-  canvas.drawOval(
-    shadowRect,
-    Paint()
-      ..color = Colors.black.withValues(alpha: unlocked ? 0.30 : 0.15)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
-  );
-}
-
-/// Paints an extruded rounded-square "stone tile" pedestal used by the Puzzle
-/// Garden — the look of the Gemini garden mockups (Candy Crush / chess.com
-/// learning-path tiles).
-///
-/// Composition (back-to-front): ground cast shadow, a single extruded
-/// silhouette filled with the dark side colour (top rrect ∪ a copy shifted
-/// down by `depth`), then the lit top face with a top-left radial gradient, a
-/// bevel highlight tracing the top + upper sides, and a faint inset for the
-/// "carved stone" rim.
+/// Layers (back to front):
+///   1. Coloured drop shadow (large, soft, same hue as tile) — the "clay" depth
+///   2. Dark bottom edge (~8% of height) — the "under-surface" of the clay disc
+///   3. Main tile face (very round, slightly lighter than base)
+///   4. Inner highlight stroke — white arc at top, fades to transparent at sides
+///   5. Outer white hairline — lifts tile off the scenery
 class PuzzlePedestalPainter extends CustomPainter {
   final Color baseColor;
   final bool unlocked;
+
   const PuzzlePedestalPainter({
     required this.baseColor,
     required this.unlocked,
@@ -46,97 +26,100 @@ class PuzzlePedestalPainter extends CustomPainter {
     final w = size.width;
     final h = size.height;
 
-    _drawPedestalShadow(canvas, size, unlocked);
+    // Very round pill/disc geometry — claymorphism uses borderRadius 40-50%
+    // of the shorter dimension so tiles feel like physical buttons, not cards.
+    final radius = Radius.circular(w * 0.40);
+    // Face occupies the upper 68% of the allocated height; the bottom 32% is
+    // breathing room for the clay shadow that "grounds" the tile.
+    final faceRect = Rect.fromLTWH(w * 0.06, h * 0.02, w * 0.88, h * 0.68);
+    final faceRRect = RRect.fromRectAndRadius(faceRect, radius);
 
-    // Top face geometry — a rounded square in the upper portion so the screen's
-    // number/icon (anchored ~0.30h from the bottom) lands on the lit face.
-    final radius = Radius.circular(w * 0.24);
-    final topRect = Rect.fromLTWH(w * 0.10, h * 0.02, w * 0.80, h * 0.62);
-    final topRRect = RRect.fromRectAndRadius(topRect, radius);
+    final alpha = unlocked ? 1.0 : 0.55;
 
-    // Extrusion: an identical rrect shifted down. The union of the two is the
-    // full side-wall silhouette (they overlap since depth < face height).
-    // Kept thin (flat-design per ui-ux-pro-max) — a clean paver with a hint of
-    // edge, not a heavy 3D coin.
-    final depth = h * 0.12;
-    final sideRRect = RRect.fromRectAndRadius(
-      topRect.translate(0, depth),
-      radius,
+    // ── Layer 1: Clay drop shadow ─────────────────────────────────────────
+    // A single large, coloured, blurred oval below and slightly behind the
+    // face — the defining "clay" depth cue that makes the tile feel physical.
+    final shadowColor = Color.lerp(
+      baseColor,
+      Colors.black,
+      0.38,
+    )!.withValues(alpha: unlocked ? 0.55 : 0.25);
+    canvas.drawOval(
+      Rect.fromLTWH(w * 0.10, faceRect.bottom - h * 0.04, w * 0.80, h * 0.22),
+      Paint()
+        ..color = shadowColor
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 7),
     );
-    final sideColor = Color.lerp(baseColor, Colors.black, 0.46)!;
-    final silhouette = Path.combine(
-      PathOperation.union,
-      Path()..addRRect(topRRect),
-      Path()..addRRect(sideRRect),
-    );
-    canvas.drawPath(silhouette, Paint()..color = sideColor);
 
-    // A subtle vertical gradient on the side wall to round the extrusion.
-    canvas.drawPath(
-      silhouette,
+    // ── Layer 2: Bottom edge "rim" ────────────────────────────────────────
+    // A slightly darker, slightly lower rrect — simulates the underside of
+    // a thick clay disc (avoids any sharp extrusion / coin look).
+    final rimColor = Color.lerp(
+      baseColor,
+      Colors.black,
+      0.34,
+    )!.withValues(alpha: alpha);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(faceRect.translate(0, h * 0.055), radius),
+      Paint()..color = rimColor,
+    );
+
+    // ── Layer 3: Main face ────────────────────────────────────────────────
+    // Slightly lightened at the top-centre so it catches imaginary overhead
+    // light — the "puffy" clay look. Very subtle gradient; mostly flat.
+    final faceTopColor = Color.lerp(
+      baseColor,
+      Colors.white,
+      0.22,
+    )!.withValues(alpha: alpha);
+    final faceBotColor = Color.lerp(
+      baseColor,
+      Colors.black,
+      0.06,
+    )!.withValues(alpha: alpha);
+    canvas.drawRRect(
+      faceRRect,
       Paint()
         ..shader = LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            Colors.white.withValues(alpha: 0.0),
-            Colors.black.withValues(alpha: 0.18),
-          ],
-        ).createShader(Rect.fromLTWH(0, h * 0.5, w, h * 0.5)),
+          colors: [faceTopColor, faceBotColor],
+          stops: const [0.0, 1.0],
+        ).createShader(faceRect),
     );
 
-    // Lit top face — soft, near-flat gradient (subtle top-left light) for a
-    // calm premium read rather than a glossy bubble.
-    final topPaint = Paint()
-      ..shader = RadialGradient(
-        center: const Alignment(-0.3, -0.45),
-        radius: 1.05,
-        colors: [
-          Color.lerp(baseColor, Colors.white, 0.16)!,
-          baseColor,
-          Color.lerp(baseColor, Colors.black, 0.08)!,
-        ],
-        stops: const [0.0, 0.6, 1.0],
-      ).createShader(topRect);
-    canvas.drawRRect(topRRect, topPaint);
-
-    // Bevel highlight — a bright stroke along the top and upper-side edges.
-    final bevel = RRect.fromRectAndRadius(
-      topRect.deflate(w * 0.04),
-      Radius.circular(w * 0.20),
-    );
+    // ── Layer 4: Inner highlight arc ──────────────────────────────────────
+    // A thin white stroke that hugs the top portion of the tile — the
+    // specular "catch light" that sells the clay/ceramic material feel.
     canvas.save();
-    canvas.clipRRect(topRRect);
-    canvas.drawRRect(
-      bevel,
+    canvas.clipRRect(faceRRect);
+    final hlRect = faceRect.deflate(w * 0.055);
+    canvas.drawArc(
+      Rect.fromLTWH(
+        hlRect.left,
+        hlRect.top,
+        hlRect.width,
+        hlRect.height * 0.70,
+      ),
+      3.14, // start from left
+      3.14, // sweep 180° (top half only)
+      false,
       Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.2
-        ..color = Colors.white.withValues(alpha: 0.40)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.2),
+        ..strokeWidth = 1.8
+        ..color = Colors.white.withValues(alpha: 0.45),
     );
     canvas.restore();
 
-    // Subtle white outer hairline so the node pops cleanly on busy
-    // illustrated scenery without adding visual bulk.
+    // ── Layer 5: Outer hairline ───────────────────────────────────────────
+    // A crisp white ring around the face at full opacity — makes the tile
+    // pop cleanly off any background without heavy borders.
     canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        topRect.inflate(1.3),
-        Radius.circular(w * 0.24 + 1.3),
-      ),
+      faceRRect,
       Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.4
-        ..color = Colors.white.withValues(alpha: 0.55),
-    );
-
-    // Crisp dark inner rim for definition against busy backgrounds.
-    canvas.drawRRect(
-      topRRect,
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.0
-        ..color = Colors.black.withValues(alpha: 0.12),
+        ..strokeWidth = 1.5
+        ..color = Colors.white.withValues(alpha: unlocked ? 0.50 : 0.25),
     );
   }
 
