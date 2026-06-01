@@ -1,3 +1,8 @@
+# Android release signing — NEVER commit these (your app's keys/secrets)
+android/key.properties
+**/*.jks
+**/*.keystore
+
 # Miscellaneous
 *.class
 *.log
