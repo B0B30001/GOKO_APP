@@ -33,7 +33,7 @@ android {
 
     defaultConfig {
         // Unique, permanent Application ID for Google Play.
-        applicationId = "com.example.zaibal"
+        applicationId = "com.goko.go"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
