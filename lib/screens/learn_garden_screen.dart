@@ -6,7 +6,6 @@ import 'package:zaibal/models/learning_rank.dart';
 import 'package:zaibal/models/tutorial.dart';
 import 'package:zaibal/services/content_service.dart';
 import 'package:zaibal/services/progress_service.dart';
-import 'package:zaibal/widgets/coach_speech.dart';
 import 'package:zaibal/widgets/garden/garden.dart';
 import 'tutorial_screen.dart';
 
@@ -126,14 +125,6 @@ class _LearnGardenScreenState extends State<LearnGardenScreen> {
   /// All lessons are free in the current build — just open the tutorial.
   Future<void> _onTileTap(Tutorial t) => _openTutorial(t);
 
-  List<String> _coachLines(AppLocalizations l) => [
-    l.coachLearnIntro1,
-    l.coachLearnIntro2,
-    l.coachLearnIntro3,
-    l.coachLearnIntro4,
-    l.coachLearnIntro5,
-  ];
-
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
@@ -239,7 +230,7 @@ class _LearnGardenScreenState extends State<LearnGardenScreen> {
         Positioned.fill(
           child: ListView(
             controller: _scroll,
-            padding: const EdgeInsets.only(top: 150, bottom: 170),
+            padding: const EdgeInsets.only(top: 104, bottom: 170),
             children: panels,
           ),
         ),
@@ -284,7 +275,6 @@ class _LearnGardenScreenState extends State<LearnGardenScreen> {
           left: 0,
           right: 0,
           child: _StickyLearnHeader(
-            messages: _coachLines(l),
             completedCount: progress.lessonsCompleted,
             totalCount: _all.length,
           ),
@@ -382,12 +372,10 @@ class _LearnGardenScreenState extends State<LearnGardenScreen> {
 // ── Sticky Learn header (coach + chess.com-style rank + progress) ───────────
 
 class _StickyLearnHeader extends StatelessWidget {
-  final List<String> messages;
   final int completedCount;
   final int totalCount;
 
   const _StickyLearnHeader({
-    required this.messages,
     required this.completedCount,
     required this.totalCount,
   });
@@ -427,8 +415,6 @@ class _StickyLearnHeader extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CoachSpeech.sticky(messages: messages),
-                const SizedBox(height: 10),
                 // ── Rank row (chess.com "Learning Rank" style) ──────────
                 Row(
                   children: [
@@ -707,36 +693,33 @@ class _LessonTileState extends State<_LessonTile>
                                   color: Colors.white,
                                   size: 22,
                                 ),
-                              // Only the current lesson is labelled
-                              // (Duolingo-style) — keeps other nodes clean and
-                              // avoids truncated titles across the whole map.
-                              if (_isCurrent) ...[
-                                const SizedBox(height: 2),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 2,
-                                  ),
-                                  child: Text(
-                                    widget.tutorial.title,
-                                    textAlign: TextAlign.center,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 9.5,
-                                      height: 1.05,
-                                      fontWeight: FontWeight.w800,
-                                      shadows: [
-                                        Shadow(
-                                          color: Colors.black54,
-                                          blurRadius: 3,
-                                          offset: Offset(0, 1),
-                                        ),
-                                      ],
-                                    ),
+                              // Lesson name under the glyph (2 lines, wraps) so
+                              // every node reads as a real lesson, not a blank tile.
+                              const SizedBox(height: 2),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 2,
+                                ),
+                                child: Text(
+                                  widget.tutorial.title,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 9.5,
+                                    height: 1.05,
+                                    fontWeight: FontWeight.w800,
+                                    shadows: [
+                                      Shadow(
+                                        color: Colors.black54,
+                                        blurRadius: 3,
+                                        offset: Offset(0, 1),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ],
+                              ),
                             ],
                           ),
                         ),
