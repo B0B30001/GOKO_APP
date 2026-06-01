@@ -105,6 +105,26 @@ class GardenBackgroundPainter extends CustomPainter {
         ..blendMode = BlendMode.plus,
     );
 
+    // God-rays — soft light shafts fanning down from the sun. Low-alpha,
+    // additive, blurred wedges for a premium "light through mist" atmosphere.
+    final sunPos = Offset(w * 0.78, h * 0.16 - sunOffset);
+    canvas.save();
+    canvas.clipRect(Rect.fromLTWH(0, 0, w, h * 0.8));
+    final rayPaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.05)
+      ..blendMode = BlendMode.plus
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
+    for (int i = 0; i < 6; i++) {
+      final x = w * 0.05 + i * (w * 0.16);
+      final ray = Path()
+        ..moveTo(sunPos.dx, sunPos.dy)
+        ..lineTo(x - 16, h * 0.82)
+        ..lineTo(x + 16, h * 0.82)
+        ..close();
+      canvas.drawPath(ray, rayPaint);
+    }
+    canvas.restore();
+
     // Three layered mountain ridges with cubic-Bezier silhouettes.
     // Each ridge gets progressively more parallax offset for depth.
     final mountainOffset = scrollOffset * mountainParallax;
@@ -272,6 +292,24 @@ class GardenBackgroundPainter extends CustomPainter {
         ripple,
       );
     }
+
+    // Soft edge vignette — darkens the corners a touch so the scene feels
+    // framed and premium, and tiles/text pop toward the centre.
+    final vignette = Rect.fromLTWH(0, 0, w, h);
+    canvas.drawRect(
+      vignette,
+      Paint()
+        ..shader = RadialGradient(
+          center: Alignment.center,
+          radius: 0.95,
+          colors: [
+            Colors.black.withValues(alpha: 0.0),
+            Colors.black.withValues(alpha: 0.0),
+            Colors.black.withValues(alpha: 0.22),
+          ],
+          stops: const [0.0, 0.62, 1.0],
+        ).createShader(vignette),
+    );
   }
 
   /// Draws a far-off 3-tier pagoda silhouette centred near the right third of
@@ -341,12 +379,21 @@ class GardenBackgroundPainter extends CustomPainter {
   ) {
     final unit = (h * 0.012).clamp(3.0, 9.0);
 
-    // ── Evergreen pines (stacked triangles) ──────────────────────────────
+    // ── Trees (stacked triangles), foliage tinted per world so each band
+    // reads as a distinct place: sakura forest, crystal cave, maple peaks,
+    // frosted tundra, jade highlands.
+    final foliage = switch (themeIdx.clamp(0, 4)) {
+      0 => const Color(0xFFE39AB8), // sakura pink
+      1 => const Color(0xFF8E7BE6), // crystal violet
+      2 => const Color(0xFFD98C3A), // maple amber
+      3 => const Color(0xFFD8E6F0), // frosted white
+      _ => const Color(0xFF3E8E5A), // jade green
+    };
     final pineColor = Color.lerp(
-      theme.hillBottom,
+      foliage,
       Colors.black,
-      0.25,
-    )!.withValues(alpha: 0.55);
+      0.10,
+    )!.withValues(alpha: 0.6);
     final trunkColor = const Color(0xFF5A3A22).withValues(alpha: 0.55);
     void pine(double cx, double scale) {
       final s = unit * scale;

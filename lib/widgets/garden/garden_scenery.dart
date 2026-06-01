@@ -17,6 +17,13 @@ import 'package:flutter/material.dart';
 ///
 /// Asset convention (one per theme band, drop into `assets/backgrounds/`):
 ///   0 stone_forest · 1 crystal_cave · 2 copper_peaks · 3 diamond_tundra · 4 jade_highlands
+/// When `true`, each world band shows its hand-painted `assets/backgrounds/`
+/// PNG (cover). When `false` (default), the panel is transparent and the
+/// richer **procedural** scene painted globally by `GardenBackgroundPainter`
+/// shows through, scrolling with parallax. Flip to `true` to restore the 5
+/// Gemini PNGs if you prefer the painted look.
+const bool _useSceneryPngs = false;
+
 class GardenWorldPanel extends StatelessWidget {
   /// Theme-band index (0..4); selects which scenery asset to look for.
   final int themeIdx;
@@ -51,35 +58,33 @@ class GardenWorldPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // Full-bleed scenery behind the (inset) content. The art is a complete
-        // 9:16 portrait scene, so we show it ONCE with BoxFit.cover (top-aligned)
-        // — fills the band preserving aspect (no stretch, no repeating the pond
-        // or clouds mid-scroll). Missing asset ⇒ transparent, so the global
-        // procedural background shows through.
-        Positioned.fill(
-          child: Image.asset(
-            _assetPath,
-            fit: BoxFit.cover,
-            alignment: Alignment.topCenter,
-            errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+        // PNG mode (opt-in): show this world's hand-painted scene once via
+        // BoxFit.cover (no stretch, no repeat) under a gentle dark veil that
+        // mutes it so the interface reads. Procedural mode (default): no
+        // per-band layer — the global GardenBackgroundPainter shows through.
+        if (_useSceneryPngs) ...[
+          Positioned.fill(
+            child: Image.asset(
+              _assetPath,
+              fit: BoxFit.cover,
+              alignment: Alignment.topCenter,
+              errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+            ),
           ),
-        ),
-        // Gentle dark veil to mute the illustration so the interface reads as
-        // premium atmosphere, not a loud focal image — and to lift tile/text
-        // contrast. Slightly stronger toward the bottom where the path sits.
-        const Positioned.fill(
-          child: IgnorePointer(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Color(0x14000000), Color(0x40000000)],
+          const Positioned.fill(
+            child: IgnorePointer(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Color(0x14000000), Color(0x40000000)],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
+        ],
         Padding(
           padding: EdgeInsets.symmetric(horizontal: horizontalInset),
           child: child,
