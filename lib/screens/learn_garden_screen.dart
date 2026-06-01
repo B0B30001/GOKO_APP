@@ -237,14 +237,9 @@ class _LearnGardenScreenState extends State<LearnGardenScreen> {
           ),
         ),
         Positioned.fill(
-          child: IgnorePointer(
-            child: AmbientDecorations(themeIdx: safeThemeIdx),
-          ),
-        ),
-        Positioned.fill(
           child: ListView(
             controller: _scroll,
-            padding: const EdgeInsets.only(top: 120, bottom: 160),
+            padding: const EdgeInsets.only(top: 150, bottom: 170),
             children: panels,
           ),
         ),

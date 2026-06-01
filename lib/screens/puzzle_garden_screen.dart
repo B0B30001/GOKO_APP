@@ -263,19 +263,16 @@ class _PuzzleGardenScreenState extends State<PuzzleGardenScreen> {
             ),
           ),
         ),
-        // Floating ambient decorations (clouds + drifting petals/snow per theme).
-        Positioned.fill(
-          child: IgnorePointer(child: AmbientDecorations(themeIdx: themeIdx)),
-        ),
         // Scrollable level map. reverse:true puts Level 1 at the bottom so the
-        // player climbs upward through the world bands. Padding is vertical
-        // only — panels are full-bleed so each world's scenery reaches the
-        // screen edges (tiles keep their inset inside GardenWorldPanel).
+        // player climbs upward through the world bands. Top padding clears the
+        // sticky header so the first world gate isn't hidden behind it; bottom
+        // clears the floating CTA. (Ambient particle overlay removed — it read
+        // as scattered noise over the illustrated scenery.)
         Positioned.fill(
           child: ListView(
             controller: _scroll,
             reverse: true,
-            padding: const EdgeInsets.only(top: 24, bottom: 160),
+            padding: const EdgeInsets.only(top: 200, bottom: 170),
             children: panels,
           ),
         ),
