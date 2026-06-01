@@ -351,14 +351,16 @@ class GoTheme {
   static ThemeData _buildLightMode() {
     const scaffold = Color(0xFFFFFFFF);
     const surface = Color(0xFFF5F7FA);
-    const primary = Color(0xFF1565C0);
+    // Zen green + gold accent (ui-ux-pro-max design system) for a calm,
+    // premium feel cohesive with the garden art.
+    const primary = Color(0xFF15803D);
     return ThemeData(
       brightness: Brightness.light,
       scaffoldBackgroundColor: scaffold,
       colorScheme: const ColorScheme.light(
         primary: primary,
         onPrimary: Colors.white,
-        secondary: Color(0xFF42A5F5),
+        secondary: Color(0xFFD97706),
         surface: surface,
         onSurface: Color(0xFF0E1525),
       ),

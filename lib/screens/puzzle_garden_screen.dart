@@ -372,11 +372,11 @@ class _SolvePuzzleCta extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
           decoration: BoxDecoration(
-            color: const Color(0xFF1565C0),
+            color: const Color(0xFF15803D),
             borderRadius: BorderRadius.circular(18),
             boxShadow: const [
               BoxShadow(
-                color: Color(0x551565C0),
+                color: Color(0x5515803D),
                 blurRadius: 18,
                 offset: Offset(0, 6),
               ),

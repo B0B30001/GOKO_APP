@@ -312,11 +312,11 @@ class _LearnGardenScreenState extends State<LearnGardenScreen> {
                     vertical: 14,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1565C0),
+                    color: const Color(0xFF15803D),
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: const [
                       BoxShadow(
-                        color: Color(0x551565C0),
+                        color: Color(0x5515803D),
                         blurRadius: 18,
                         offset: Offset(0, 6),
                       ),
@@ -668,12 +668,13 @@ class _LessonTileState extends State<_LessonTile>
                             ),
                           ),
                         ),
-                      // 3D book-stack pedestal.
+                      // Unified jade-paver pedestal (same as Puzzle garden) so
+                      // both maps share one clean tile language.
                       Positioned(
                         bottom: 0,
                         child: CustomPaint(
                           size: const Size(width, height),
-                          painter: LessonPedestalPainter(
+                          painter: PuzzlePedestalPainter(
                             baseColor: tileColor,
                             unlocked: !widget.locked,
                           ),
