@@ -2,54 +2,64 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:zaibal/widgets/garden/garden_scenery.dart';
 
-/// Tests for [GardenWorldPanel] — the per-world scenery wrapper that scrolls
-/// with the path and never stretches its art.
+/// Tests for [GardenWorldPanel] — the per-world layout wrapper that insets a
+/// world band's content while the procedural background shows full-bleed
+/// behind it. (Illustrated PNG backdrops were dropped, so it is now a thin
+/// inset wrapper with no themeIdx/asset logic.)
 void main() {
   testWidgets('renders its child', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: Scaffold(
           body: GardenWorldPanel(
-            themeIdx: 0,
             child: Text('band-content'),
           ),
         ),
       ),
     );
     expect(find.text('band-content'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
-  testWidgets('missing scenery asset falls back gracefully (no crash)', (
-    tester,
-  ) async {
-    // No assets/backgrounds/*.png are bundled in the test harness, so the
-    // Image.asset errorBuilder must kick in (→ transparent) without throwing.
+  testWidgets('applies the default horizontal inset', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: GardenWorldPanel(child: SizedBox(height: 200, width: 100)),
+        ),
+      ),
+    );
+    final padding = tester.widget<Padding>(
+      find
+          .descendant(
+            of: find.byType(GardenWorldPanel),
+            matching: find.byType(Padding),
+          )
+          .first,
+    );
+    expect(padding.padding, const EdgeInsets.symmetric(horizontal: 16));
+  });
+
+  testWidgets('honours a custom horizontal inset', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: Scaffold(
           body: GardenWorldPanel(
-            themeIdx: 2,
-            child: SizedBox(height: 200, width: 100),
+            horizontalInset: 32,
+            child: Text('x'),
           ),
         ),
       ),
     );
-    await tester.pump();
-    expect(tester.takeException(), isNull);
-    expect(find.byType(GardenWorldPanel), findsOneWidget);
-  });
-
-  testWidgets('clamps an out-of-range themeIdx without throwing', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
-          body: GardenWorldPanel(themeIdx: 99, child: Text('x')),
-        ),
-      ),
+    final padding = tester.widget<Padding>(
+      find
+          .descendant(
+            of: find.byType(GardenWorldPanel),
+            matching: find.byType(Padding),
+          )
+          .first,
     );
-    expect(tester.takeException(), isNull);
+    expect(padding.padding, const EdgeInsets.symmetric(horizontal: 32));
     expect(find.text('x'), findsOneWidget);
   });
 }

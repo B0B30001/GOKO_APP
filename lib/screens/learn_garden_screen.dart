@@ -165,7 +165,6 @@ class _LearnGardenScreenState extends State<LearnGardenScreen> {
       if (bandChildren.isEmpty) return;
       panels.add(
         GardenWorldPanel(
-          themeIdx: safeThemeIdx,
           child: Column(mainAxisSize: MainAxisSize.min, children: bandChildren),
         ),
       );

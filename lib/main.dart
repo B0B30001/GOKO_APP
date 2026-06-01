@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:zaibal/gen/l10n/app_localizations.dart';
 import 'package:zaibal/utils/stone_shader_warmup.dart';
@@ -52,15 +53,26 @@ Future<void> main() async {
     progressService.load(),
   ]);
 
-  runApp(
-    GokoApp(
-      userService: userService,
-      subscriptionService: subscriptionService,
-      matchHistoryService: matchHistoryService,
-      ogsService: ogsService,
-      progressService: progressService,
-    ),
+  final app = GokoApp(
+    userService: userService,
+    subscriptionService: subscriptionService,
+    matchHistoryService: matchHistoryService,
+    ogsService: ogsService,
+    progressService: progressService,
   );
+
+  // Crash / error reporting. Enabled only when a DSN is supplied at build time
+  // (`--dart-define=SENTRY_DSN=...`); with no DSN the app runs normally with no
+  // reporting and zero overhead, so debug/local builds are unaffected.
+  const sentryDsn = String.fromEnvironment('SENTRY_DSN');
+  if (sentryDsn.isEmpty) {
+    runApp(app);
+  } else {
+    await SentryFlutter.init((options) {
+      options.dsn = sentryDsn;
+      options.tracesSampleRate = 0.1;
+    }, appRunner: () => runApp(app));
+  }
 }
 
 class GokoApp extends StatefulWidget {

@@ -195,7 +195,6 @@ class _PuzzleGardenScreenState extends State<PuzzleGardenScreen> {
       if (bandChildren.isEmpty) return;
       panels.add(
         GardenWorldPanel(
-          themeIdx: bandThemeIdx,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: bandChildren.reversed.toList(),
