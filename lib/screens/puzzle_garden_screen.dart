@@ -271,7 +271,7 @@ class _PuzzleGardenScreenState extends State<PuzzleGardenScreen> {
           child: ListView(
             controller: _scroll,
             reverse: true,
-            padding: const EdgeInsets.only(top: 110, bottom: 170),
+            padding: const EdgeInsets.only(top: 150, bottom: 170),
             children: panels,
           ),
         ),
@@ -492,7 +492,7 @@ class _StickyCoachHeader extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(14, 10, 14, 0),
         child: DecoratedBox(
           decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.48),
+            color: Colors.black.withValues(alpha: 0.66),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: Colors.white.withValues(alpha: 0.14),
@@ -670,7 +670,7 @@ class _LevelTileState extends State<_LevelTile> with TickerProviderStateMixin {
     // the current tile keeps the active world colour; locked tiles are slate.
     const jade = Color(0xFF6FAE83);
     final tileColor = !widget.unlocked
-        ? Colors.blueGrey.shade700
+        ? const Color(0xFF9AA7B2)
         : isCompleted
         ? jade
         : widget.theme.tileBase;

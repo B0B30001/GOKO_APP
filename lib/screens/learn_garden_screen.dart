@@ -597,7 +597,7 @@ class _LessonTileState extends State<_LessonTile>
     const height = 72.0;
 
     final tileColor = widget.locked
-        ? Colors.blueGrey.shade700
+        ? const Color(0xFF9AA7B2)
         : widget.completed
         ? const Color(0xFF43A047)
         : widget.theme.tileBase;
