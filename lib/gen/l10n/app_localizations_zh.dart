@@ -807,7 +807,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get appTagline => '掌握古老的围棋游戏';
 
   @override
-  String get featurePlayBots => '与 KataGo 和在线机器人对弈';
+  String get featurePlayBots => '与 AI 机器人对弈 — 离线和在线';
 
   @override
   String get featurePuzzlesLessons => '题目、课程与每日练习';
@@ -820,6 +820,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get createOgsAccount => '创建免费 OGS 账号';
+
+  @override
+  String get continueOffline => '离线继续';
 
   @override
   String get displayName => '显示名称';

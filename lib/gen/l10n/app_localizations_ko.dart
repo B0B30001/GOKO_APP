@@ -808,7 +808,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appTagline => '고대 바둑 게임을 마스터하세요';
 
   @override
-  String get featurePlayBots => 'KataGo 및 온라인 봇과의 대국';
+  String get featurePlayBots => 'AI 봇과 대국 — 오프라인 및 온라인';
 
   @override
   String get featurePuzzlesLessons => '퍼즐, 레슨 및 일일 훈련';
@@ -821,6 +821,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get createOgsAccount => '무료 OGS 계정 만들기';
+
+  @override
+  String get continueOffline => '오프라인으로 계속하기';
 
   @override
   String get displayName => '표시 이름';

@@ -92,6 +92,15 @@ class AppSettings {
   /// Vibration motor only; ignored on devices without one (web, desktop).
   static bool hapticsEnabled = true;
 
+  /// True once the user has chosen "Continue offline" on the sign-in gate.
+  ///
+  /// GOKO is offline-first: local 2-player, vs-AI, and puzzles need no account.
+  /// When this is true (or the user is authenticated) the app skips the sign-in
+  /// gate and goes straight to the main shell. Online play still prompts for an
+  /// OGS login at the point of use. Persisted so a returning offline user isn't
+  /// shown the gate again every launch.
+  static bool guestMode = false;
+
   /// Bumped on every save so listeners can rebuild.
   static final ValueNotifier<int> revision = ValueNotifier<int>(0);
 
@@ -109,6 +118,7 @@ class AppSettings {
   static const _kSoundEnabled = 'soundEnabled';
   static const _kHapticsEnabled = 'hapticsEnabled';
   static const _kStoneColorId = 'stoneColorId';
+  static const _kGuestMode = 'guestMode';
 
   /// Reads persisted values into the static fields. Must be called once at
   /// startup before runApp().
@@ -144,6 +154,7 @@ class AppSettings {
     soundEnabled = prefs.getBool(_kSoundEnabled) ?? soundEnabled;
     hapticsEnabled = prefs.getBool(_kHapticsEnabled) ?? hapticsEnabled;
     stoneColorId = prefs.getString(_kStoneColorId) ?? stoneColorId;
+    guestMode = prefs.getBool(_kGuestMode) ?? guestMode;
     revision.value++;
   }
 
@@ -161,6 +172,7 @@ class AppSettings {
     await prefs.setBool(_kSoundEnabled, soundEnabled);
     await prefs.setBool(_kHapticsEnabled, hapticsEnabled);
     await prefs.setString(_kStoneColorId, stoneColorId);
+    await prefs.setBool(_kGuestMode, guestMode);
     revision.value++;
   }
 

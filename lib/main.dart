@@ -96,6 +96,20 @@ class GokoApp extends StatefulWidget {
 }
 
 class _GokoAppState extends State<GokoApp> {
+  /// Mirrors [AppSettings.guestMode]. When true (or the user is authenticated)
+  /// the sign-in gate is skipped and the main shell is shown. Set by tapping
+  /// "Continue offline" on the [AuthGateScreen].
+  bool _guest = AppSettings.guestMode;
+
+  /// Enters offline (guest) mode: skips the sign-in gate so the user can play
+  /// 2-player, vs-AI, and puzzles without an OGS account. Persisted so the gate
+  /// isn't shown again on the next launch. Online play still prompts for login.
+  void _continueOffline() {
+    setState(() => _guest = true);
+    AppSettings.guestMode = true;
+    AppSettings.save();
+  }
+
   void _setTheme(bool isDark) {
     setState(() {
       AppSettings.themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
@@ -211,11 +225,14 @@ class _GokoAppState extends State<GokoApp> {
           Locale('ja'),
           Locale('ko'),
         ],
-        // Auth gate: show AuthGateScreen until OgsService is authenticated.
+        // Sign-in gate: shown until the user authenticates with OGS OR chooses
+        // "Continue offline". GOKO is offline-first, so the gate must never trap
+        // a user who only wants local play — online features prompt for login at
+        // the point of use instead.
         home: Consumer<OgsService>(
-          builder: (_, ogs, __) => ogs.isAuthenticated
+          builder: (_, ogs, __) => (ogs.isAuthenticated || _guest)
               ? AppShell(onThemeToggle: _toggleTheme)
-              : const AuthGateScreen(),
+              : AuthGateScreen(onContinueOffline: _continueOffline),
         ),
         routes: {
           '/learn': (context) => const LearnScreen(),

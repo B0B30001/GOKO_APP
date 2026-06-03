@@ -808,7 +808,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get appTagline => '古代の囲碁をマスターしよう';
 
   @override
-  String get featurePlayBots => 'KataGo とオンラインボットとの対局';
+  String get featurePlayBots => 'AI ボットと対局 — オフライン＆オンライン';
 
   @override
   String get featurePuzzlesLessons => '詰碁・レッスン・デイリードリル';
@@ -821,6 +821,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get createOgsAccount => '無料 OGS アカウント作成';
+
+  @override
+  String get continueOffline => 'オフラインで続ける';
 
   @override
   String get displayName => '表示名';

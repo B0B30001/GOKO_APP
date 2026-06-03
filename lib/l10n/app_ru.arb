@@ -306,11 +306,12 @@
   "goBack": "Назад",
 
   "appTagline": "Освойте древнюю игру Го",
-  "featurePlayBots": "Игра против KataGo и онлайн-ботов",
+  "featurePlayBots": "Игра против ИИ-ботов — офлайн и онлайн",
   "featurePuzzlesLessons": "Задачи, уроки и ежедневные тренировки",
   "featureLiveGames": "Живые партии на Online Go Server",
   "signInWithOgs": "Войти через OGS",
   "createOgsAccount": "Создать бесплатный аккаунт OGS",
+  "continueOffline": "Продолжить офлайн",
 
   "displayName": "Отображаемое имя",
   "attributionAvatars": "Аватары ботов: OpenMoji (CC BY-SA 4.0)",

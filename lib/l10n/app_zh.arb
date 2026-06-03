@@ -304,11 +304,12 @@
   "goBack": "返回",
 
   "appTagline": "掌握古老的围棋游戏",
-  "featurePlayBots": "与 KataGo 和在线机器人对弈",
+  "featurePlayBots": "与 AI 机器人对弈 — 离线和在线",
   "featurePuzzlesLessons": "题目、课程与每日练习",
   "featureLiveGames": "在 Online Go Server 上直播对局",
   "signInWithOgs": "使用 OGS 登录",
   "createOgsAccount": "创建免费 OGS 账号",
+  "continueOffline": "离线继续",
 
   "displayName": "显示名称",
   "attributionAvatars": "机器人头像：OpenMoji (CC BY-SA 4.0)",

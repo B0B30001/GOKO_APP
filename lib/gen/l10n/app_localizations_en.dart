@@ -816,7 +816,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTagline => 'Master the ancient game of Go';
 
   @override
-  String get featurePlayBots => 'Play vs KataGo & online bots';
+  String get featurePlayBots => 'Play vs AI bots — offline & online';
 
   @override
   String get featurePuzzlesLessons => 'Puzzles, lessons & daily drills';
@@ -829,6 +829,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get createOgsAccount => 'Create free OGS account';
+
+  @override
+  String get continueOffline => 'Continue offline';
 
   @override
   String get displayName => 'Display name';

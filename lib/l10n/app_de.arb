@@ -300,11 +300,12 @@
   "goBack": "Zurück",
 
   "appTagline": "Meistere das alte Spiel Go",
-  "featurePlayBots": "Spiele gegen KataGo & Online-Bots",
+  "featurePlayBots": "Spiele gegen KI-Bots – offline & online",
   "featurePuzzlesLessons": "Aufgaben, Lektionen & tägliche Übungen",
   "featureLiveGames": "Live-Partien auf dem Online Go Server",
   "signInWithOgs": "Mit OGS anmelden",
   "createOgsAccount": "Kostenloses OGS-Konto erstellen",
+  "continueOffline": "Offline fortfahren",
 
   "displayName": "Anzeigename",
   "attributionAvatars": "Bot-Avatare: OpenMoji (CC BY-SA 4.0)",

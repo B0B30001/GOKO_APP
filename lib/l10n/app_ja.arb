@@ -304,11 +304,12 @@
   "goBack": "戻る",
 
   "appTagline": "古代の囲碁をマスターしよう",
-  "featurePlayBots": "KataGo とオンラインボットとの対局",
+  "featurePlayBots": "AI ボットと対局 — オフライン＆オンライン",
   "featurePuzzlesLessons": "詰碁・レッスン・デイリードリル",
   "featureLiveGames": "Online Go Server でのライブ対局",
   "signInWithOgs": "OGS でサインイン",
   "createOgsAccount": "無料 OGS アカウント作成",
+  "continueOffline": "オフラインで続ける",
 
   "displayName": "表示名",
   "attributionAvatars": "ボットアバター: OpenMoji (CC BY-SA 4.0)",

@@ -1651,7 +1651,7 @@ abstract class AppLocalizations {
   /// No description provided for @featurePlayBots.
   ///
   /// In en, this message translates to:
-  /// **'Play vs KataGo & online bots'**
+  /// **'Play vs AI bots — offline & online'**
   String get featurePlayBots;
 
   /// No description provided for @featurePuzzlesLessons.
@@ -1677,6 +1677,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create free OGS account'**
   String get createOgsAccount;
+
+  /// No description provided for @continueOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue offline'**
+  String get continueOffline;
 
   /// No description provided for @displayName.
   ///

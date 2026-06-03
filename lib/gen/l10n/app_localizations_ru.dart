@@ -818,7 +818,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get appTagline => 'Освойте древнюю игру Го';
 
   @override
-  String get featurePlayBots => 'Игра против KataGo и онлайн-ботов';
+  String get featurePlayBots => 'Игра против ИИ-ботов — офлайн и онлайн';
 
   @override
   String get featurePuzzlesLessons => 'Задачи, уроки и ежедневные тренировки';
@@ -831,6 +831,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get createOgsAccount => 'Создать бесплатный аккаунт OGS';
+
+  @override
+  String get continueOffline => 'Продолжить офлайн';
 
   @override
   String get displayName => 'Отображаемое имя';

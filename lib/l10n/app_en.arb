@@ -762,11 +762,12 @@
   "goBack": "Go Back",
 
   "appTagline": "Master the ancient game of Go",
-  "featurePlayBots": "Play vs KataGo & online bots",
+  "featurePlayBots": "Play vs AI bots — offline & online",
   "featurePuzzlesLessons": "Puzzles, lessons & daily drills",
   "featureLiveGames": "Live games on Online Go Server",
   "signInWithOgs": "Sign in with OGS",
   "createOgsAccount": "Create free OGS account",
+  "continueOffline": "Continue offline",
 
   "displayName": "Display name",
   "attributionAvatars": "Bot avatars: OpenMoji (CC BY-SA 4.0)",

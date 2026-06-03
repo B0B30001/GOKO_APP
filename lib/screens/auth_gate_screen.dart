@@ -7,9 +7,17 @@ import '../widgets/goko_logo.dart';
 import '../widgets/login_dialog.dart';
 
 /// Full-screen sign-in gate shown at launch when the user is not authenticated.
-/// There is no guest/skip option — an OGS account is required to use the app.
+///
+/// GOKO is offline-first, so the gate is NOT a hard wall: alongside OGS sign-in
+/// it offers a "Continue offline" action ([onContinueOffline]) that lets the
+/// user straight into local 2-player, vs-AI, and puzzles with no account. Online
+/// play prompts for an OGS login at the point of use instead.
 class AuthGateScreen extends StatelessWidget {
-  const AuthGateScreen({super.key});
+  /// Called when the user taps "Continue offline" — enters guest mode and
+  /// dismisses the gate. See `_GokoAppState._continueOffline` in main.dart.
+  final VoidCallback onContinueOffline;
+
+  const AuthGateScreen({super.key, required this.onContinueOffline});
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +142,31 @@ class AuthGateScreen extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 8),
+
+                  // ── Continue offline ────────────────────────────────────
+                  // Offline-first escape hatch: local play, AI, and puzzles
+                  // need no account. Sign-in above is only for online games.
+                  SizedBox(
+                    width: double.infinity,
+                    child: TextButton.icon(
+                      icon: const Icon(Icons.wifi_off_outlined, size: 20),
+                      label: Text(
+                        l.continueOffline,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        foregroundColor: cs.onSurface,
+                      ),
+                      onPressed: onContinueOffline,
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
                   Text(
                     l.pleaseLogInToPlayOnline,
                     textAlign: TextAlign.center,
@@ -178,16 +210,19 @@ class _FeaturePill extends StatelessWidget {
         borderRadius: BorderRadius.circular(40),
         border: Border.all(color: cs.outline.withValues(alpha: 0.2)),
       ),
+      // Full-width row with a flexible label so longer translations (German,
+      // Russian) wrap to a second line instead of overflowing the pill.
       child: Row(
-        mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 18, color: cs.primary),
           const SizedBox(width: 10),
-          Text(
-            label,
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
+          Flexible(
+            child: Text(
+              label,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
+            ),
           ),
         ],
       ),
